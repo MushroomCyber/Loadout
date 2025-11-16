@@ -1,6 +1,6 @@
 # Kali Tools Manager
 
-Terminal UI and automation helpers for browsing, installing, and exporting Kali Linux tooling metadata. **The application targets Kali Linux (or other Debian-based security distributions).** The project  ships as a small package (`kalitools/`) with a thin launcher `kalitools.py` so you can either run `python kalitools.py` or `python -m kalitools`.
+Terminal UI and automation helpers for browsing, installing, and exporting Kali Linux tools. 
 
 ## Features
 - Rich- or basic-mode terminal interface with keyboard navigation, search, categories, utilities menu, and status widgets.
