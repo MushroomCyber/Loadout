@@ -11,6 +11,10 @@
   <img alt="Platform: Kali Linux" src="https://img.shields.io/badge/platform-Kali%20Linux-557C94?style=flat-square&logo=kalilinux&logoColor=white">
 </p>
 
+<p align="center">
+  <img src="docs/kali-tools.PNG" alt="Kali Tools Manager" width="800">
+</p>
+
 ---
 
 ## Features
