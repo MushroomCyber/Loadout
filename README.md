@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="docs/images/cli-list.svg" alt="Kali Tools Manager — CLI" width="700">
-</p>
-
 <h1 align="center">Kali Tools Manager</h1>
 
 <p align="center">
@@ -13,46 +9,22 @@
   <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
   <img alt="Platform: Kali Linux" src="https://img.shields.io/badge/platform-Kali%20Linux-557C94?style=flat-square&logo=kalilinux&logoColor=white">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-33%20passing-brightgreen?style=flat-square">
 </p>
 
 ---
 
 ## Features
 
-- **700+ tools** cataloged from APT metadata and kali.org discovery
-- **Interactive Rich CLI** with keyboard navigation, search, category browsing, and status widgets
+- **700+ tools** cataloged from APT metadata and kali.org
+- **Interactive Rich CLI** with keyboard navigation, search, and category browsing
 - **Full-screen Textual TUI** with category sidebar, tool table, detail panel, and in-app install modal
-- **Knight Rider cyber progress bar** — bouncing scanner animation during installs
-- **Curated profiles** — one-command setup for pentesting, forensics, OSINT, bug bounty, and CTF workflows
-- **Install / uninstall** with sudo verification, dependency display, disk-space checks, and desktop notifications
-- **Export / import** tooling lists as JSON or idempotent bash scripts
-- **Offline mode** — route APT through a local mirror on air-gapped hosts (`KALITOOLS_OFFLINE=1`)
-- **SQLite state database** — install history, starred tools, and launch tracking survive catalog rebuilds
-- **`robots.txt` compliant** web scraping with exponential backoff and circuit breaker
-- **33 tests** covering core logic, security regexes, profiles, state DB, config, themes, and CLI smoke tests
-
----
-
-## Screenshots
-
-### Full-Screen TUI
-
-<p align="center">
-  <img src="docs/images/tui-main.svg" alt="TUI Main Screen" width="700">
-</p>
-
-### In-App Install Modal (TUI)
-
-<p align="center">
-  <img src="docs/images/tui-install-modal.svg" alt="TUI Install Modal" width="500">
-</p>
-
-### Cyber Progress Bar (CLI)
-
-<p align="center">
-  <img src="docs/images/cyber-progress.svg" alt="Cyber Progress Bar" width="650">
-</p>
+- **Cyber progress bar** — animated Knight Rider-style scanner during installs
+- **Curated profiles** — one-command setup for pentesting, forensics, OSINT, bug bounty, and CTF
+- **Install / uninstall** with sudo elevation, dependency display, disk-space checks, and desktop notifications
+- **Export / import** your installed toolset as JSON or an idempotent bash script
+- **Offline mode** — route APT through a local mirror on air-gapped hosts
+- **History tracking** — every install, remove, and launch is recorded in a local SQLite database
+- **Star favourites** — bookmark the tools you use most
 
 ---
 
@@ -79,46 +51,35 @@ chmod +x run.sh
 ./run.sh --tui      # full-screen Textual TUI
 ```
 
-That's it. `run.sh` handles virtual environment creation and dependency installation automatically.
+`run.sh` handles virtual environment creation and dependency installation automatically.
 
 ---
 
-## Manual Installation
+## Installation
 
-### Option A: pipx (recommended for daily use)
+### Option A: pipx (recommended)
 
 ```bash
 pipx install '.[notifications,disk,tui,fuzzy]'
-kalitools              # Rich CLI
-kalitools --tui        # Textual TUI
 ```
 
-### Option B: venv (for development)
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e '.[notifications,disk,tui,fuzzy,dev]'
-```
-
-### Option C: requirements.txt
+### Option B: pip + venv
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-pip install -e .
+pip install .
 ```
 
 ### Optional extras
 
-| Extra | Installs | Purpose |
-|---|---|---|
-| `notifications` | `notify2` | Desktop toast notifications on install/uninstall |
-| `disk` | `psutil` | Free-disk-space pre-check before installs |
-| `tui` | `textual` | Full-screen Textual TUI |
-| `fuzzy` | `rapidfuzz` | Fuzzy search matching |
-| `dev` | `pytest`, `ruff`, … | Test and lint tooling for contributors |
+| Extra | What it adds |
+|---|---|
+| `notifications` | Desktop toast alerts on install/uninstall |
+| `disk` | Free-disk-space check before installs |
+| `tui` | Full-screen Textual TUI (`--tui`) |
+| `fuzzy` | Fuzzy search matching |
 
 ---
 
@@ -129,45 +90,89 @@ pip install -e .
 ```bash
 kalitools                    # interactive Rich CLI (default)
 kalitools --tui              # full-screen Textual TUI
-python -m kalitools          # module invocation
-python kalitools.py          # legacy launcher
 ./run.sh                     # auto-setup launcher
 ```
 
-### Subcommands
+### Browse & Search
 
 ```bash
-# Browse & search
 kalitools list                          # list all tools
-kalitools list --installed --json       # installed tools as JSON
+kalitools list --installed              # only installed tools
+kalitools list --category web           # filter by category
 kalitools search nmap                   # search by name
 kalitools show hydra                    # detailed tool info
-
-# Install & remove
-kalitools install nmap                  # install with progress bar
-kalitools remove hydra --yes            # uninstall without confirmation
-kalitools install nmap --dry-run        # preview without changes
-
-# Profiles (curated tool bundles)
-kalitools profile list                  # list available profiles
-kalitools profile show pentester-web    # preview a profile
-kalitools profile apply bug-bounty      # install all tools in profile
-
-# Catalog management
-kalitools catalog refresh               # rebuild from APT metadata
-kalitools catalog info                  # catalog statistics
-
-# History
-kalitools history                       # recent operations
-kalitools history --package nmap        # filter by package
-kalitools history --clear               # wipe history
-
-# Export / import
-kalitools export --format json > tools.json
-kalitools export --format script > install.sh
 ```
 
-### TUI Keyboard Shortcuts
+### Install & Remove
+
+```bash
+kalitools install nmap                  # install with progress bar
+kalitools install nmap sqlmap burpsuite # install multiple at once
+kalitools remove hydra --yes            # uninstall without confirmation
+kalitools install nmap --dry-run        # preview without changes
+```
+
+### Profiles
+
+Apply a curated bundle of tools with a single command:
+
+```bash
+kalitools profile list                  # see available profiles
+kalitools profile show pentester-web    # preview what's included
+kalitools profile apply bug-bounty      # install everything in the profile
+```
+
+| Profile | Audience | Packages |
+|---|---|---|
+| `pentester-web` | Web application testing | ~18 |
+| `forensics-starter` | DFIR starter toolkit | ~15 |
+| `osint-minimal` | Lightweight OSINT collection | ~12 |
+| `bug-bounty` | Public bug-bounty recon & web | ~17 |
+| `ctf-basics` | Jeopardy-style CTF starter | ~15 |
+
+Create your own by dropping a JSON file in `~/.config/kalitools/profiles/`.
+
+### Updates & Upgrades
+
+```bash
+kalitools update                        # apt-get update + list upgradable
+kalitools upgrade                       # apt-get upgrade -y
+kalitools catalog refresh               # rebuild the tool catalog
+```
+
+### History & Favourites
+
+```bash
+kalitools history                       # recent operations
+kalitools history --package nmap        # filter by package
+kalitools star nmap                     # bookmark a tool
+kalitools list --starred                # list your favourites
+```
+
+### Export & Import
+
+```bash
+kalitools export --format json > tools.json       # save installed set
+kalitools export --format script > install.sh     # idempotent bash script
+```
+
+### Version Pinning
+
+```bash
+kalitools hold nmap                     # pin current version (apt-mark hold)
+kalitools unhold nmap                   # release pin
+kalitools holds                         # list held packages
+```
+
+### System Diagnostics
+
+```bash
+kalitools doctor                        # check for common issues
+```
+
+---
+
+## TUI Keyboard Shortcuts
 
 | Key | Action |
 |---|---|
@@ -180,77 +185,18 @@ kalitools export --format script > install.sh
 
 ---
 
-## Profiles
-
-Five curated profiles ship out of the box:
-
-| Profile | Audience | Packages |
-|---|---|---|
-| `pentester-web` | Web application testing | ~18 |
-| `forensics-starter` | DFIR starter toolkit | ~15 |
-| `osint-minimal` | Lightweight OSINT collection | ~12 |
-| `bug-bounty` | Public bug-bounty recon & web | ~17 |
-| `ctf-basics` | Jeopardy-style CTF starter | ~15 |
-
-Create your own by dropping a JSON file in `~/.config/kalitools/profiles/`.
-
-See [docs/PROFILES.md](docs/PROFILES.md) for the full profile specification.
-
----
-
 ## Offline Mode
 
 For air-gapped or restricted environments:
 
-1. Configure a local APT mirror:
-   ```bash
-   kalitools catalog refresh  # or via the Utilities menu
-   ```
-   Point it at a USB drive or local mirror directory.
+1. Configure a local APT mirror via the Utilities menu or point `~/.kali_tools_local_repo.txt` at your mirror path.
 
 2. Set the environment variable:
    ```bash
    export KALITOOLS_OFFLINE=1
    ```
 
-3. Installs and updates will route exclusively through the local repository.
-
----
-
-## Project Layout
-
-```
-kalitools.py                 # convenience launcher
-run.sh                       # one-command auto-setup launcher
-kalitools/                   # main package
-  __init__.py                # shared console/logger
-  __main__.py                # python -m kalitools
-  cli.py                     # argparse wiring + entry points
-  manager.py                 # core business logic + cyber progress bar
-  ui.py                      # Rich interactive TUI
-  config.py                  # export/import helpers
-  constants.py               # categories, icons, keyword hints
-  model.py                   # Tool data model
-  state.py                   # SQLite state database
-  profiles.py                # profile loader
-  history.py                 # operation history
-  theme.py                   # Rich theme registry
-  doctor.py                  # system health checks
-  http_util.py               # robots.txt-aware HTTP client
-  notifications.py           # desktop notifications
-  apt_catalog.py             # APT-first catalog builder
-  data/                      # shipped catalog + bundled profiles
-    tools_merged.json        # 700+ tool entries
-    profiles/                # 5 curated profiles
-  tui/                       # Textual TUI
-    app.py                   # full-screen app + install modal
-kalitools_lib/               # stand-alone scraping helpers
-tests/                       # 33 tests
-docs/                        # additional documentation
-  GETTING_STARTED.md
-  PROFILES.md
-  CONFIGURATION.md
-```
+3. All installs and updates route exclusively through the local repository.
 
 ---
 
@@ -258,59 +204,33 @@ docs/                        # additional documentation
 
 | Path | Purpose |
 |---|---|
-| `~/.config/kalitools/profiles/*.json` | User-defined profiles |
-| `~/.local/state/kalitools/state.db` | Installed state + history (SQLite) |
-| `~/.kali_tools_cache.json` | Legacy installed cache |
+| `~/.config/kalitools/profiles/*.json` | Your custom profiles |
+| `~/.local/state/kalitools/state.db` | Install state, history, stars (SQLite) |
+| `~/.kali_tools_local_repo.txt` | Offline mirror path |
 | `~/.kali_tools_overrides.json` | Category overrides |
-| `~/.kali_tools_local_repo.txt` | Offline repo pointer |
 
 | Environment Variable | Purpose |
 |---|---|
-| `KALITOOLS_OFFLINE` | Skip all network requests, use local repo |
+| `KALITOOLS_OFFLINE` | Skip network requests, use local repo |
 | `KALITOOLS_NO_EMOJI` | Strip emoji glyphs for minimal terminals |
-| `XDG_STATE_HOME` | Override state directory base |
-| `XDG_CONFIG_HOME` | Override config directory base |
 
 See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for full details.
 
 ---
 
-## Development
+## Man Page
+
+A full man page is included:
 
 ```bash
-# Setup
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e '.[dev,tui,notifications,disk,fuzzy]'
-
-# Lint
-ruff check .
-
-# Test
-python -m pytest -q          # quick
-python -m pytest -v          # verbose
-
-# All checks (what CI runs)
-ruff check . && python -m pytest -q
+man -l man/kalitools.1
 ```
-
----
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for the threat model and vulnerability reporting process.
-
-Key security properties:
-- Package names validated against `^[a-z0-9][a-z0-9+.\-]*$` before subprocess use
-- No `shell=True` anywhere
-- Atomic JSON writes via `tempfile` + `os.replace`
-- `robots.txt` compliance on all outbound scraping
-- Local repo paths reject control characters and require explicit confirmation for unsigned repos
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines and the PR checklist.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
