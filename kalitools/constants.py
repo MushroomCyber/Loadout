@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Dict, Optional
-
 CATEGORY_ICONS = {
     'web': '🌐',
     'wireless': '📡',
@@ -61,7 +59,7 @@ CATEGORIES = {
     'other': []
 }
 
-CATEGORY_DESCRIPTIONS: Dict[str, str] = {
+CATEGORY_DESCRIPTIONS: dict[str, str] = {
     'web': 'Web application scanning, content discovery, HTTP enumeration, CMS auditing (e.g., ffuf, nikto, zaproxy).',
     'wireless': '802.11/Wi‑Fi recon, packet capture, WPA/WPS attacks, rogue AP and injection tooling.',
     'forensics': 'Disk, memory and artifact analysis: carving, timeline reconstruction, evidence extraction.',
@@ -92,7 +90,7 @@ CATEGORY_DEFAULT_SUBCATEGORY = {
     'other': 'Misc',
 }
 
-SUBCATEGORY_MAP: Dict[str, Dict[str, str]] = {
+SUBCATEGORY_MAP: dict[str, dict[str, str]] = {
     'web': {
         'ffuf': 'Fuzzing', 'dirb': 'Discovery', 'dirsearch': 'Discovery', 'feroxbuster': 'Discovery', 'gobuster': 'Discovery',
         'nikto': 'Scanning', 'zaproxy': 'Proxy/Scan', 'burpsuite': 'Proxy/Scan', 'wpscan': 'CMS', 'cewl': 'Wordlists',
@@ -276,19 +274,19 @@ META_CATEGORY_SOURCES = {
 }
 
 
-def get_category_description(cat: Optional[str]) -> Optional[str]:
+def get_category_description(cat: str | None) -> str | None:
     if not cat:
         return None
     return CATEGORY_DESCRIPTIONS.get(cat)
 
 
-def get_subcategory_for(name: str, category: Optional[str]) -> str:
+def get_subcategory_for(name: str, category: str | None) -> str:
     cat = (category or 'other').lower()
     mapping = SUBCATEGORY_MAP.get(cat, {})
     return mapping.get(name, '')
 
 
-def get_category_display_name(category: Optional[str]) -> str:
+def get_category_display_name(category: str | None) -> str:
     if not category:
         return 'Other'
     return CATEGORY_NAMES.get(category.lower(), category.title())

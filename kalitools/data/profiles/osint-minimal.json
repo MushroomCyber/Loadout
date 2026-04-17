@@ -1,0 +1,20 @@
+{
+  "slug": "osint-minimal",
+  "name": "OSINT Minimal",
+  "description": "Lightweight OSINT collection bundle: subdomains, DNS, harvesting.",
+  "tags": ["osint", "recon"],
+  "packages": [
+    "theharvester",
+    "amass",
+    "subfinder",
+    "assetfinder",
+    "findomain",
+    "sublist3r",
+    "dnsrecon",
+    "dnsenum",
+    "fierce",
+    "recon-ng",
+    "spiderfoot",
+    "maltego"
+  ]
+}

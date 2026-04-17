@@ -1,0 +1,25 @@
+{
+  "slug": "bug-bounty",
+  "name": "Bug Bounty Hunter",
+  "description": "Broad recon + web + API testing toolkit used for public bug-bounty programs.",
+  "tags": ["bugbounty", "web", "recon"],
+  "packages": [
+    "amass",
+    "subfinder",
+    "assetfinder",
+    "findomain",
+    "httpx-toolkit",
+    "nuclei",
+    "ffuf",
+    "gobuster",
+    "feroxbuster",
+    "naabu",
+    "katana",
+    "gau",
+    "waybackurls",
+    "dalfox",
+    "sqlmap",
+    "burpsuite",
+    "seclists"
+  ]
+}

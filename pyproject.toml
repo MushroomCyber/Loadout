@@ -4,13 +4,65 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kalitools-app"
-version = "0.1.0"
-description = "Kali Tools Manager CLI"
-authors = [{name = "MushroomCyber"}]
-requires-python = ">=3.8"
+version = "0.3.0"
+description = "Kali Tools Manager — an interactive TUI for browsing, installing, and managing Kali Linux tooling."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "MushroomCyber" }]
+requires-python = ">=3.10"
+keywords = ["kali", "security", "tools", "apt", "tui", "cli"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+  "Topic :: System :: Software Distribution",
+]
 dependencies = [
-  "rich>=13.0",
+  "rich>=13.7",
   "requests>=2.31",
   "beautifulsoup4>=4.12",
 ]
+
+[project.optional-dependencies]
+notifications = ["notify2>=0.3.1"]
+disk = ["psutil>=5.9"]
+tui = ["textual>=0.60"]
+fuzzy = ["rapidfuzz>=3.5"]
+dev = [
+  "pytest>=7.4",
+  "pytest-mock>=3.12",
+  "ruff>=0.4",
+  "rapidfuzz>=3.5",
+]
+
+[project.scripts]
+kalitools = "kalitools.cli:main"
+kalitools-tui = "kalitools.cli:tui_main"
+
+[project.urls]
+Homepage = "https://github.com/MushroomCyber/Kali-Tools-Manager"
+Repository = "https://github.com/MushroomCyber/Kali-Tools-Manager"
+Issues = "https://github.com/MushroomCyber/Kali-Tools-Manager/issues"
+
+[tool.setuptools.packages.find]
+include = ["kalitools*", "kalitools_lib*"]
+
+[tool.setuptools.package-data]
+kalitools = ["data/*.json", "data/profiles/*.json"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501"]  # long lines sometimes unavoidable in rich strings
 

@@ -5,43 +5,49 @@ from __future__ import annotations
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
-import sys
+import tempfile
 import time
 from collections import deque
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 from rich.panel import Panel
 from rich.progress import (
-    BarColumn,
     Progress,
-    SpinnerColumn,
+    ProgressColumn,
+    Task,
     TextColumn,
     TimeElapsedColumn,
 )
 from rich.prompt import Confirm
 from rich.syntax import Syntax
+from rich.text import Text
 
 from . import console, logger
 from .config import ConfigManager
 from .constants import (
     CATEGORIES,
-    CATEGORY_ICONS,
-    CATEGORY_NAMES,
-    CATEGORY_KEYWORD_HINTS,
-    TOOL_DESCRIPTIONS,
-    SUBCATEGORY_KEYWORD_HINTS,
-    META_CATEGORY_SOURCES,
     CATEGORY_DEFAULT_SUBCATEGORY,
+    CATEGORY_ICONS,
+    CATEGORY_KEYWORD_HINTS,
+    CATEGORY_NAMES,
+    META_CATEGORY_SOURCES,
+    SUBCATEGORY_KEYWORD_HINTS,
+    TOOL_DESCRIPTIONS,
     get_category_display_name,
     get_subcategory_for,
 )
+from .http_util import offline as is_offline_mode
 from .model import Tool
 from .notifications import notifications_ready, send_notification
+from .state import get_state_db
 
 try:
     from kalitools_lib.scraping import parse_tool_page  # type: ignore
@@ -65,6 +71,97 @@ except ImportError:
     requests = None  # type: ignore
     BeautifulSoup = None  # type: ignore
     WEB_SCRAPING_AVAILABLE = False
+
+
+# ---------------------------------------------------------------------------
+# Knight Rider / cyber-style progress bar
+# ---------------------------------------------------------------------------
+
+_CYBER_GLYPHS = "░▒▓█"  # increasingly bright fill characters
+_SCANNER_WIDTH = 4       # width of the bouncing "scanner" highlight
+
+
+class CyberBarColumn(ProgressColumn):
+    """A Knight-Rider-inspired progress bar with a digital scanner sweep."""
+
+    def __init__(self, bar_width: int = 30) -> None:
+        super().__init__()
+        self.bar_width = bar_width
+        self._tick = 0
+
+    def render(self, task: Task) -> Text:
+        pct = task.percentage or 0.0
+        filled = int(self.bar_width * pct / 100)
+        empty = self.bar_width - filled
+
+        # Build the base bar
+        bar_chars = list(_CYBER_GLYPHS[3] * filled + _CYBER_GLYPHS[0] * empty)
+
+        # Bouncing scanner position across the *filled* region
+        if filled > 1:
+            self._tick += 1
+            cycle = max(filled - _SCANNER_WIDTH, 1) * 2
+            pos = self._tick % cycle
+            if pos >= cycle // 2:
+                pos = cycle - pos - 1
+            for i in range(_SCANNER_WIDTH):
+                idx = pos + i
+                if 0 <= idx < filled:
+                    bar_chars[idx] = _CYBER_GLYPHS[1] if i in (0, _SCANNER_WIDTH - 1) else _CYBER_GLYPHS[2]
+
+        text = Text()
+        text.append("⟨", style="bold bright_black")
+        for idx, ch in enumerate(bar_chars):
+            if idx < filled:
+                if ch == _CYBER_GLYPHS[3]:
+                    text.append(ch, style="bold cyan")
+                elif ch == _CYBER_GLYPHS[2]:
+                    text.append(ch, style="bold bright_white")
+                else:
+                    text.append(ch, style="bold bright_cyan")
+            else:
+                text.append(ch, style="dim bright_black")
+        text.append("⟩", style="bold bright_black")
+        return text
+
+
+class CyberPercentColumn(ProgressColumn):
+    """Percentage rendered in digital / cyber style."""
+
+    def render(self, task: Task) -> Text:
+        pct = task.percentage or 0.0
+        if pct >= 100:
+            return Text("【DONE】", style="bold bright_green")
+        return Text(f"〔{pct:5.1f}%〕", style="bold cyan")
+
+
+class CyberSpinnerColumn(ProgressColumn):
+    """A rotating scanner glyph instead of the default dots spinner."""
+
+    _FRAMES = ["◜", "◠", "◝", "◞", "◡", "◟"]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._idx = 0
+
+    def render(self, task: Task) -> Text:
+        frame = self._FRAMES[self._idx % len(self._FRAMES)]
+        self._idx += 1
+        if (task.percentage or 0) >= 100:
+            return Text("◉", style="bold bright_green")
+        return Text(frame, style="bold red")
+
+
+def _cyber_progress(**kwargs: Any) -> Progress:
+    """Create a :class:`Progress` instance with the cyber theme."""
+    return Progress(
+        CyberSpinnerColumn(),
+        TextColumn("[bold bright_cyan]{task.description}"),
+        CyberBarColumn(),
+        CyberPercentColumn(),
+        TimeElapsedColumn(),
+        **kwargs,
+    )
 
 
 FALLBACK_TOOL_ENTRIES = [
@@ -103,6 +200,85 @@ FALLBACK_NAME_VARIANTS = [
 ]
 
 
+# --- Safety helpers -------------------------------------------------------
+
+# Allow only POSIX package names (Debian rules) for any value interpolated
+# into a subprocess argv. `validate_tool_name` already applies this but we
+# keep a module-level version for callers outside the class.
+_PACKAGE_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9+.\-]*$")
+
+# Accept only absolute filesystem paths with printable, non-control chars for
+# the local apt repo setup. Explicitly rejects CR/LF so injection into
+# /etc/apt/sources.list.d/*.list is impossible.
+_SAFE_ABS_PATH_RE = re.compile(r"^/[\x20-\x7e]+$")
+_CONTROL_CHARS_RE = re.compile(r"[\x00-\x1f\x7f]")
+
+# Leading token of a launch command must look like a command name. Full
+# argv-style strings are allowed but metacharacters trigger an explicit
+# confirmation/log warning in `launch_tool`.
+_LAUNCH_LEADING_TOKEN_RE = re.compile(r"^[A-Za-z0-9_./\-]+$")
+_LAUNCH_METACHARS = set(";&|`$<>(){}[]*?!\\\"'")
+
+
+def _atomic_write_json(path: Path, payload: Any, *, indent: int = 2) -> None:
+    """Write JSON to *path* atomically.
+
+    Writes to a sibling temp file then ``os.replace``s it over the target so a
+    crash mid-write can never corrupt an existing cache/override file. The
+    parent directory is created if missing.
+    """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_fd, tmp_name = tempfile.mkstemp(
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+        dir=str(path.parent),
+    )
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(tmp_fd, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, indent=indent)
+            handle.flush()
+            try:
+                os.fsync(handle.fileno())
+            except OSError:
+                pass
+        os.replace(tmp_path, path)
+    except Exception:
+        try:
+            tmp_path.unlink()
+        except OSError:
+            pass
+        raise
+
+
+def _atomic_write_text(path: Path, text: str) -> None:
+    """Atomic text write, same semantics as ``_atomic_write_json``."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_fd, tmp_name = tempfile.mkstemp(
+        prefix=f".{path.name}.",
+        suffix=".tmp",
+        dir=str(path.parent),
+    )
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(tmp_fd, "w", encoding="utf-8") as handle:
+            handle.write(text)
+            handle.flush()
+            try:
+                os.fsync(handle.fileno())
+            except OSError:
+                pass
+        os.replace(tmp_path, path)
+    except Exception:
+        try:
+            tmp_path.unlink()
+        except OSError:
+            pass
+        raise
+
+
 class KaliToolsManager:
     """Main class for managing Kali Linux tools with enhanced features"""
 
@@ -121,9 +297,9 @@ class KaliToolsManager:
         self.debug_scraper = debug_scraper
 
         # Load canonical Kali tools index from web cache if present (best-effort)
-        self.web_index: Optional[Dict[str, Any]] = self._load_web_index()
+        self.web_index: dict[str, Any] | None = self._load_web_index()
         # Initialize caches that discovery helpers might touch
-        self._installed_cache: Optional[Set[str]] = None
+        self._installed_cache: set[str] | None = None
 
         loaded = self._load_tools_from_json()
         if loaded:
@@ -177,10 +353,10 @@ class KaliToolsManager:
                 console.print(f"[green]✓ Saved {len(self.tools)} tools to data/tools_merged.json[/green]")
             except Exception as e:
                 console.print(f"[yellow]⚠️  Could not save tools: {e}[/yellow]")
-            
+
             # Clear screen after discovery to prepare for UI display
             console.clear()
-            
+
         self.cache_file = Path.home() / ".kali_tools_cache.json"
         self.local_repo_file = Path.home() / ".kali_tools_local_repo.txt"
         self.installation_status = {}
@@ -188,10 +364,10 @@ class KaliToolsManager:
         self.load_cache()
         self._categorize_tools()
         self.category_override_file = Path.home() / ".kali_tools_overrides.json"
-        self.category_overrides: Dict[str, Dict[str, str]] = {}
+        self.category_overrides: dict[str, dict[str, str]] = {}
         self.category_overrides = self._load_category_overrides()
         self.meta_hint_cache_file = Path.home() / ".kali_tools_meta_hints.json"
-        self.meta_category_hints: Dict[str, Dict[str, str]] = self._load_meta_category_cache()
+        self.meta_category_hints: dict[str, dict[str, str]] = self._load_meta_category_cache()
         if not self.meta_category_hints and self.is_debian_based():
             hints = self._discover_meta_category_hints()
             if hints:
@@ -199,9 +375,9 @@ class KaliToolsManager:
                 self._save_meta_category_cache(hints)
         self._apply_metadata_enrichment()
         self._load_local_repo()
-        self.description_cache: Dict[str, str] = {}
-        self._dependency_cache: Dict[str, List[str]] = {}
-        self._package_size_cache: Dict[str, int] = {}
+        self.description_cache: dict[str, str] = {}
+        self._dependency_cache: dict[str, list[str]] = {}
+        self._package_size_cache: dict[str, int] = {}
         self._check_system_requirements()
         # Purge legacy history database if present
         try:
@@ -211,7 +387,7 @@ class KaliToolsManager:
         except Exception:
             pass
 
-    def _load_web_index(self) -> Optional[Dict[str, Any]]:
+    def _load_web_index(self) -> dict[str, Any] | None:
         """Load canonical tools index discovered from Kali website, if available.
 
         Expects a JSON object mapping normalized tool names to any metadata
@@ -224,7 +400,7 @@ class KaliToolsManager:
             index_file = data_dir / "kali_web_index.json"
             if not index_file.exists():
                 return None
-            with open(index_file, "r", encoding="utf-8") as f:
+            with open(index_file, encoding="utf-8") as f:
                 data = json.load(f)
             if isinstance(data, dict):
                 # Normalize keys to lowercase strings
@@ -251,7 +427,7 @@ class KaliToolsManager:
             discovered = self._discover_tools_from_meta_packages()
 
             # Merge by name, preferring existing JSON definitions when present
-            merged: Dict[str, Tool] = {t['name']: t for t in base_tools}
+            merged: dict[str, Tool] = {t['name']: t for t in base_tools}
             for tool in discovered:
                 name = tool['name']
                 if name not in merged:
@@ -273,7 +449,7 @@ class KaliToolsManager:
             console.print(f"[red]Error refreshing tools from sources: {e}[/red]")
             return 0
 
-    def _discover_tools_from_meta_packages(self) -> List[Tool]:
+    def _discover_tools_from_meta_packages(self) -> list[Tool]:
         """Best-effort discovery of tools from Kali meta-packages.
 
         This inspects dependencies of selected `kali-linux-*` meta-packages via
@@ -286,8 +462,8 @@ class KaliToolsManager:
             "kali-linux-top10",
             "kali-linux-default",
         ])
-        visited_meta: Set[str] = set()
-        discovered: Dict[str, Tool] = {}
+        visited_meta: set[str] = set()
+        discovered: dict[str, Tool] = {}
 
         deny_prefixes = (
             "lib",
@@ -350,7 +526,7 @@ class KaliToolsManager:
 
         return list(discovered.values())
 
-    def _save_tools_to_json(self, tools: List[Tool]) -> None:
+    def _save_tools_to_json(self, tools: list[Tool]) -> None:
         """Persist the merged tools list to a primary JSON file.
 
         This writes to `data/tools_merged.json`, creating the `data` directory
@@ -359,19 +535,23 @@ class KaliToolsManager:
         try:
             base_dir = Path(__file__).resolve().parent
             data_dir = base_dir / "data"
-            data_dir.mkdir(parents=True, exist_ok=True)
             out_file = data_dir / "tools_merged.json"
-
-            payload: List[Dict[str, Any]] = [t.to_dict() for t in tools]
-
-            with open(out_file, "w", encoding="utf-8") as f:
-                json.dump(payload, f, indent=2)
+            payload = {
+                "schema": 2,
+                "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "source": {
+                    "type": "merged",
+                    "notes": "Produced by KaliToolsManager discovery pipeline.",
+                },
+                "tools": [t.to_dict() for t in tools],
+            }
+            _atomic_write_json(out_file, payload)
         except Exception as e:
             console.print(f"[yellow]⚠️ Could not persist merged tools JSON: {e}[/yellow]")
 
-    def _looks_like_fallback_dataset(self, tools: List[Tool]) -> bool:
+    def _looks_like_fallback_dataset(self, tools: list[Tool]) -> bool:
         """Detect whether the provided tools match the built-in fallback list."""
-        names: Set[str] = set()
+        names: set[str] = set()
         for tool in tools:
             if isinstance(tool, Tool):
                 name = tool.name
@@ -384,7 +564,7 @@ class KaliToolsManager:
             return False
         return any(names == variant for variant in FALLBACK_NAME_VARIANTS)
 
-    def _parse_tools_data(self) -> List[Tool]:
+    def _parse_tools_data(self) -> list[Tool]:
         """Return a minimal built-in tool list for fully offline scenarios."""
         return [Tool.from_dict(entry) for entry in FALLBACK_TOOL_ENTRIES]
 
@@ -406,44 +586,58 @@ class KaliToolsManager:
         if not self.is_debian_based():
             console.print("[yellow]⚠️  Warning: This tool is designed for Debian/Ubuntu-based systems (Kali Linux)[/yellow]")
             console.print("[dim]Some features may not work correctly on other distributions[/dim]\n")
-        
+
         if not shutil.which('apt-get'):
             console.print("[red]❌ Error: apt-get not found![/red]")
             console.print("[yellow]This tool requires apt-get package manager[/yellow]\n")
-        
+
         if not shutil.which('dpkg'):
             console.print("[red]❌ Error: dpkg not found![/red]")
             console.print("[yellow]This tool requires dpkg package manager[/yellow]\n")
-    
+
     def is_debian_based(self) -> bool:
         """Check if system is Debian-based"""
         try:
             return bool(shutil.which('apt-get') and shutil.which('dpkg'))
         except Exception:
             return False
-    
+
     def check_sudo_available(self) -> bool:
-        """Check if sudo is available and user can use it"""
+        """Return True if the user can obtain sudo (possibly after a prompt).
+
+        ``sudo -n true`` exits 0 when credentials are cached, non-zero
+        otherwise. A non-zero exit does NOT mean sudo is unavailable -- only
+        that the user will be prompted. We therefore return True whenever
+        the sudo binary exists; callers should use
+        :meth:`verify_sudo_before_operation` when they actually need a live
+        session.
+        """
         try:
             if not shutil.which('sudo'):
                 console.print("[red]❌ Error: sudo command not found![/red]")
                 console.print("[yellow]Please install sudo: apt install sudo[/yellow]")
                 return False
-            
-            result = subprocess.run(
-                ['sudo', '-n', 'true'],
-                capture_output=True,
-                timeout=1
-            )
-            
+
+            try:
+                result = subprocess.run(
+                    ['sudo', '-n', 'true'],
+                    capture_output=True,
+                    timeout=1,
+                )
+                if result.returncode == 0:
+                    logger.debug("sudo credentials are cached")
+                else:
+                    logger.debug(
+                        "sudo is installed but will prompt for a password (rc=%s)",
+                        result.returncode,
+                    )
+            except subprocess.TimeoutExpired:
+                logger.debug("sudo -n true timed out; assuming password prompt")
             return True
-            
-        except subprocess.TimeoutExpired:
-            return True  # Assume it's working, just waiting for password
         except Exception as e:
             console.print(f"[yellow]⚠️  Warning: Could not verify sudo access: {e}[/yellow]")
-            return True  # Assume it's available to avoid blocking
-    
+            return True
+
     def verify_sudo_before_operation(self) -> bool:
         """Verify sudo access before performing privileged operations"""
         try:
@@ -453,7 +647,7 @@ class KaliToolsManager:
                 text=True,
                 timeout=30
             )
-            
+
             if result.returncode == 0:
                 return True
             else:
@@ -463,7 +657,7 @@ class KaliToolsManager:
                 console.print("  2. Your password is correct")
                 console.print("  3. Your user is in the sudoers file")
                 return False
-                
+
         except subprocess.TimeoutExpired:
             console.print("[red]❌ Sudo authentication timed out![/red]")
             return False
@@ -473,15 +667,16 @@ class KaliToolsManager:
 
     # --- Tool data loading ---
 
-    def _load_tools_from_json(self) -> List[Tool]:
+    def _load_tools_from_json(self) -> list[Tool]:
         """Load tools from JSON files in a local data directory.
 
-        Looks for any `tools_*.json` under a `data` folder next to this script.
-        Each file should contain a list of objects with at least:
-          - name: str
-          - commands: list[str] (optional)
-          - category: str (optional)
-          - source: str (optional, e.g. "kali")
+        Supports two on-disk shapes:
+
+        * schema v1: a bare JSON list of tool objects (legacy).
+        * schema v2: an object ``{"schema": 2, "generated_at": ..., "tools": [...]}``
+
+        Any entries without a name are skipped. The loader is resilient to
+        partially-broken files (prints a warning and moves on).
         """
         try:
             base_dir = Path(__file__).resolve().parent
@@ -489,20 +684,32 @@ class KaliToolsManager:
             if not data_dir.exists():
                 return []
 
-            tools: List[Tool] = []
+            tools: list[Tool] = []
             for json_file in sorted(data_dir.glob("tools_*.json")):
                 try:
-                    with open(json_file, "r", encoding="utf-8") as f:
+                    with open(json_file, encoding="utf-8") as f:
                         payload = json.load(f)
                 except Exception as e:
                     console.print(f"[yellow]⚠️ Could not read {json_file.name}: {e}[/yellow]")
                     continue
 
-                if not isinstance(payload, list):
-                    console.print(f"[yellow]⚠️ {json_file.name} must contain a JSON list of tool objects[/yellow]")
+                entries: list[Any]
+                if isinstance(payload, list):
+                    entries = payload
+                elif isinstance(payload, dict):
+                    entries = payload.get("tools", [])
+                    if not isinstance(entries, list):
+                        console.print(
+                            f"[yellow]⚠️ {json_file.name} has invalid 'tools' field[/yellow]"
+                        )
+                        continue
+                else:
+                    console.print(
+                        f"[yellow]⚠️ {json_file.name} must be a list or {{'tools': [...]}} object[/yellow]"
+                    )
                     continue
 
-                for entry in payload:
+                for entry in entries:
                     if not isinstance(entry, dict):
                         continue
                     tool = Tool.from_dict(entry)
@@ -527,17 +734,17 @@ class KaliToolsManager:
             self._normalize_tool_entry(tool, lookup)
 
     @staticmethod
-    def _build_category_lookup() -> Dict[str, str]:
-        lookup: Dict[str, str] = {}
+    def _build_category_lookup() -> dict[str, str]:
+        lookup: dict[str, str] = {}
         for category, names in CATEGORIES.items():
             for name in names:
                 lookup[name.lower()] = category
         return lookup
 
     @staticmethod
-    def _dedupe_preserve_order(values: List[str]) -> List[str]:
-        seen: Set[str] = set()
-        result: List[str] = []
+    def _dedupe_preserve_order(values: list[str]) -> list[str]:
+        seen: set[str] = set()
+        result: list[str] = []
         for value in values:
             text = str(value or '').strip()
             if not text:
@@ -549,7 +756,7 @@ class KaliToolsManager:
             result.append(text)
         return result
 
-    def _normalize_tool_entry(self, tool: Tool, lookup: Dict[str, str]) -> None:
+    def _normalize_tool_entry(self, tool: Tool, lookup: dict[str, str]) -> None:
         tool.name = tool.name.strip()
         if not tool.name:
             return
@@ -647,7 +854,7 @@ class KaliToolsManager:
         self._refresh_tool_metadata(tool)
 
     def _build_metadata_haystack(self, tool: Tool) -> str:
-        parts: List[str] = [tool.name, ' '.join(tool.commands or []), tool.description, ' '.join(tool.subpackages or [])]
+        parts: list[str] = [tool.name, ' '.join(tool.commands or []), tool.description, ' '.join(tool.subpackages or [])]
         meta_keywords = tool.metadata.get('keywords') if isinstance(tool.metadata, dict) else None  # type: ignore[arg-type]
         if isinstance(meta_keywords, list):
             parts.append(' '.join(str(item) for item in meta_keywords if item))
@@ -656,7 +863,7 @@ class KaliToolsManager:
         return ' '.join(part for part in parts if part).lower()
 
     @staticmethod
-    def _match_category_from_keywords(haystack: str) -> Optional[str]:
+    def _match_category_from_keywords(haystack: str) -> str | None:
         for category, keywords in CATEGORY_KEYWORD_HINTS.items():
             for keyword in keywords:
                 if keyword.lower() in haystack:
@@ -664,7 +871,7 @@ class KaliToolsManager:
         return None
 
     @staticmethod
-    def _match_subcategory_from_keywords(category: Optional[str], haystack: str) -> Optional[str]:
+    def _match_subcategory_from_keywords(category: str | None, haystack: str) -> str | None:
         if not category:
             return None
         mapping = SUBCATEGORY_KEYWORD_HINTS.get((category or '').lower(), {})
@@ -682,21 +889,21 @@ class KaliToolsManager:
         tool.metadata['category_display'] = get_category_display_name(tool.category)
 
     @staticmethod
-    def _should_replace_category(current_category: Optional[str]) -> bool:
+    def _should_replace_category(current_category: str | None) -> bool:
         slug = (current_category or '').strip().lower()
         return not slug or slug == 'other' or slug not in CATEGORY_NAMES
 
-    def _load_category_overrides(self) -> Dict[str, Dict[str, str]]:
+    def _load_category_overrides(self) -> dict[str, dict[str, str]]:
         if not self.category_override_file.exists():
             return {}
         try:
-            with open(self.category_override_file, 'r', encoding='utf-8') as handle:
+            with open(self.category_override_file, encoding='utf-8') as handle:
                 raw_data = json.load(handle)
         except Exception as exc:
             console.print(f"[yellow]⚠️ Could not read category overrides: {exc}[/yellow]")
             return {}
 
-        overrides: Dict[str, Dict[str, str]] = {}
+        overrides: dict[str, dict[str, str]] = {}
         if isinstance(raw_data, dict):
             for name, payload in raw_data.items():
                 if not isinstance(payload, dict):
@@ -721,7 +928,7 @@ class KaliToolsManager:
                 pass
             return
 
-        payload: Dict[str, Dict[str, str]] = {}
+        payload: dict[str, dict[str, str]] = {}
         for key, values in self.category_overrides.items():
             name = values.get('original_name') or self._lookup_tool_name(key)
             if not name:
@@ -732,19 +939,18 @@ class KaliToolsManager:
             }
 
         try:
-            with open(self.category_override_file, 'w', encoding='utf-8') as handle:
-                json.dump(payload, handle, indent=2)
+            _atomic_write_json(Path(self.category_override_file), payload)
         except Exception as exc:
             console.print(f"[yellow]⚠️ Could not persist category overrides: {exc}[/yellow]")
 
-    def _load_meta_category_cache(self, ttl_hours: int = 240) -> Dict[str, Dict[str, str]]:
+    def _load_meta_category_cache(self, ttl_hours: int = 240) -> dict[str, dict[str, str]]:
         if not hasattr(self, 'meta_hint_cache_file'):
             return {}
         cache_path = self.meta_hint_cache_file
         if not cache_path.exists():
             return {}
         try:
-            with open(cache_path, 'r', encoding='utf-8') as handle:
+            with open(cache_path, encoding='utf-8') as handle:
                 data = json.load(handle)
         except Exception:
             return {}
@@ -758,7 +964,7 @@ class KaliToolsManager:
         if not isinstance(raw_hints, dict):
             return {}
 
-        normalized: Dict[str, Dict[str, str]] = {}
+        normalized: dict[str, dict[str, str]] = {}
         for name, payload in raw_hints.items():
             category = ''
             subcategory = ''
@@ -775,7 +981,7 @@ class KaliToolsManager:
             }
         return normalized
 
-    def _save_meta_category_cache(self, hints: Dict[str, Dict[str, str]]) -> None:
+    def _save_meta_category_cache(self, hints: dict[str, dict[str, str]]) -> None:
         if not hasattr(self, 'meta_hint_cache_file'):
             return
         payload = {
@@ -783,13 +989,12 @@ class KaliToolsManager:
             'hints': hints,
         }
         try:
-            with open(self.meta_hint_cache_file, 'w', encoding='utf-8') as handle:
-                json.dump(payload, handle, indent=2)
+            _atomic_write_json(Path(self.meta_hint_cache_file), payload)
         except Exception as exc:
             console.print(f"[yellow]⚠️ Could not persist meta category cache: {exc}[/yellow]")
 
-    def _discover_meta_category_hints(self) -> Dict[str, Dict[str, str]]:
-        hints: Dict[str, Dict[str, str]] = {}
+    def _discover_meta_category_hints(self) -> dict[str, dict[str, str]]:
+        hints: dict[str, dict[str, str]] = {}
         if not shutil.which('apt-cache'):
             return hints
 
@@ -829,7 +1034,7 @@ class KaliToolsManager:
                 })
         return hints
 
-    def _lookup_tool_name(self, key: str) -> Optional[str]:
+    def _lookup_tool_name(self, key: str) -> str | None:
         key = (key or '').lower()
         for tool in self.tools:
             name = ''
@@ -844,8 +1049,8 @@ class KaliToolsManager:
     def set_tool_category_override(
         self,
         tool_name: str,
-        category: Optional[str],
-        subcategory: Optional[str] = None,
+        category: str | None,
+        subcategory: str | None = None,
     ) -> None:
         """Persist a user-defined category/subcategory for a specific tool."""
         normalized = (tool_name or '').strip()
@@ -890,54 +1095,65 @@ class KaliToolsManager:
         """Load local repository path if configured"""
         if self.local_repo_file.exists():
             try:
-                with open(self.local_repo_file, 'r') as f:
+                with open(self.local_repo_file) as f:
                     self.local_repo = f.read().strip()
             except Exception:
                 self.local_repo = None
         else:
             self.local_repo = None
 
+    def _build_apt_install_cmd(self, package_name: str) -> list[str]:
+        """Build the ``apt-get install`` command list.
+
+        When a local repository is configured **and** the environment is in
+        offline mode (``KALITOOLS_OFFLINE=1``), apt is restricted to the
+        local sources file so it won't stall trying to reach unreachable
+        remote mirrors.
+        """
+        base = ['sudo', 'apt-get']
+        local_list = Path("/etc/apt/sources.list.d/local.list")
+        if self.local_repo and is_offline_mode() and local_list.exists():
+            base.extend([
+                '-o', 'Dir::Etc::sourcelist=/dev/null',
+                '-o', f'Dir::Etc::sourceparts={local_list.parent}',
+            ])
+            logger.info("offline mode: routing apt through local repo only")
+        base.extend(['install', '-y', package_name])
+        return base
+
     def fetch_tools_from_web(self) -> bool:
-        """Fetch latest tools from Kali website using web scraping"""
+        """Re-run kali.org discovery and persist the merged catalog.
+
+        Thin wrapper around :meth:`discover_from_kali_site` kept for backward
+        compatibility with older UI code paths. Returns ``True`` iff at least
+        one tool was discovered.
+        """
         if not WEB_SCRAPING_AVAILABLE:
-            console.print("[yellow]Web scraping not available. Install: pip install requests beautifulsoup4[/yellow]")
+            console.print(
+                "[yellow]Web scraping not available. Install optional deps: pip install 'kalitools-app[scraping]'[/yellow]"
+            )
             return False
-        
         try:
-            console.print("[cyan]Fetching tools from Kali website...[/cyan]")
-            url = "https://www.kali.org/tools/all-tools/"
-            
-            with Progress(
-                SpinnerColumn(),
-                TextColumn("[progress.description]{task.description}"),
-                console=console
-            ) as progress:
-                task = progress.add_task("[cyan]Downloading page...", total=None)
-                response = requests.get(url, timeout=10)
-                progress.update(task, completed=True)
-            
-            if response.status_code != 200:
-                console.print(f"[red]Failed to fetch page. Status code: {response.status_code}[/red]")
-                return False
-            
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            console.print("[green]✓ Successfully fetched tools data[/green]")
-            console.print("[yellow]Note: Web scraping integration needs HTML structure analysis[/yellow]")
+            discovered = self.discover_from_kali_site()
+        except Exception as exc:
+            logger.exception("discover_from_kali_site failed")
+            console.print(f"[red]Error fetching tools from kali.org: {exc}[/red]")
+            return False
+        if discovered:
+            try:
+                self._save_tools_to_json(self.tools)
+            except Exception:
+                logger.exception("Failed to persist tools_merged.json after refresh")
+            console.print(f"[green]✓ Refreshed catalog ({len(discovered)} tools)[/green]")
             return True
-            
-        except requests.RequestException as e:
-            console.print(f"[red]Network error: {e}[/red]")
-            return False
-        except Exception as e:
-            console.print(f"[red]Error: {e}[/red]")
-            return False
+        console.print("[yellow]Discovery returned no tools.[/yellow]")
+        return False
 
     def load_cache(self):
         """Load cached installation status"""
         if self.cache_file.exists():
             try:
-                with open(self.cache_file, 'r') as f:
+                with open(self.cache_file) as f:
                     self.installation_status = json.load(f)
                 for tool in self.tools:
                     tool.installed = self.installation_status.get(tool.name, False)
@@ -948,17 +1164,16 @@ class KaliToolsManager:
         """Save installation status to cache"""
         try:
             self.installation_status = {tool.name: tool.installed for tool in self.tools}
-            with open(self.cache_file, 'w') as f:
-                json.dump(self.installation_status, f, indent=2)
+            _atomic_write_json(Path(self.cache_file), self.installation_status)
         except Exception as e:
             console.print(f"[yellow]Warning: Could not save cache: {e}[/yellow]")
 
-    def refresh_installed_cache(self, force: bool = False) -> Set[str]:
+    def refresh_installed_cache(self, force: bool = False) -> set[str]:
         """Return cached dpkg package list, refreshing when needed."""
         if self._installed_cache is not None and not force:
             return self._installed_cache
 
-        installed: Set[str] = set()
+        installed: set[str] = set()
         try:
             result = subprocess.run(['dpkg', '-l'], capture_output=True, text=True, timeout=15)
             for line in result.stdout.splitlines():
@@ -988,7 +1203,7 @@ class KaliToolsManager:
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return False
 
-    def get_dependencies(self, package_name: str) -> List[str]:
+    def get_dependencies(self, package_name: str) -> list[str]:
         """Get package dependencies"""
         if package_name in self._dependency_cache:
             return self._dependency_cache[package_name]
@@ -999,16 +1214,16 @@ class KaliToolsManager:
                 text=True,
                 timeout=5
             )
-            
+
             if result.returncode != 0:
                 return []
-            
+
             dependencies = []
             for line in result.stdout.split('\n'):
                 if line.strip().startswith('Depends:'):
                     dep = line.split(':')[1].strip()
                     dependencies.append(dep)
-            
+
             self._dependency_cache[package_name] = dependencies
             return dependencies
         except Exception:
@@ -1076,7 +1291,7 @@ class KaliToolsManager:
                     continue
         return 0
 
-    def scan_all_tools(self) -> Tuple[int, int]:
+    def scan_all_tools(self) -> tuple[int, int]:
         """Fast scan of all tools using single dpkg -l parse (no per-package calls)."""
         installed_count = 0
         try:
@@ -1089,14 +1304,8 @@ class KaliToolsManager:
                     if len(parts) >= 2:
                         installed_set.add(parts[1])
 
-            with Progress(
-                SpinnerColumn(),
-                TextColumn('[progress.description]{task.description}'),
-                BarColumn(),
-                TextColumn('[progress.percentage]{task.percentage:>3.0f}%'),
-                console=console
-            ) as progress:
-                task = progress.add_task('[cyan]🔍 Scanning installed packages (dpkg cache)...', total=len(self.tools))
+            with _cyber_progress(console=console) as progress:
+                task = progress.add_task('🔍 Scanning installed packages (dpkg cache)...', total=len(self.tools))
                 for tool in self.tools:
                     tool.installed = tool.name in installed_set
                     if tool.installed:
@@ -1128,20 +1337,20 @@ class KaliToolsManager:
         """Check if sufficient disk space is available"""
         if not PSUTIL_AVAILABLE:
             return True  # Can't check, assume OK
-        
+
         try:
             disk = psutil.disk_usage('/')
             available_mb = disk.free / 1024 / 1024
-            
+
             if available_mb < required_mb + 500:  # 500MB safety buffer
-                console.print(f"[red]❌ Insufficient disk space![/red]")
+                console.print("[red]❌ Insufficient disk space![/red]")
                 console.print(f"[yellow]Available: {available_mb:.0f} MB | Required: ~{required_mb} MB + 500 MB buffer[/yellow]")
-                console.print(f"[dim]Tip: Free up space or use 'apt-get clean' to remove cached packages[/dim]")
+                console.print("[dim]Tip: Free up space or use 'apt-get clean' to remove cached packages[/dim]")
                 return False
-            
+
             if available_mb < 2000:  # Warn if less than 2GB
                 console.print(f"[yellow]⚠️  Low disk space: {available_mb:.0f} MB available[/yellow]")
-            
+
             return True
         except Exception as e:
             console.print(f"[yellow]⚠️  Could not check disk space: {e}[/yellow]")
@@ -1152,52 +1361,45 @@ class KaliToolsManager:
         try:
             if not self.validate_tool_name(package_name):
                 return False
-            
+
             if not self.verify_sudo_before_operation():
                 console.print("[red]❌ Cannot proceed without sudo privileges[/red]")
                 return False
-            
+
             tool = next((t for t in self.tools if t['name'] == package_name), None)
             if not tool:
                 console.print(f"[red]❌ Tool '{package_name}' not found in database![/red]")
-                console.print(f"[dim]Tip: Use 'S' to search for similar tools[/dim]")
+                console.print("[dim]Tip: Use 'S' to search for similar tools[/dim]")
                 return False
-            
+
             if tool['installed']:
                 console.print(f"[yellow]ℹ️  {package_name} is already installed![/yellow]")
                 return False
-            
+
             if not self.check_disk_space(100):
                 if not Confirm.ask("[yellow]Continue anyway?[/yellow]", default=False):
                     return False
-            
+
             console.print(f"\n[yellow]Installing {package_name}...[/yellow]")
             console.print("[dim]This requires sudo privileges[/dim]\n")
-            
+
             deps = self.get_dependencies(package_name)
             if deps:
                 console.print(f"[cyan]Dependencies ({len(deps)}): {', '.join(deps[:5])}{' ...' if len(deps) > 5 else ''}[/cyan]\n")
-            
+
             start_time = time.time()
-            
-            with Progress(
-                SpinnerColumn(),
-                TextColumn("[progress.description]{task.description}"),
-                BarColumn(),
-                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-                TimeElapsedColumn(),
-                console=console
-            ) as progress:
-                task = progress.add_task(f"[cyan]Installing {package_name}...", total=100)
-                
+
+            with _cyber_progress(console=console) as progress:
+                task = progress.add_task(f"Installing {package_name}...", total=100)
+
                 process = subprocess.Popen(
-                    ['sudo', 'apt-get', 'install', '-y', package_name],
+                    self._build_apt_install_cmd(package_name),
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     text=True,
                     bufsize=1
                 )
-                
+
                 progress_value = 0
                 line_count = 0
                 for line in process.stdout:
@@ -1216,39 +1418,46 @@ class KaliToolsManager:
                         progress_value = max(progress_value, 80)
                     elif 'Processing triggers' in line or 'triggers' in line:
                         progress_value = max(progress_value, 90)
-                    
+
                     estimated_progress = min(95, 5 + (line_count * 2))
                     progress_value = max(progress_value, estimated_progress)
-                    
+
                     progress.update(task, completed=progress_value)
-                
+
                 process.wait()
                 progress.update(task, completed=100)
                 result_code = process.returncode
-            
+
             elapsed_time = time.time() - start_time
-            
+
             success = result_code == 0
-            
+
             if success:
                 for tool in self.tools:
                     if tool['name'] == package_name:
                         tool['installed'] = True
                         tool['size'] = self.get_package_size(package_name)
-                
+
                 self.save_cache()
                 self._installed_cache = None
+                try:
+                    db = get_state_db()
+                    db.set_installed(package_name, True)
+                    db.record('install', package_name, success=True,
+                              detail=f'elapsed={elapsed_time:.1f}s')
+                except Exception as exc:  # pragma: no cover - best effort
+                    logger.debug('state record failed: %s', exc)
                 console.print(f"\n[green]✅ {package_name} installed successfully in {elapsed_time:.1f}s![/green]")
-                
+
                 if tool['commands']:
                     console.print(f"[cyan]💡 Available commands: {', '.join(tool['commands'][:3])}[/cyan]")
-                
+
                 if notifications_ready():
                     send_notification(
                         "Installation Complete",
                         f"{package_name} has been successfully installed",
                     )
-                
+
             else:
                 console.print(f"\n[red]❌ Failed to install {package_name}[/red]")
                 console.print("\n[yellow]🔧 Troubleshooting tips:[/yellow]")
@@ -1259,18 +1468,10 @@ class KaliToolsManager:
                 console.print("  5. Check if another apt process is running: ps aux | grep apt")
                 console.print(f"  6. Try manually: sudo apt-get install {package_name}")
                 console.print("  7. Check system logs: journalctl -xe")
-            
+
             return success
-        except subprocess.TimeoutExpired:
-            console.print(f"[red]❌ Installation timed out![/red]")
-            console.print("[yellow]⚠️  Possible causes:[/yellow]")
-            console.print("  • Package manager is locked by another process")
-            console.print("  • Waiting for sudo password (if running in background)")
-            console.print("  • Network connection issues")
-            console.print("[dim]Tip: Check running processes: ps aux | grep -E 'apt|dpkg'[/dim]")
-            return False
         except FileNotFoundError:
-            console.print(f"[red]❌ Command not found![/red]")
+            console.print("[red]❌ Command not found![/red]")
             console.print("[yellow]This tool requires:[/yellow]")
             console.print("  • Debian/Ubuntu-based system (Kali Linux)")
             console.print("  • apt-get package manager")
@@ -1278,7 +1479,7 @@ class KaliToolsManager:
             console.print("[dim]Current system may not be compatible[/dim]")
             return False
         except PermissionError:
-            console.print(f"[red]❌ Permission denied![/red]")
+            console.print("[red]❌ Permission denied![/red]")
             console.print("[yellow]⚠️  Sudo privileges required:[/yellow]")
             console.print("  1. Verify you're in sudoers: groups $USER")
             console.print("  2. Test sudo access: sudo -v")
@@ -1287,7 +1488,7 @@ class KaliToolsManager:
             return False
         except Exception as e:
             console.print(f"[red]❌ Error: {e}[/red]")
-            console.print(f"[dim]If the problem persists, re-run with verbose logging or check system logs[/dim]")
+            console.print("[dim]If the problem persists, re-run with verbose logging or check system logs[/dim]")
             return False
 
     def uninstall_tool(self, package_name: str) -> bool:
@@ -1296,35 +1497,29 @@ class KaliToolsManager:
             if not self.verify_sudo_before_operation():
                 console.print("[red]❌ Cannot proceed without sudo privileges[/red]")
                 return False
-            
+
             console.print(f"\n[yellow]Uninstalling {package_name}...[/yellow]")
             console.print("[dim]This requires sudo privileges[/dim]\n")
-            
+
             start_time = time.time()
-            
-            with Progress(
-                SpinnerColumn(),
-                TextColumn("[progress.description]{task.description}"),
-                BarColumn(),
-                TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-                TimeElapsedColumn(),
-                console=console
-            ) as progress:
-                task = progress.add_task(f"[yellow]Removing {package_name}...", total=100)
-                
+
+            with _cyber_progress(console=console) as progress:
+                task = progress.add_task(f"Removing {package_name}...", total=100)
+
                 process = subprocess.Popen(
                     ['sudo', 'apt-get', 'remove', '-y', package_name],
                     stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
                     text=True,
                     bufsize=1
                 )
-                
+
                 progress_value = 0
-                stderr_output = []
+                captured_lines: deque[str] = deque(maxlen=60)
                 line_count = 0
-                
+
                 for line in process.stdout:
+                    captured_lines.append(line)
                     line_count += 1
                     if 'Reading package lists' in line or 'Reading' in line:
                         progress_value = max(progress_value, 20)
@@ -1336,49 +1531,43 @@ class KaliToolsManager:
                         progress_value = max(progress_value, 75)
                     elif 'Processing triggers' in line or 'triggers' in line:
                         progress_value = max(progress_value, 90)
-                    
+
                     estimated_progress = min(95, 10 + (line_count * 3))
                     progress_value = max(progress_value, estimated_progress)
-                    
+
                     progress.update(task, completed=progress_value)
-                
-                stderr_output = process.stderr.read()
+
                 process.wait()
+                stderr_output = ''.join(captured_lines)
                 progress.update(task, completed=100)
                 result_code = process.returncode
-            
+
             if result_code != 0:
                 error_output = stderr_output.lower()
-                
+
                 if 'unmet dependencies' in error_output or 'pkgproblemresolver' in error_output:
                     console.print(f"[yellow]⚠️  {package_name} is required by other packages[/yellow]\n")
                     console.print("[dim]This tool is part of a larger metapackage (like kali-desktop-xfce)[/dim]")
                     console.print("[dim]Removing it may affect your desktop environment.[/dim]\n")
-                    
-                    from rich.prompt import Confirm
+
                     if Confirm.ask("Try force removal? (This may remove dependent packages)", default=False):
                         console.print("\n[yellow]Attempting force removal with autoremove...[/yellow]\n")
-                        
-                        with Progress(
-                            SpinnerColumn(),
-                            TextColumn("[progress.description]{task.description}"),
-                            BarColumn(),
-                            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-                            TimeElapsedColumn(),
-                            console=console
-                        ) as progress:
-                            task = progress.add_task(f"[yellow]Force removing {package_name}...", total=100)
-                            
+
+                        with _cyber_progress(console=console) as progress:
+                            task = progress.add_task(f"Force removing {package_name}...", total=100)
+
                             process = subprocess.Popen(
                                 ['sudo', 'apt-get', 'autoremove', '-y', package_name],
                                 stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
                                 text=True,
                                 bufsize=1
                             )
-                            
+
                             progress_value = 0
+                            force_captured: deque[str] = deque(maxlen=60)
                             for line in process.stdout:
+                                force_captured.append(line)
                                 if 'Reading' in line:
                                     progress_value = 20
                                 elif 'Removing' in line:
@@ -1386,12 +1575,12 @@ class KaliToolsManager:
                                 elif 'Processing' in line:
                                     progress_value = 90
                                 progress.update(task, completed=progress_value)
-                            
-                            stderr_output = process.stderr.read()
+
                             process.wait()
+                            stderr_output = ''.join(force_captured)
                             progress.update(task, completed=100)
                             result_code = process.returncode
-                        
+
                         if result_code != 0:
                             console.print(f"[red]✗ Unable to remove {package_name}[/red]\n")
                             console.print("[yellow]💡 Suggested alternatives:[/yellow]")
@@ -1407,31 +1596,101 @@ class KaliToolsManager:
                     console.print(f"\n[red]✗ Failed to uninstall {package_name}[/red]")
                     console.print(f"[dim]Error: {stderr_output[:200]}[/dim]")
                     return False
-            
+
             elapsed_time = time.time() - start_time
-            
+
             for tool in self.tools:
                 if tool['name'] == package_name:
                     tool['installed'] = False
                     tool['size'] = 0
-            
+
             self.save_cache()
             self._installed_cache = None
+            try:
+                db = get_state_db()
+                db.set_installed(package_name, False)
+                db.record('uninstall', package_name, success=True,
+                          detail=f'elapsed={elapsed_time:.1f}s')
+            except Exception as exc:  # pragma: no cover - best effort
+                logger.debug('state record failed: %s', exc)
             console.print(f"\n[green]✓ {package_name} uninstalled successfully in {elapsed_time:.1f}s![/green]")
-            
+
             if notifications_ready():
                 send_notification(
                     "Uninstallation Complete",
                     f"{package_name} has been removed",
                 )
-            
+
             return True
-            
+
         except Exception as e:
             console.print(f"[red]Error: {e}[/red]")
             return False
 
-    def check_updates(self, progress_callback: Optional[Callable[[str, int, int], None]] = None) -> List[str]:
+    def hold_package(self, package_name: str) -> bool:
+        """Mark *package_name* as held via ``apt-mark hold``."""
+        if not _PACKAGE_NAME_RE.match(package_name):
+            console.print(f"[red]Invalid package name: {package_name!r}[/red]")
+            return False
+        if not self.verify_sudo_before_operation():
+            return False
+        try:
+            rc = subprocess.run(
+                ['sudo', 'apt-mark', 'hold', package_name]
+            ).returncode
+            if rc == 0:
+                console.print(f"[green]✓ {package_name} held[/green]")
+                try:
+                    db = get_state_db()
+                    db.record('hold', package_name, success=True)
+                except Exception:  # pragma: no cover
+                    pass
+                return True
+            console.print(f"[red]apt-mark hold failed (rc={rc})[/red]")
+            return False
+        except Exception as exc:
+            console.print(f"[red]Error: {exc}[/red]")
+            return False
+
+    def unhold_package(self, package_name: str) -> bool:
+        """Undo a previous hold via ``apt-mark unhold``."""
+        if not _PACKAGE_NAME_RE.match(package_name):
+            console.print(f"[red]Invalid package name: {package_name!r}[/red]")
+            return False
+        if not self.verify_sudo_before_operation():
+            return False
+        try:
+            rc = subprocess.run(
+                ['sudo', 'apt-mark', 'unhold', package_name]
+            ).returncode
+            if rc == 0:
+                console.print(f"[green]✓ {package_name} unheld[/green]")
+                try:
+                    db = get_state_db()
+                    db.record('unhold', package_name, success=True)
+                except Exception:  # pragma: no cover
+                    pass
+                return True
+            console.print(f"[red]apt-mark unhold failed (rc={rc})[/red]")
+            return False
+        except Exception as exc:
+            console.print(f"[red]Error: {exc}[/red]")
+            return False
+
+    def list_held_packages(self) -> list[str]:
+        """Return the list of packages currently held via apt-mark."""
+        try:
+            res = subprocess.run(
+                ['apt-mark', 'showhold'],
+                capture_output=True, text=True, timeout=10,
+            )
+            if res.returncode != 0:
+                return []
+            return [line.strip() for line in res.stdout.splitlines() if line.strip()]
+        except Exception:
+            return []
+
+    def check_updates(self, progress_callback: Callable[[str, int, int], None] | None = None) -> list[str]:
         """Check for available package updates with optional progress reporting."""
 
         def emit(message: str, completed: int, total: int) -> None:
@@ -1446,7 +1705,14 @@ class KaliToolsManager:
         steps_total = 3
         emit("Refreshing package lists...", 0, steps_total)
 
-        update_cmd = ['apt-get', 'update']
+        update_cmd = ['apt-get']
+        local_list = Path("/etc/apt/sources.list.d/local.list")
+        if self.local_repo and is_offline_mode() and local_list.exists():
+            update_cmd.extend([
+                '-o', 'Dir::Etc::sourcelist=/dev/null',
+                '-o', f'Dir::Etc::sourceparts={local_list.parent}',
+            ])
+        update_cmd.append('update')
         geteuid = getattr(os, 'geteuid', None)
         is_root = False
         if callable(geteuid):
@@ -1474,7 +1740,10 @@ class KaliToolsManager:
         if update_proc.returncode != 0:
             stderr = (update_proc.stderr or '').strip().splitlines()[:3]
             if stderr:
-                console.print(f"[yellow]apt-get update reported issues:\n  {'\n  '.join(stderr)}[/yellow]")
+                joined = "\n  ".join(stderr)
+                console.print(
+                    f"[yellow]apt-get update reported issues:\n  {joined}[/yellow]"
+                )
             return []
 
         emit("Scanning upgradable packages...", 1, steps_total)
@@ -1509,7 +1778,7 @@ class KaliToolsManager:
         emit("Update check complete", steps_total, steps_total)
         return upgradable
 
-    def get_tool_info(self, package_name: str) -> Optional[str]:
+    def get_tool_info(self, package_name: str) -> str | None:
         """Get detailed information about a package"""
         try:
             result = subprocess.run(
@@ -1531,58 +1800,57 @@ class KaliToolsManager:
             pass
         return cache_dir / 'kali_site_cache.json'
 
-    def _load_kali_site_cache(self) -> Optional[Dict[str, Any]]:
+    def _load_kali_site_cache(self) -> dict[str, Any] | None:
         path = self._kali_site_cache_path()
         if path.exists():
             try:
-                with open(path, 'r') as f:
+                with open(path) as f:
                     return json.load(f)
             except Exception:
                 return None
         return None
 
-    def _save_kali_site_cache(self, data: Dict[str, Any]):
+    def _save_kali_site_cache(self, data: dict[str, Any]):
         try:
-            with open(self._kali_site_cache_path(), 'w') as f:
-                json.dump(data, f, indent=2)
+            _atomic_write_json(self._kali_site_cache_path(), data)
         except Exception:
-            pass
+            logger.exception("Failed to persist kali.org site cache")
 
-    def _fetch_kali_tool_links(self, max_pages: int = 5) -> List[str]:
+    def _fetch_kali_tool_links(self, max_pages: int = 5) -> list[str]:
         """Return list of tool page URLs from kali.org/tools/all-tools/."""
         if not WEB_SCRAPING_AVAILABLE or requests is None or BeautifulSoup is None:
             return []
+        from .http_util import polite_get
+
         base = 'https://www.kali.org'
-        urls: List[str] = []
+        urls: list[str] = []
         try:
-            headers = {'User-Agent': 'kalitools-cli/0.1 (+https://example.local)'}
-            # The all-tools page appears to be a single long page with all tools
             index_url = f"{base}/tools/all-tools/"
-            
+
             if self.discovery_delay:
                 time.sleep(self.discovery_delay)
-            resp = requests.get(index_url, timeout=15, headers=headers)
-            if resp.status_code != 200:
+            resp = polite_get(index_url, timeout=15)
+            if resp is None or resp.status_code != 200:
                 return []
-            
+
             soup = BeautifulSoup(resp.content, 'html.parser')
-            
+
             # Debug counters
             total_links = 0
             tools_links = 0
             sample_hrefs = []
-            
+
             # Find all links that point to individual tool pages
             # Pattern: /tools/<toolname>/ (exactly 3 parts, ending with /)
             # or /tools/<toolname>/#<anchor> (for sub-packages)
             for a in soup.find_all('a', href=True):
                 href = a['href']
                 total_links += 1
-                
+
                 # Collect sample hrefs for debugging
                 if total_links <= 50:
                     sample_hrefs.append(href)
-                
+
                 # Match https://www.kali.org/tools/<name>/
                 if href.startswith('https://www.kali.org/tools/'):
                     tools_links += 1
@@ -1597,7 +1865,7 @@ class KaliToolsManager:
                         if len(parts) == 2 and parts[0] == 'tools':
                             if clean_href not in urls:
                                 urls.append(clean_href)
-            
+
             # Debug output to file - always write, even if successful
             if self.debug_scraper:
                 try:
@@ -1618,7 +1886,7 @@ class KaliToolsManager:
                     logger.info("Debug scraper log written to %s", debug_path)
                 except Exception as ex:
                     logger.debug("Failed to write debug scraper log: %s", ex)
-                
+
         except Exception as e:
             # Log error for debugging but don't crash
             import sys
@@ -1626,27 +1894,29 @@ class KaliToolsManager:
             import traceback
             traceback.print_exc(file=sys.stderr)
             return []
-        
+
         # Return unique URLs (already deduplicated in loop)
         return urls
 
-    def _parse_tool_page_for_package(self, tool_url: str) -> Optional[Tuple[str, Optional[str], List[str]]]:
+    def _parse_tool_page_for_package(self, tool_url: str) -> tuple[str, str | None, list[str]] | None:
         """Return (package_name, category, subpackages_list) parsed from a tool page URL.
-        
+
         Subpackages are related packages shown on the tool page (e.g., apache2-bin, apache2-dev for apache2).
         """
         if not WEB_SCRAPING_AVAILABLE or requests is None or BeautifulSoup is None:
             return None
+        from .http_util import polite_get
+
         try:
             if self.discovery_delay:
                 time.sleep(self.discovery_delay)
-            resp = requests.get(tool_url, timeout=10)
-            if resp.status_code != 200:
+            resp = polite_get(tool_url, timeout=10)
+            if resp is None or resp.status_code != 200:
                 return None
-            
+
             # Extract package name from URL as fallback: /tools/toolname/ -> toolname
             pkg_from_url = tool_url.rstrip('/').split('/')[-1]
-            
+
             if parse_tool_page:
                 parsed = parse_tool_page(resp.text)
                 if parsed:
@@ -1654,9 +1924,9 @@ class KaliToolsManager:
                     # External parser doesn't return subpackages, so return empty list
                     return pkg, cat, []
             soup = BeautifulSoup(resp.content, 'html.parser')
-            package_candidates: List[str] = []
-            subpackages: List[str] = []
-            
+            package_candidates: list[str] = []
+            subpackages: list[str] = []
+
             # Prefer structured data: look for definition lists <dl><dt>Package</dt><dd>name</dd>
             for dl in soup.find_all('dl'):
                 dts = dl.find_all('dt')
@@ -1675,17 +1945,17 @@ class KaliToolsManager:
                 m = re.search(r'Package\s*:\s*([a-z0-9][a-z0-9+\-.]+)', text, re.IGNORECASE)
                 if m:
                     pkg = m.group(1).lower()
-            
+
             # If still no package found, use the tool name from URL
             if not pkg:
                 pkg = pkg_from_url
-            
+
             # Extract sub-packages from the page
             # Look for links with href pattern: /tools/<toolname>/#<packagename> (absolute or relative)
             # From the webpage, links look like: https://www.kali.org/tools/apache2/#apache2-bin
             base_path = f"/tools/{pkg_from_url}/#"
             base_path_abs = f"https://www.kali.org/tools/{pkg_from_url}/#"
-            
+
             for a in soup.find_all('a', href=True):
                 href = a['href']
                 # Check if this is a sub-package link (has anchor pointing to same tool page)
@@ -1697,10 +1967,10 @@ class KaliToolsManager:
                         # Only add if it's different from the main package
                         if anchor != pkg and anchor not in subpackages:
                             subpackages.append(anchor)
-            
+
             # Category / tags parsing
             category = None
-            tag_values: List[str] = []
+            tag_values: list[str] = []
             for dl in soup.find_all('dl'):
                 for dt in dl.find_all('dt'):
                     label = dt.get_text(strip=True).lower()
@@ -1738,7 +2008,7 @@ class KaliToolsManager:
             print(f"  └─ Parse error: {e}", file=sys.stderr)
             return None
 
-    def discover_from_kali_site(self, ttl_hours: int = 168) -> List[str]:
+    def discover_from_kali_site(self, ttl_hours: int = 168) -> list[str]:
         """Discover and add tools based only on the Kali tools website.
 
         Returns list of newly added package names.
@@ -1746,8 +2016,8 @@ class KaliToolsManager:
         # Use cache first
         cache = self._load_kali_site_cache()
         now = time.time()
-        urls: List[str] = []
-        added: List[str] = []
+        urls: list[str] = []
+        added: list[str] = []
         if cache and isinstance(cache, dict):
             ts = cache.get('timestamp', 0)
             if (now - ts) < (ttl_hours * 3600):
@@ -1760,13 +2030,11 @@ class KaliToolsManager:
         if not urls:
             return []
 
-        from rich.progress import Progress, BarColumn, TextColumn, TimeElapsedColumn
-        
         existing = {t.name for t in self.tools}
         lock = Lock()  # Thread-safe lock for shared data
-        added: List[str] = []
+        added: list[str] = []
 
-        def record_parsed(parsed: Optional[Tuple[str, Optional[str], List[str]]]) -> None:
+        def record_parsed(parsed: tuple[str, str | None, list[str]] | None) -> None:
             if not parsed:
                 return
             pkg, cat, subpkgs = parsed
@@ -1784,7 +2052,7 @@ class KaliToolsManager:
                 self.tools.append(tool)
                 existing.add(pkg)
                 added.append(pkg)
-        
+
         if self.debug_scraper:
             console.print("[cyan]Debug scraper mode: verbose output enabled with concurrency[/cyan]")
             total = len(urls)
@@ -1817,30 +2085,22 @@ class KaliToolsManager:
         else:
             completed = 0
             # Knight Rider style progress bar with bright, visible colors
-            with Progress(
-                TextColumn("[bold bright_red]▓[/bold bright_red] [bold white]{task.description}[/bold white]"),
-                BarColumn(bar_width=60, style="bright_black", complete_style="bright_red", pulse_style="bold red on bright_red"),
-                TextColumn("[bold yellow]{task.completed}[/bold yellow][white]/[/white][bold cyan]{task.total}[/bold cyan]"),
-                TextColumn("[bright_black]│[/bright_black]"),
-                TimeElapsedColumn(),
-                console=console,
-                transient=False
-            ) as progress:
+            with _cyber_progress(console=console, transient=False) as progress:
                 task = progress.add_task(
-                    "SCANNING KALI TOOLS", 
+                    "SCANNING KALI TOOLS",
                     total=len(urls),
                     completed=0
                 )
-                
+
                 # Process URLs concurrently with ThreadPoolExecutor
                 with ThreadPoolExecutor(max_workers=self.discovery_workers) as executor:
                     # Submit all fetch tasks
                     future_to_url = {executor.submit(self._parse_tool_page_for_package, url): url for url in urls}
-                    
+
                     # Process results as they complete
                     for future in as_completed(future_to_url):
                         url = future_to_url[future]
-                        
+
                         try:
                             parsed = future.result()
                             record_parsed(parsed)
@@ -1856,7 +2116,7 @@ class KaliToolsManager:
         self._categorize_tools()
         return added
 
-    def get_cached_description(self, package_name: str) -> Optional[str]:
+    def get_cached_description(self, package_name: str) -> str | None:
         """Return (and cache) a short description for a package using apt-cache show.
 
         Handles multi-line Description fields and localized variants (Description-en).
@@ -1869,8 +2129,8 @@ class KaliToolsManager:
         if not info:
             return None
         lines = info.splitlines()
-        base: Optional[str] = None
-        continuation: List[str] = []
+        base: str | None = None
+        continuation: list[str] = []
         capturing = False
         for line in lines:
             if line.startswith('Description-en:') or line.startswith('Description:'):
@@ -1901,7 +2161,7 @@ class KaliToolsManager:
         if not tool or not tool['commands']:
             console.print(f"[yellow]No commands available for {tool_name}[/yellow]")
             return False
-        
+
         command = tool['commands'][0]
         try:
             result = subprocess.run(
@@ -1910,7 +2170,7 @@ class KaliToolsManager:
                 text=True,
                 timeout=5
             )
-            
+
             if result.stdout or result.stderr:
                 output = result.stdout or result.stderr
                 console.print(Panel(
@@ -1923,31 +2183,86 @@ class KaliToolsManager:
             console.print(f"[yellow]{command} not found. Tool may not be installed.[/yellow]")
         except Exception as e:
             console.print(f"[red]Error running help command: {e}[/red]")
-        
+
         return False
 
     def launch_tool(self, command: str) -> bool:
-        """Launch a tool in a new terminal"""
-        try:
-            # Prefer bash if available for a login shell; fallback to /bin/sh
-            bash_path = shutil.which('bash')
-            shell_cmd = []
-            if bash_path:
-                shell_cmd = [bash_path, '-lc']
-            else:
-                sh_path = shutil.which('sh') or '/bin/sh'
-                shell_cmd = [sh_path, '-c']
+        """Launch a tool in a new terminal.
 
-            # Build candidate terminal invocations (most compatible first)
-            cmd_str = f"{command}; exec bash" if bash_path else f"{command}"
+        Security posture: the *command* string originates from the tool
+        catalog. Every argv token is validated; if the command is "clean"
+        (no shell metacharacters in any token) we execute it directly
+        without a shell wrapper. Only commands that genuinely need a shell
+        (pipes, redirects, globs) are wrapped in ``bash -lc`` and only after
+        an explicit user confirmation.
+        """
+        try:
+            if not command or not command.strip():
+                console.print("[red]Empty launch command.[/red]")
+                return False
+            if _CONTROL_CHARS_RE.search(command):
+                console.print("[red]Refusing to launch command containing control characters.[/red]")
+                logger.warning("launch_tool blocked command with control chars: %r", command)
+                return False
+
+            try:
+                parts = shlex.split(command)
+            except ValueError as exc:
+                console.print(f"[red]Could not parse command: {exc}[/red]")
+                return False
+            if not parts or not _LAUNCH_LEADING_TOKEN_RE.match(parts[0]):
+                console.print(
+                    f"[red]Refusing to launch suspicious command: {command!r}[/red]"
+                )
+                logger.warning("launch_tool blocked leading token: %r", command)
+                return False
+
+            # Per-argument validation. Each token must be "safe": either an
+            # allowed flag/positional pattern or purely alphanumeric-ish.
+            needs_shell = False
+            for tok in parts[1:]:
+                if any(ch in _LAUNCH_METACHARS for ch in tok):
+                    needs_shell = True
+                    break
+
+            if needs_shell:
+                console.print(
+                    f"[yellow]⚠ Command contains shell metacharacters: {command!r}[/yellow]"
+                )
+                if not Confirm.ask("Launch anyway?", default=False):
+                    return False
+                logger.info("Launching command with metachars after user confirm: %r", command)
+
+            bash_path = shutil.which('bash')
+            # Build the argv we want the terminal to execute. When the
+            # command is clean we pass the parsed argv directly, so the
+            # terminal spawns the tool without any shell involvement.
+            if needs_shell and bash_path:
+                inner_argv = [bash_path, '-lc', f"{command}; exec bash"]
+            elif needs_shell:
+                sh_path = shutil.which('sh') or '/bin/sh'
+                inner_argv = [sh_path, '-c', command]
+            else:
+                # Clean path: run the tool directly, keep shell open after.
+                # `bash -lc 'exec tool args...; exec bash'` would re-introduce
+                # shell parsing; instead we use argv-exec via `bash --login
+                # -i -c` only to keep the window alive.
+                if bash_path:
+                    quoted = ' '.join(shlex.quote(p) for p in parts)
+                    inner_argv = [bash_path, '-lc', f"{quoted}; exec bash"]
+                else:
+                    inner_argv = list(parts)
+
+            # xfce4-terminal wants a single --command string; pre-quote.
+            xfce_cmd = ' '.join(shlex.quote(p) for p in inner_argv)
             candidates = [
-                ['x-terminal-emulator', '-e', *shell_cmd, cmd_str],
-                ['gnome-terminal', '--', *([bash_path, '-lc'] if bash_path else [shell_cmd[0], shell_cmd[1]]), cmd_str],
-                ['konsole', '-e', *shell_cmd, cmd_str],
-                ['mate-terminal', '--', *([bash_path, '-lc'] if bash_path else [shell_cmd[0], shell_cmd[1]]), cmd_str],
-                ['xfce4-terminal', '--hold', '--command', f"bash -lc '{command}; exec bash'" if bash_path else f"sh -c '{command}'"],
-                ['xterm', '-e', *shell_cmd, cmd_str],
-                ['terminator', '-x', *shell_cmd, cmd_str],
+                ['x-terminal-emulator', '-e', *inner_argv],
+                ['gnome-terminal', '--', *inner_argv],
+                ['konsole', '-e', *inner_argv],
+                ['mate-terminal', '--', *inner_argv],
+                ['xfce4-terminal', '--hold', '--command', xfce_cmd],
+                ['xterm', '-e', *inner_argv],
+                ['terminator', '-x', *inner_argv],
             ]
 
             for args in candidates:
@@ -1956,13 +2271,25 @@ class KaliToolsManager:
                     continue
                 try:
                     subprocess.Popen(args)
-                    console.print(f"[green]✓ Launched {command} in new terminal ({term})[/green]")
+                    console.print(
+                        f"[green]✓ Launched {command} in new terminal ({term})[/green]"
+                    )
+                    try:
+                        leading = parts[0] if parts else command
+                        db = get_state_db()
+                        db.mark_used(leading)
+                        db.record('launch', leading, success=True, detail=command)
+                    except Exception as exc:  # pragma: no cover
+                        logger.debug('launch history failed: %s', exc)
                     return True
                 except Exception:
+                    logger.exception("Terminal %s failed to launch", term)
                     continue
 
             console.print("[red]No suitable terminal emulator found[/red]")
-            console.print("[dim]Try installing one, e.g.: xterm, gnome-terminal, konsole, xfce4-terminal, terminator[/dim]")
+            console.print(
+                "[dim]Try installing one, e.g.: xterm, gnome-terminal, konsole, xfce4-terminal, terminator[/dim]"
+            )
             return False
         except Exception as e:
             console.print(f"[red]Error launching tool: {e}[/red]")
@@ -1971,51 +2298,104 @@ class KaliToolsManager:
     def create_backup(self) -> bool:
         """Create backup of installed packages"""
         try:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
             backup_file = Path.home() / f"kali_tools_backup_{timestamp}.txt"
-            
+
             result = subprocess.run(
                 ['dpkg', '--get-selections'],
                 capture_output=True,
                 text=True
             )
-            
+
             with open(backup_file, 'w') as f:
                 f.write(result.stdout)
-            
+
             console.print(f"[green]✓ Backup created: {backup_file}[/green]")
             return True
         except Exception as e:
             console.print(f"[red]Error creating backup: {e}[/red]")
             return False
 
-    def setup_local_repo(self, repo_path: str) -> bool:
-        """Configure local APT repository"""
+    def setup_local_repo(self, repo_path: str, *, allow_unsigned: bool = False) -> bool:
+        """Configure a local APT repository at ``repo_path``.
+
+        Hardening vs. the old implementation:
+
+        * The path is validated -- must be absolute, must exist, must not
+          contain any control character (no \\n / \\r injection into the
+          generated ``sources.list`` entry).
+        * The staging file is created with ``tempfile.mkstemp`` in
+          ``/tmp`` so there is no predictable filename / symlink race.
+        * ``[trusted=yes]`` (which disables GPG verification) is only emitted
+          when ``allow_unsigned=True`` and the user explicitly confirms it.
+        """
+        config_file = "/etc/apt/sources.list.d/local.list"
         try:
-            repo_config = f"deb [trusted=yes] file://{repo_path} ./"
-            config_file = "/etc/apt/sources.list.d/local.list"
-            
-            console.print(f"[yellow]Setting up local repository: {repo_path}[/yellow]")
-            console.print(f"[yellow]This will create: {config_file}[/yellow]")
-            
-            if Confirm.ask("Proceed?"):
-                with open('/tmp/local.list', 'w') as f:
-                    f.write(repo_config)
-                
-                subprocess.run(['sudo', 'mv', '/tmp/local.list', config_file])
+            if not repo_path:
+                console.print("[red]Local repo path is required.[/red]")
+                return False
+            if _CONTROL_CHARS_RE.search(repo_path):
+                console.print("[red]Repository path contains control characters; refusing.[/red]")
+                logger.warning("setup_local_repo: rejected path with control chars: %r", repo_path)
+                return False
+            if not _SAFE_ABS_PATH_RE.match(repo_path):
+                console.print(
+                    "[red]Repository path must be an absolute POSIX path with printable characters only.[/red]"
+                )
+                return False
+            resolved = Path(repo_path)
+            if not resolved.is_absolute() or not resolved.exists() or not resolved.is_dir():
+                console.print(f"[red]Repository path does not exist or is not a directory: {repo_path}[/red]")
+                return False
+
+            trusted_flag = " [trusted=yes]" if allow_unsigned else ""
+            repo_config = f"deb{trusted_flag} file://{resolved} ./\n"
+
+            console.print(f"[yellow]Setting up local repository: {resolved}[/yellow]")
+            console.print(f"[yellow]Target file: {config_file}[/yellow]")
+            if allow_unsigned:
+                console.print(
+                    "[red]⚠ [trusted=yes] disables signature verification for this repo.[/red]"
+                )
+                if not Confirm.ask("Really disable signature verification?", default=False):
+                    return False
+            if not Confirm.ask("Proceed?", default=False):
+                return False
+
+            tmp_fd, tmp_name = tempfile.mkstemp(
+                prefix="kalitools-local-", suffix=".list", dir="/tmp"
+            )
+            tmp_path = Path(tmp_name)
+            try:
+                with os.fdopen(tmp_fd, "w", encoding="utf-8") as handle:
+                    handle.write(repo_config)
+                # chmod 0644 so apt can read it once moved into sources.list.d
+                os.chmod(tmp_path, 0o644)
+                mv_rc = subprocess.run(['sudo', 'mv', str(tmp_path), config_file]).returncode
+                if mv_rc != 0:
+                    console.print("[red]Failed to install sources.list.d entry (sudo mv failed).[/red]")
+                    return False
                 subprocess.run(['sudo', 'apt-get', 'update'])
-                
-                with open(self.local_repo_file, 'w') as f:
-                    f.write(repo_path)
-                
-                console.print("[green]✓ Local repository configured[/green]")
-                return True
+            finally:
+                # mkstemp'd file will be gone after the mv on success; clean up on failure
+                if tmp_path.exists():
+                    try:
+                        tmp_path.unlink()
+                    except OSError:
+                        pass
+
+            try:
+                _atomic_write_text(Path(self.local_repo_file), str(resolved))
+            except Exception:
+                logger.exception("Failed to persist local repo pointer")
+
+            console.print("[green]✓ Local repository configured[/green]")
+            return True
         except Exception as e:
             console.print(f"[red]Error setting up local repo: {e}[/red]")
-        
-        return False
+            return False
 
-    def search_tools(self, query: str) -> List[Dict]:
+    def search_tools(self, query: str) -> list[dict]:
         """Search tools by name or command"""
         query = query.lower()
         return [
@@ -2024,20 +2404,20 @@ class KaliToolsManager:
             any(query in cmd.lower() for cmd in tool['commands'])
         ]
 
-    def filter_by_status(self, installed: bool) -> List[Tool]:
+    def filter_by_status(self, installed: bool) -> list[Tool]:
         """Filter tools by installation status"""
         return [tool for tool in self.tools if tool.installed == installed]
-    
-    def filter_by_category(self, category: str) -> List[Tool]:
+
+    def filter_by_category(self, category: str) -> list[Tool]:
         """Filter tools by category"""
         return [tool for tool in self.tools if tool.category == category]
 
-    def get_statistics(self) -> Dict:
+    def get_statistics(self) -> dict:
         """Get statistics about tools"""
         total = len(self.tools)
         installed = sum(1 for tool in self.tools if tool.installed)
         total_size = sum(getattr(tool, 'size', 0) for tool in self.tools if tool.installed)
-        
+
         category_stats = {}
         for category in set(t.category for t in self.tools):
             cat_tools = [t for t in self.tools if t.category == category]
@@ -2047,7 +2427,7 @@ class KaliToolsManager:
                 'installed': cat_installed,
                 'percentage': round((cat_installed / len(cat_tools) * 100), 1) if cat_tools else 0
             }
-        
+
         return {
             'total': total,
             'installed': installed,

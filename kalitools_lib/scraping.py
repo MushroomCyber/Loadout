@@ -1,6 +1,5 @@
-import re
-from typing import List, Optional, Tuple
 import json
+import re
 
 try:
     from bs4 import BeautifulSoup  # type: ignore
@@ -8,7 +7,7 @@ except Exception:
     BeautifulSoup = None  # type: ignore
 
 
-def parse_tool_page(html: str) -> Optional[Tuple[str, Optional[str], List[str]]]:
+def parse_tool_page(html: str) -> tuple[str, str | None, list[str]] | None:
     """Parse a Kali tool page HTML, returning (package, category, tags).
 
     - Prefers structured <dl><dt>Package</dt><dd>name</dd>
@@ -20,7 +19,7 @@ def parse_tool_page(html: str) -> Optional[Tuple[str, Optional[str], List[str]]]
     soup = BeautifulSoup(html, 'html.parser')
 
     # Package
-    package_candidates: List[str] = []
+    package_candidates: list[str] = []
     for dl in soup.find_all('dl'):
         for dt in dl.find_all('dt'):
             label = dt.get_text(strip=True).lower()
@@ -62,7 +61,7 @@ def parse_tool_page(html: str) -> Optional[Tuple[str, Optional[str], List[str]]]
         return None
 
     # Tags and category
-    tag_values: List[str] = []
+    tag_values: list[str] = []
     for dl in soup.find_all('dl'):
         for dt in dl.find_all('dt'):
             label = dt.get_text(strip=True).lower()
@@ -103,7 +102,7 @@ def parse_tool_page(html: str) -> Optional[Tuple[str, Optional[str], List[str]]]
         'bruteforce': 'password', 'sniffing': 'sniffing', 'capture': 'sniffing', 'reverse': 'reverse',
         'phishing': 'social', 'social': 'social', 'database': 'database', 'sql': 'database'
     }
-    category: Optional[str] = None
+    category: str | None = None
     for tag in tag_values:
         for key, cat in mapping.items():
             if key in tag:

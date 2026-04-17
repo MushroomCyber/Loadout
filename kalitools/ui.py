@@ -7,10 +7,10 @@ import select
 import subprocess
 import sys
 import time
+from concurrent.futures import Future, ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
-from concurrent.futures import Future, ThreadPoolExecutor
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from rich import box
 from rich.panel import Panel
@@ -35,7 +35,8 @@ from .constants import (
     get_category_display_name,
     get_subcategory_for,
 )
-from .manager import KaliToolsManager, PSUTIL_AVAILABLE
+from .manager import KaliToolsManager
+from .model import Tool
 
 try:
     import termios
@@ -74,7 +75,7 @@ class ToolsUI:
         # Buffer for multi-digit numeric jumps in interactive list
         self._num_buf = ''
         self._size_executor = ThreadPoolExecutor(max_workers=4)
-        self._size_futures: Dict[str, Future[int]] = {}
+        self._size_futures: dict[str, Future[int]] = {}
 
     def flush_input_buffer(self):
         """Clear any pending keyboard input to avoid phantom key events."""
@@ -86,7 +87,7 @@ class ToolsUI:
         except Exception:
             pass
 
-    def _load_settings(self) -> Dict:
+    def _load_settings(self) -> dict:
         """Load user settings"""
         settings_file = Path.home() / ".kali_tools_settings.json"
         default_settings = {
@@ -100,9 +101,9 @@ class ToolsUI:
         }
         if settings_file.exists():
             try:
-                with open(settings_file, 'r') as f:
+                with open(settings_file) as f:
                     return {**default_settings, **json.load(f)}
-            except:
+            except Exception:
                 return default_settings
         return default_settings
 
@@ -110,8 +111,8 @@ class ToolsUI:
         """Save user settings"""
         settings_file = Path.home() / ".kali_tools_settings.json"
         try:
-            with open(settings_file, 'w') as f:
-                json.dump(self.settings, f, indent=2)
+            from .manager import _atomic_write_json
+            _atomic_write_json(settings_file, self.settings)
         except Exception as e:
             console.print(f"[yellow]Could not save settings: {e}[/yellow]")
 
@@ -120,8 +121,8 @@ class ToolsUI:
         self.settings[key] = value
         self._save_settings()
 
-    def set_view(self, filter_type: str = 'all', category: Optional[str] = None,
-                 search: Optional[str] = None, reset_page: bool = True):
+    def set_view(self, filter_type: str = 'all', category: str | None = None,
+                 search: str | None = None, reset_page: bool = True):
         """Centralized helper to update filtering/search state"""
         self.current_filter = filter_type
         self.current_category = category
@@ -137,7 +138,7 @@ class ToolsUI:
         except KeyboardInterrupt:
             return False
 
-    def get_filtered_tools(self) -> List[Dict]:
+    def get_filtered_tools(self) -> list[dict]:
         """Return tools list after applying current filter/search criteria"""
         if self.current_category:
             tools = self.manager.filter_by_category(self.current_category)
@@ -156,7 +157,7 @@ class ToolsUI:
             tools.sort(key=lambda t: t['name'])
         elif self.sort_mode == 'installed':
             tools.sort(key=lambda t: (not t['installed'], t['name']))
-        elif self.sort_mode == 'size' and PSUTIL_AVAILABLE:
+        elif self.sort_mode == 'size':
             tools.sort(key=lambda t: getattr(t, 'size', 0), reverse=True)
         elif self.sort_mode == 'category':
             tools.sort(key=lambda t: (getattr(t, 'category', ''), t['name']))
@@ -173,7 +174,7 @@ class ToolsUI:
             self.sort_mode = 'name'
         # No need to set a transient status; sort is shown persistently below the table
 
-    def open_tool_action(self, tool: Dict[str, Any]):
+    def open_tool_action(self, tool: dict[str, Any]):
         """Display tool details and handle install/uninstall workflow"""
         console.clear()
         self.show_tool_details(tool['name'])
@@ -198,7 +199,7 @@ class ToolsUI:
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
         console.clear()
 
-    def categorize_tool(self, tool: Dict[str, Any]):
+    def categorize_tool(self, tool: dict[str, Any]):
         """Prompt the user to override category/subcategory assignments."""
         if not tool:
             return
@@ -234,7 +235,7 @@ class ToolsUI:
             default=default_choice,
         ).strip()
 
-        selected_category: Optional[str]
+        selected_category: str | None
         if not choice or choice.lower() in ('0', 'auto'):
             selected_category = None
         elif choice.isdigit():
@@ -329,22 +330,22 @@ class ToolsUI:
     def get_breadcrumb(self) -> str:
         """Generate breadcrumb navigation"""
         parts = ['🔧 Kali Tools']
-        
+
         if self.current_category:
             icon = CATEGORY_ICONS.get(self.current_category, '📦')
             parts.append(f"{icon} {self.current_category.title()}")
-        
+
         if self.search_query:
             parts.append(f"🔍 Search: '{self.search_query}'")
-        
+
         if self.current_filter == 'installed':
             parts.append("🟢 Installed")
         elif self.current_filter == 'available':
             parts.append("⭕ Available")
-        
+
         if self.current_page > 1:
             parts.append(f"📄 Page {self.current_page}")
-        
+
         return " > ".join(parts)
 
     def build_statistics_bar_text(self) -> Text:
@@ -353,15 +354,15 @@ class ToolsUI:
         total = stats['total']
         installed = stats['installed']
         percentage = round((installed / total * 100), 1) if total > 0 else 0
-        
+
         total_size_mb = stats.get('total_size_mb', 0)
         size_str = f"{total_size_mb:.1f} GB" if total_size_mb > 1024 else f"{total_size_mb:.0f} MB"
-        
+
         stats_parts = [
             f"📦 [cyan]{total}[/cyan] Total",
             f"🟢 [green]{installed}[/green] Installed ([yellow]{percentage}%[/yellow])",
         ]
-        
+
         if total_size_mb > 0:
             stats_parts.append(f"💾 [magenta]{size_str}[/magenta] Used")
 
@@ -408,7 +409,7 @@ class ToolsUI:
         )
         return table
 
-    def get_subcategory_for_tool(self, tool: Dict[str, Any]) -> str:
+    def get_subcategory_for_tool(self, tool: dict[str, Any]) -> str:
         """Return display subcategory for a tool row, resilient to Tool/dataclass or dict types."""
         try:
             subcat = tool['subcategory']  # type: ignore[index]
@@ -448,7 +449,7 @@ class ToolsUI:
         return compact
 
     @staticmethod
-    def format_size(size_bytes: Optional[int]) -> str:
+    def format_size(size_bytes: int | None) -> str:
         """Return human-readable size (bytes -> KB/MB/GB)."""
         try:
             size = float(size_bytes or 0)
@@ -506,7 +507,7 @@ class ToolsUI:
             tool['size'] = size  # type: ignore[index]
         except Exception:
             try:
-                setattr(tool, 'size', size)
+                tool.size = size
             except Exception:
                 pass
         return size
@@ -541,8 +542,8 @@ class ToolsUI:
                 with Progress(*columns, transient=True) as progress_bar:
                     task_id = progress_bar.add_task("Refreshing package lists...", total=3)
 
-                    def _on_progress(message: str, completed: int, total: int):
-                        progress_bar.update(task_id, description=message, completed=completed, total=total)
+                    def _on_progress(message: str, completed: int, total: int, _tid=task_id, _bar=progress_bar):
+                        _bar.update(_tid, description=message, completed=completed, total=total)
 
                     upgradable = self.manager.check_updates(_on_progress)
                 if upgradable:
@@ -613,7 +614,7 @@ class ToolsUI:
 [bold red]        ██║  ██╗██║  ██║███████╗██║[/bold red]       [bold white]██║   ╚██████╔╝╚██████╔╝███████╗███████║[/bold white]
 [bold red]        ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝[/bold red]       [bold white]╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚══════╝[/bold white]
         """
-        
+
         console.print(banner)
 
     def get_banner_text(self) -> str:
@@ -681,8 +682,8 @@ class ToolsUI:
         self.flush_input_buffer()
 
         needs_render = True
-        tools: List[Any] = []
-        page_tools: List[Any] = []
+        tools: list[Any] = []
+        page_tools: list[Any] = []
         total_tools = 0
         total_pages = 1
         per_page_effective = 1
@@ -852,7 +853,7 @@ class ToolsUI:
                         key = 'REDRAW'
                         needs_render = True
                         break
-                
+
                 # Read keyboard input - switch to raw mode temporarily
                 fd = sys.stdin.fileno()
                 old_settings = termios.tcgetattr(fd)
@@ -861,7 +862,7 @@ class ToolsUI:
                     # Check if input is available
                     if sys.stdin in select.select([sys.stdin], [], [], 0.05)[0]:
                         ch = sys.stdin.read(1)
-                        
+
                         if ch == '\x1b':  # ESC sequence
                             # Read the rest of the escape sequence
                             seq = sys.stdin.read(2)
@@ -1048,16 +1049,16 @@ class ToolsUI:
 
         status_color = "green" if tool['installed'] else "red"
         status_text = "✓ Installed" if tool['installed'] else "✗ Not Installed"
-        
+
         # Build comprehensive tool details including package info
         info = f"[bold cyan]Package Name:[/bold cyan] {tool['name']}\n"
         info += f"[bold cyan]Category:[/bold cyan] {tool['category'] or 'other'}\n"
         info += f"[bold cyan]Status:[/bold cyan] [{status_color}]{status_text}[/{status_color}]\n"
-        
+
         # Get full apt-cache information
         full_info = self.manager.get_tool_info(tool['name'])
         description_lines = []
-        
+
         if full_info:
             # Parse key fields from apt-cache show
             lines = full_info.split('\n')
@@ -1074,7 +1075,7 @@ class ToolsUI:
                     info += f"[bold cyan]{line.split(':', 1)[0]}:[/bold cyan] {line.split(':', 1)[1].strip()}\n"
                 elif line.startswith('Priority:'):
                     info += f"[bold cyan]{line.split(':', 1)[0]}:[/bold cyan] {line.split(':', 1)[1].strip()}\n"
-            
+
             # Extract FULL description from apt-cache (not truncated)
             desc_started = False
             for line in lines:
@@ -1090,11 +1091,11 @@ class ToolsUI:
                     elif line and not line.startswith(' '):
                         # End of description (next field started)
                         break
-        
+
         # Add commands count
         if tool['commands']:
             info += f"[bold cyan]Number of Commands:[/bold cyan] {len(tool['commands'])}\n"
-        
+
         # Add FULL description at the top (right after metadata)
         if description_lines:
             full_desc = ' '.join(description_lines)
@@ -1108,7 +1109,7 @@ class ToolsUI:
                 fallback_desc = TOOL_DESCRIPTIONS.get(tool['name'])
                 if fallback_desc:
                     info += f"\n[bold cyan]Description:[/bold cyan]\n{fallback_desc}\n"
-        
+
         # Show sub-packages if available
         subpackages = getattr(tool, 'subpackages', []) or []
         if subpackages:
@@ -1138,7 +1139,7 @@ class ToolsUI:
         # Add full package info at the bottom (excluding Description field since it's already shown at top)
         if full_info:
             info += f"\n[dim]{'-' * 80}[/dim]\n"
-            info += f"[bold cyan]Full Package Information:[/bold cyan]\n\n"
+            info += "[bold cyan]Full Package Information:[/bold cyan]\n\n"
             # Filter out the Description and Conffiles fields from full info
             filtered_lines = []
             skip_desc = False
@@ -1164,17 +1165,17 @@ class ToolsUI:
                     else:
                         # Conffiles ended
                         skip_conffiles = False
-                
+
                 if not skip_desc and not skip_conffiles:
                     filtered_lines.append(line)
-            
+
             info += '\n'.join(filtered_lines)
 
         console.print(Panel(info, title=f"🔍 Tool Details: {tool['name']}", border_style="cyan"))
 
         if not tool['installed']:
             install_cmd = f"sudo apt-get install {tool['name']}"
-            console.print(f"\n[bold cyan]Installation Command:[/bold cyan]")
+            console.print("\n[bold cyan]Installation Command:[/bold cyan]")
             syntax = Syntax(install_cmd, "bash", theme="monokai", line_numbers=False)
             console.print(syntax)
         else:
@@ -1194,11 +1195,11 @@ class ToolsUI:
                 else:
                     options_text += "  2) Remove from List  3) Back to Menu"
                     choices.extend(["2", "3"])
-                
+
                 console.print(f"\n{options_text}")
                 default_choice = choices[-1]
                 choice = Prompt.ask("[cyan]Select option[/cyan]", choices=choices, default=default_choice)
-                
+
                 if choice == "1":
                     success = self.manager.uninstall_tool(tool['name'])
                     if success:
@@ -1221,11 +1222,11 @@ class ToolsUI:
                 else:
                     options_text += "  2) Remove from List  3) Back to Menu"
                     choices.extend(["2", "3"])
-                
+
                 console.print(f"\n{options_text}")
                 default_choice = choices[-1]
                 choice = Prompt.ask("[cyan]Select option[/cyan]", choices=choices, default=default_choice)
-                
+
                 if choice == "1":
                     success = self.manager.install_tool(tool['name'])
                     if success:
@@ -1238,34 +1239,34 @@ class ToolsUI:
                         self.show_toast(f"{tool['name']} removed from list", "warning")
                 return
 
-    def _manage_subpackages(self, tool: Tool, subpackages: List[str]):
+    def _manage_subpackages(self, tool: Tool, subpackages: list[str]):
         """Interactive sub-package installation/uninstallation menu."""
         console.clear()
         console.print(f"\n[bold cyan]Sub-packages for {tool['name']}:[/bold cyan]\n")
-        
+
         # Build table of sub-packages with status
         table = Table(box=box.ROUNDED, show_lines=False)
         table.add_column("#", style="yellow bold", width=5, justify="right")
         table.add_column("Package Name", style="cyan bold", width=40)
         table.add_column("Status", width=15, justify="center")
-        
+
         pkg_status = []
         for idx, subpkg in enumerate(subpackages, 1):
             installed = self.manager.check_installation(subpkg)
             status_text = "[green]✓ Installed[/green]" if installed else "[red]✗ Available[/red]"
             table.add_row(str(idx), subpkg, status_text)
             pkg_status.append((subpkg, installed))
-        
+
         console.print(table)
-        
+
         console.print("\n[bold yellow]Options:[/bold yellow]")
         console.print("  • Enter a number to install/uninstall that package")
         console.print("  • Press 'A' to install all sub-packages")
         console.print("  • Press 'U' to uninstall all sub-packages")
         console.print("  • Press 'Q' to go back")
-        
+
         choice = Prompt.ask("\n[cyan]Select option[/cyan]", default="Q").strip().upper()
-        
+
         if choice == 'Q':
             return
         elif choice == 'A':
@@ -1298,7 +1299,7 @@ class ToolsUI:
                 console.print("[red]Invalid package number![/red]")
         else:
             console.print("[yellow]Invalid option![/yellow]")
-        
+
         console.print("\n[dim]Press any key to continue...[/dim]")
         input("Press Enter to continue...")
     def show_menu(self):
@@ -1315,28 +1316,31 @@ class ToolsUI:
 [bold green]🎯 ESSENTIAL NAVIGATION:[/bold green]
     [bold white]↑/↓ or K/J[/bold white]      Move cursor up/down
     [bold white]ENTER[/bold white]            Open details for highlighted tool
+    [bold white]0-9[/bold white]              Type a number to jump to that entry, then ENTER
     [bold white]I[/bold white]                Install/Uninstall highlighted tool
     [bold white]D[/bold white]                View detailed info for tool
     [bold white]C[/bold white]                Set/clear category & subcategory override
     [bold white]O[/bold white]                Cycle sort: name → installed → size → category
     [bold green]N/P or ←/→[/bold green]      Next/Previous page
 
-[bold blue]🔍 SEARCH:[/bold blue]
+[bold blue]🔍 SEARCH & FILTERS:[/bold blue]
     [bold cyan]S[/bold cyan]                Search tools by name/command
     [bold cyan]B[/bold cyan]                Clear search / show all tools
 
-[bold cyan]⚙️  SYSTEM:[/bold cyan]
-    [bold red]?[/bold red]                Show this help screen
+[bold yellow]🛠  SYSTEM ACTIONS:[/bold yellow]
+    [bold white]U[/bold white]                Updates menu (check for / apply upgrades)
+    [bold white]R[/bold white]                Re-scan installed tools
     [bold magenta]Y[/bold magenta]                Utilities: export/import/backup/local repo
-    [bold red]Q[/bold red]                Exit application
+    [bold red]?[/bold red]                Show this help screen
+    [bold red]Q / ESC[/bold red]          Exit application
     [bold red]Ctrl+C[/bold red]          Force quit
 
 [bold magenta]💡 TIPS:[/bold magenta]
     • Arrow keys auto-page at boundaries (↑ on row 1 = previous page)
-    • Press a number to jump to a tool by global index
-    • Use O to cycle sorting modes (name → installed → size → category)
-    • Filter by category then read its description under the breadcrumb
-    • Use --mode basic (or automatic fallback) for monochrome, prompt-driven navigation
+    • Non-interactive scripting: `kalitools list --installed --json`
+    • Launch the Textual UI with `kalitools --tui` (requires the `[tui]` extra)
+    • Profiles: `kalitools profile list` / `kalitools profile apply <slug>`
+    • History:  `kalitools history --limit 20`
 
 [bold cyan]🏷 CATEGORY DESCRIPTIONS:[/bold cyan]
 [dim]Web:[/dim] Web app scanning & content discovery
@@ -1365,7 +1369,7 @@ class ToolsUI:
             return True
 
         self.run_knight_rider(_startup_task, label="Loading tools")
-        
+
         self.show_banner()
 
         try:
@@ -1376,8 +1380,9 @@ class ToolsUI:
             try:
                 self.list_tools_interactive()
             except Exception as e:
-                from rich.markup import escape
                 import traceback
+
+                from rich.markup import escape
                 console.print("\n[red]An unexpected error occurred:[/red] " + escape(str(e)))
                 console.print(escape(traceback.format_exc()), style="dim")
                 console.print("\n[yellow]Please report this issue.[/yellow]\n")
@@ -1485,44 +1490,11 @@ class ToolsUI:
             else:
                 console.print("[yellow]Unknown command[/yellow]")
 
-    def get_column_widths(self) -> Tuple[int, int, int, int]:
+    def get_column_widths(self) -> tuple[int, int, int, int]:
         """Return (name_width, status_width, size_width, category_width) based on theme."""
         theme = (self.theme or '').lower()
         if theme == 'minimal':
             return (28, 12, 9, 10)
         # default theme
         return (40, 15, 10, 14)
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Interactive Kali tool manager")
-    parser.add_argument(
-        "--mode",
-        default="auto",
-        choices=["auto", "rich", "basic"],
-        help="UI mode: auto-detect, rich TUI, or basic text prompts",
-    )
-    parser.add_argument(
-        "--log-level",
-        default="INFO",
-        help="Python logging level (DEBUG, INFO, WARNING, ERROR)",
-    )
-    parser.add_argument(
-        "--discovery-workers",
-        type=int,
-        default=8,
-        help="Max concurrent HTTP requests when scraping kali.org",
-    )
-    parser.add_argument(
-        "--discovery-delay",
-        type=float,
-        default=0.2,
-        help="Delay (seconds) before each scrape request to avoid hammering",
-    )
-    parser.add_argument(
-        "--debug-scraper",
-        action="store_true",
-        help="Write detailed scraper debug log to debug_scraper.txt",
-    )
-    return parser.parse_args()
 

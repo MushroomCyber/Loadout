@@ -1,0 +1,23 @@
+{
+  "slug": "forensics-starter",
+  "name": "Digital Forensics Starter Kit",
+  "description": "Core disk/memory/artifact analysis tools for incident response and forensics.",
+  "tags": ["forensics", "dfir"],
+  "packages": [
+    "autopsy",
+    "sleuthkit",
+    "volatility3",
+    "bulk-extractor",
+    "foremost",
+    "scalpel",
+    "binwalk",
+    "ddrescue",
+    "guymager",
+    "dc3dd",
+    "ewf-tools",
+    "extundelete",
+    "photorec",
+    "chainsaw",
+    "plaso"
+  ]
+}

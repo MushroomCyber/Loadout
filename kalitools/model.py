@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Set
+from typing import Any
 
 
 @dataclass
@@ -11,15 +11,15 @@ class Tool:
     """Typed representation of a Kali tool entry."""
 
     name: str
-    commands: List[str] = field(default_factory=list)
+    commands: list[str] = field(default_factory=list)
     installed: bool = False
     category: str = 'other'
     subcategory: str = ''
     description: str = ''
     size: int = 0
-    subpackages: List[str] = field(default_factory=list)
+    subpackages: list[str] = field(default_factory=list)
     source: str = ''
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self.name = str(self.name or '').strip()
@@ -36,11 +36,11 @@ class Tool:
         self.metadata = dict(self.metadata or {})
 
     @staticmethod
-    def _normalize_list(values: Any) -> List[str]:
+    def _normalize_list(values: Any) -> list[str]:
         if isinstance(values, str):
             values = [values]
-        normalized: List[str] = []
-        seen: Set[str] = set()
+        normalized: list[str] = []
+        seen: set[str] = set()
         for value in values or []:
             text = str(value or '').strip()
             if not text:
@@ -52,7 +52,7 @@ class Tool:
             normalized.append(text)
         return normalized
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             'name': self.name,
             'commands': list(self.commands),
@@ -67,7 +67,7 @@ class Tool:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Tool":
+    def from_dict(cls, data: dict[str, Any]) -> Tool:
         return cls(
             name=data.get('name', ''),
             commands=data.get('commands') or [],

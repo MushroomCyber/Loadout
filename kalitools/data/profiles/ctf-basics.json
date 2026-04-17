@@ -1,0 +1,23 @@
+{
+  "slug": "ctf-basics",
+  "name": "CTF Basics",
+  "description": "A solid starting toolkit for jeopardy-style CTFs: reversing, forensics, crypto, web.",
+  "tags": ["ctf", "general"],
+  "packages": [
+    "ghidra",
+    "radare2",
+    "gdb",
+    "gef",
+    "pwntools",
+    "binwalk",
+    "exiftool",
+    "steghide",
+    "stegsolve",
+    "hashcat",
+    "john",
+    "nmap",
+    "burpsuite",
+    "wireshark",
+    "apktool"
+  ]
+}
