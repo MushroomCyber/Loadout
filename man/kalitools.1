@@ -1,0 +1,314 @@
+.\" Man page for kalitools(1)
+.TH KALITOOLS 1 "April 2026" "kalitools 0.3.0" "Kali Tools Manager"
+.SH NAME
+kalitools \- browse, install, and manage Kali Linux tools
+.SH SYNOPSIS
+.B kalitools
+.RI [ OPTIONS ]
+.RI [ COMMAND ]
+.RI [ ARGS ... ]
+.SH DESCRIPTION
+.B kalitools
+is an interactive terminal tool for discovering, installing, removing, and
+managing the 700+ packages available in Kali Linux repositories.
+It offers a Rich\-powered interactive CLI, a full\-screen Textual TUI, curated
+profile bundles, offline APT routing, and scriptable subcommands with JSON
+output.
+.PP
+When invoked without a subcommand the interactive Rich interface starts.
+Pass
+.B \-\-tui
+to start the full\-screen Textual UI instead.
+.SH OPTIONS
+.TP
+.B \-\-version
+Print version and exit.
+.TP
+.BI \-\-mode " auto|rich|basic"
+UI mode for the interactive launcher (default: auto).
+.TP
+.B \-\-tui
+Launch the Textual full\-screen UI instead of the Rich interface.
+.TP
+.BI \-\-log\-level " LEVEL"
+Logging verbosity: DEBUG, INFO, WARNING, ERROR (default: INFO).
+.TP
+.BI \-\-discovery\-workers " N"
+Concurrent scraper workers for legacy web discovery (default: 8).
+.TP
+.BI \-\-discovery\-delay " SECONDS"
+Delay between HTTP fetches during web discovery (default: 0.2).
+.TP
+.B \-\-debug\-scraper
+Emit verbose scraper diagnostics to debug_scraper.txt.
+.TP
+.B \-\-no\-emoji
+Strip emoji glyphs from output.
+.TP
+.BI \-\-theme " THEME"
+Rich colour theme: default, mono, solarized\-dark, high\-contrast.
+.TP
+.BI \-\-log\-file " PATH"
+Also append log records to this file.
+.TP
+.B \-\-offline
+Skip all network calls (scraping, update checks).
+.SH SUBCOMMANDS
+.SS list
+List tools, optionally filtered.
+.PP
+.RS 4
+.nf
+kalitools list
+kalitools list \-\-installed \-\-json
+kalitools list \-\-category web \-\-limit 20
+kalitools list \-\-starred
+kalitools list \-\-available
+.fi
+.RE
+.TP
+.BI \-\-category " SLUG"
+Filter by category slug.
+.TP
+.B \-\-installed
+Only installed tools.
+.TP
+.B \-\-available
+Only not\-installed tools.
+.TP
+.B \-\-starred
+Only starred tools.
+.TP
+.B \-\-json
+Machine\-readable JSON output.
+.TP
+.BI \-\-limit " N"
+Maximum entries (0 = all).
+.SS search
+Search tools by name, description, category, or tag.
+.PP
+.RS 4
+.nf
+kalitools search nmap
+kalitools search category:web
+kalitools search tag:osint
+.fi
+.RE
+.TP
+.B \-\-json
+Machine\-readable JSON output.
+.TP
+.BI \-\-limit " N"
+Maximum results (default: 50).
+.SS show
+Show details for a single tool.
+.PP
+.RS 4
+kalitools show hydra
+.RE
+.TP
+.B \-\-json
+Machine\-readable JSON output.
+.SS install
+Install one or more tools via apt\-get.
+.PP
+.RS 4
+kalitools install nmap sqlmap
+.RE
+.TP
+.B \-\-yes
+Skip confirmation prompt.
+.TP
+.B \-\-dry\-run
+Preview only; do not install.
+.SS remove
+Uninstall one or more tools.
+.PP
+.RS 4
+kalitools remove hydra \-\-yes
+.RE
+.TP
+.B \-\-yes
+Skip confirmation prompt.
+.TP
+.B \-\-dry\-run
+Preview only; do not remove.
+.SS update
+Run
+.B apt\-get update
+and list upgradable tools.
+.SS upgrade
+Run
+.BR "apt\-get upgrade \-y" .
+.SS catalog refresh
+Rebuild the tool catalog from APT metadata.
+.PP
+.RS 4
+kalitools catalog refresh \-\-source=apt \-\-filter\-kali
+.RE
+.TP
+.BI \-\-source " apt|kali.org|both"
+Catalog source (default: apt).
+.TP
+.B \-\-force
+Force rebuild even if cache is fresh.
+.TP
+.B \-\-filter\-kali
+Keep only packages that look like Kali tools.
+.SS catalog info
+Print catalog metadata and statistics.
+.SS profile list
+List available profiles (bundled and user\-defined).
+.SS profile show \fISLUG\fR
+Show the details and tool list for a profile.
+.SS profile apply \fISLUG\fR
+Install all tools in a profile.
+.TP
+.B \-\-yes
+Skip confirmation.
+.TP
+.B \-\-dry\-run
+Preview only.
+.SS star / unstar
+Mark or unmark a tool as a favourite.
+.PP
+.RS 4
+.nf
+kalitools star nmap
+kalitools unstar nmap
+.fi
+.RE
+.SS hold / unhold / holds
+Pin or release a package version via apt\-mark.
+.PP
+.RS 4
+.nf
+kalitools hold nmap
+kalitools unhold nmap
+kalitools holds
+.fi
+.RE
+.SS history
+Show operation history from the SQLite state database.
+.PP
+.RS 4
+.nf
+kalitools history
+kalitools history \-\-package nmap \-\-limit 20
+kalitools history \-\-clear
+.fi
+.RE
+.TP
+.BI \-\-package " NAME"
+Filter by package.
+.TP
+.BI \-\-limit " N"
+Maximum entries (default: 20).
+.TP
+.B \-\-clear
+Wipe all history records.
+.SS export
+Export the current installed set.
+.PP
+.RS 4
+.nf
+kalitools export \-\-format json > tools.json
+kalitools export \-\-format script > install.sh
+.fi
+.RE
+.TP
+.BI \-\-format " json|script"
+Output format (default: json).
+.TP
+.BI \-\-output " PATH"
+Write to file instead of stdout.
+.SS doctor
+Diagnose common environment issues.
+.PP
+.RS 4
+kalitools doctor \-\-json
+.RE
+.SH PROFILES
+Five curated profiles ship with kalitools:
+.TP
+.B pentester\-web
+Web application testing (~18 packages).
+.TP
+.B forensics\-starter
+DFIR starter toolkit (~15 packages).
+.TP
+.B osint\-minimal
+Lightweight OSINT collection (~12 packages).
+.TP
+.B bug\-bounty
+Public bug\-bounty recon & web (~17 packages).
+.TP
+.B ctf\-basics
+Jeopardy\-style CTF starter (~15 packages).
+.PP
+User\-defined profiles can be placed in
+.IR ~/.config/kalitools/profiles/ .
+.SH ENVIRONMENT
+.TP
+.B KALITOOLS_OFFLINE
+When set, skip all network requests and route APT through a local mirror.
+.TP
+.B KALITOOLS_NO_EMOJI
+Strip emoji glyphs from rendered output.
+.TP
+.B KALITOOLS_THEME
+Default theme (overridden by \-\-theme).
+.TP
+.B KALITOOLS_LOG_FILE
+Default log file path (overridden by \-\-log\-file).
+.TP
+.B XDG_STATE_HOME
+Override the base of the state directory (default: ~/.local/state).
+.TP
+.B XDG_CONFIG_HOME
+Override the base of the user\-profiles directory (default: ~/.config).
+.SH FILES
+.TP
+.I ~/.local/state/kalitools/state.db
+SQLite state database (installed tools, history, stars).
+.TP
+.I ~/.config/kalitools/profiles/*.json
+User\-defined profiles.
+.TP
+.I ~/.kali_tools_cache.json
+Legacy installed\-tools cache.
+.TP
+.I ~/.kali_tools_local_repo.txt
+Offline APT mirror path pointer.
+.TP
+.I ~/.kali_tools_overrides.json
+Category/subcategory overrides.
+.SH SECURITY
+Package names are validated against
+.B ^[a\-z0\-9][a\-z0\-9+.\-]*$
+before any subprocess invocation. All subprocess calls use list\-form argv
+(no
+.BR shell=True ).
+Atomic JSON writes use
+.B tempfile.mkstemp
++
+.BR os.replace .
+Web scraping honours robots.txt via
+.BR urllib.robotparser .
+.PP
+See
+.I SECURITY.md
+in the source tree for the full threat model.
+.SH BUGS
+Report issues at
+.UR https://github.com/MushroomCyber/Kali\-Tools\-Manager/issues
+GitHub Issues
+.UE .
+.SH AUTHORS
+MushroomCyber and contributors.
+.SH LICENSE
+MIT License.
+.SH SEE ALSO
+.BR apt\-get (8),
+.BR dpkg (1),
+.BR apt\-mark (8)

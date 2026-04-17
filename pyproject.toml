@@ -58,6 +58,9 @@ include = ["kalitools*", "kalitools_lib*"]
 [tool.setuptools.package-data]
 kalitools = ["data/*.json", "data/profiles/*.json"]
 
+[tool.setuptools.data-files]
+"share/man/man1" = ["man/kalitools.1"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"

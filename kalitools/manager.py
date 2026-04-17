@@ -2163,6 +2163,9 @@ class KaliToolsManager:
             return False
 
         command = tool['commands'][0]
+        if not _LAUNCH_LEADING_TOKEN_RE.match(command):
+            console.print(f"[red]Refusing unsafe command token: {command!r}[/red]")
+            return False
         try:
             result = subprocess.run(
                 [command, '--help'],

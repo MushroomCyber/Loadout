@@ -125,6 +125,9 @@ def polite_get(
         return None
 
     parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        logger.warning("refusing non-HTTP(S) scheme: %s", parsed.scheme)
+        return None
     if not parsed.netloc:
         return None
     state = _host_state(parsed.netloc)

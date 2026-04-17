@@ -26,6 +26,9 @@ htmlcov/
 *.cover
 *.log
 
+# Debug output
+debug_scraper.txt
+
 # OS/editor noise
 .DS_Store
 Thumbs.db

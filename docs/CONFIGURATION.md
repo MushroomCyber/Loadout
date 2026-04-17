@@ -28,7 +28,9 @@ catalog regeneration is lossless.
 | `KALITOOLS_NO_EMOJI`  | When set, strip emoji glyphs in rendered output            |
 | `XDG_STATE_HOME`      | Override the base of the state directory                   |
 | `XDG_CONFIG_HOME`     | Override the base of the user-profiles directory           |
-| `GITHUB_TOKEN`        | Used by [kalitools_lib/github_metrics.py](../kalitools_lib/github_metrics.py) for higher rate limits |
+| `KALITOOLS_OFFLINE`   | Skip all network requests; route APT through local mirror              |
+| `KALITOOLS_THEME`     | Default Rich colour theme (overridden by `--theme`)                    |
+| `KALITOOLS_LOG_FILE`  | Default log file path (overridden by `--log-file`)                     |
 
 ### Themes
 
