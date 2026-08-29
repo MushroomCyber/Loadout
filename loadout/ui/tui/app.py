@@ -677,7 +677,10 @@ if TEXTUAL_AVAILABLE:
                     f"[dim]no tools match {' · '.join(why)}{marked}[/dim]"
                 )
                 return
-            scope = f"{shown} of {total}" if filtered else f"{shown} tools"
+            # "500 tools" next to a banner reading "774 tools" is two answers
+            # to one question. Say "of" whenever the list is capped, whether by
+            # a filter or by the search limit.
+            scope = f"{shown} of {total}" if shown < total else f"{shown} tools"
             self.query_one("#hint", Static).update(
                 f"[dim]{scope} · {here} installed{marked}[/dim]"
             )

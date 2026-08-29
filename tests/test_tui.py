@@ -363,6 +363,22 @@ async def test_empty_results_clear_the_detail_pane(app):
         assert not detail.query("Button")
 
 
+async def test_hint_says_of_total_when_the_list_is_capped(app):
+    """The banner counts the whole catalog and the hint counts the rows shown.
+    Reporting the capped number as if it were the total gave two answers to one
+    question on the same screen."""
+    from textual.widgets import Static
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        total = pilot.app.ctx.catalog.count()
+        pilot.app._rows = pilot.app._rows[:1]
+        pilot.app._update_hint()
+        await pilot.pause()
+        hint = str(pilot.app.query_one("#hint", Static).render())
+        assert f"1 of {total}" in hint, hint
+
+
 async def test_empty_results_say_what_is_filtering(app):
     from textual.widgets import Input, Static
 

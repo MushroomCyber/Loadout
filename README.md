@@ -12,6 +12,10 @@
   <img alt="Platforms" src="https://img.shields.io/badge/linux%20%C2%B7%20macos%20%C2%B7%20wsl-supported-informational?style=flat-square">
 </p>
 
+<p align="center">
+  <img alt="The Loadout browser running on Kali: filter box, provider toggles, category sidebar with installed-over-total counts, tool list and detail pane" src="docs/demo/loadout.png" width="900">
+</p>
+
 ---
 
 The tools worth having no longer ship from one place. `nuclei`, `subfinder` and
@@ -250,17 +254,9 @@ loadout doctor --json | jq '.[] | select(.severity != "ok")'
 `loadout` with no arguments. The cursor starts in the filter box and the list
 narrows as you type.
 
-```
-██╗      ██████╗  █████╗ ██████╗  ██████╗ ██╗   ██╗████████╗
-██║     ██╔═══██╗██╔══██╗██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝
-██║     ██║   ██║███████║██║  ██║██║   ██║██║   ██║   ██║      774 tools · 61 installed
-██║     ██║   ██║██╔══██║██║  ██║██║   ██║██║   ██║   ██║      kali · apt gem gh go pipx
-███████╗╚██████╔╝██║  ██║██████╔╝╚██████╔╝╚██████╔╝   ██║
-╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝  ╚═════╝    ╚═╝
-```
-
-The banner drops to a single line on terminals under 96x30, so a small window
-spends its rows on tools rather than on the program's own name.
+The screenshot at the top of this page is exactly what you get. The banner
+drops to a single line on terminals under 96x30, so a small window spends its
+rows on tools rather than on the program's own name.
 
 ### Keys
 
