@@ -406,6 +406,7 @@ if TEXTUAL_AVAILABLE:
         #query  { border: none; border-bottom: solid $panel; height: 3; }
         #providers { height: auto; padding: 0 1; border-bottom: solid $panel; }
         #providers Button { margin-right: 1; }
+        .-empty { text-opacity: 50%; }
         .provider-toggle.-active { text-style: bold reverse; }
         #facets { width: 26; border-right: solid $panel; }
         #facetlist { height: 1fr; padding: 0 1; }
@@ -449,6 +450,9 @@ if TEXTUAL_AVAILABLE:
             #: Each category chip's coverage colour, so the active chip can
             #: take the accent and give it back when another is chosen.
             self._chip_variant: dict[str, ButtonVariant] = {}
+            #: Category slugs in sidebar order, so counts can be refreshed in
+            #: place without rebuilding the chips.
+            self._facet_slugs: list[str] = []
             self.title = "loadout"
 
         @property
@@ -489,19 +493,12 @@ if TEXTUAL_AVAILABLE:
             facets.mount(
                 Button("all", id="facet-all", variant="primary", classes="chip -active", compact=True)
             )
-            installed = self.ctx.installed()
-            for slug, count in self.ctx.catalog.facet_values("category")[:18]:
-                here = self._installed_in(slug, installed)
-                variant = self._coverage_variant(here, count)
-                self._chip_variant[f"facet-{slug}"] = variant
+            self._facet_slugs = [
+                slug for slug, _ in self.ctx.catalog.facet_values("category")[:18]
+            ]
+            for slug in self._facet_slugs:
                 facets.mount(
-                    Button(
-                        f"{slug[:12]:<12}{here:>3}/{count:<3}",
-                        id=f"facet-{slug}",
-                        variant=variant,
-                        classes="chip",
-                        compact=True,
-                    )
+                    Button(slug, id=f"facet-{slug}", classes="chip", compact=True)
                 )
 
             # A toggle is only worth offering when the provider is usable here
@@ -518,7 +515,7 @@ if TEXTUAL_AVAILABLE:
                 short = _SHORT_PROVIDER.get(name, name)
                 providers.mount(
                     Button(
-                        f"{short} {count}",
+                        short,
                         id=f"prov-{name}",
                         classes="provider-toggle",
                         compact=True,
@@ -546,11 +543,63 @@ if TEXTUAL_AVAILABLE:
             roomy = size.height >= BANNER_MIN_HEIGHT and size.width >= BANNER_MIN_WIDTH
             banner.update(banner_block(self.ctx) if roomy else status_line(self.ctx))
 
-        def _installed_in(self, slug: str, installed: set[str]) -> int:
-            """Cheap even at ~800 tools: one indexed facet query per category,
-            done once at startup, not per frame."""
-            rows = self.ctx.catalog.search("", categories=[slug])
-            return sum(1 for tool in rows if tool.id in installed)
+        def _refresh_facet_counts(self, query: str) -> None:
+            """Recount every chip against the *other* active filters.
+
+            Global counts are a trap once two filters are combined: with
+            `reverse` and `gh` both on, the sidebar still read `reverse 0/17`
+            and `gh 15` over an empty table, so every number on screen
+            contradicted the result. A chip now answers the only question
+            worth asking of it -- how many tools you get if you click it --
+            and says nothing when the answer is none.
+
+            About 6ms for the whole sidebar on the 774-entry catalog, which is
+            why this can run on every keystroke rather than only on a click.
+            """
+            try:
+                chips = {b.id: b for b in self.query("#facetlist Button").results(Button)}
+                toggles = {
+                    b.id: b for b in self.query(".provider-toggle").results(Button)
+                }
+            except NoMatches:  # pragma: no cover - teardown
+                return
+
+            installed = self.ctx.installed()
+            search = self.ctx.catalog.search_ids
+            active_providers = sorted(self._active_providers)
+            active_category = (
+                [self._facet[1]] if self._facet and self._facet[0] == "category" else []
+            )
+
+            total = len(search(query, providers=active_providers))
+            if (chip := chips.get("facet-all")) is not None:
+                chip.label = f"{'all':<12}{total:>7}"
+
+            for slug in self._facet_slugs:
+                chip = chips.get(f"facet-{slug}")
+                if chip is None:
+                    continue
+                ids = search(query, categories=[slug], providers=active_providers)
+                count = len(ids)
+                here = sum(1 for tool_id in ids if tool_id in installed)
+                chip.label = f"{slug[:12]:<12}{here:>3}/{count:<3}"
+                variant = self._coverage_variant(here, count)
+                self._chip_variant[f"facet-{slug}"] = variant
+                chip.set_class(count == 0, "-empty")
+                if not chip.has_class("-active"):
+                    chip.variant = variant
+
+            for name, toggle in toggles.items():
+                provider = (name or "").removeprefix("prov-")
+                # Count what this toggle *adds*: how many tools it can reach
+                # under the current category and query, ignoring the other
+                # toggles, since providers combine as a union.
+                count = len(
+                    search(query, categories=active_category, providers=[provider])
+                )
+                short = _SHORT_PROVIDER.get(provider, provider)
+                toggle.label = f"{short} {count}"
+                toggle.set_class(count == 0, "-empty")
 
         def _coverage_variant(self, here: int, count: int) -> ButtonVariant:
             """Green once a category is well covered, plain otherwise.
@@ -582,6 +631,7 @@ if TEXTUAL_AVAILABLE:
                 rows = self._prioritised(rows)
             self._rows = rows
             self._render_rows()
+            self._refresh_facet_counts(query)
 
         def _prioritised(self, rows: list[Any]) -> list[Any]:
             starred = self.ctx.starred()

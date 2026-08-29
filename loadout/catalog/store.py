@@ -190,6 +190,58 @@ class CatalogStore:
 
         An empty *query* returns everything matching the filters, ordered by id.
         """
+        rows = self._matching(
+            query,
+            categories=categories,
+            tags=tags,
+            phases=phases,
+            providers=providers,
+            limit=limit,
+            column="doc",
+        )
+        return [Tool.from_dict(json.loads(r["doc"])) for r in rows]
+
+    def search_ids(
+        self,
+        query: str = "",
+        *,
+        categories: Sequence[str] = (),
+        tags: Sequence[str] = (),
+        phases: Sequence[str] = (),
+        providers: Sequence[str] = (),
+        limit: int = 0,
+    ) -> list[str]:
+        """Ids only, same filters and order as :meth:`search`.
+
+        Building a :class:`Tool` per row costs a JSON parse and a dataclass;
+        the facet sidebar wants nothing but counts and membership, and doing
+        that through `search` made every keystroke rebuild the whole catalog
+        nineteen times over.
+        """
+        rows = self._matching(
+            query,
+            categories=categories,
+            tags=tags,
+            phases=phases,
+            providers=providers,
+            limit=limit,
+            column="id",
+        )
+        return [r["id"] for r in rows]
+
+    def _matching(
+        self,
+        query: str = "",
+        *,
+        categories: Sequence[str] = (),
+        tags: Sequence[str] = (),
+        phases: Sequence[str] = (),
+        providers: Sequence[str] = (),
+        limit: int = 0,
+        column: str = "doc",
+    ) -> list[sqlite3.Row]:
+        if column not in ("doc", "id"):  # pragma: no cover - internal guard
+            raise CatalogError(f"cannot project column {column!r}")
         clauses: list[str] = []
         params: list[object] = []
 
@@ -216,7 +268,7 @@ class CatalogStore:
         if query and self._has_fts:
             match = _to_fts_query(query)
             sql = (
-                "SELECT t.doc AS doc FROM tools_fts f "
+                f"SELECT t.{column} AS {column} FROM tools_fts f "
                 "JOIN tools t ON t.id = f.tool_id "
                 "WHERE tools_fts MATCH ? "
             )
@@ -229,27 +281,30 @@ class CatalogStore:
                 rows = self._conn.execute(sql, head_params).fetchall()
             except sqlite3.OperationalError as exc:
                 logger.debug("FTS query failed (%s); falling back to LIKE", exc)
-                rows = self._like_search(query, clauses, params)
+                rows = self._like_search(query, clauses, params, column)
         elif query:
-            rows = self._like_search(query, clauses, params)
+            rows = self._like_search(query, clauses, params, column)
         else:
-            sql = "SELECT doc FROM tools t"
+            sql = f"SELECT t.{column} AS {column} FROM tools t"
             if clauses:
                 sql += " WHERE " + " AND ".join(clauses)
             sql += " ORDER BY t.id"
             rows = self._conn.execute(sql, params).fetchall()
 
-        tools = [Tool.from_dict(json.loads(r["doc"])) for r in rows]
         if limit and limit > 0:
-            tools = tools[:limit]
-        return tools
+            rows = rows[:limit]
+        return rows
 
     def _like_search(
-        self, query: str, clauses: list[str], params: list[object]
+        self,
+        query: str,
+        clauses: list[str],
+        params: list[object],
+        column: str = "doc",
     ) -> list[sqlite3.Row]:
         like = f"%{query.lower()}%"
         sql = (
-            "SELECT t.doc AS doc FROM tools t "
+            f"SELECT t.{column} AS {column} FROM tools t "
             "WHERE (LOWER(t.id) LIKE ? OR LOWER(t.summary) LIKE ?)"
         )
         args: list[object] = [like, like]

@@ -379,6 +379,68 @@ async def test_hint_says_of_total_when_the_list_is_capped(app):
         assert f"1 of {total}" in hint, hint
 
 
+async def test_facet_counts_are_conditioned_on_the_other_filters(app):
+    """A global count is a trap once two filters combine. With `reverse` and
+    `gh` both on, the sidebar read `reverse 0/17` and `gh 15` over an empty
+    table -- every number on screen contradicting the result."""
+    from textual.widgets import Button
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        toggle = pilot.app.query_one("#prov-apt", Button)
+        assert str(toggle.label) == "apt 4", str(toggle.label)
+
+        # ffuf is the only sample tool tagged web, and it has an apt route.
+        pilot.app.query_one("#facet-web", Button).press()
+        await pilot.pause()
+        assert str(toggle.label) == "apt 1", str(toggle.label)
+
+
+async def test_a_chip_that_can_return_nothing_says_so(app):
+    """The count must go to zero, not stay at its global value, so the user
+    can see the combination is empty before clicking it."""
+    from textual.widgets import Button, Input
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        web = pilot.app.query_one("#facet-web", Button)
+        assert "/1" in str(web.label), str(web.label)
+
+        pilot.app.query_one("#query", Input).value = "zzzznotathing"
+        await pilot.pause()
+        assert "/0" in str(web.label), str(web.label)
+        assert web.has_class("-empty")
+
+
+async def test_the_all_chip_counts_what_the_other_filters_allow(app):
+    from textual.widgets import Button, Input
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        chip = pilot.app.query_one("#facet-all", Button)
+        assert str(chip.label).split()[-1] == "4", str(chip.label)
+
+        pilot.app.query_one("#query", Input).value = "nmap"
+        await pilot.pause()
+        assert str(chip.label).split()[-1] == "1", str(chip.label)
+
+
+async def test_search_ids_matches_search_but_skips_building_tools(catalog):
+    """The sidebar wants counts and membership, nothing else. Going through
+    `search` rebuilt every Tool nineteen times per keystroke."""
+    for kwargs in (
+        {},
+        {"query": "nmap"},
+        {"categories": ["web"]},
+        {"providers": ["apt"]},
+        {"query": "zzz"},
+    ):
+        query = kwargs.pop("query", "")
+        assert catalog.search_ids(query, **kwargs) == [
+            tool.id for tool in catalog.search(query, **kwargs)
+        ], kwargs
+
+
 async def test_empty_results_say_what_is_filtering(app):
     from textual.widgets import Input, Static
 
