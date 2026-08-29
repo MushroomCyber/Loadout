@@ -80,6 +80,23 @@ loadout doctor
 > source checkout and is installed from the checkout with `pip install -e .` or
 > `pipx install --editable .`.
 
+### Kali / Linux quick start
+
+On Kali, Debian, Ubuntu, or most Linux hosts:
+
+```bash
+git clone https://github.com/MushroomCyber/Kali-Tools-Manager.git
+cd Kali-Tools-Manager
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev,tui]'
+loadout
+```
+
+The first launch opens the interactive browser. Move around with the arrow keys,
+filter by typing, press Enter to act on the highlighted tool, and use the
+sidebar to see the current category and provider hints.
+
 ---
 
 ## Everyday use
