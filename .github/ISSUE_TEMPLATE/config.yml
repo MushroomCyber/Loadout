@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/MushroomCyber/Loadout/security/advisories/new
+    about: Report privately via a GitHub security advisory. Never in a public issue.
+  - name: Catalog documentation
+    url: https://github.com/MushroomCyber/Loadout/blob/main/docs/CATALOG.md
+    about: How catalog entries work, before opening a pull request.

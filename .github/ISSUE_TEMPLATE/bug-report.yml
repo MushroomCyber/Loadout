@@ -1,0 +1,42 @@
+name: Bug report
+description: Something behaved incorrectly.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you ran, what you expected, what you got.
+      placeholder: |
+        $ loadout install nuclei
+        ...
+    validations: {required: true}
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `loadout doctor`
+      description: >
+        Paste the output. It reports the distro, available providers, catalog
+        state and privilege setup, which is most of what is needed to reproduce.
+      render: shell
+    validations: {required: true}
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `loadout --version`.
+    validations: {required: true}
+  - type: dropdown
+    id: install_method
+    attributes:
+      label: How did you install Loadout?
+      options:
+        - pip install -e . from a checkout
+        - pipx install --editable .
+        - other (describe above)
+    validations: {required: true}
+  - type: markdown
+    attributes:
+      value: |
+        **Do not report security vulnerabilities here.** See
+        [SECURITY.md](../blob/main/SECURITY.md) for private disclosure.

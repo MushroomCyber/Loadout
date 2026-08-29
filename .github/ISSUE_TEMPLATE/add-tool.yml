@@ -1,0 +1,101 @@
+name: Add a tool to the catalog
+description: Suggest a security tool Loadout should know about.
+title: "catalog: add <tool name>"
+labels: ["catalog"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a tool is one YAML file under `catalog/` — you can open a pull
+        request directly instead of an issue if you prefer. See
+        [docs/CATALOG.md](../blob/main/docs/CATALOG.md).
+
+        This form collects the same fields, so a maintainer can turn it into an
+        entry without going back and forth.
+  - type: input
+    id: tool_id
+    attributes:
+      label: Tool id
+      description: Lowercase, what a user would type. Usually the upstream name.
+      placeholder: feroxbuster
+    validations: {required: true}
+  - type: input
+    id: summary
+    attributes:
+      label: One-line summary
+      description: Written for someone who has never heard of it. No marketing.
+      placeholder: Recursive content discovery written in Rust
+    validations: {required: true}
+  - type: input
+    id: homepage
+    attributes:
+      label: Homepage or repository
+      placeholder: https://github.com/epi052/feroxbuster
+    validations: {required: true}
+  - type: input
+    id: binaries
+    attributes:
+      label: Executables it installs
+      description: >
+        The actual commands, primary one first. This matters: the package name
+        is often not the command (metasploit-framework installs msfconsole).
+      placeholder: feroxbuster
+    validations: {required: true}
+  - type: textarea
+    id: install
+    attributes:
+      label: How can it be installed?
+      description: >
+        Every route you know of. More is better — the point of Loadout is that a
+        tool available via Go or Homebrew should not be apt-only in the catalog.
+      placeholder: |
+        apt: feroxbuster (kali, debian)
+        brew: feroxbuster
+        cargo: feroxbuster
+        github: epi052/feroxbuster
+    validations: {required: true}
+  - type: dropdown
+    id: categories
+    attributes:
+      label: Category
+      multiple: true
+      options:
+        - recon
+        - web
+        - network
+        - wireless
+        - exploitation
+        - post-exploitation
+        - password
+        - vuln-scan
+        - fuzzing
+        - database
+        - social
+        - mobile
+        - cloud
+        - hardware
+        - forensics
+        - incident-response
+        - detection
+        - monitoring
+        - sniffing
+        - reverse
+        - malware
+        - crypto
+        - threat-intel
+        - reporting
+        - utility
+    validations: {required: true}
+  - type: input
+    id: alternatives
+    attributes:
+      label: Similar tools already in the catalog
+      description: Powers `loadout alt`. Leave blank if unsure.
+      placeholder: ffuf, gobuster, dirsearch
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This tool is actively maintained (or I have noted below that it is not).
+        - label: I checked `loadout search` and it is not already in the catalog.
