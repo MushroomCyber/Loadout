@@ -68,6 +68,31 @@ _VALIDSIG_RE = re.compile(r"^\[GNUPG:\] VALIDSIG ([0-9A-F]{40})\b", re.M)
 
 _VERIFY_TIMEOUT = 60
 
+#: A Unix domain socket path is capped at about 104 bytes on macOS and 108 on
+#: Linux, and gpg-agent puts its socket inside GNUPGHOME. macOS hands out
+#: ``/var/folders/<hash>/T`` as TMPDIR, which is long enough that a temporary
+#: home built there fails with "can't connect to the gpg-agent: File name too
+#: long" before gpg does any work. Somewhere short is not a preference here.
+_SOCKET_PATH_BUDGET = 90
+
+
+def short_tmpdir() -> str | None:
+    """A base for GNUPGHOME whose path leaves room for the agent socket.
+
+    Returns ``None`` to mean "the platform default is fine", which is the case
+    on Linux where TMPDIR is already ``/tmp``.
+    """
+    default = tempfile.gettempdir()
+    if len(default) <= _SOCKET_PATH_BUDGET // 2:
+        return None
+    # Only ever the *parent*: TemporaryDirectory below still uses mkdtemp, so
+    # the directory actually used has an unpredictable name and mode 0700.
+    # That is the pattern S108 exists to require, not the one it warns about.
+    candidate = Path("/tmp")  # noqa: S108
+    if candidate.is_dir() and os.access(candidate, os.W_OK):
+        return str(candidate)
+    return None
+
 
 @dataclass(frozen=True)
 class SignatureSpec:
@@ -238,12 +263,23 @@ def _verify_gpg(payload: Path, signature: Path, spec: SignatureSpec) -> None:
     could satisfy a catalog entry, and would let a catalog entry write into
     their trust store.
     """
-    with tempfile.TemporaryDirectory(prefix="loadout-gpg-") as home:
+    with tempfile.TemporaryDirectory(prefix="lo-gpg-", dir=short_tmpdir()) as home:
         home_path = Path(home)
         # gpg refuses to run against a world-readable home.
         home_path.chmod(0o700)
         env = {"GNUPGHOME": str(home_path), "LC_ALL": "C"}
-        base = ["gpg", "--batch", "--no-tty", "--homedir", str(home_path)]
+        # --no-autostart: importing a public key and checking a detached
+        # signature are both agent-free operations, so there is no reason to
+        # spawn gpg-agent, open a socket under GNUPGHOME, or leave a stray
+        # process behind on the user's machine.
+        base = [
+            "gpg",
+            "--batch",
+            "--no-tty",
+            "--no-autostart",
+            "--homedir",
+            str(home_path),
+        ]
 
         key_file = home_path / "pinned.asc"
         key_file.write_text(spec.public_key, encoding="utf-8")

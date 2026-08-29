@@ -12,6 +12,7 @@ from __future__ import annotations
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -21,6 +22,7 @@ from loadout.signature import (
     SIGNS_CHECKSUMS,
     SignatureSpec,
     parse_spec,
+    short_tmpdir,
     validate_spec,
     verify_signature,
 )
@@ -194,11 +196,23 @@ class Keyring:
 
 
 @pytest.fixture(scope="module")
-def keys(tmp_path_factory):
-    """Two real keypairs: the one a catalog would pin, and an attacker's."""
+def keys():
+    """Two real keypairs: the one a catalog would pin, and an attacker's.
+
+    Not ``tmp_path_factory``: generating a key needs gpg-agent, whose socket
+    lives inside GNUPGHOME, and pytest's tmp path under macOS's
+    ``/var/folders/<hash>/T`` already exceeds the ~104-byte Unix socket limit.
+    """
     if shutil.which("gpg") is None or sys.platform == "win32":
         pytest.skip("needs a POSIX gpg")
-    ring = Keyring(tmp_path_factory.mktemp("signing-home"))
+    with tempfile.TemporaryDirectory(
+        prefix="lo-test-", dir=short_tmpdir()
+    ) as home:
+        yield _build_keys(Path(home))
+
+
+def _build_keys(home: Path) -> dict:
+    ring = Keyring(home)
     trusted = ring.create_key("Loadout Trusted <trusted@example.invalid>")
     attacker = ring.create_key("Loadout Attacker <attacker@example.invalid>")
     return {
@@ -356,3 +370,54 @@ def test_signs_defaults_to_the_artifact_but_can_name_the_checksum_file():
     )
     assert over_sums is not None
     assert over_sums.signs == SIGNS_CHECKSUMS
+
+
+# ---------------------------------------------------------------------------
+# The gpg-agent socket path limit
+# ---------------------------------------------------------------------------
+
+
+def test_the_temporary_keyring_leaves_room_for_the_agent_socket():
+    """gpg-agent's socket lives inside GNUPGHOME and a Unix socket path caps at
+    about 104 bytes. macOS hands out `/var/folders/<hash>/T` as TMPDIR, which
+    is long enough on its own that gpg fails with "File name too long" before
+    doing any work -- caught by CI on macos-latest, not by reading the docs."""
+    import os
+    import tempfile as tf
+
+    base = short_tmpdir() or tf.gettempdir()
+    with tf.TemporaryDirectory(prefix="lo-gpg-", dir=short_tmpdir()) as home:
+        socket_path = os.path.join(home, "S.gpg-agent.extra")
+        assert len(socket_path) < 104, f"{socket_path} ({len(socket_path)} bytes)"
+    assert base
+
+
+@gpg_required
+def test_verification_does_not_need_gpg_agent(keys, artifact, tmp_path):
+    """Importing a public key and checking a detached signature are both
+    agent-free, so `--no-autostart` must not break them -- and it keeps a stray
+    agent process off the user's machine."""
+    import loadout.signature as signature_module
+
+    signature = keys["ring"].sign(keys["trusted"], artifact, tmp_path / "a.asc")
+    spec = parse_spec(
+        {"type": "gpg", "asset": "*.asc", "public_key": keys["trusted_pub"]}
+    )
+    assert spec is not None
+
+    seen: list[list[str]] = []
+    original = signature_module._run
+
+    def record(argv, **kwargs):
+        seen.append(list(argv))
+        return original(argv, **kwargs)
+
+    signature_module._run = record
+    try:
+        verify_signature(artifact, signature, spec)
+    finally:
+        signature_module._run = original
+
+    assert seen, "no gpg invocations recorded"
+    for argv in seen:
+        assert "--no-autostart" in argv, argv
