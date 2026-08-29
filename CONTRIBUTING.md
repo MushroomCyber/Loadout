@@ -11,10 +11,15 @@ cd Kali-Tools-Manager
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e '.[dev,tui]'
 
+loadout --help
 pytest
 ruff check .
 mypy loadout
 ```
+
+Use `pipx install --editable .` only when you want the repo checkout itself to be
+managed by pipx; `pipx install loadout` is not the right command for working from
+this source tree.
 
 ## Adding a tool
 

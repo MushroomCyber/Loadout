@@ -47,22 +47,27 @@ loadout report --since 30d      # signed inventory of what you used, for the rep
 
 ## Install
 
-```bash
-pipx install loadout
-```
-
-Optional interactive browser:
-
-```bash
-pipx inject loadout textual
-```
-
-Or from a checkout:
+From a local checkout of this repository:
 
 ```bash
 git clone https://github.com/MushroomCyber/Kali-Tools-Manager.git
 cd Kali-Tools-Manager
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -e '.[dev,tui]'
+```
+
+If you want a pipx-managed environment for the local repo checkout instead of a
+plain virtualenv:
+
+```bash
+pipx install --editable .
+```
+
+Then launch the interactive browser:
+
+```bash
+loadout
 ```
 
 Check the machine is ready:
@@ -70,6 +75,10 @@ Check the machine is ready:
 ```bash
 loadout doctor
 ```
+
+> `pipx install loadout` is for a published package on PyPI; this repo is a local
+> source checkout and is installed from the checkout with `pip install -e .` or
+> `pipx install --editable .`.
 
 ---
 
