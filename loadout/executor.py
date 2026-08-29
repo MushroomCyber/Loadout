@@ -342,8 +342,14 @@ class Executor:
             )
             status_reader.start()
 
-        assert process.stdout is not None
-        for line in process.stdout:
+        # Not an assert: `python -O` strips those, and this sits in the
+        # privileged execution path. Popen(stdout=PIPE) always yields a stream,
+        # so this is really narrowing for the type checker.
+        stdout = process.stdout
+        if stdout is None:  # pragma: no cover - unreachable with stdout=PIPE
+            process.kill()
+            raise LoadoutError(f"{argv[0]}: could not capture output")
+        for line in stdout:
             text = line.rstrip("\n")
             if text:
                 context.output(text)
