@@ -61,12 +61,74 @@ def textual_available() -> bool:
 _SHORT_PROVIDER = {"github": "gh", "cargo": "crate", "docker": "img"}
 
 
+#: `pyfiglet -f ansi_shadow loadout`, baked in rather than depended on: the
+#: output is a constant, and a runtime dependency to regenerate a constant is
+#: a dependency for nothing.
+BANNER_ART = (
+    "██╗      ██████╗  █████╗ ██████╗  ██████╗ ██╗   ██╗████████╗",
+    "██║     ██╔═══██╗██╔══██╗██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝",
+    "██║     ██║   ██║███████║██║  ██║██║   ██║██║   ██║   ██║   ",
+    "██║     ██║   ██║██╔══██║██║  ██║██║   ██║██║   ██║   ██║   ",
+    "███████╗╚██████╔╝██║  ██║██████╔╝╚██████╔╝╚██████╔╝   ██║   ",
+    "╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   ",
+)
+
+#: The smallest terminal the art earns its keep in. Below this the one-line
+#: form is used -- six rows of chrome on a 24-row terminal spends a quarter of
+#: the screen on the program's own name.
+BANNER_WIDTH = 60
+BANNER_MIN_HEIGHT = 30
+BANNER_MIN_WIDTH = 96
+
+
+def banner_block(ctx: Any) -> str:
+    """The art with this machine's facts set beside it, not under it.
+
+    Stacking the status line below would cost a seventh row for something
+    that fits in the whitespace the art already has.
+    """
+    rows = list(BANNER_ART)
+    # The middle rows are the letterforms' waist, where the art is most even.
+    # Text alongside them reads as placed rather than dropped in.
+    for offset, fact in zip((2, 3), _facts(ctx), strict=False):
+        rows[offset] = f"{rows[offset]}   [dim]{fact}[/dim]"
+    return "[$accent]" + "\n".join(rows) + "[/$accent]"
+
+
+def _facts(ctx: Any) -> tuple[str, str]:
+    """The two lines of machine state the banner shows in either form."""
+    try:
+        total = ctx.catalog.count()
+    except Exception:
+        total = 0
+    try:
+        installed = len(ctx.installed())
+    except Exception:
+        installed = 0
+    try:
+        from ...providers import detect_distro
+
+        where = detect_distro()
+    except Exception:
+        where = "unknown"
+    try:
+        ready = sorted(
+            _SHORT_PROVIDER.get(name, name)
+            for name, status in ctx.provider_status.items()
+            if status.available
+        )
+    except Exception:
+        ready = []
+    return (
+        f"{total} tools · {installed} installed",
+        f"{where} · {' '.join(ready) or 'no providers detected'}",
+    )
+
+
 def status_line(ctx: Any) -> str:
     """One line of chrome: who we are, and the state of this machine.
 
-    Replaces a drawn box around whitespace that cost four of roughly forty
-    rows. Everything here is information the user would otherwise have to run a
-    command to learn.
+    The fallback for terminals too small to spend six rows on a name.
     """
     try:
         total = ctx.catalog.count()
@@ -340,7 +402,7 @@ if TEXTUAL_AVAILABLE:
 
         CSS = """
         Screen { layers: base; }
-        #banner { height: 1; color: $accent; padding: 0 1; }
+        #banner { height: auto; color: $accent; padding: 0 1; }
         #query  { border: none; border-bottom: solid $panel; height: 3; }
         #providers { height: auto; padding: 0 1; border-bottom: solid $panel; }
         #providers Button { margin-right: 1; }
@@ -384,6 +446,9 @@ if TEXTUAL_AVAILABLE:
             self._rows: list[Any] = []
             self._planner_cache: Any = None
             self._active_providers: set[str] = set()
+            #: Each category chip's coverage colour, so the active chip can
+            #: take the accent and give it back when another is chosen.
+            self._chip_variant: dict[str, ButtonVariant] = {}
             self.title = "loadout"
 
         @property
@@ -397,7 +462,7 @@ if TEXTUAL_AVAILABLE:
         # -- layout --------------------------------------------------------
 
         def compose(self) -> ComposeResult:
-            yield Static(status_line(self.ctx), id="banner")
+            yield Static(id="banner")
             yield Input(placeholder="Type to filter…  (Esc clears)", id="query")
             yield Horizontal(id="providers")
             with Horizontal():
@@ -426,10 +491,12 @@ if TEXTUAL_AVAILABLE:
             )
             installed = self.ctx.installed()
             for slug, count in self.ctx.catalog.facet_values("category")[:18]:
-                variant = self._coverage_variant(slug, count, installed)
+                here = self._installed_in(slug, installed)
+                variant = self._coverage_variant(here, count)
+                self._chip_variant[f"facet-{slug}"] = variant
                 facets.mount(
                     Button(
-                        f"{slug[:14]:<14}{count:>4}",
+                        f"{slug[:12]:<12}{here:>3}/{count:<3}",
                         id=f"facet-{slug}",
                         variant=variant,
                         classes="chip",
@@ -458,24 +525,45 @@ if TEXTUAL_AVAILABLE:
                     )
                 )
 
+            self._draw_banner()
             self.query_one("#query", Input).focus()
             self._reload()
 
-        def _coverage_variant(self, slug: str, count: int, installed: set[str]) -> ButtonVariant:
-            """How much of a category is already installed, as a button colour.
+        def on_resize(self) -> None:
+            self._draw_banner()
 
-            Cheap even at ~800 tools: one indexed facet query per category,
-            done once at startup, not per frame.
+        def _draw_banner(self) -> None:
+            """Art on a terminal with room for it, one line on one without.
+
+            A fixed six-row banner would be a quarter of a default 80x24
+            window spent on the program telling you its own name.
+            """
+            try:
+                banner = self.query_one("#banner", Static)
+            except NoMatches:
+                return
+            size = self.size
+            roomy = size.height >= BANNER_MIN_HEIGHT and size.width >= BANNER_MIN_WIDTH
+            banner.update(banner_block(self.ctx) if roomy else status_line(self.ctx))
+
+        def _installed_in(self, slug: str, installed: set[str]) -> int:
+            """Cheap even at ~800 tools: one indexed facet query per category,
+            done once at startup, not per frame."""
+            rows = self.ctx.catalog.search("", categories=[slug])
+            return sum(1 for tool in rows if tool.id in installed)
+
+        def _coverage_variant(self, here: int, count: int) -> ButtonVariant:
+            """Green once a category is well covered, plain otherwise.
+
+            There used to be a third, amber state for "some but not many",
+            which nobody could read: amber means *something is wrong* in every
+            other part of a security tool's interface, and a partly-installed
+            category is not a warning. The n/N in the label carries that
+            detail now, and the colour only reinforces it.
             """
             if not count:
                 return "default"
-            here = sum(1 for t in self.ctx.catalog.search("", categories=[slug]) if t.id in installed)
-            coverage = here / count
-            if coverage >= 0.3:
-                return "success"
-            if coverage > 0:
-                return "warning"
-            return "default"
+            return "success" if here / count >= 0.3 else "default"
 
         # -- data ----------------------------------------------------------
 
@@ -642,9 +730,13 @@ if TEXTUAL_AVAILABLE:
             button = event.button
             slug = (button.id or "").removeprefix("facet-")
             self._facet = None if slug == "all" else ("category", slug)
-            for chip in self.query("#facetlist Button"):
+            for chip in self.query("#facetlist Button").results(Button):
                 chip.remove_class("-active")
+                # Restore the coverage colour the chip was built with; only
+                # the active one wears the accent.
+                chip.variant = self._chip_variant.get(chip.id or "", "default")
             button.add_class("-active")
+            button.variant = "primary"
             self._reload()
 
         @on(Button.Pressed, ".provider-toggle")

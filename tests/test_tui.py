@@ -382,6 +382,84 @@ async def test_category_chips_replace_the_category_list(app):
         assert any(c.id == "facet-all" for c in chips)
 
 
+async def test_no_category_chip_uses_the_warning_variant(app):
+    """Amber means *something is wrong* everywhere else in a security tool.
+    A partly-installed category is not a warning, and users read it as one."""
+    from textual.widgets import Button
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        variants = {c.variant for c in pilot.app.query("#facetlist Button").results(Button)}
+        assert "warning" not in variants
+        assert "error" not in variants
+
+
+async def test_category_chip_label_shows_installed_over_total(app):
+    """The colour reinforces the ratio; the ratio is what actually says where
+    the user's loadout is thin."""
+    import re
+
+    from textual.widgets import Button
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        chip = pilot.app.query_one("#facet-recon", Button)
+        assert re.search(r"\d+/\d+", str(chip.label)), str(chip.label)
+
+
+async def test_active_category_chip_takes_the_accent_and_gives_it_back(app):
+    """Selecting a category used to leave no visual trace: only the hardcoded
+    `all` chip was ever coloured, so the active filter was invisible."""
+    from textual.widgets import Button
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        recon = pilot.app.query_one("#facet-recon", Button)
+        was = recon.variant
+        recon.press()
+        await pilot.pause()
+        assert recon.variant == "primary"
+        assert pilot.app.query_one("#facet-all", Button).variant == "default"
+        pilot.app.query_one("#facet-all", Button).press()
+        await pilot.pause()
+        assert recon.variant == was
+        assert pilot.app.query_one("#facet-all", Button).variant == "primary"
+
+
+async def test_banner_uses_the_art_on_a_roomy_terminal(app):
+    from textual.widgets import Static
+
+    from loadout.ui.tui.app import BANNER_ART
+
+    async with app.run_test(size=(120, 42)) as pilot:
+        await pilot.pause()
+        rendered = str(pilot.app.query_one("#banner", Static).render())
+        assert BANNER_ART[0].strip() in rendered
+
+
+async def test_banner_falls_back_to_one_line_on_a_small_terminal(app):
+    """Six rows of chrome on an 80x24 terminal is a quarter of the screen
+    spent on the program telling you its own name."""
+    from textual.widgets import Static
+
+    from loadout.ui.tui.app import BANNER_ART
+
+    async with app.run_test(size=(80, 24)) as pilot:
+        await pilot.pause()
+        rendered = str(pilot.app.query_one("#banner", Static).render())
+        assert BANNER_ART[0].strip() not in rendered
+        assert "loadout" in rendered
+
+
+async def test_banner_art_is_a_clean_block(app):
+    """A ragged row would shift the facts set beside the art out of line."""
+    from loadout.ui.tui.app import BANNER_ART, BANNER_WIDTH
+
+    assert len({len(row) for row in BANNER_ART}) == 1
+    assert len(BANNER_ART[0]) == BANNER_WIDTH
+    assert all(row.strip() for row in BANNER_ART)
+
+
 async def test_clicking_a_category_chip_filters_like_the_old_listview_did(app):
     from textual.widgets import DataTable
 
