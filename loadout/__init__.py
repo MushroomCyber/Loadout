@@ -1,6 +1,6 @@
 """Loadout -- pick your kit, install it anywhere, prove what you used.
 
-Formerly Kali Tools Manager. The rename came with the provider layer: a tool is
+Formerly `kalitools`. The rename came with the provider layer: a tool is
 now described once and installed by whichever backend the machine actually has
 (apt, brew, pipx, go, cargo, a verified GitHub release, a container).
 

@@ -33,7 +33,7 @@ logger = logging.getLogger("loadout.http")
 
 USER_AGENT = (
     f"loadout/{__version__} "
-    "(+https://github.com/MushroomCyber/Kali-Tools-Manager)"
+    "(+https://github.com/MushroomCyber/Loadout)"
 )
 
 DEFAULT_TIMEOUT = 10.0

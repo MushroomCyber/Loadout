@@ -6,8 +6,8 @@ file, no Python. See [docs/CATALOG.md](docs/CATALOG.md).
 ## Setup
 
 ```bash
-git clone https://github.com/MushroomCyber/Kali-Tools-Manager.git
-cd Kali-Tools-Manager
+git clone https://github.com/MushroomCyber/Loadout.git
+cd Loadout
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e '.[dev,tui]'
 

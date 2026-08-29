@@ -6,6 +6,7 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/MushroomCyber/Loadout/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/MushroomCyber/Loadout/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
   <img alt="Platforms" src="https://img.shields.io/badge/linux%20%C2%B7%20macos%20%C2%B7%20wsl-supported-informational?style=flat-square">
@@ -50,8 +51,8 @@ loadout report --since 30d      # signed inventory of what you used, for the rep
 From a local checkout of this repository:
 
 ```bash
-git clone https://github.com/MushroomCyber/Kali-Tools-Manager.git
-cd Kali-Tools-Manager
+git clone https://github.com/MushroomCyber/Loadout.git
+cd Loadout
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev,tui]'
@@ -85,8 +86,8 @@ loadout doctor
 On Kali, Debian, Ubuntu, or most Linux hosts:
 
 ```bash
-git clone https://github.com/MushroomCyber/Kali-Tools-Manager.git
-cd Kali-Tools-Manager
+git clone https://github.com/MushroomCyber/Loadout.git
+cd Loadout
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev,tui]'
@@ -297,8 +298,11 @@ See [SECURITY.md](SECURITY.md) for the threat model and how to report an issue.
 
 ## Contributing
 
-Adding a tool to the catalog is the easiest useful contribution — one YAML
-file. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Adding a tool to the catalog is the easiest useful contribution — one YAML file,
+no Python. See [docs/CATALOG.md](docs/CATALOG.md) for the format and
+[CONTRIBUTING.md](CONTRIBUTING.md) for the workflow. There is an
+[issue template](https://github.com/MushroomCyber/Loadout/issues/new?template=add-tool.yml)
+if you would rather suggest a tool than write the entry yourself.
 
 ```bash
 pip install -e '.[dev,tui]'

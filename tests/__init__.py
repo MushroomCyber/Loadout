@@ -1,1 +1,1 @@
-"""Test suite for Kali Tools Manager."""
+"""Test suite for Loadout."""

@@ -6,7 +6,7 @@ versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.0] — unreleased
 
-Kali Tools Manager becomes **Loadout**. The rename ships with the capability
+`kalitools` becomes **Loadout**. The rename ships with the capability
 that justifies it: a tool is described once and installed by whichever backend
 the machine actually has.
 
@@ -143,5 +143,5 @@ Found only by running against real Kali (see `tools/verify_linux.sh`):
 
 ## [0.3.0] — 2026-04
 
-Last release under the Kali Tools Manager name. Rich CLI, Textual TUI, curated
+Last release under the `kalitools` name. Rich CLI, Textual TUI, curated
 profiles, offline APT support, SQLite state, 33 tests.

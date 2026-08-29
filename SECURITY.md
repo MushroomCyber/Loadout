@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 **Please do not open a public issue.** Use a
-[private security advisory](https://github.com/MushroomCyber/Kali-Tools-Manager/security/advisories/new).
+[private security advisory](https://github.com/MushroomCyber/Loadout/security/advisories/new).
 
 Include what the issue is, how to reproduce it, and your read on the impact.
 Expect an acknowledgement within 7 days.

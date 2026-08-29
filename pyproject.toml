@@ -59,10 +59,10 @@ loadout = "loadout.ui.cli:cli"
 kalitools = "loadout.ui.cli:legacy_shim"
 
 [project.urls]
-Homepage = "https://github.com/MushroomCyber/Kali-Tools-Manager"
-Repository = "https://github.com/MushroomCyber/Kali-Tools-Manager"
-Issues = "https://github.com/MushroomCyber/Kali-Tools-Manager/issues"
-Changelog = "https://github.com/MushroomCyber/Kali-Tools-Manager/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/MushroomCyber/Loadout"
+Repository = "https://github.com/MushroomCyber/Loadout"
+Issues = "https://github.com/MushroomCyber/Loadout/issues"
+Changelog = "https://github.com/MushroomCyber/Loadout/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 include = ["loadout*"]
