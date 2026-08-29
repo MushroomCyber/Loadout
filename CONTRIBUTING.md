@@ -3,6 +3,9 @@
 The easiest useful contribution is **adding a tool to the catalog** — one YAML
 file, no Python. See [docs/CATALOG.md](docs/CATALOG.md).
 
+For code, [TODO.md](TODO.md) is the current backlog, ordered by how much each
+item affects someone actually using the tool.
+
 ## Setup
 
 ```bash
@@ -60,6 +63,13 @@ def test_my_provider_argv():
 - **Every command supports `--json`**, with a stable shape.
 - **Errors carry a remediation.** `LoadoutError("x failed", remediation="try y")`.
   A user should never have to guess what to do next.
+- **A button must call an action that already exists.** Every control in the
+  browser dispatches to the same `action_*` method its key binding does, so the
+  mouse and keyboard paths cannot drift apart. Adding a control means wiring it
+  to an action, not reimplementing the behaviour beside one.
+- **Never encode state in amber.** In a security tool amber reads as *something
+  is wrong*; it is not free to spend on "partly done". Put the detail in the
+  label and let colour reinforce it.
 - Type annotations on new code; `mypy loadout` must pass.
 
 ## Tests

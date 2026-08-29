@@ -131,16 +131,19 @@ Aligned with PTES and the ATT&CK tactics people already plan around, so
 
 ## Seeding and enrichment
 
-Two helper paths exist for bulk work:
+Bulk gaps are filled from the machine's own APT metadata — summaries,
+homepages, sizes, and categories derived from Kali meta-package membership and
+debtags:
 
 ```bash
-# Fill gaps from local APT metadata: summaries, homepages, sizes, categories
-# from Kali meta-package membership and debtags.
-loadout catalog update
-
-# One-shot import of the kalitools 0.3 JSON (already run; kept for reference).
-python tools/seed_from_legacy.py --json legacy/tools_merged.json --out catalog/
+loadout catalog enrich        # write the findings back into catalog/*.yaml
+loadout catalog update        # refresh the compiled catalog in $XDG_DATA_HOME
 ```
+
+`enrich` edits the YAML source tree and is what a catalog pull request is built
+from; `update` refreshes only your own compiled copy. Both need a Debian-family
+box with APT present. CI runs `enrich` on a schedule in a
+`kalilinux/kali-rolling` container and opens a pull request with the diff.
 
 `loadout catalog update` never overwrites what an entry already states — APT
 only supplies what is missing. Curation always wins.

@@ -43,6 +43,19 @@ the machine actually has.
   a method that exists -- previously a broken binding surfaced only on keypress.
 - Issue templates (including an "add a tool" form for the catalog) and a pull
   request checklist.
+- **Mouse control throughout the browser.** An action row in the detail pane
+  (Install/Remove, Star, Run, Alternatives), a batch bar that appears once
+  something is marked, provider toggles, clickable category chips, and
+  Retry/Close on the install modal so a failure has a next step. Every button
+  calls the action its key binding already called, so the two cannot drift.
+- **Command palette** (`ctrl+p`) with the bundled loadouts in it, matching
+  either the name or the slug `loadout apply` takes.
+- **`ctrl+r`** runs the highlighted tool, suspending the UI and restoring it
+  afterwards.
+- An `ansi_shadow` banner, baked in as a constant rather than a runtime
+  dependency, with the machine's facts set beside it. Falls back to the
+  existing one-line form below 96x30 and switches on resize.
+- [TODO.md](TODO.md), tracking what is outstanding.
 
 ### Changed
 
@@ -61,10 +74,35 @@ the machine actually has.
 - Logging defaults to WARNING; a CLI that prints log lines during normal
   operation is unusable in a pipeline.
 - Desktop notifications shell out to `notify-send` / `osascript`, dropping the
-  unmaintained `notify2` dependency (and with it `dbus-python`).
+  unmaintained `notify2` dependency (and with it `dbus-python`). *(The module
+  is not yet wired to a caller — see [TODO.md](TODO.md).)*
+- **Category chips carry installed-over-total** (`wireless 14/48`) instead of a
+  bare count, and use two colours rather than three. The amber "some but not
+  many installed" state was unreadable: amber means *something is wrong*
+  everywhere else in a security tool, and a partly-stocked category is not a
+  warning.
+- Provider toggles are offered only for backends that are usable on this
+  machine *and* present in the catalog, labelled with their entry count. `npm`
+  and `docker` are implemented but no catalog entry uses them, so a toggle for
+  either could only ever empty the table.
 
 ### Fixed
 
+- **Installs failed as a non-root sudo user** with `E: Write error - write (9:
+  Bad file descriptor)` repeated once per status write, and were reported as
+  failures even though dpkg had installed the package correctly. APT's progress
+  fd was an anonymous pipe passed through `pass_fds`, which did not reliably
+  survive `fork`/`exec` through sudo. It now points at the process's own
+  stdout: always open, inherited by `exec()`, no bookkeeping and no reader
+  thread.
+- Selecting a category left no visual trace — only the hardcoded `all` chip was
+  ever coloured, so the active filter was invisible.
+- An empty result left the previous tool's facts and action row standing over an
+  empty table, offering to install something the filter had just excluded. The
+  detail pane clears, and the hint names the filters responsible instead of
+  reporting a bare "0 tools".
+- The marked-set watcher and the detail pane raised `NoMatches` during app
+  teardown, when a queued message arrived after the widgets were removed.
 - `list --installed` and `export` returned nothing on a fresh machine — silently,
   with exit code 0 — because installed state came from a cache file that started
   out empty. It is now queried live from the providers.

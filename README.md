@@ -90,9 +90,54 @@ pip install -e '.[dev,tui]'
 loadout
 ```
 
-The first launch opens the interactive browser. Move around with the arrow keys,
-filter by typing, press Enter to act on the highlighted tool, and use the
-sidebar to see the current category and provider hints.
+The first launch opens the interactive browser. Type to filter, arrow keys to
+move, `enter` to act on the highlighted tool. Everything is also clickable --
+see [Interactive browser](#interactive-browser).
+
+### Upgrading Loadout
+
+Two different things get upgraded, and they are separate commands on purpose:
+**Loadout itself** comes from this repository, and **the tools it installed for
+you** come from their own package managers.
+
+To upgrade Loadout:
+
+```bash
+cd Loadout
+git pull
+source .venv/bin/activate
+pip install -e '.[dev,tui]'   # picks up dependency changes
+loadout --version
+loadout catalog info          # confirm the new catalog is the one in use
+```
+
+With a pipx-managed checkout, `pipx install --editable . --force` instead of the
+`pip install` line.
+
+`git pull` brings a rebuilt catalog with it, so there is nothing to compile.
+Run `loadout catalog build` only if you edited `catalog/` yourself.
+
+Your data is untouched by an upgrade: loadouts, history, stars and provenance
+live in `$XDG_STATE_HOME` and `$XDG_CONFIG_HOME`, never inside the package.
+
+> **If `loadout catalog info` still shows the old tool count**, you have a
+> refreshed catalog in `$XDG_DATA_HOME/loadout/catalog.db` from a previous
+> `loadout catalog update`, and it deliberately wins over the one shipped with
+> the release — otherwise an upgrade would throw away a refresh. Re-run
+> `loadout catalog update` to rebuild it from this machine's package metadata,
+> or delete that file to fall back to the catalog you just pulled.
+
+To upgrade the tools themselves:
+
+```bash
+loadout update                # refresh package lists, report what is upgradable
+loadout upgrade --dry-run     # show exactly what would change
+loadout upgrade               # apply it
+loadout hold burpsuite        # pin a version an engagement depends on
+```
+
+If an upgrade leaves the machine in an odd state, `loadout doctor` names the
+problem rather than making you guess.
 
 ---
 
@@ -205,15 +250,57 @@ loadout doctor --json | jq '.[] | select(.severity != "ok")'
 `loadout` with no arguments. The cursor starts in the filter box and the list
 narrows as you type.
 
+```
+██╗      ██████╗  █████╗ ██████╗  ██████╗ ██╗   ██╗████████╗
+██║     ██╔═══██╗██╔══██╗██╔══██╗██╔═══██╗██║   ██║╚══██╔══╝
+██║     ██║   ██║███████║██║  ██║██║   ██║██║   ██║   ██║      774 tools · 61 installed
+██║     ██║   ██║██╔══██║██║  ██║██║   ██║██║   ██║   ██║      kali · apt gem gh go pipx
+███████╗╚██████╔╝██║  ██║██████╔╝╚██████╔╝╚██████╔╝   ██║
+╚══════╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝  ╚═════╝    ╚═╝
+```
+
+The banner drops to a single line on terminals under 96x30, so a small window
+spends its rows on tools rather than on the program's own name.
+
+### Keys
+
 | Key | Action |
 |---|---|
 | *type* | Filter immediately |
 | `↑` `↓` | Move |
 | `space` | Mark a tool |
-| `ctrl+a` | Install everything marked |
 | `enter` | Install / remove the highlighted tool |
+| `ctrl+a` | Install everything marked |
 | `ctrl+s` | Star |
+| `ctrl+r` | Run the highlighted tool, suspending the UI |
+| `ctrl+p` | Command palette — fuzzy-find and apply a loadout |
+| `f5` | Re-read what is installed |
 | `esc` | Clear filter, then clear marks, then quit |
+
+### Mouse
+
+Every control calls the same action its key binding does, so nothing behaves
+differently depending on how you reached it.
+
+| Control | Where | Does |
+|---|---|---|
+| **Install** / **Remove** | Detail pane | Acts on the selected tool; the label tracks its state |
+| **★ Star** | Detail pane | Toggles the star |
+| **Run** | Detail pane | Only shown when the tool has a known binary or a container image |
+| **Alternatives** | Detail pane | Only shown when the catalog lists any |
+| **Install *n* marked** / **Clear** | Batch bar | Appears once something is marked, and counts it |
+| Provider toggles | Under the filter box | Narrow the list to one or more backends |
+| Category chips | Left sidebar | Filter by category |
+| **Retry** / **Close** | Install modal | A failed install offers a next step, not just red text |
+
+Two of those carry state you can read at a glance:
+
+- **Provider toggles** are only offered for backends that are both usable on
+  this machine *and* present in the catalog, and are labelled with how many
+  entries they cover: `apt 768`, `gh 15`, `pipx 10`. An active toggle takes the
+  accent colour.
+- **Category chips** show installed-over-total (`wireless 14/48`), and turn
+  green once you have a third of a category. The active chip takes the accent.
 
 ---
 
@@ -252,8 +339,12 @@ loadout catalog info
 Adding a tool is one file and a pull request. See
 [docs/CATALOG.md](docs/CATALOG.md).
 
-**Supported providers:** `apt` · `brew` · `pipx` · `go` · `cargo` · `gem` ·
+**Providers implemented:** `apt` · `brew` · `pipx` · `go` · `cargo` · `gem` ·
 `npm` · `github` (verified release downloads) · `docker`
+
+**Providers with catalog coverage today:** `apt` 768 · `brew` 33 · `github` 15 ·
+`go` 10 · `pipx` 10 · `gem` 2 · `cargo` 1. `npm` and `docker` work but no entry
+uses them yet — adding one is a pull request, not a code change.
 
 ---
 
@@ -304,7 +395,12 @@ if you would rather suggest a tool than write the entry yourself.
 pip install -e '.[dev,tui]'
 pytest
 ruff check .
+mypy loadout
 ```
+
+[TODO.md](TODO.md) tracks what is outstanding, from packaging and signature
+verification to the modules where test coverage is thinnest. It is the place to
+look for something to pick up.
 
 ---
 
