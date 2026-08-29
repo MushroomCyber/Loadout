@@ -303,6 +303,78 @@ async def test_provider_toggle_filters_the_list(app):
         assert "apt" in pilot.app._active_providers
 
 
+async def test_provider_toggle_is_skipped_when_the_catalog_has_no_entries(app):
+    """A provider can be installed on the box and still have nothing in the
+    catalog that uses it. Offering that toggle gives the user a control whose
+    only possible outcome is an empty table."""
+    from loadout.providers.base import ProviderStatus
+
+    app.ctx._statuses = {
+        "apt": ProviderStatus(name="apt", available=True),
+        "npm": ProviderStatus(name="npm", available=True),
+    }
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        ids = {b.id for b in pilot.app.query("#providers Button")}
+        assert ids == {"prov-apt"}, "npm matches no sample tool and must not appear"
+
+
+async def test_provider_toggle_label_carries_the_catalog_count(app):
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        from textual.widgets import Button
+
+        label = str(pilot.app.query_one("#prov-apt", Button).label)
+        assert label.startswith("apt ")
+        assert label.split()[1].isdigit()
+
+
+async def test_active_provider_toggle_changes_variant_not_just_a_class(app):
+    """`reverse` alone was indistinguishable from Textual's focus highlight,
+    so a user could not tell whether the click had registered."""
+    from textual.widgets import Button
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        button = pilot.app.query_one("#prov-apt", Button)
+        assert button.variant == "default"
+        button.press()
+        await pilot.pause()
+        assert button.variant == "primary"
+        button.press()
+        await pilot.pause()
+        assert button.variant == "default"
+
+
+async def test_empty_results_clear_the_detail_pane(app):
+    """The action row acts on the selected tool. Left standing over an empty
+    table it offers to install something the current filter excludes."""
+    from textual.widgets import Input
+
+    from loadout.ui.tui.app import ToolDetail
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        assert pilot.app.query("#detail Button")
+        pilot.app.query_one("#query", Input).value = "zzzznotathing"
+        await pilot.pause()
+        assert pilot.app._rows == []
+        detail = pilot.app.query_one("#detail", ToolDetail)
+        assert not detail.query("Button")
+
+
+async def test_empty_results_say_what_is_filtering(app):
+    from textual.widgets import Input, Static
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        pilot.app.query_one("#query", Input).value = "zzzznotathing"
+        await pilot.pause()
+        hint = str(pilot.app.query_one("#hint", Static).render())
+        assert "no tools match" in hint
+        assert "zzzznotathing" in hint
+
+
 async def test_category_chips_replace_the_category_list(app):
     async with app.run_test() as pilot:
         await pilot.pause()

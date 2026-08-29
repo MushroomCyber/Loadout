@@ -437,14 +437,25 @@ if TEXTUAL_AVAILABLE:
                     )
                 )
 
+            # A toggle is only worth offering when the provider is usable here
+            # *and* the catalog has something it can install. Listing npm or
+            # docker on a box where no entry names them gives the user a
+            # control whose only possible outcome is an empty table.
+            counts = dict(self.ctx.catalog.facet_values("provider"))
             providers = self.query_one("#providers", Horizontal)
             for name in sorted(self.ctx.provider_status):
                 status = self.ctx.provider_status[name]
-                if not status.available:
+                count = counts.get(name, 0)
+                if not status.available or not count:
                     continue
                 short = _SHORT_PROVIDER.get(name, name)
                 providers.mount(
-                    Button(short, id=f"prov-{name}", classes="provider-toggle", compact=True)
+                    Button(
+                        f"{short} {count}",
+                        id=f"prov-{name}",
+                        classes="provider-toggle",
+                        compact=True,
+                    )
                 )
 
             self.query_one("#query", Input).focus()
@@ -521,6 +532,14 @@ if TEXTUAL_AVAILABLE:
             return " ".join(parts)
 
         def _render_rows(self) -> None:
+            try:
+                self._render_rows_now()
+            except NoMatches:
+                # Textual can deliver a queued message after teardown has
+                # started removing widgets. Nothing to draw on a dead DOM.
+                return
+
+        def _render_rows_now(self) -> None:
             table = self.query_one("#table", DataTable)
             table.clear()
             installed = self.ctx.installed()
@@ -540,8 +559,10 @@ if TEXTUAL_AVAILABLE:
                     key=tool.id,
                 )
             self._update_hint()
-            if self._rows:
-                self._show_detail(self._rows[0])
+            # Clear rather than leave the last tool's facts and action row
+            # standing over an empty table -- those buttons would be offering
+            # to install something the current filter excludes.
+            self._show_detail(self._rows[0] if self._rows else None)
 
         def _update_hint(self) -> None:
             installed = self.ctx.installed()
@@ -553,7 +574,22 @@ if TEXTUAL_AVAILABLE:
                 total = self.ctx.catalog.count()
             except Exception:
                 total = shown
-            scope = f"{shown} of {total}" if query or self._facet else f"{shown} tools"
+            filtered = bool(query or self._facet or self._active_providers)
+            if filtered and not shown:
+                # An empty table with no explanation reads as a broken filter.
+                # Name what is narrowing it so the user knows what to undo.
+                why = []
+                if query:
+                    why.append(f'"{query}"')
+                if self._facet:
+                    why.append(self._facet[1])
+                if self._active_providers:
+                    why.append(" + ".join(sorted(self._active_providers)))
+                self.query_one("#hint", Static).update(
+                    f"[dim]no tools match {' · '.join(why)}{marked}[/dim]"
+                )
+                return
+            scope = f"{shown} of {total}" if filtered else f"{shown} tools"
             self.query_one("#hint", Static).update(
                 f"[dim]{scope} · {here} installed{marked}[/dim]"
             )
@@ -574,7 +610,13 @@ if TEXTUAL_AVAILABLE:
             return next((t for t in self._rows if t.id == tool_id), None)
 
         def _show_detail(self, tool: Any) -> None:
-            self.query_one("#detail", ToolDetail).update_tool(tool, self.ctx)
+            try:
+                detail = self.query_one("#detail", ToolDetail)
+            except NoMatches:
+                # Clearing the table posts RowHighlighted, and Textual can
+                # deliver it after teardown has removed the detail pane.
+                return
+            detail.update_tool(tool, self.ctx)
 
         # -- events --------------------------------------------------------
 
@@ -613,9 +655,11 @@ if TEXTUAL_AVAILABLE:
             if name in self._active_providers:
                 self._active_providers.discard(name)
                 button.remove_class("-active")
+                button.variant = "default"
             else:
                 self._active_providers.add(name)
                 button.add_class("-active")
+                button.variant = "primary"
             self._reload()
 
         @on(Button.Pressed, "#btn-apply")
@@ -721,11 +765,9 @@ if TEXTUAL_AVAILABLE:
                 bar.styles.display = "block" if marked else "none"
                 if marked:
                     self.query_one("#btn-apply", Button).label = f"Install {len(marked)} marked"
-                self._render_rows()
             except NoMatches:
-                # Also fires while the app tears down, once the widgets this
-                # touches have already been removed from the DOM.
                 return
+            self._render_rows()
 
         def _run_for(self, tool_ids: list[str]) -> None:
             from ...planner import ACTION_INSTALL, ACTION_REMOVE
