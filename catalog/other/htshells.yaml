@@ -1,6 +1,14 @@
 id: htshells
+summary: Self contained htaccess shells and attacks
+description: htshells is a series of web based attacks based around the .htaccess files. Most of the attacks
+  are centered around two attack categories. Remote code/ command execution and information disclosure.
+  These attacks are intended for use during penetration tests or security assessments. It was created
+  to get shell in a CMS that restricted uploads based on extension and placed each uploaded file in it's
+  own directory.
 categories:
 - other
+homepage: https://github.com/wireghoul/htshells
+size: 57344
 install:
 - provider: apt
   package: htshells
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1~git20131205-1kali3

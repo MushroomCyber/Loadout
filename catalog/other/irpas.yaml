@@ -1,6 +1,19 @@
 id: irpas
+summary: Internetwork Routing Protocol Attack Suite
+description: This package contains a collection of programs used for advanced network operations, testing,
+  and debugging. CDP and the route injectors can be useful in a production network. Several other tools
+  are useful for security and firewall testing. Finally some tools such as netenum are useful for general
+  admin scripting. Like all powerful tools, it could cause great damage, so be careful. * cdp - Cisco
+  discovery protocol packet sender * igrp - IGRP route injector * ass - Autonomous system scanner * irdp
+  - IRDP sender * irdpresponder - IRDP responder * itrace - ICMP based traceroute * tctrace - TCP SYN
+  based traceroute * protos - ICMP based port scanner * netmask - Asks for netmask via ICMP * file2cable
+  - Dumps any binary file direct to ethernet * dfkaa - Troubleshoot devices formerly known as Ascend (Pipeline,
+  etc) * netenum - Ping scanner designed for shell scripts * hsrp - HSRP failover tester * icmp_redirect
+  - ICMP redirection system * timestamp - ICMP timestamp requester * dhcpx - DHCP s
 categories:
-- other
+- recon
+homepage: https://web.archive.org/web/20200208113522fw_/http://phenoelit.org/fr/tools.html
+size: 415744
 install:
 - provider: apt
   package: irpas
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.10-10

@@ -1,5 +1,15 @@
 id: bettercap
 summary: Network attack and monitoring framework
+description: 'The Swiss Army knife for 802.11, BLE, IPv4 and IPv6 networks reconnaissance and MITM attacks.
+  bettercap is a powerful, easily extensible and portable framework  written in Go which aims to offer
+  to security researchers, red teamers and reverse engineers an easy to use, all-in-one solution with
+  all the features they might possibly need for performing reconnaissance and attacking WiFi networks,
+  Bluetooth Low Energy devices, wireless HID devices and Ethernet networks. Main Features: * WiFi networks
+  scanning, deauthentication attack, clientless PMKID association attack and automatic WPA/WPA2 client
+  handshakes capture. * Bluetooth Low Energy devices scanning, characteristics enumeration, reading and
+  writing. * 2.4Ghz wireless devices scanning and MouseJacking attacks with over-the-air HID frames injection
+  (with DuckyScript support). * Passive and active IP network hosts probing and recon. * ARP, DNS, NDP
+  and DHCPv6 spoofers for MITM attacks on IPv4 and IPv6 based networks. * Proxies at pack'
 categories:
 - sniffing
 - wireless
@@ -14,6 +24,7 @@ homepage: https://www.bettercap.org
 requires_root: true
 alternatives:
 - ettercap
+size: 66208768
 install:
 - provider: apt
   package: bettercap
@@ -24,3 +35,4 @@ install:
   - ubuntu
 - provider: brew
   formula: bettercap
+version: 2.41.5-0kali1

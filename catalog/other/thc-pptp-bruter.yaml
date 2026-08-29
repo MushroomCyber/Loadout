@@ -1,6 +1,12 @@
 id: thc-pptp-bruter
+summary: THC PPTP Brute Force
+description: Brute force program against pptp vpn endpoints (tcp port 1723).  Fully standalone. Supports
+  latest MSChapV2 authentication. Tested against Windows and Cisco gateways.  Exploits a weakness in Microsoft's
+  anti-brute force implementation which makes it possible to try 300 passwords the second.
 categories:
-- other
+- password
+homepage: http://www.thc.org/releases.php
+size: 48128
 install:
 - provider: apt
   package: thc-pptp-bruter
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1.4-1kali5

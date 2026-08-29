@@ -1,6 +1,10 @@
 id: dns2tcp
+summary: TCP-over-DNS tunnel server and client
+description: dns2tcp is a set of tools to encapsulate a TCP session in DNS packets. This type of encapsulation
+  generates smaller packets than IP-over-DNS, improving throughput. The client does not need root privileges.1
 categories:
-- other
+- post-exploitation
+size: 155648
 install:
 - provider: apt
   package: dns2tcp
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.5.2-4

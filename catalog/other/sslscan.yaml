@@ -1,6 +1,13 @@
 id: sslscan
+summary: Tests SSL/TLS enabled services to discover supported cipher suites
+description: This tool allow queries SSL/TLS services (such as HTTPS) and reports the protocol versions,
+  cipher suites, key exchanges, signature algorithms, and certificates in use.  This helps the user understand
+  which  parameters are weak from a security standpoint. sslscan can also output results into an XML file
+  for easy consumption by external programs.
 categories:
-- other
+- recon
+homepage: https://github.com/rbsec/sslscan
+size: 182272
 install:
 - provider: apt
   package: sslscan
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.5-1

@@ -1,6 +1,13 @@
 id: nasm
+summary: General-purpose x86 assembler
+description: Netwide Assembler.  NASM will currently output flat-form binary files, a.out, COFF and ELF
+  Unix object files, and Microsoft 16-bit DOS and Win32 object files. Also included is NDISASM, a prototype
+  x86 binary-file disassembler which uses the same instruction table as NASM. NASM is released under the
+  2-clause BSD license.
 categories:
-- other
+- recon
+homepage: https://www.nasm.us/
+size: 3851264
 install:
 - provider: apt
   package: nasm
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.01-1

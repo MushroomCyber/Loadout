@@ -1,6 +1,13 @@
 id: xsrfprobe
+summary: Prime Cross Site Request Forgery Audit and Exploitation Toolkit
+description: XSRFProbe is an advanced Cross Site Request Forgery (CSRF/XSRF) Audit and Exploitation Toolkit.
+  Equipped with a powerful crawling engine and numerous systematic checks, it is able to detect most cases
+  of CSRF vulnerabilities, their related bypasses and further generate (maliciously) exploitable proof
+  of concepts with each found vulnerability.
 categories:
 - other
+homepage: https://github.com/0xInfection/XSRFProbe
+size: 194560
 install:
 - provider: apt
   package: xsrfprobe
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.3.1-0kali1

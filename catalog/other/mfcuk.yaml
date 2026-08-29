@@ -1,6 +1,14 @@
 id: mfcuk
+summary: MiFare Classic Universal toolKit
+description: 'Toolkit containing samples and various tools based on and around libnfc and crapto1, with
+  emphasis on Mifare Classic NXP/Philips RFID cards. Special emphasis of the toolkit is on the following:
+  1) mifare classic weakness demonstration/exploitation 2) demonstrate use of libnfc (and ACR122 readers)
+  3) demonstrate use of Crapto1 implementation to confirm internal workings and to verify theoretical/practical
+  weaknesses/attacks.'
 categories:
 - other
+homepage: https://github.com/nfc-tools/mfcuk
+size: 89088
 install:
 - provider: apt
   package: mfcuk
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.3.8+git20180720-2

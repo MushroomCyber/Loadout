@@ -1,6 +1,12 @@
 id: cymothoa
+summary: Stealth backdooring tool
+description: Cymothoa is a stealth backdooring tool, that inject backdoor's shellcode into an existing
+  process. The tool uses the ptrace library (available on nearly all * nix), to manipulate processes and
+  infect them.
 categories:
-- other
+- post-exploitation
+homepage: https://cymothoa.sourceforge.net/
+size: 92160
 install:
 - provider: apt
   package: cymothoa
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1-beta-1kali4

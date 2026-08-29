@@ -1,6 +1,13 @@
 id: aesfix
+summary: tool for correcting bit errors in an AES key schedule
+description: This program illustrates a technique for correcting bit errors in an AES key schedule. It
+  should be used with the output of the aeskeyfind program. It is limited to AES-128 key schedules, and
+  it can only correct unidirectional 1->0 bit errors.  For the most part it has been optimized for readability
+  rather than performance. This package is useful to several activities, as forensics investigations.
 categories:
-- other
+- crypto
+homepage: https://citp.princeton.edu/our-work/memory/code/
+size: 41984
 install:
 - provider: apt
   package: aesfix
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.1-8

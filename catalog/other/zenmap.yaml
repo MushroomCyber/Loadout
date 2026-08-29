@@ -1,6 +1,12 @@
 id: zenmap
+summary: The Network Mapper Front End
+description: Zenmap is an Nmap frontend. It is meant to be useful for advanced users and to make Nmap
+  easy to use by beginners. It was originally derived from Umit, an Nmap GUI created as part of the Google
+  Summer of Code.
 categories:
-- other
+- recon
+homepage: https://nmap.org/
+size: 1854464
 install:
 - provider: apt
   package: zenmap
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 7.99+dfsg-1kali1

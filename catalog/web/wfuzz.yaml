@@ -1,8 +1,14 @@
 id: wfuzz
+summary: Web application bruteforcer
+description: Wfuzz is a tool designed for bruteforcing Web Applications, it can be used for finding resources
+  not linked directories, servlets, scripts, etc, bruteforce GET and POST parameters for checking different
+  kind of injections (SQL, XSS, LDAP,etc), bruteforce Forms parameters (User/Password), Fuzzing, etc.
 categories:
 - web
 tags:
 - fuzzing
+homepage: http://www.edge-security.com/wfuzz.php
+size: 1622016
 install:
 - provider: apt
   package: wfuzz
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.1.0-6

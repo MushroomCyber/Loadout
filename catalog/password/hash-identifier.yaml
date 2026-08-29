@@ -1,8 +1,12 @@
 id: hash-identifier
+summary: Tool to identify hash types
+description: Software to identify the different types of hashes used to encrypt data and especially passwords.
 categories:
 - password
 tags:
 - identification
+homepage: https://github.com/blackploit/hash-identifier
+size: 50176
 install:
 - provider: apt
   package: hash-identifier
@@ -11,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2+git20180314-0kali3

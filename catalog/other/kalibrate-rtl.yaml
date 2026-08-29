@@ -1,6 +1,11 @@
 id: kalibrate-rtl
+summary: Calculate local oscillator frequency offset using GSM base stations
+description: Kalibrate, or kal, can scan for GSM base stations in a given frequency band and can use those
+  GSM base stations to calculate the local oscillator frequency offset.
 categories:
-- other
+- wireless
+homepage: https://github.com/steve-m/kalibrate-rtl
+size: 63488
 install:
 - provider: apt
   package: kalibrate-rtl
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4.1+git20191125-0kali2+b2

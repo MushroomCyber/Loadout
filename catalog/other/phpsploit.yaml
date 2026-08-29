@@ -1,6 +1,12 @@
 id: phpsploit
+summary: Stealth post-exploitation framework
+description: This package contains a remote control framework, aiming to provide a stealth interactive
+  shell-like connection over HTTP between client and web server. It is a post-exploitation tool capable
+  to maintain access to a compromised web server for privilege escalation purposes.
 categories:
 - other
+homepage: https://github.com/nil0x42/phpsploit
+size: 898048
 install:
 - provider: apt
   package: phpsploit
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.2+git20240329.aea961d-0kali1

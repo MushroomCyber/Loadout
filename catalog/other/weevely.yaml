@@ -1,6 +1,12 @@
 id: weevely
+summary: Stealth tiny web shell
+description: Weevely is a stealth PHP web shell that simulate telnet-like connection. It is an essential
+  tool for web application post exploitation, and can be used as stealth backdoor or as a web shell to
+  manage legit web accounts, even free hosted ones.
 categories:
-- other
+- web
+homepage: https://github.com/epinna/weevely3/
+size: 920576
 install:
 - provider: apt
   package: weevely
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.0.2-1

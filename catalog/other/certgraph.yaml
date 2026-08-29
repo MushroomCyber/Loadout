@@ -1,6 +1,17 @@
 id: certgraph
+summary: tool to crawl the graph of certificate Alternate Names
+description: This package contains a tool to crawl the graph of certificate Alternate Names. CertGraph
+  crawls SSL certificates creating a directed graph where each domain is a node and the certificate alternative
+  names for that domain's certificate are the edges to other domain nodes. New domains are printed as
+  they are found. In Detailed mode upon completion the Graph's adjacency list is printed. Crawling defaults
+  to collecting certificate by connecting over TCP, however there are multiple drivers that can search
+  Certificate Transparency logs. This tool was designed to be used for host name enumeration via SSL certificates,
+  but it can also show you a "chain" of trust between domains and the certificates that re-used between
+  them.
 categories:
 - other
+homepage: https://github.com/lanrat/certgraph
+size: 6685696
 install:
 - provider: apt
   package: certgraph
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 20180911-0kali1

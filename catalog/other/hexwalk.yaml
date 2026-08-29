@@ -1,6 +1,13 @@
 id: hexwalk
+summary: Hex analyzer, editor and viewer
+description: 'HexWalk is an Hex editor, viewer, analyzer based on opensource projects like qhexedit2,
+  binwalk and QT It is cross platform and has plenty of features: - Advanced find patterns in binary files
+  based on HEX, UTF8, UTF16 and regex - Binwalk integration - Entropy Analysis - Byte Map - Hash Calculator
+  - Bin/Dec/Hex Converter - Hex file editing - Diff file analysis - Byte Patterns to parse headers'
 categories:
 - other
+homepage: https://www.hexwalk.com
+size: 958464
 install:
 - provider: apt
   package: hexwalk
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7.1-1+b1

@@ -1,8 +1,18 @@
 id: blueranger
+summary: Simple Bash script to locate Bluetooth devices
+description: BlueRanger is a simple Bash script which uses Link Quality to locate Bluetooth device radios.
+  It sends l2cap (Bluetooth) pings to create a connection between Bluetooth interfaces, since most devices
+  allow pings without any authentication or authorization. The higher the link quality, the closer the
+  device (in theory). Use a Bluetooth Class 1 adapter for long range location detection. Switch to a Class
+  3 adapter for more precise short range locating. The precision and accuracy depend on the build quality
+  of the Bluetooth adapter, interference, and response from the remote device. Fluctuations may occur
+  even when neither device is in motion.
 categories:
-- other
+- wireless
 tags:
 - bluetooth
+homepage: http://www.hackfromacave.com/projects/blueranger.html
+size: 13312
 install:
 - provider: apt
   package: blueranger
@@ -11,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1-1kali7

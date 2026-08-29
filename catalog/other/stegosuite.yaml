@@ -1,6 +1,13 @@
 id: stegosuite
+summary: steganography tool to hide information in image files
+description: Stegosuite is a graphical steganography tool to easily hide information in image files. It
+  allows the embedding of text messages and multiple files of any type. In addition, the embedded data
+  is encrypted using AES. Currently supported file types are BMP, GIF, JPG and PNG. Stegosuite is written
+  in Java and utilizes the SWT toolkit for its interface.
 categories:
-- other
+- crypto
+homepage: https://codeberg.org/tob/stegosuite
+size: 285696
 install:
 - provider: apt
   package: stegosuite
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.0-1

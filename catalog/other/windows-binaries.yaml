@@ -1,6 +1,12 @@
 id: windows-binaries
+summary: Various pentesting Windows binaries
+description: A collection of Windows executables for use on penetration tests.
 categories:
-- other
+- post-exploitation
+tags:
+- windows
+homepage: https://www.kali.org
+size: 5804032
 install:
 - provider: apt
   package: windows-binaries
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6.10

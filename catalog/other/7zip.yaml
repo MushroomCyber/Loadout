@@ -1,7 +1,19 @@
 id: 7zip
 summary: File archiver with high compression
+description: '7-Zip is a file archiver with a high compression ratio. The main features of 7-Zip are:
+  * High compression ratio in 7z format with LZMA and LZMA2 compression * Supported formats: * Packing
+  / unpacking: 7z, XZ, BZIP2, GZIP, TAR, ZIP and WIM * Unpacking only: AR, ARJ, CAB, CHM, CPIO, CramFS,
+  DMG, EXT, FAT, GPT, HFS, IHEX, ISO, LZH, LZMA, MBR, MSI, NSIS, NTFS, QCOW2, RPM, SquashFS, UDF, UEFI,
+  VDI, VHD, VMDK, WIM, XAR and Z. * For ZIP and GZIP formats, 7-Zip provides a compression ratio that
+  is 2-10 % better than the ratio provided by PKZip and WinZip * Strong AES-256 encryption in 7z and ZIP
+  formats * Powerful command line version "7zip" provides: * /usr/bin/7z:  Full featured with plugin functionality.
+  * /usr/bin/7za: Major formats/features only. * /usr/bin/7zr: LZMA (.7z, .lzma, .xz) only. Minimal executable.
+  Note: The unRAR code was dropped to keep compatible with DFSG. Install 7zip-rar package in non-free
+  section to use RAR files.'
 categories:
-- other
+- reverse
+homepage: https://www.7-zip.org/
+size: 7345152
 install:
 - provider: apt
   package: 7zip
@@ -10,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 26.01+dfsg-2

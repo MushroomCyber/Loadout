@@ -1,6 +1,13 @@
 id: ncurses-hexedit
+summary: Edit files/disks in hex, ASCII and EBCDIC
+description: Hexedit is a file editor which allows editing and viewing a file in hexadecimal, along with
+  its ASCII or EBCDIC text equivalent.  Standard editing features include insert, delete, search (text
+  or byte searches), highlighted changes,  undo, two different viewing formats, and full screen text snapshots.  Allows
+  editing of fixed disks as well.  Includes a binary/octal/decimal/hex converter.
 categories:
 - other
+homepage: http://www.rogoyski.com/adam/programs/hexedit/
+size: 133120
 install:
 - provider: apt
   package: ncurses-hexedit
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.7+orig-7.3

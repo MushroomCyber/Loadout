@@ -1,6 +1,12 @@
 id: sslyze
+summary: Fast and full-featured SSL scanner
+description: SSLyze is a Python tool that can analyze the SSL configuration of a server by connecting
+  to it. It is designed to be fast and comprehensive, and should help organizations and testers identify
+  misconfigurations affecting their SSL servers.
 categories:
-- other
+- recon
+homepage: https://github.com/nabla-c0d3/sslyze
+size: 2299904
 install:
 - provider: apt
   package: sslyze
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 6.3.1-0kali1

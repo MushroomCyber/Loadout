@@ -1,6 +1,14 @@
 id: sslsniff
+summary: SSL/TLS man-in-the-middle attack tool
+description: sslsniff is designed to create man-in-the-middle (MITM) attacks for SSL/TLS connections,
+  and dynamically generates certs for the domains that are being accessed on the fly. The new certificates
+  are constructed in a certificate chain that is signed by any certificate that is provided. sslsniff
+  also supports other attacks like null-prefix or OCSP attacks to achieve silent interceptions of connections
+  when possible.
 categories:
-- other
+- web
+homepage: https://github.com/moxie0/sslsniff
+size: 462848
 install:
 - provider: apt
   package: sslsniff
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8+git20111017-4

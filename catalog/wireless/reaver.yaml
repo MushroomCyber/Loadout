@@ -1,9 +1,15 @@
 id: reaver
 summary: WPS brute-force attack tool
+description: Reaver performs a brute force attack against an access point's Wi-Fi Protected Setup pin
+  number. Once the WPS pin is found, the WPA PSK can be recovered and alternately the AP's wireless settings
+  can be reconfigured. This package also provides the Wash executable, an utility for identifying WPS
+  enabled access points. See documentation in /usr/share/doc/reaver/README.WASH.
 categories:
 - wireless
 tags:
 - wps
+homepage: https://github.com/t6x/reaver-wps-fork-t6x
+size: 871424
 install:
 - provider: apt
   package: reaver
@@ -12,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6.6-2+b1

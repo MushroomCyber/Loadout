@@ -1,6 +1,12 @@
 id: spraykatz
+summary: tool able to retrieve credentials on Windows machines
+description: This package contains a tool without any pretention able to retrieve credentials on Windows
+  machines and large Active Directory environments. It simply tries to procdump machines and parse dumps
+  remotely in order to avoid detections by antivirus software as much as possible.
 categories:
 - other
+homepage: https://github.com/aas-n/spraykatz
+size: 798720
 install:
 - provider: apt
   package: spraykatz
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.9-0kali2

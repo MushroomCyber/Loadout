@@ -1,6 +1,14 @@
 id: cloud-enum
+summary: Multi-cloud open source intelligence tool
+description: 'cloud_enum enumerates public resources matching user requested keywords in public clouds:
+  Amazon Web Services: Open S3 Buckets Protected S3 Buckets Microsoft Azure: Storage Accounts Open Blob
+  Storage Containers Hosted Databases Virtual Machines Web Apps Google Cloud Platform: Open GCP Buckets
+  Protected GCP Buckets Google App Engine sites This program is useful for penetration testing (PENTEST)
+  and network security analysis serving as OSINT.'
 categories:
 - other
+homepage: https://github.com/initstring/cloud_enum
+size: 80896
 install:
 - provider: apt
   package: cloud-enum
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7-3

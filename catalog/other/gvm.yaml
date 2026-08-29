@@ -1,6 +1,12 @@
 id: gvm
+summary: remote network security auditor - metapackage and useful scripts
+description: The Greenbone Vulnerability Manager is a modular security auditing tool, used for testing
+  remote systems for vulnerabilities that should be fixed. This package installs all the required packages.
+  It provides scripts to setup, start and stop the GVM services. The tool was previously named OpenVAS.
 categories:
-- other
+- vuln-scan
+homepage: https://www.greenbone.net/
+size: 49152
 install:
 - provider: apt
   package: gvm
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 25.04.3

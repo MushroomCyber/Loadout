@@ -1,5 +1,9 @@
 id: autopsy
 summary: Graphical front-end for disk forensics and timeline analysis
+description: The Autopsy Forensic Browser is a graphical interface to the command line digital forensic
+  analysis tools in The Sleuth Kit. Together, The Sleuth Kit and Autopsy provide many of the same features
+  as commercial digital forensics tools for the analysis of Windows and UNIX file systems (NTFS, FAT,
+  FFS, EXT2FS, and EXT3FS).
 categories:
 - forensics
 tags:
@@ -12,6 +16,7 @@ binaries:
 homepage: https://www.autopsy.com
 alternatives:
 - sleuthkit
+size: 1050624
 install:
 - provider: apt
   package: autopsy
@@ -20,3 +25,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.24-6kali1

@@ -1,6 +1,19 @@
 id: terraform
+summary: tool for building, changing, and versioning infrastructure
+description: 'This package contains a tool for building, changing, and versioning infrastructure safely
+  and efficiently. Terraform can manage existing and popular service providers as well as custom in-house
+  solutions. Terraform enables you to safely and predictably create, change, and improve infrastructure.
+  It is an open source tool that codifies APIs into declarative configuration files that can be shared
+  amongst team members, treated as code, edited, reviewed, and versioned. The key features of Terraform
+  are: * Infrastructure as Code: Infrastructure is described using a high- level configuration syntax.
+  This allows a blueprint of your datacenter to be versioned and treated as you would any other code.
+  Additionally, infrastructure can be shared and re-used. * Execution Plans: Terraform has a "planning"
+  step where it generates an execution plan. The execution plan shows what Terraform will do when you
+  call apply. This lets you avoid any surprises when Terraform manipulates infrastructure. * Resour'
 categories:
 - other
+homepage: https://github.com/hashicorp/terraform
+size: 80915456
 install:
 - provider: apt
   package: terraform
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6.3-0kali1

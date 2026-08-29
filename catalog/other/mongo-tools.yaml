@@ -1,6 +1,14 @@
 id: mongo-tools
+summary: MongoDB tools (program)
+description: 'This package contains tools for MongDB: * bsondump - display BSON files in a human-readable
+  format * mongoimport - Convert data from JSON, TSV or CSV and insert them into a collection * mongoexport
+  - Write an existing collection to CSV or JSON format * mongodump/mongorestore - Dump MongoDB backups
+  to disk in .BSON format, or restore them to a live database * mongostat - Monitor live MongoDB servers,
+  replica sets, or sharded clusters * mongofiles - Read, write, delete, or update files in GridFS'
 categories:
 - other
+homepage: https://github.com/mongodb/mongo-tools
+size: 74020864
 install:
 - provider: apt
   package: mongo-tools
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 100.9.1+ds1-0kali1

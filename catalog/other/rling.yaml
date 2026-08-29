@@ -1,6 +1,11 @@
 id: rling
+summary: better rli
+description: This package is similar to the rli utility found in hashcat-utils, but much, much faster.
+  rli compares a single file against another file(s) and removes all duplicates.
 categories:
 - other
+homepage: https://github.com/Cynosureprime/rling
+size: 169984
 install:
 - provider: apt
   package: rling
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.82-0kali1

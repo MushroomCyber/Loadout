@@ -1,6 +1,10 @@
 id: hostapd-mana
+summary: featureful rogue access point
+description: This package contains a eatureful rogue access point first presented at Defcon 22.
 categories:
 - other
+homepage: https://github.com/sensepost/hostapd-mana
+size: 1355776
 install:
 - provider: apt
   package: hostapd-mana
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.6.5+git20240805.8853d5a-0kali1

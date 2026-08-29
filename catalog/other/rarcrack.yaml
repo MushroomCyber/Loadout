@@ -1,6 +1,11 @@
 id: rarcrack
+summary: Password cracker for rar archives
+description: This program uses a brute force algorithm to guess your encrypted compressed file's password.
+  This program can crack zip, 7z, and rar file passwords.
 categories:
-- other
+- password
+homepage: http://rarcrack.sourceforge.net/
+size: 57344
 install:
 - provider: apt
   package: rarcrack
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2+20240214~413ea3a-2

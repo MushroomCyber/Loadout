@@ -1,5 +1,11 @@
 id: aircrack-ng
 summary: 802.11 capture, injection and WPA handshake cracking
+description: aircrack-ng is an 802.11a/b/g WEP/WPA cracking program that can recover a 40-bit, 104-bit,
+  256-bit or 512-bit WEP key once enough encrypted packets have been gathered. Also it can attack WPA1/2
+  networks with some advanced methods or simply by brute force. It implements the standard FMS attack
+  along with some optimizations, thus making the attack much faster compared to other WEP cracking tools.
+  It can also fully use a multiprocessor system to its full power in order to speed up the cracking process.
+  aircrack-ng is a fork of aircrack, as that project has been stopped by the upstream maintainer.
 categories:
 - wireless
 tags:
@@ -18,6 +24,7 @@ requires_root: true
 alternatives:
 - wifite
 - hcxdumptool
+size: 2591744
 install:
 - provider: apt
   package: aircrack-ng
@@ -28,3 +35,4 @@ install:
   - ubuntu
 - provider: brew
   formula: aircrack-ng
+version: 1:1.7+git20230807.4bf83f1a-3

@@ -1,8 +1,14 @@
 id: findomain
+summary: Fastest and most complete solution for domain recognition
+description: Findomain is fastest and most complete solution for domain recognition. It supports screenshoting,
+  port scanning, HTTP checks, data imports from other tools, subdomain monitoring, alerts via Discord,
+  Slack & Telegram, multiple API Keys for sourcing and much more.
 categories:
 - recon
 tags:
 - subdomains
+homepage: https://github.com/Findomain/Findomain
+size: 19519488
 install:
 - provider: apt
   package: findomain
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 10.0.1-0kali1

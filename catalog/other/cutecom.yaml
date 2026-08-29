@@ -1,6 +1,13 @@
 id: cutecom
+summary: Graphical serial terminal, like minicom
+description: Cutecom is a graphical serial terminal, like minicom. It is aimed mainly at hardware developers
+  or other people who need a terminal to talk to their devices. It features lineoriented interface instead
+  of character-oriented, xmodem, ymodem, zmodem support (requires the lrzsz package) and hexadecimal input
+  and output among other things. It is written using the Qt library originally by Trolltech (www.trolltech.com).
 categories:
-- other
+- hardware
+homepage: https://gitlab.com/cutecom/cutecom
+size: 756736
 install:
 - provider: apt
   package: cutecom
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.51.0-1.1

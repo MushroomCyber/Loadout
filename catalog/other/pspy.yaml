@@ -1,6 +1,13 @@
 id: pspy
+summary: Monitor Linux processes without root permissions
+description: pspy is a command line tool designed to snoop on processes without need for root permissions.
+  It allows you to see commands run by other users, cron jobs, etc. as they execute. Great for enumeration
+  of Linux systems in CTFs. Also great to demonstrate your colleagues why passing secrets as arguments
+  on the command line is a bad idea.
 categories:
 - other
+homepage: https://github.com/DominicBreuker/pspy
+size: 9661440
 install:
 - provider: apt
   package: pspy
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2.1-0kali1

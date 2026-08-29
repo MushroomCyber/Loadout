@@ -1,6 +1,11 @@
 id: pnscan
+summary: Multi threaded port scanner
+description: Pnscan is a multi threaded port scanner that can scan a large network very quickly. If does
+  not have all the features that nmap have but is much faster.
 categories:
-- other
+- recon
+homepage: https://github.com/ptrrkssn/pnscan
+size: 66560
 install:
 - provider: apt
   package: pnscan
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.14.1-2

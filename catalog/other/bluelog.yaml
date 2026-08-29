@@ -1,8 +1,14 @@
 id: bluelog
+summary: Bluetooth scanner and logger
+description: Bluelog is a Bluetooth scanner designed to tell you how many discoverable devices there are
+  in an area as quickly as possible. It is intended to be used as a site survey tool, identifying the
+  number of possible Bluetooth targets there are in the surrounding environment.
 categories:
-- other
+- wireless
 tags:
 - bluetooth
+homepage: http://www.digifail.com/software/bluelog.shtml
+size: 202752
 install:
 - provider: apt
   package: bluelog
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.2-1kali3

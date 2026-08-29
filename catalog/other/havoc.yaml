@@ -1,6 +1,11 @@
 id: havoc
+summary: Modern and malleable post-exploitation C2 framework
+description: Havoc is a modern, malleable post-exploitation command and control framework made for penetration
+  testers, red teams, and blue teams.
 categories:
 - other
+homepage: https://github.com/HavocFramework/Havoc
+size: 28449792
 install:
 - provider: apt
   package: havoc
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6~git20251218.c84f775-0kali1

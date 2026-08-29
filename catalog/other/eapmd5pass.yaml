@@ -1,6 +1,15 @@
 id: eapmd5pass
+summary: Tool for extracting and cracking EAP-MD5
+description: EAP-MD5 is a legacy authentication mechanism that does not provide sufficient protection
+  for user authentication credentials.  Users who authenticate using EAP-MD5 subject themselves to an
+  offline dictionary attack vulnerability. This tool reads from a live network interface in monitor-mode,
+  or from a stored libpcap capture file, and extracts the portions of the EAP-MD5 authentication exchange.  Once
+  the challenge and response portions have been collected from this exchange, eapmd5pass will mount an
+  offline dictionary attack against the user's password.
 categories:
-- other
+- wireless
+homepage: https://www.willhackforsushi.com/?page_id=67
+size: 104448
 install:
 - provider: apt
   package: eapmd5pass
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.5-0kali1+b1

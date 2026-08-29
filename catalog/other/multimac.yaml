@@ -1,6 +1,11 @@
 id: multimac
+summary: Create multiple MACs on an adapter
+description: Multimac is a Linux virtual ethernet tap allocator to emulate and use multiple virtual interfaces
+  (with different MAC addresses) on a LAN using a single network adapter.
 categories:
 - other
+homepage: https://sourceforge.net/projects/multimac/
+size: 28672
 install:
 - provider: apt
   package: multimac
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.3-1kali4

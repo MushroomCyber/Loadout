@@ -1,6 +1,11 @@
 id: netbase
+summary: Basic TCP/IP networking system
+description: This package provides the necessary infrastructure for basic TCP/IP based networking. In
+  particular, it supplies common name-to-number mappings in /etc/services, /etc/rpc, /etc/protocols and
+  /etc/ethertypes.
 categories:
-- other
+- recon
+size: 35840
 install:
 - provider: apt
   package: netbase
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: '6.5'

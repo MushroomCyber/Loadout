@@ -1,6 +1,13 @@
 id: mxcheck
+summary: Info and security scanner for e-mail servers
+description: 'mxcheck is an info scanner for e-mail servers, checking: - DNS records: A, MX, PTR, SPF,
+  MTA-STS, DKIM, DMARC - AS Number and AS Country - The support of StartTLS and the certificate - Open
+  ports: 25, 465, 587 - If the service is listed by blacklists - If it leaks information by server string
+  and VRFY command - If the server is an open relay'
 categories:
 - other
+homepage: https://github.com/steffenfritz/mxcheck
+size: 7127040
 install:
 - provider: apt
   package: mxcheck
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.0-0kali1

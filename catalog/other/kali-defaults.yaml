@@ -1,6 +1,13 @@
 id: kali-defaults
+summary: Kali default settings
+description: This package implements various default settings within Kali. The size of this package (including
+  its dependencies) should be rather limited because it is included in all Kali images, even minimalistic
+  ones such as container images. This package is meant to be installed during bootstrap stage, so it shouldn't
+  have any dependency, or only trivial dependencies.
 categories:
-- other
+- recon
+homepage: https://www.kali.org
+size: 1379328
 install:
 - provider: apt
   package: kali-defaults
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2026.2.12

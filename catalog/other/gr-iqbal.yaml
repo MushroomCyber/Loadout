@@ -1,6 +1,18 @@
 id: gr-iqbal
+summary: GNU Radio Blind IQ imbalance estimator and correction
+description: 'The general idea is to suppress symmetrical images caused by IQ imbalance in the RX path
+  of quadrature receivers. It''s composed of two subblocks: "IQ Bal Fix": This applies the actual correction.
+  to a complex stream. The correction parameters are only magnitude/phase and the actual correction algo
+  is the same as applied in hardware in the USRP. You can either specify the correction parameters manually
+  on the block, or send them via ''messages''. "IQ Bal Optimize": This blocks tries to blindly detect
+  the imbalance by minimizing the correlation between the left and right part of the spectrum. See the
+  code for the "how it does it". The general idea is inspired from papers found on the internet and the
+  way some SDR software achieve the same things (sdr# for eg, although there are significant differences
+  in the actual implementation).'
 categories:
-- other
+- wireless
+homepage: https://git.osmocom.org/gr-iqbal
+size: 1335296
 install:
 - provider: apt
   package: gr-iqbal
@@ -9,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.38.3-1

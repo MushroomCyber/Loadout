@@ -1,6 +1,19 @@
 id: testssl.sh
+summary: Command line tool to check TLS/SSL ciphers, protocols and cryptographic flaws
+description: 'testssl.sh is a free command line tool which checks a server''s service on any port for
+  the support of TLS/SSL ciphers, protocols as well as recent cryptographic flaws and more. Key features
+  * Clear output: you can tell easily whether anything is good or bad * Ease of installation: It works
+  for Linux, Darwin, FreeBSD and MSYS2/Cygwin out of the box: no need to install or configure something,
+  no gems, CPAN, pip or the like. * Flexibility: You can test any SSL/TLS enabled and STARTTLS service,
+  not only webservers at port 443 * Toolbox: Several command line options help you to run YOUR test and
+  configure YOUR output * Reliability: features are tested thoroughly * Verbosity: If a particular check
+  cannot be performed because of a missing capability on your client side, you''ll get a warning * Privacy:
+  It''s only you who sees the result, not a third party * Freedom: It''s 100% open source. You can look
+  at the code, see what''s going on and you can change it. Heck, even the development is open (gi'
 categories:
 - other
+homepage: https://testssl.sh/
+size: 3696640
 install:
 - provider: apt
   package: testssl.sh
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.2.2+dfsg-1

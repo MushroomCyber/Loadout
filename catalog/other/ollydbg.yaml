@@ -1,6 +1,11 @@
 id: ollydbg
+summary: 32-bit assembler level analysing debugger
+description: OllyDbg is a 32-bit assembler level analysing debugger for Microsoft Windows. Emphasis on
+  binary code analysis makes it particularly useful in cases where source is unavailable.
 categories:
-- other
+- reverse
+homepage: http://www.ollydbg.de/
+size: 2623488
 install:
 - provider: apt
   package: ollydbg
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.10-1kali5

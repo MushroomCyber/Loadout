@@ -125,8 +125,87 @@ def compile_tree(
     return report
 
 
+def enrich_source_tree(
+    root: Path,
+    *,
+    only_security: bool = True,
+    resolve_binaries: bool = True,
+    add_new: bool = False,
+) -> dict[str, int]:
+    """Fill gaps in the YAML tree from local APT metadata, in place.
+
+    Writes back into ``catalog/`` rather than straight to a compiled database,
+    so the enrichment lands as a reviewable diff and the YAML stays the single
+    source of truth. Curated values always win -- APT only supplies what an
+    entry does not already state -- so this is safe to run on a schedule.
+
+    Returns counts for the CI job to report.
+    """
+    from .seed_apt import build_tools, enrich
+
+    root = Path(root)
+    report = load_source_tree(root, strict=False)
+    before = {t.id: t.to_dict() for t in report.tools}
+
+    enriched = enrich(report.tools, resolve_binaries=resolve_binaries)
+    by_id = {t.id: t for t in enriched}
+
+    added = 0
+    if add_new:
+        for tool in build_tools(only_security=only_security, resolve_binaries=resolve_binaries):
+            if tool.id not in by_id:
+                by_id[tool.id] = tool
+                added += 1
+
+    # Remember where each entry already lives so enrichment never relocates a
+    # file that a contributor placed deliberately.
+    import yaml
+
+    existing_paths: dict[str, Path] = {}
+    for path in iter_entry_files(root):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            logger.debug("cannot map %s to an id: %s", path, exc)
+            continue
+        if isinstance(data, dict) and data.get("id"):
+            existing_paths[str(data["id"]).strip().lower()] = path
+
+    changed = 0
+    for tool_id, tool in sorted(by_id.items()):
+        payload = tool.to_dict()
+        if before.get(tool_id) == payload:
+            continue
+        destination = existing_paths.get(tool_id) or (
+            root / tool.category / f"{tool_id}.yaml"
+        )
+        dump_tool(tool, destination)
+        changed += 1
+
+    return {
+        "entries": len(by_id),
+        "changed": changed,
+        "added": added,
+        "described": sum(1 for t in by_id.values() if t.summary),
+        "categorised": sum(1 for t in by_id.values() if t.category != "other"),
+    }
+
+
 def dump_tool(tool: Tool, destination: Path) -> Path:
-    """Write one tool back out as YAML. Used by the seeding importers."""
+    """Write one tool back out as YAML. Used by the seeding importers.
+
+    Writes to a sibling temp file then ``os.replace``s it over the target.
+    ``enrich_source_tree`` calls this hundreds of times in a batch; a plain
+    ``write_text`` was found to lose a file entirely under real load (712
+    writes across a WSL9P-mounted filesystem in ~13s dropped one file
+    outright, with the destination directory still present -- an ordinary
+    non-atomic write racing a concurrent reader or an interrupted flush is
+    consistent with that). Atomic replace makes the failure mode "keep the old
+    file" instead of "lose it".
+    """
+    import os
+    import tempfile
+
     import yaml
 
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -139,8 +218,25 @@ def dump_tool(tool: Tool, destination: Path) -> Path:
     ]
     ordered = {key: payload[key] for key in order if key in payload}
     ordered.update({k: v for k, v in payload.items() if k not in ordered})
-    destination.write_text(
-        yaml.safe_dump(ordered, sort_keys=False, allow_unicode=True, width=100),
-        encoding="utf-8",
+    text = yaml.safe_dump(ordered, sort_keys=False, allow_unicode=True, width=100)
+
+    fd, tmp_name = tempfile.mkstemp(
+        prefix=f".{destination.name}.", suffix=".tmp", dir=str(destination.parent)
     )
+    tmp_path = Path(tmp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write(text)
+            handle.flush()
+            try:
+                os.fsync(handle.fileno())
+            except OSError:
+                pass  # not fatal -- some network/9P mounts do not support fsync
+        tmp_path.replace(destination)
+    except Exception:
+        try:
+            tmp_path.unlink()
+        except OSError:
+            pass
+        raise
     return destination

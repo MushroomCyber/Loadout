@@ -1,6 +1,11 @@
 id: certi
+summary: Tool to ask certificates to ADCS and discover templates
+description: Certi is an utility to play with ADCS, allows one to request tickets and collect information
+  about related objects. Basically, it's the impacket copy of Certify.
 categories:
 - other
+homepage: https://github.com/zer1t0/certi
+size: 120832
 install:
 - provider: apt
   package: certi
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20230127.6cfa656-0kali3

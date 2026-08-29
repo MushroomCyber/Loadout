@@ -1,6 +1,15 @@
 id: heartleech
+summary: Scanner detecting systems vulnerable to the heartbleed OpenSSL bug
+description: 'This is a typical "heartbleed" tool. It can scan for systems vulnerable to the bug, and
+  then be used to download them. Some important features: * conclusive/inconclusive verdicts as to whether
+  the target is vulnerable * bulk/fast download of heartbleed data into a large files for offline processing
+  using many threads * automatic retrieval of private keys with no additional steps * some limited IDS
+  evasion * STARTTLS support * IPv6 support * Tor/Socks5n proxy support * extensive connection diagnostic
+  information'
 categories:
-- other
+- web
+homepage: https://github.com/robertdavidgraham/heartleech
+size: 999424
 install:
 - provider: apt
   package: heartleech
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~git20140607.3ab1d60-0kali3

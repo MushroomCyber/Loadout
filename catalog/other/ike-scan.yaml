@@ -1,6 +1,16 @@
 id: ike-scan
+summary: discover and fingerprint IKE hosts (IPsec VPN Servers)
+description: 'ike-scan discovers IKE hosts and can also fingerprint them using the retransmission backoff
+  pattern. ike-scan does two things: a) Discovery: Determine which hosts are running IKE. This is done
+  by displaying those hosts which respond to the IKE requests sent by ike-scan. b) Fingerprinting: Determine
+  which IKE implementation the hosts are using. This is done by recording the times of the IKE response
+  packets from the target hosts and comparing the observed retransmission backoff pattern against known
+  patterns. The retransmission backoff fingerprinting concept is discussed in more detail in the UDP backoff
+  fingerprinting paper which should be included in the ike-scan kit as udp-backoff-fingerprinting-paper.txt.'
 categories:
-- other
+- recon
+homepage: https://github.com/royhills/ike-scan
+size: 4376576
 install:
 - provider: apt
   package: ike-scan
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.5-2

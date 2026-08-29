@@ -1,6 +1,16 @@
 id: vlan
+summary: ifupdown legacy integration for vlan configuration
+description: 'This package contains legacy integration scripts for configuring vlan interfaces via ifupdown
+  (/etc/network/interfaces). For further details see vlan-interfaces(5) man page in this package. Please
+  note that this package is not necessary for most VLAN use cases with ifupdown. You only need to install
+  it if you need to support the legacy VLAN naming scheme (vlan0001) or the following extra features it
+  provides: * vlan‐raw‐device * ip‐proxy‐arp * ip‐rp‐filter * hw‐mac‐address It currently also ships a
+  wrapper script for backwards compatibility called vconfig, that replaces the old deprecated vconfig
+  program with translations to ip(route2) commands. This compatibility shim might be dropped in future
+  releases, please use ip(route2) commands directly.'
 categories:
 - other
+size: 37888
 install:
 - provider: apt
   package: vlan
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.5+nmu3

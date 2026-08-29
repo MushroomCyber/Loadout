@@ -1,6 +1,10 @@
 id: faraday-cli
+summary: Faraday on the terminal
+description: This package contains the official client that make automating your security workflows, easier.
 categories:
 - other
+homepage: https://github.com/infobyte/faraday-cli
+size: 831488
 install:
 - provider: apt
   package: faraday-cli
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.2.2-0kali1

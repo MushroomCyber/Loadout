@@ -1,6 +1,11 @@
 id: sprayingtoolkit
+summary: Scripts to make password spraying attacks against Lync/S4B, OWA & O365
+description: A set of Python scripts/utilities that tries to make password spraying attacks against Lync/S4B
+  & OWA a lot quicker, less painful and more efficient.
 categories:
 - other
+homepage: https://github.com/byt3bl33d3r/SprayingToolkit
+size: 80896
 install:
 - provider: apt
   package: sprayingtoolkit
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20201009.68f295d-0kali1

@@ -1,6 +1,12 @@
 id: sudo
+summary: Provide limited super user privileges to specific users
+description: Sudo is a program designed to allow a sysadmin to give limited root privileges to users and
+  log root activity.  The basic philosophy is to give as few privileges as possible but still allow people
+  to get their work done.
 categories:
-- other
+- recon
+homepage: https://www.sudo.ws/
+size: 6936576
 install:
 - provider: apt
   package: sudo
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.17p2-7

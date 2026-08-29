@@ -1,8 +1,12 @@
 id: azurehound
+summary: BloodHound data collector for Microsoft Azure (program)
+description: This package contains the BloodHound data collector for Microsoft Azure.
 categories:
 - other
 tags:
 - cloud-ad
+homepage: https://github.com/SpecterOps/AzureHound
+size: 13575168
 install:
 - provider: apt
   package: azurehound
@@ -11,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.12.1-0kali1

@@ -1,6 +1,11 @@
 id: krbrelayx
+summary: Kerberos relaying and unconstrained delegation abuse toolkit
+description: Kerberos relaying and unconstrained delegation abuse toolkit. This tool can add/remove/modify
+  Service Principal Names on accounts in AD over LDAP.
 categories:
 - other
+homepage: https://github.com/dirkjanm/krbrelayx
+size: 176128
 install:
 - provider: apt
   package: krbrelayx
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20260311.10b45a3-0kali1

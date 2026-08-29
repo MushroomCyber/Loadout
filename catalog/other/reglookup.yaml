@@ -1,6 +1,16 @@
 id: reglookup
+summary: utility to analysis for Windows NT-based registry
+description: 'RegLookup is a system to direct analysis of Windows NT-based registry files providing command
+  line tools, a C API, and a Python module for accessing registry data structures. The project has a focus
+  on providing tools for digital forensics investigations (though is useful for many purposes), and includes
+  algorithms for retrieving deleted data structures from registry hives. Currently the program allows
+  one to read an entire registry and output it in a (mostly) standardized, quoted format. It also provides
+  features for filtering of results based on registry path and data type. The package provides the following
+  commands: reglookup, reglookup-recover and reglookup-timeline.'
 categories:
-- other
+- forensics
+homepage: https://web.archive.org/web/20240804024044/http://projects.sentinelchicken.org/reglookup/
+size: 89088
 install:
 - provider: apt
   package: reglookup
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.1+svn296-2

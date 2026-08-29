@@ -1,6 +1,14 @@
 id: sqlsus
+summary: MySQL injection tool
+description: sqlsus is an open source MySQL injection and takeover tool, written in perl. Via a command
+  line interface, you can retrieve the database(s) structure, inject your own SQL queries (even complex
+  ones), download files from the web server, crawl the website for writable directories, upload and control
+  a backdoor, clone the database(s), and much more... Whenever relevant, sqlsus will mimic a MySQL console
+  output.
 categories:
-- other
+- web
+homepage: https://sqlsus.sourceforge.net/
+size: 159744
 install:
 - provider: apt
   package: sqlsus
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.2-1kali3

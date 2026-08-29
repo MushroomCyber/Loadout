@@ -1,5 +1,11 @@
 id: spiderfoot
 summary: Automated OSINT collection and correlation platform
+description: This package contains an open source intelligence (OSINT) automation tool. Its goal is to
+  automate the process of gathering intelligence about a given target, which may be an IP address, domain
+  name, hostname, network subnet, ASN, e-mail address or person's name. SpiderFoot can be used offensively,
+  i.e. as part of a black-box penetration test to gather information about the target, or defensively
+  to identify what information you or your organisation are freely providing for attackers to use against
+  you.
 categories:
 - recon
 - threat-intel
@@ -15,6 +21,7 @@ homepage: https://www.spiderfoot.net
 alternatives:
 - theharvester
 - maltego
+size: 14399488
 install:
 - provider: apt
   package: spiderfoot
@@ -25,3 +32,4 @@ install:
   - ubuntu
 - provider: pipx
   package: spiderfoot
+version: 4.0-0kali5

@@ -1,6 +1,13 @@
 id: unblob
+summary: accurate, fast, and easy-to-use extraction suite (Python 3)
+description: This package contains an accurate, fast, and easy-to-use extraction suite. It parses unknown
+  binary blobs for more than 30 different archive, compression, and file-system formats, extracts their
+  content recursively, and carves out unknown chunks that have not been accounted for. This package installs
+  the library for Python 3.
 categories:
 - other
+homepage: https://unblob.org/
+size: 1227776
 install:
 - provider: apt
   package: unblob
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 26.3.30+ds-0kali1

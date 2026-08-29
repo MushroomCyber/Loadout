@@ -1,6 +1,19 @@
 id: bruteforce-salted-openssl
+summary: try to find the passphrase for files encrypted with OpenSSL
+description: 'bruteforce-salted-openssl try to find the passphrase or password of a file that was encrypted
+  with the openssl command. It can be used in two ways: - Try all possible passwords given a charset.
+  - Try all passwords in a file (dictionary). bruteforce-salted-openssl have the following features: -
+  You can specify the number of threads to use when cracking a file. - The program should be able to use
+  all the digests and symmetric ciphers available with the OpenSSL libraries installed on your system.
+  - Sending a USR1 signal to a running bruteforce-salted-openssl process makes it print progress and continue.
+  - There are an exhaustive mode and a dictionary mode. In the exhaustive mode the program tries to decrypt
+  the file by trying all possible passwords. It is especially useful if you know something about the password
+  (i.e. you forgot a part of your password but still remember most of it). Finding the password of the
+  file without knowing anything about it would take way too much time (unless t'
 categories:
 - other
+homepage: https://github.com/glv2/bruteforce-salted-openssl
+size: 58368
 install:
 - provider: apt
   package: bruteforce-salted-openssl
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.5.0-1

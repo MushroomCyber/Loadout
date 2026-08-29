@@ -1,6 +1,14 @@
 id: spray
+summary: Password Spraying tool for Active Directory Credentials
+description: This package contains a Password Spraying tool for Active Directory Credentials. The script
+  will password spray a target over a period of time. It requires password policy as input so accounts
+  are not locked out. The package also provides a series of hand crafted password files for multiple languages.
+  These have been crafted from the most common active directory passwords in various languages and all
+  fit in the complex (1 Upper, 1 lower, 1 digit) category.
 categories:
 - other
+homepage: https://github.com/Greenwolf/Spray
+size: 40912896
 install:
 - provider: apt
   package: spray
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1+git20190226-0kali3

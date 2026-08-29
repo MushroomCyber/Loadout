@@ -1,5 +1,9 @@
 id: chainsaw
 summary: Fast Windows event log hunting with Sigma rule support
+description: Chainsaw provides a powerful ‘first-response’ capability to quickly identify threats within
+  Windows forensic artefacts such as Event Logs and the MFT files. Chainsaw offers a generic and fast
+  method of searching through event logs for keywords, and by identifying threats using built-in support
+  for Sigma detection rules, and via custom Chainsaw detection rules.
 categories:
 - detection
 - incident-response
@@ -16,6 +20,7 @@ homepage: https://github.com/WithSecureLabs/chainsaw
 alternatives:
 - hayabusa
 - zircolite
+size: 10255360
 install:
 - provider: apt
   package: chainsaw
@@ -27,3 +32,4 @@ install:
 - provider: github
   repo: WithSecureLabs/chainsaw
   checksums: '*checksums*.txt'
+version: 2.16.0-0kali1

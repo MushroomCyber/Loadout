@@ -1,6 +1,14 @@
 id: rtpbreak
+summary: Detects, reconstructs, and analyzes RTP sessions
+description: With rtpbreak you can detect, reconstruct and analyze any RTP session. It doesn't require
+  the presence of RTCP packets and works independently form the used signaling protocol (SIP, H.323, SCCP,
+  ...). The input is a sequence of packets, the output is a set of files you can use as input for other
+  tools (wireshark/tshark, sox, grep/awk/cut/ cat/sed, ...). It supports also wireless (AP_DLT_IEEE802_11)
+  networks.
 categories:
-- other
+- vuln-scan
+homepage: http://dallachiesa.com/code/rtpbreak/
+size: 94208
 install:
 - provider: apt
   package: rtpbreak
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3a-1kali5

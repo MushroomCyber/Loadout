@@ -1,6 +1,13 @@
 id: getsploit
+summary: Command line utility for searching and downloading exploits
+description: 'Inspired by searchsploit, getsploit combines two features: command line search and download.
+  It allows you to search online for the exploits across all the most popular collections, including (but
+  not limited to): - Exploit-DB, - Metasploit, - Packetstorm The most powerful feature of getsploit is
+  the ability to immediately download the exploit source code in your working path.'
 categories:
 - other
+homepage: https://github.com/vulnersCom/getsploit
+size: 40960
 install:
 - provider: apt
   package: getsploit
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.2-0kali1

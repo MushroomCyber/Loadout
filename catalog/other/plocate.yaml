@@ -1,6 +1,12 @@
 id: plocate
+summary: much faster locate
+description: plocate is a locate(1) based on posting lists, giving much faster searches on a much smaller
+  index. It is a drop-in replacement for mlocate in nearly all aspects, and is fast on SSDs and non-SSDs
+  alike.
 categories:
 - other
+homepage: https://plocate.sesse.net/
+size: 585728
 install:
 - provider: apt
   package: plocate
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.24-1

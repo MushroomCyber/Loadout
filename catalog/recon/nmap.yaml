@@ -1,5 +1,11 @@
 id: nmap
 summary: Network discovery and service/version fingerprinting
+description: Nmap is a utility for network exploration or security auditing. It supports ping scanning
+  (determine which hosts are up), many port scanning techniques, version detection (determine service
+  protocols and application versions listening behind ports), and TCP/IP fingerprinting (remote host OS
+  or device identification). Nmap also offers flexible target and port specification, decoy/stealth scanning,
+  sunRPC scanning, and more. Most Unix and Windows platforms are supported in both GUI and commandline
+  modes. Several popular handheld devices are also supported, including the Sharp Zaurus and the iPAQ.
 categories:
 - recon
 tags:
@@ -19,6 +25,7 @@ alternatives:
 - masscan
 - naabu
 - rustscan
+size: 4938752
 install:
 - provider: apt
   package: nmap
@@ -29,3 +36,4 @@ install:
   - ubuntu
 - provider: brew
   formula: nmap
+version: 7.99+dfsg-1kali1

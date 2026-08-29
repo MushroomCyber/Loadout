@@ -1,6 +1,13 @@
 id: sbd
+summary: Secure backdoor for Linux and Windows
+description: sbd is a Netcat-clone, designed to be portable and offer strong encryption. It runs on Unix-like
+  operating systems and on Microsoft Win32. sbd features AES-CBC-128 + HMAC-SHA1 encryption (by Christophe
+  Devine), program execution (-e option), choosing source port, continuous reconnection with delay, and
+  some other nice features. sbd supports TCP/IP communication only.
 categories:
-- other
+- post-exploitation
+homepage: https://mirrors.kernel.org/gentoo/distfiles/sbd-1.37.tar.gz
+size: 166912
 install:
 - provider: apt
   package: sbd
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.37-1kali6

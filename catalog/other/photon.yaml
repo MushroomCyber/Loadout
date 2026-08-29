@@ -1,6 +1,15 @@
 id: photon
+summary: Incredibly fast crawler designed for open source intelligence
+description: 'This package includes a fast and flexible crawler designed for open source intelligence
+  (OSINT). Photon can extract the following data while crawling: - URLs (in-scope & out-of-scope) - URLs
+  with parameters (example.com/gallery.php?id=2) - Intel (emails, social media accounts, amazon buckets
+  etc.) - Files (pdf, png, xml etc.) - Secret keys (auth/API keys & hashes) - JavaScript files & Endpoints
+  present in them - Strings matching custom regex pattern - Subdomains & DNS related data The extracted
+  information is saved in an organized manner or can be exported as json.'
 categories:
 - other
+homepage: https://github.com/s0md3v/Photon
+size: 61440
 install:
 - provider: apt
   package: photon
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.0-0kali2

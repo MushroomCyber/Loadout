@@ -1,6 +1,13 @@
 id: bloodyad
+summary: Active Directory privilege escalation framework
+description: bloodyAD can perform specific LDAP calls to a domain controller in order to perform AD privesc.
+  It supports authentication using cleartext passwords, pass-the-hash, pass-the-ticket or certificates
+  and binds to LDAP services of a domain controller to perform AD privesc. Exchange of sensitive information
+  without LDAPS is supported. It is also designed to be used transparently with a SOCKS proxy.
 categories:
 - other
+homepage: https://github.com/CravateRouge/bloodyAD
+size: 51908608
 install:
 - provider: apt
   package: bloodyad
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.5.4-0kali5

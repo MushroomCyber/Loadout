@@ -1,6 +1,11 @@
 id: ligolo-ng-common-binaries
+summary: Prebuilt binaries for Advanced ligolo-ng
+description: Ligolo-ng is a simple, lightweight and fast tool that allows pentesters to establish tunnels
+  from a reverse TCP/TLS connection using a tun interface (without the need of SOCKS).
 categories:
 - other
+homepage: https://github.com/nicocha30/ligolo-ng
+size: 165814272
 install:
 - provider: apt
   package: ligolo-ng-common-binaries
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8.3-0kali1

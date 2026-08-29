@@ -1,6 +1,11 @@
 id: sippts
+summary: Set of tools to audit SIP based VoIP Systems
+description: Sippts is a set of tools to audit VoIP servers and devices using SIP protocol. Sippts is
+  programmed in Python and it allows pentesters to check the security of a VoIP server using SIP protocol.
 categories:
 - other
+homepage: https://github.com/Pepelux/sippts
+size: 780288
 install:
 - provider: apt
   package: sippts
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.1.2-0kali1

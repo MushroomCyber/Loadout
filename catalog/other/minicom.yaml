@@ -1,6 +1,11 @@
 id: minicom
+summary: Friendly menu driven serial communication program
+description: Minicom is a clone of the MS-DOS "Telix" communication program. It emulates ANSI and VT102
+  terminals, has a dialing directory and auto zmodem download.
 categories:
-- other
+- hardware
+homepage: https://salsa.debian.org/minicom-team/minicom
+size: 1149952
 install:
 - provider: apt
   package: minicom
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.11.1-1

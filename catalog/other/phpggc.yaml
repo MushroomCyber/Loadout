@@ -1,6 +1,11 @@
 id: phpggc
+summary: Generate payloads that exploit unsafe object deserialization
+description: PHPGGC is a library of payloads exploiting unsafe object deserialization. It also provides
+  a command-line tool to generate them.
 categories:
 - other
+homepage: https://github.com/ambionics/phpggc
+size: 665600
 install:
 - provider: apt
   package: phpggc
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.20230428-0kali1

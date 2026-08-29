@@ -1,6 +1,11 @@
 id: pskracker
+summary: collection of WPA/WPA2/WPS default keys generators/pingens
+description: This package contains a collection of WPA/WPA2/WPS default algorithms/password generators/pingens
+  written in C. This is useful for testing/auditing wireless networks and contains bleeding edge algorithms.
 categories:
 - other
+homepage: https://github.com/soxrok2212/PSKracker
+size: 37888
 install:
 - provider: apt
   package: pskracker
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.3.1+git20230831-1kali3

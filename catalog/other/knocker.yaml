@@ -1,6 +1,11 @@
 id: knocker
+summary: Simple and easy to use TCP security port scanner
+description: Knocker is a new, simple, and easy to use TCP security port scanner written in C, using threads.
+  It is able to analyze hosts and the network services which are running on them.
 categories:
-- other
+- recon
+homepage: http://knocker.sourceforge.net/
+size: 84992
 install:
 - provider: apt
   package: knocker
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.1-6+b1

@@ -1,6 +1,16 @@
 id: wotmate
+summary: reimplement the defunct PGP pathfinder with only your own keyring
+description: 'This package contains a reimplementation the defunct PGP pathfinder without needing anything
+  other than your own keyring. Currently, the following tools are available: * graph-paths.py: Draws the
+  shortest path between each key you have personally signed and the target key. For simpler setups, it
+  exactly mirrors the web of trust, but the resulting graph is not necessarily one-to-one (because you
+  can assign ownertrust to a key you did not directly sign). * graph-to-full.py: Very similar, but finds
+  shortest paths to each fully-trusted key in your keyring. Handy for open-source projects where someone
+  maintains a "web of trust."'
 categories:
 - other
+homepage: https://github.com/mricon/wotmate
+size: 205824
 install:
 - provider: apt
   package: wotmate
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1+git20210512-0kali3

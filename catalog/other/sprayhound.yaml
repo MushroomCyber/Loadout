@@ -1,6 +1,11 @@
 id: sprayhound
+summary: Password spraying tool and Bloodhound integration
+description: SprayHound is a Python library to safely password spray in Active Directory, which sets pwned
+  users as owned in Bloodhound and detects paths to Domain Admins.
 categories:
 - other
+homepage: https://github.com/Hackndo/sprayhound
+size: 70656
 install:
 - provider: apt
   package: sprayhound
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20260326.f20f9c3-0kali1

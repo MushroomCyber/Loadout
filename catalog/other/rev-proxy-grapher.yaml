@@ -1,6 +1,13 @@
 id: rev-proxy-grapher
+summary: Reverse proxy grapher
+description: This package contains a useful little tool that will generate a nice graphviz graph illustrating
+  your reverse proxy flow. It takes a manually curated YAML file describing the topology of your network,
+  proxy definitions, and optionally a collection of nmap output files for additional port/service information
+  and output a graph in any format supported by graphviz.
 categories:
 - other
+homepage: https://github.com/mricon/rev-proxy-grapher
+size: 211968
 install:
 - provider: apt
   package: rev-proxy-grapher
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~git20180301-0kali2

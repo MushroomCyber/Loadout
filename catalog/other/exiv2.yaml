@@ -1,6 +1,19 @@
 id: exiv2
+summary: EXIF/IPTC/XMP metadata manipulation tool
+description: 'Exiv2 is a C++ library and a command line utility to manage image metadata. It provides
+  fast and easy read and write access to the Exif, IPTC and XMP metadata of images in various formats
+  Exiv2 command line utility to: * print Exif, IPTC and XMP image metadata in different formats: - Exif
+  summary info, interpreted values, or the plain data for each tag * set, add and delete Exif, IPTC and
+  XMP image metadata from command line modify commands or command scripts * adjust the Exif timestamp
+  (that''s how it all started...) * rename Exif image files according to the Exif timestamp * extract,
+  insert and delete Exif, IPTC and XMP metadata and JPEG comments * extract previews from RAW images and
+  thumbnails from the Exif metadata * insert and delete the thumbnail image embedded in the Exif metadata
+  * print, set and delete the JPEG comment of JPEG images * fix the Exif ISO setting of picture taken
+  with Canon and Nikon cameras'
 categories:
-- other
+- forensics
+homepage: https://www.exiv2.org/
+size: 439296
 install:
 - provider: apt
   package: exiv2
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.28.8+dfsg-1

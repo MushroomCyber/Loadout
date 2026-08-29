@@ -1,6 +1,14 @@
 id: cadaver
+summary: command-line WebDAV client
+description: cadaver supports file upload, download, on-screen display, in-place editing, namespace operations
+  (move/copy), collection creation and deletion, property manipulation, and resource locking. Its operation
+  is similar to the standard BSD ftp(1) client and the Samba Project's smbclient(1). This package includes
+  GnuTLS (HTTPS) support. WebDAV (Web-based Distributed Authoring and Versioning) is a set of extensions
+  to the HTTP protocol which allow users to collaboratively edit and manage files on remote web servers.
 categories:
 - web
+homepage: https://github.com/notroj/cadaver
+size: 198656
 install:
 - provider: apt
   package: cadaver
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.28+dfsg-2

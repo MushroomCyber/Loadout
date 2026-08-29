@@ -1,6 +1,14 @@
 id: dnstwist
+summary: Domain name permutation engine
+description: dnstwist generates a list of similarly looking domain names for a given domain name and performs
+  DNS queries for them (A, AAAA, NS and MX). For MX records it checks whether there is an active mail
+  server which could be used to intercept misdirected emails. Additionally it estimates webpage similarity
+  based on fuzzy hashes. This functionality might be helpful in detecting typosquatters, phishing attacks,
+  fraud and corporate espionage.
 categories:
 - other
+homepage: https://github.com/elceef/dnstwist
+size: 500736
 install:
 - provider: apt
   package: dnstwist
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~20250130-1

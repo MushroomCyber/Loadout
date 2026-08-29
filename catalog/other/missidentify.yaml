@@ -1,6 +1,13 @@
 id: missidentify
+summary: find win32 applications
+description: Miss Identify (missidentify) is a program to find MS Windows type win32 applications. By
+  default, it displays the filename of any executable that does not have an extension, as exe, dll, com,
+  sys, cpl, hxs, hxi, olb, rll or tlb. It can also display all the executables regardless the extension.
+  Miss Identify is useful in forensics investigations.
 categories:
-- other
+- forensics
+homepage: https://missidentify.sf.net
+size: 48128
 install:
 - provider: apt
   package: missidentify
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0-12

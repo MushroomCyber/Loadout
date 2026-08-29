@@ -1,8 +1,14 @@
 id: autorecon
+summary: Multi-threaded network reconnaissance tool
+description: AutoRecon is a multi-threaded network reconnaissance tool which performs automated enumeration
+  of services. It is intended as a time-saving tool for use in CTFs and other penetration testing environments
+  (e.g. OSCP). It may also be useful in real-world engagements.
 categories:
 - recon
 tags:
 - automation
+homepage: https://github.com/Tib3rius/AutoRecon
+size: 1300480
 install:
 - provider: apt
   package: autorecon
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20251116.e7e98f6-0kali1

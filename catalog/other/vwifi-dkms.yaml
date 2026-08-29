@@ -1,6 +1,15 @@
 id: vwifi-dkms
+summary: Simple Virtual Wireless Driver for Linux in DKMS format
+description: This package contains a minimal interface to provide essential functionalities, such as scanning
+  for dummy Wi-Fi networks, establishing connections, and disconnecting from them. It is built upon the
+  cfg80211 subsystem, which collaborates with FullMAC drivers. Currently, vwifi supports both Station
+  Mode and Host AP Mode and is equipped with robust WPA/WPA2 security features. This enables users to
+  configure a wireless environment using vwifi, hostapd (in HostAP mode interface), and wpa_supplicant
+  (in station mode interface).
 categories:
 - other
+homepage: https://github.com/sysprog21/vwifi
+size: 841728
 install:
 - provider: apt
   package: vwifi-dkms
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20260407.11569dd-0kali1

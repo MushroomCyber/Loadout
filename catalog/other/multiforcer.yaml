@@ -1,6 +1,11 @@
 id: multiforcer
+summary: GPU accelerated password cracking tool
+description: A CUDA & OpenCL accelerated rainbow table implementation from the ground up, and a CUDA hash
+  brute forcing tool with support for many hash types including MD5, SHA1, LM, NTLM, and lots more.
 categories:
 - other
+homepage: https://sourceforge.net/projects/cryptohaze/
+size: 16227328
 install:
 - provider: apt
   package: multiforcer
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.31-1kali2

@@ -1,6 +1,12 @@
 id: ferret-sidejack
+summary: Monitors data and extracts interesting data
+description: This tool extracts interesting bits from network traffic. One use is to feed the "hamster"
+  tool. Another use is to dump the output intoa text file, then use indexers and grep programs to analyze
+  it.
 categories:
-- other
+- web
+homepage: https://github.com/robertdavidgraham/ferret
+size: 388096
 install:
 - provider: apt
   package: ferret-sidejack
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.1-1kali11

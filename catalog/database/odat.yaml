@@ -1,9 +1,17 @@
 id: odat
 summary: Oracle database attack tool
+description: 'This package contains the ODAT (Oracle Database Attacking Tool), an open source penetration
+  testing tool that tests the security of Oracle Databases remotely. Usage examples of ODAT: * You have
+  an Oracle database listening remotely and want to find valid SIDs and credentials in order to connect
+  to the database * You have a valid Oracle account on a database and want to escalate your privileges
+  to become DBA or SYSDBA * You have a Oracle account and you want to execute system commands (e.g. reverse
+  shell) in order to move forward on the operating system hosting the database'
 categories:
 - database
 tags:
 - oracle
+homepage: https://github.com/quentinhardy/odat
+size: 523264
 install:
 - provider: apt
   package: odat
@@ -12,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.1.1-0kali4

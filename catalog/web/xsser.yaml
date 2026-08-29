@@ -1,8 +1,14 @@
 id: xsser
+summary: XSS testing framework
+description: Cross Site "Scripter" (aka XSSer) is an automatic -framework- to detect, exploit and report
+  XSS vulnerabilities in web-based applications. It contains several options to try to bypass certain
+  filters, and various special techniques of code injection.
 categories:
 - web
 tags:
 - xss
+homepage: https://xsser.03c8.net/
+size: 25151488
 install:
 - provider: apt
   package: xsser
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.8.4-0kali3

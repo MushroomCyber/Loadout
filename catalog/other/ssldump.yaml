@@ -1,6 +1,13 @@
 id: ssldump
+summary: SSLv3/TLS network protocol analyzer
+description: This program will dump the traffic on a network and analyze it for SSLv3/TLS network traffic,
+  typically used to secure TCP connections. When it identifies this traffic, it decodes the results.  When
+  provided with the appropriate keying material, it will also decrypt the connections and display the
+  application data traffic. ssldump is based on tcpdump, a network monitoring and data acquisition tool.
 categories:
-- other
+- recon
+homepage: https://github.com/adulau/ssldump
+size: 197632
 install:
 - provider: apt
   package: ssldump
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9-2

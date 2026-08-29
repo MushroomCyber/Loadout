@@ -1,6 +1,14 @@
 id: shed
+summary: simple hex editor with a pico-style interface
+description: 'shed (Simple Hex Editor) is an easy application for viewing and editing files in text mode,
+  using ncurses. The main features are: - Displays each byte as ascii, hex, decimal, octal and binary;
+  - Allows changes to be input in all of the above displayed modes, with bit toggling in the binary column;
+  - Simple Pico-style interface; - Search resource; - Can dump information to file; - Small memory requirements
+  because file is not loaded into memory; - Large file support. shed is useful in forensics investigations.'
 categories:
 - other
+homepage: http://shed.sf.net
+size: 62464
 install:
 - provider: apt
   package: shed
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.16-2

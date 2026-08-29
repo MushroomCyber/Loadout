@@ -1,6 +1,18 @@
 id: pdfcrack
+summary: PDF files password cracker
+description: 'PDFCrack is a simple tool for recovering passwords from pdf-documents. It should be able
+  to handle all pdfs that uses the standard security handler but the pdf-parsing routines are a bit of
+  a quick hack so you might stumble across some pdfs where the parser needs to be fixed to handle. The
+  main PDFCrack features are: - Supports the standard security handler (revision 2, 3 and 4) on all known
+  PDF-versions. - Supports cracking both owner and userpasswords. - Both wordlists and bruteforcing the
+  password are supported. - Simple permutations (currently only trying first character as Upper Case).
+  - Save and load a running job. - Simple benchmarking. - Optimised search for owner-password when user-password
+  is known. This program can be used in forensics investigations or similar activities, to legal password
+  crack.'
 categories:
-- other
+- password
+homepage: http://pdfcrack.sf.net
+size: 91136
 install:
 - provider: apt
   package: pdfcrack
@@ -9,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.21-1

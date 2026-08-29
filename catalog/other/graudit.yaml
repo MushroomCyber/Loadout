@@ -1,6 +1,12 @@
 id: graudit
+summary: grep rough audit - source code auditing tool
+description: This is a simple script and signature sets that allows you to find potential security flaws
+  in source code using the GNU utility grep. It's comparable to other static analysis applications like
+  RATS, SWAAT and flaw-finder while keeping the technical requirements to a minimum and being very flexible.
 categories:
 - other
+homepage: https://github.com/wireghoul/graudit
+size: 120832
 install:
 - provider: apt
   package: graudit
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.0-1

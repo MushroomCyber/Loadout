@@ -1,6 +1,12 @@
 id: rsakeyfind
+summary: locates BER-encoded RSA private keys in memory images
+description: rsakeyfind is a tool that locates BER-encoded RSA private keys in MEMORY-IMAGE. If a MODULUS-FILE
+  is specified, it will locate private and public keys matching the hex-encoded modulus read from this
+  file. This package is useful to several activities, as forensics investigations.
 categories:
-- other
+- forensics
+homepage: https://citp.princeton.edu/our-work/memory/code/
+size: 34816
 install:
 - provider: apt
   package: rsakeyfind
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:1.0-8

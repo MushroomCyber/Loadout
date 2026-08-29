@@ -1,6 +1,16 @@
 id: reconspider
+summary: OSINT Framework for scanning IP Address, Emails, Websites, Organizations
+description: This package contains Advanced Open Source Intelligence (OSINT) Framework for scanning IP
+  Address, Emails, Websites, Organizations and find out information from different sources. ReconSpider
+  can be used by Infosec Researchers, Penetration Testers, Bug Hunters and Cyber Crime Investigators to
+  find deep information about their target. ReconSpider aggregate all the raw data, visualize it on a
+  dashboard and facilitate alerting and monitoring on the data. Recon Spider also combines the capabilities
+  of Wave, Photon and Recon Dog to do a comprehensive enumeration of attack surface. This package includes
+  IP2Proxy LITE data available from https://www.ip2location.com/proxy-database.
 categories:
 - other
+homepage: https://github.com/bhavsec/reconspider
+size: 389974016
 install:
 - provider: apt
   package: reconspider
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.7-0kali2

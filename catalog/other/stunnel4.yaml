@@ -1,6 +1,16 @@
 id: stunnel4
+summary: Universal SSL tunnnel for network daemons - compatibility package
+description: The stunnel program is designed to work  as  SSL  encryption wrapper between remote client
+  and local (inetd-startable) or remote server. The concept is that having non-SSL aware daemons running  on  your  system
+  you can easily setup them to communicate with clients over secure SSL channel. stunnel can be used to
+  add  SSL  functionality  to  commonly used  inetd  daemons  like  POP-2,  POP-3  and  IMAP servers without
+  any changes in the programs' code. This package provides the /usr/bin/stunnel4 symlink for compatibility
+  with other packages. As soon as all the reverse dependencies within Debian are adapted to use /usr/bin/stunnel
+  instead, it will become a purely transitional package.
 categories:
-- other
+- web
+homepage: https://www.stunnel.org/
+size: 21504
 install:
 - provider: apt
   package: stunnel4
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3:5.78-4

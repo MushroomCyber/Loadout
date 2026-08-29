@@ -1,6 +1,15 @@
 id: gss-ntlmssp
+summary: GSSAPI NTLMSSP Mechanism -- MIT GSSAPI plugin
+description: GSS-NTLMSSP is a GSSAPI mechanism plugin that implements NTLMSSP. NTLMSSP is a Microsoft
+  Security Provider that implements various versions and falvors of the NTLM challenge-response family.
+  GSS-NTLMSSP, implements both NTLM and NTLMv2 and all the various security variants to the key exchange
+  that Microsoft introduced and documented over time. This code implements the NTLMSSP mechanism as a
+  GSSAPI loadable mechanism and has been tested to work with MIT Kerberos' 1.11 implementation of GSSAPI.
+  This package supplies the MIT GSSAPI plugin.
 categories:
 - other
+homepage: https://github.com/gssapi/gss-ntlmssp/
+size: 156672
 install:
 - provider: apt
   package: gss-ntlmssp
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.1-1

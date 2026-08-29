@@ -1,6 +1,13 @@
 id: brutespray
+summary: Bruteforcing from various scanner output
+description: Brutespray has been re-written in Golang, eliminating the requirement for additional tools.
+  This enhanced version is more extensive and operates at a significantly faster pace than its Python
+  counterpart. As of now, Brutespray accepts input from Nmap's GNMAP/XML output, newline-separated JSON
+  files, Nexpose's XML Export feature, Nessus exports in .nessus format, and various lists.
 categories:
 - other
+homepage: https://github.com/x90skysn3k/brutespray
+size: 25657344
 install:
 - provider: apt
   package: brutespray
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.2.2-0kali1

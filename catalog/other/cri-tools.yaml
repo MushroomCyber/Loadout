@@ -1,6 +1,11 @@
 id: cri-tools
+summary: command line tool used for creating OCI images
+description: 'This package contains a series of debugging and validation tools for Kubelet CRI, which
+  includes: - crictl: CLI for kubelet CRI. - critest: validation test suites for kubelet CRI.'
 categories:
 - other
+homepage: https://github.com/kubernetes-sigs/cri-tools
+size: 56229888
 install:
 - provider: apt
   package: cri-tools
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.36.0-0kali1

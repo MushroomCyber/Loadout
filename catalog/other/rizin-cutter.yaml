@@ -1,6 +1,12 @@
 id: rizin-cutter
+summary: reverse engineering platform powered by rizin
+description: Cutter is a free and open-source reverse engineering platform powered by rizin. It aims at
+  being an advanced and customizable reverse engineering platform while keeping the user experience in
+  mind. Cutter is created by reverse engineers for reverse engineers.
 categories:
-- other
+- reverse
+homepage: https://cutter.re
+size: 9055232
 install:
 - provider: apt
   package: rizin-cutter
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.4.1-0kali1+b4

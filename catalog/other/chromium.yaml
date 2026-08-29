@@ -1,6 +1,11 @@
 id: chromium
+summary: web browser
+description: Web browser that aims to build a safer, faster, and more stable internet browsing experience.
+  This package contains the web browser component.
 categories:
-- other
+- recon
+homepage: http://www.chromium.org/Home
+size: 307680256
 install:
 - provider: apt
   package: chromium
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 148.0.7778.178-1

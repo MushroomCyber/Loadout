@@ -1,6 +1,12 @@
 id: lvm2
+summary: Linux Logical Volume Manager
+description: This is LVM2, the rewrite of The Linux Logical Volume Manager.  LVM supports enterprise level
+  volume management of disk and disk subsystems by grouping arbitrary disks into volume groups. The total
+  capacity of volume groups can be allocated to logical volumes, which are accessed as regular block devices.
 categories:
-- other
+- forensics
+homepage: https://sourceware.org/lvm2/
+size: 4153344
 install:
 - provider: apt
   package: lvm2
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.03.31-2+b2

@@ -1,6 +1,12 @@
 id: getallurls
+summary: fetch known URLs from AlienVault's Open Threat Exchange (gau)
+description: This package contains getallurls (gau). It fetches known URLs from AlienVault's Open Threat
+  Exchange (https://otx.alienvault.com), the Wayback Machine, and Common Crawl for any given domain. Inspired
+  by Tomnomnom's waybackurls.
 categories:
 - other
+homepage: https://github.com/lc/gau
+size: 6739968
 install:
 - provider: apt
   package: getallurls
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.7-0kali1

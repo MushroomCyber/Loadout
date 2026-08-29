@@ -1,6 +1,10 @@
 id: stegcracker
+summary: steganography brute-force tool
+description: StegCracker is steganography brute-force utility to uncover hidden data inside files.
 categories:
 - other
+homepage: https://github.com/Paradoxis/StegCracker
+size: 51200
 install:
 - provider: apt
   package: stegcracker
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.0-5

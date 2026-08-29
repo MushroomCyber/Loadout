@@ -1,6 +1,12 @@
 id: vopono
+summary: Run applications through VPN tunnels with temporary network namespaces
+description: vopono is a tool to run applications through VPN tunnels via temporary network namespaces.
+  This allows you to run only a handful of applications through different VPNs simultaneously, whilst
+  keeping your main connection as normal.
 categories:
 - other
+homepage: https://github.com/jamesmcm/vopono
+size: 13840384
 install:
 - provider: apt
   package: vopono
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.10.16-0kali1

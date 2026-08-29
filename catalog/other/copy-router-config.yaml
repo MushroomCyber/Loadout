@@ -1,6 +1,10 @@
 id: copy-router-config
+summary: Copies Cisco configs via SNMP
+description: This package copies configuration files from Cisco devices running SNMP.
 categories:
-- other
+- vuln-scan
+homepage: https://www.offsec.com
+size: 12288
 install:
 - provider: apt
   package: copy-router-config
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0-1kali5

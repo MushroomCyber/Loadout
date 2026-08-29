@@ -1,6 +1,11 @@
 id: rcracki-mt
+summary: Version of rcrack that supports hybrid and indexed tables
+description: rcracki_mt is our modified version of rcrack which supports hybrid and indexed tables. In
+  addition to that, it also adds multi-core support
 categories:
-- other
+- password
+homepage: https://freerainbowtables.com/
+size: 415744
 install:
 - provider: apt
   package: rcracki-mt
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.0-1kali5

@@ -1,6 +1,10 @@
 id: asleap
+summary: A tool for exploiting Cisco LEAP networks
+description: Demonstrates a serious deficiency in proprietary Cisco LEAP networks.
 categories:
 - wireless
+homepage: https://www.willhackforsushi.com/
+size: 240640
 install:
 - provider: apt
   package: asleap
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.3~git20201128.254acab-0kali1+b1

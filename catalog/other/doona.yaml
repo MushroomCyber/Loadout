@@ -1,6 +1,11 @@
 id: doona
+summary: Network fuzzer forked from bed
+description: Doona is a fork of the Bruteforce Exploit Detector Tool (BED). BED is a program which is
+  designed to check daemons for potential buffer overflows, format string bugs etc.
 categories:
 - other
+homepage: https://github.com/wireghoul/doona
+size: 131072
 install:
 - provider: apt
   package: doona
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0+git20190108-2

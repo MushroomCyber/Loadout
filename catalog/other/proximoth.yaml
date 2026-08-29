@@ -1,6 +1,11 @@
 id: proximoth
+summary: Control Frame Attack Vulnerability Detection Tool
+description: Proximoth is a command-line tool to detect Wi-Fi devices in proximity with Control Frame
+  Attack.
 categories:
 - other
+homepage: https://technicaluserx.gitlab.io/proximoth
+size: 984064
 install:
 - provider: apt
   package: proximoth
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.0-0kali1

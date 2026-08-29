@@ -1,6 +1,16 @@
 id: cisco-torch
+summary: Cisco device scanner
+description: The main feature that makes cisco-torch different from similar tools is the extensive use
+  of forking to launch multiple scanning processes on the background for maximum scanning efficiency.
+  Also, it uses several methods of application layer fingerprinting simultaneoulsy, if needed. We wanted
+  something fast to discover remote Cisco hosts running Telnet, SSH, Web, NTP, TFTP and SNMP services
+  and launch dicitionary attacks against the services discovered, including SNMP community attack (you
+  would like the community.txt list :-) and TFTP servers (configuration file name bruteforcing with following
+  config leeching). The tool can also get device configurationfiles automatically if SNMP RW community
+  is found.
 categories:
-- other
+- vuln-scan
+size: 119808
 install:
 - provider: apt
   package: cisco-torch
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4b-1kali6

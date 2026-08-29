@@ -1,8 +1,16 @@
 id: dex2jar
+summary: Tools to work with android .dex and java .class files
+description: 'dex2jar contains 4 compments: dex-reader is designed to read the Dalvik Executable (.dex/.odex)
+  format. It has a light weight API similar with ASM. An example here dex-translator is designed to do
+  the convert job. It reads the dex instruction to dex-ir format, after some optimize, convert to ASM
+  format. dex-ir used by dex-translator, is designed to represent the dex instruction dex-tools tools
+  to work with .class files.'
 categories:
 - reverse
 tags:
 - android
+homepage: https://github.com/pxb1988/dex2jar/tree/2.x
+size: 6082560
 install:
 - provider: apt
   package: dex2jar
@@ -11,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1~nightly-28-0kali2

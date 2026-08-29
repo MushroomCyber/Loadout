@@ -1,6 +1,15 @@
 id: unicorn-magic
+summary: Tool for a PowerShell downgrade attack and inject shellcode
+description: This package contains a simple tool for using a PowerShell downgrade attack and inject shellcode
+  straight into memory. Based on Matthew Graeber's powershell attacks and the powershell bypass technique
+  presented by David Kennedy (TrustedSec) and Josh Kelly at Defcon 18. Usage is simple, just run Magic
+  Unicorn (ensure Metasploit is installed and in the right path) and magic unicorn will automatically
+  generate a powershell command that you need to simply cut and paste the powershell code into a command
+  line window or through a payload delivery system.
 categories:
-- other
+- web
+homepage: https://github.com/trustedsec/unicorn
+size: 101376
 install:
 - provider: apt
   package: unicorn-magic
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.12-0kali3

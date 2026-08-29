@@ -1,5 +1,8 @@
 id: ffuf
 summary: Fast web fuzzer for content and parameter discovery
+description: ffuf is a fast web fuzzer written in Go that allows typical directory discovery, virtual
+  host discovery (without DNS records) and GET and POST parameter fuzzing. This program is useful for
+  pentesters, ethical hackers and forensics experts. It also can be used for security tests.
 categories:
 - web
 - fuzzing
@@ -17,6 +20,7 @@ alternatives:
 - feroxbuster
 - gobuster
 - dirsearch
+size: 9878528
 install:
 - provider: apt
   package: ffuf
@@ -32,3 +36,4 @@ install:
 - provider: github
   repo: ffuf/ffuf
   checksums: '*checksums*.txt'
+version: 2.1.0-1+b11

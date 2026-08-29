@@ -1,6 +1,16 @@
 id: hackrf
+summary: Software defined radio peripheral - utilities
+description: 'HackRF is an open source Software Defined Radio that can receive and transmit between 30
+  MHz and 6 GHz. HackRF has a 20 MHz bandwidth. It is a High Speed USB device powered by the USB bus.
+  This package contains a set of command line utilities: * hackrf_clock: HackRF clock configuration utility
+  * hackrf_cpldjtag: program CLPD * hackrf_debug: chip register read/write/config tool * hackrf_info:
+  probe device and show configuration * hackrf_operacake: control of operacake board via hackrf * hackrf_spiflash:
+  read and write flash data from file. * hackrf_sweep: control frequency sweep of hackrf * hackrf_transfer:
+  file based transmit and receive sdr'
 categories:
-- other
+- wireless
+homepage: http://greatscottgadgets.com/hackrf/
+size: 221184
 install:
 - provider: apt
   package: hackrf
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2026.01.3-1

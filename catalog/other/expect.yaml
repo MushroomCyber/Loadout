@@ -1,6 +1,15 @@
 id: expect
+summary: Automates interactive applications
+description: Expect is a tool for automating interactive applications according to a script. Following
+  the script, Expect knows what can be expected from a program and what the correct response should be.
+  Expect is also useful for testing these same applications. And by adding Tk, you can also wrap interactive
+  applications in X11 GUIs. An interpreted language provides branching and high-level control structures
+  to direct the dialogue. In addition, the user can take control and interact directly when desired, afterward
+  returning control to the script. This package contains the expect binary and several Expect based scripts.
 categories:
-- other
+- recon
+homepage: https://core.tcl.tk/expect/
+size: 331776
 install:
 - provider: apt
   package: expect
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.45.4-7

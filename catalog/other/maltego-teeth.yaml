@@ -1,6 +1,10 @@
 id: maltego-teeth
+summary: Set of offensive Maltego transforms
+description: A set of transforms for Maltego to run nmap, sqlmap, and more against entitites in Maltego.
 categories:
 - other
+homepage: https://www.maltego.com
+size: 128648192
 install:
 - provider: apt
   package: maltego-teeth
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0+20201218-0kali4

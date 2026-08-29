@@ -1,6 +1,13 @@
 id: ophcrack-cli
+summary: Microsoft Windows password cracker using rainbow tables (cmdline)
+description: Ophcrack is a Windows password cracker based on a time-memory trade-off using rainbow tables.
+  This is a new variant of Hellman's original trade-off, with better performance. It recovers 99.9% of
+  alphanumeric passwords in seconds. It works for Windows NT/2000/XP/Vista/7. This package contains ophcrack
+  with command line interface only.
 categories:
-- other
+- password
+homepage: https://ophcrack.sourceforge.net/
+size: 192512
 install:
 - provider: apt
   package: ophcrack-cli
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.8.0-4

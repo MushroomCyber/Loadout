@@ -1,6 +1,17 @@
 id: sipvicious
+summary: tools to audit SIP based VoIP systems
+description: 'SIPVicious suite is a set of tools that can be used to audit SIP based VoIP systems. This
+  suite has five tools: svmap, svwar, svcrack, svreport, svcrash. svmap is a sip scanner. When launched
+  against ranges of ip address space, it will identify any SIP servers which it finds on the way. svwar
+  identifies working extension lines on a PBX. Also tells you if extension line requires authentication
+  or not. svcrack is a password cracker making use of digest authentication. It is able to crack passwords
+  on both registrar servers and proxy servers. svreport is able to manage sessions created by the rest
+  of the tools and export to pdf, xml, csv and plain text. svcrash responds to svwar and svcrack SIP messages
+  with a message that causes old versions to crash.'
 categories:
-- other
+- vuln-scan
+homepage: https://github.com/EnableSecurity/sipvicious
+size: 201728
 install:
 - provider: apt
   package: sipvicious
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.3.3-2.1

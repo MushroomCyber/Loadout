@@ -1,6 +1,14 @@
 id: dhcpig
+summary: DHCP exhaustion script using scapy network library
+description: DHCPig initiates an advanced DHCP exhaustion attack. It will consume all IPs on the LAN,
+  stop new users from obtaining IPs, release any IPs in use, then for good measure send gratuitous ARP
+  and knock all windows hosts offline. It is based on the scapy library and requests admin privileges
+  to execute. It has been tested on multiple Linux distributions and multiple DHCP servers (ISC, Windows
+  2k3/2k8, ...).
 categories:
-- other
+- vuln-scan
+homepage: https://github.com/kamorin/DHCPig
+size: 87040
 install:
 - provider: apt
   package: dhcpig
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6-3

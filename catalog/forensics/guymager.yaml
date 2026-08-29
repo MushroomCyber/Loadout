@@ -1,8 +1,14 @@
 id: guymager
+summary: Forensic imaging tool based on Qt
+description: The forensic imager contained in this package, guymager, was designed to support different
+  image file formats, to be most user-friendly and to run really fast. It has a high speed multi-threaded
+  engine using parallel compression for best performance on multi-processor and hyper-threading machines.
 categories:
 - forensics
 tags:
 - imaging
+homepage: https://guymager.sourceforge.net/
+size: 1074176
 install:
 - provider: apt
   package: guymager
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8.13-3

@@ -1,6 +1,11 @@
 id: protos-sip
+summary: SIP test suite
+description: The purpose of this test-suite is to evaluate implementation level security and robustness
+  of Session Initiation Protocol (SIP) implementations.
 categories:
-- other
+- vuln-scan
+homepage: https://www.ee.oulu.fi/research/ouspg/PROTOS_Test-Suite_c07-sip
+size: 2263040
 install:
 - provider: apt
   package: protos-sip
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0-1kali6

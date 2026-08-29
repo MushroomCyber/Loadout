@@ -1,6 +1,13 @@
 id: nasty
+summary: tool which helps you to recover your GPG passphrase
+description: 'Nasty is a program that helps you to recover the passphrase of your PGP or GPG-key in case
+  you forget or lost it. The following features will make things easier: - set minimum/maximum length
+  of the passphrase - incremental mode, random mode or reads a file for guessing - charset filter This
+  package is useful in forensics investigations.'
 categories:
-- other
+- forensics
+homepage: https://github.com/folkertvanheusden/nasty
+size: 43008
 install:
 - provider: apt
   package: nasty
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6+git20220929.9830b7a-3+b1

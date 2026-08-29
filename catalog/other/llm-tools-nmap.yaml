@@ -1,6 +1,12 @@
 id: llm-tools-nmap
+summary: plugin for LLM tool hat provides Nmap network scanning capabilities
+description: This package contains a plugin for Simon Willison's LLM tool that provides Nmap network scanning
+  capabilities through function calling. This plugin enables LLMs to perform network discovery and security
+  scanning tasks using the powerful Nmap tool.
 categories:
 - other
+homepage: https://github.com/peter-hackertarget/llm-tools-nmap
+size: 31744
 install:
 - provider: apt
   package: llm-tools-nmap
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20250612.36818ca-0kali1

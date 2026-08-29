@@ -1,6 +1,14 @@
 id: mssqlpwner
+summary: Advanced and versatile pentesting tool
+description: MSSqlPwner is an advanced and versatile pentesting tool designed to seamlessly interact and
+  pwn MSSQL servers. That tool is based on impacket, which allows attackers to authenticate to databases
+  using clear-text passwords NTLM Hashes, and kerberos tickets. With MSSqlPwner, users can execute custom
+  commands through various methods, including custom assembly, `xp_cmdshell`, and `sp_oacreate(Ole Automation
+  Procedures)` and much more.
 categories:
 - other
+homepage: https://github.com/ScorpionesLabs/MSSqlPwner
+size: 244736
 install:
 - provider: apt
   package: mssqlpwner
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.2+git20260525.5c2d326-0kali1

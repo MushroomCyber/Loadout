@@ -1,6 +1,14 @@
 id: binwalk3
+summary: tool library for analyzing binary blobs and executable code
+description: Binwalk is a tool for identifying, and optionally extracting, files and data that have been
+  embedded inside of other files. While its primary focus is firmware analysis, it supports a wide variety
+  of file and data types. Through entropy analysis, it can even help to identify unknown compression or
+  encryption! Binwalk can be customized and integrated into your own Rust projects This is an updated
+  version of the Binwalk firmware analysis tool, re-written in Rust for speed and accuracy.
 categories:
-- other
+- forensics
+homepage: https://github.com/ReFirmLabs/binwalk
+size: 4078592
 install:
 - provider: apt
   package: binwalk3
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.1.0-0kali4

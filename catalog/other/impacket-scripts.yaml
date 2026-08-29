@@ -1,6 +1,10 @@
 id: impacket-scripts
+summary: Links to useful impacket scripts examples
+description: This package contains links to useful impacket scripts. It's a separate package to keep impacket
+  package from Debian and have the useful scripts in the path for Kali.
 categories:
-- other
+- recon
+size: 66560
 install:
 - provider: apt
   package: impacket-scripts
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: '1.10'

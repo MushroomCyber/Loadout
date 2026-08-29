@@ -1,6 +1,11 @@
 id: rtpmixsound
+summary: Mixes pre-recorded audio in real-time
+description: A tool to mix pre-recorded audio in real-time with the audio (i.e. RTP) in the specified
+  target audio stream.
 categories:
-- other
+- vuln-scan
+homepage: http://www.hackingvoip.com/sec_tools.html
+size: 236544
 install:
 - provider: apt
   package: rtpmixsound
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0-1kali5+b1

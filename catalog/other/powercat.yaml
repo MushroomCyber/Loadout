@@ -1,6 +1,13 @@
 id: powercat
+summary: netcat features all in powershell v2
+description: This package contains a netcat powershell version. It's a simple utility which reads and
+  writes data across network connections using DNS or UDP protocol.
 categories:
-- other
+- post-exploitation
+tags:
+- windows
+homepage: https://github.com/besimorhino/powercat
+size: 56320
 install:
 - provider: apt
   package: powercat
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20240305.4e33fdf-0kali1

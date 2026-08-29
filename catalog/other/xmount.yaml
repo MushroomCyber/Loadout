@@ -1,6 +1,18 @@
 id: xmount
+summary: tool for crossmounting between disk image formats
+description: xmount allows you to convert on-the-fly between multiple input and output harddisk image
+  formats. xmount creates a virtual file system using FUSE (Filesystem in Userspace) that contains a virtual
+  representation of the input image. The virtual representation can be in raw DD, Apple's Disk Image format
+  (DMG), VirtualBox's virtual disk file format (VDI), Microsoft's Virtual Hard Disk Image format (VHD)
+  or in VMware's VMDK file format. Input images can be raw DD, EWF (Expert Witness Compression Format),
+  AFF (Advanced Forensic Format), VDI (VirtualBox Virtual Disk Image) or QCOW (QEMU Copy On Write) files.
+  In addition, xmount also supports virtual write access to the output files that is redirected to a cache
+  file. This makes it for example possible to boot acquired harddisk images using QEMU, KVM, VirtualBox,
+  VWware or alike.
 categories:
-- other
+- forensics
+homepage: https://www.sits.lu/xmount
+size: 334848
 install:
 - provider: apt
   package: xmount
@@ -9,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2.1+ds-1

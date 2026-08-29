@@ -1,6 +1,14 @@
 id: sparrow-wifi
+summary: Graphical Wi-Fi Analyzer for Linux
+description: This package contains a graphical Wi-Fi analyzer for Linux. It provides a more comprehensive
+  GUI-based replacement for tools like inSSIDer and linssid that runs specifically on Linux. In its most
+  comprehensive use cases, sparrow-wifi integrates Wi-Fi, software-defined radio (hackrf), advanced bluetooth
+  tools (traditional and Ubertooth), traditional GPS (via gpsd), and drone/rover GPS via mavlink in one
+  solution.
 categories:
 - other
+homepage: https://github.com/ghostop14/sparrow-wifi
+size: 2039808
 install:
 - provider: apt
   package: sparrow-wifi
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0-0kali1

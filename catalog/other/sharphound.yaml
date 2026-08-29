@@ -1,6 +1,10 @@
 id: sharphound
+summary: C# Data Collector for BloodHound
+description: This package contains the pre-built SharpHound.
 categories:
 - other
+homepage: https://github.com/SpecterOps/SharpHound
+size: 3260416
 install:
 - provider: apt
   package: sharphound
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.13.0-0kali1

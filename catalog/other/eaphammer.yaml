@@ -1,6 +1,15 @@
 id: eaphammer
+summary: toolkit for targeted evil twin attacks against WPA2-Enterprise networks
+description: This package contains a toolkit for performing targeted evil twin attacks against WPA2-Enterprise
+  networks. It is designed to be used in full scope wireless assessments and red team engagements. As
+  such, focus is placed on providing an easy-to-use interface that can be leveraged to execute powerful
+  wireless attacks with minimal manual configuration. To illustrate just how fast this tool is, the Quick
+  Start section provides an example of how to execute a credential stealing evil twin attack against a
+  WPA/2-EAP network in just commands.
 categories:
 - other
+homepage: https://github.com/s0lst1c3/eaphammer
+size: 11973632
 install:
 - provider: apt
   package: eaphammer
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.14.0-0kali5

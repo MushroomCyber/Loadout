@@ -1,6 +1,10 @@
 id: cabextract
+summary: Microsoft Cabinet file unpacker
+description: Cabextract is a program which unpacks cabinet (.cab) files, which are a form of archive Microsoft
+  uses to distribute their software and things like Windows Font Packs.
 categories:
-- other
+- forensics
+size: 84992
 install:
 - provider: apt
   package: cabextract
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.11-2

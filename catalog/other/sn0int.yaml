@@ -1,6 +1,13 @@
 id: sn0int
+summary: Semi-automatic OSINT framework and package manager
+description: sn0int is a semi-automatic OSINT framework and package manager. It was built for IT security
+  professionals and bug hunters to gather intelligence about a given target or about yourself. sn0int
+  is enumerating attack surface by semi-automatically processing public information and mapping the results
+  in a unified format for followup investigations.
 categories:
 - other
+homepage: https://github.com/kpcyrd/sn0int
+size: 17684480
 install:
 - provider: apt
   package: sn0int
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.26.1-0kali1+b1

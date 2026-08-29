@@ -1,6 +1,18 @@
 id: cloudbrute
+summary: Awesome cloud enumerator (program)
+description: 'This package contains a tool to find a company (target) infrastructure, files, and apps
+  on the top cloud providers (Amazon, Google, Microsoft, DigitalOcean, Alibaba, Vultr, Linode). The outcome
+  is useful for bug bounty hunters, red teamers, and penetration testers alike. The complete writeup is
+  available here (https://0xsha.io/posts/introducing-cloudbrute-wild-hunt-on-the-clouds) Features * Cloud
+  detection (IPINFO API and Source Code) * Supports all major providers• Black-Box (unauthenticated) *
+  Fast (concurrent) * Modular and easily customizable * Cross Platform (windows, Linux, mac) * User-Agent
+  Randomization * Proxy Randomization (HTTP, Socks5) Supported Cloud Providers * Microsoft: - Storage
+  - Apps * Amazon: - Storage - Apps * Google: - Storage - Apps * DigitalOcean: - storage * Vultr: - Storage
+  * Linode: - Storage * Alibaba: - Storage'
 categories:
 - other
+homepage: https://github.com/0xsha/cloudbrute
+size: 6457344
 install:
 - provider: apt
   package: cloudbrute
@@ -9,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.7-0kali2

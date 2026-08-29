@@ -1,6 +1,12 @@
 id: gitleaks
+summary: protect and discover secrets using Gitleaks 🔑 (program)
+description: Gitleaks is a SAST tool for **detecting** and **preventing** hardcoded secrets like passwords,
+  API keys, and tokens in git repos.  Gitleaks is an **easy-to-use, all-in-one solution** for detecting
+  secrets, past or present, in your code. This package contains the command-line tool 'gitleaks'.
 categories:
 - other
+homepage: https://github.com/gitleaks/gitleaks
+size: 10366976
 install:
 - provider: apt
   package: gitleaks
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 8.26.0-1+b1

@@ -1,6 +1,12 @@
 id: intrace
+summary: Traceroute-like application piggybacking on existing TCP connections
+description: InTrace is a traceroute-like application that enables users to enumerate IP hops exploiting
+  existing TCP connections, both initiated from local network (local system) or from remote hosts. It
+  could be useful for network reconnaissance and firewall bypassing.
 categories:
-- other
+- recon
+homepage: https://github.com/robertswiecki/intrace
+size: 53248
 install:
 - provider: apt
   package: intrace
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6-0kali2

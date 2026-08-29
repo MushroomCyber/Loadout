@@ -1,0 +1,94 @@
+name: Enrich catalog
+
+# The catalog shipped in the wheel is built from catalog/, where most entries
+# are bare names. APT already knows every package's summary, homepage, size and
+# meta-package membership -- this job reads that on a real Kali box and writes
+# it back into the YAML tree, so every user gets a full catalog regardless of
+# what platform they installed on.
+#
+# Opens a pull request rather than pushing: catalog content is reviewable data,
+# and a bad upstream metadata change should not land unseen.
+
+on:
+  schedule:
+    - cron: "17 4 * * 1"   # Mondays, after Kali's weekly rebuilds
+  workflow_dispatch:
+    inputs:
+      add_new:
+        description: "Also add security packages not yet in the tree"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    container:
+      image: kalilinux/kali-rolling:latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Install prerequisites
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            python3 python3-venv python3-pip git ca-certificates
+
+      # kali-tools-* meta-packages are the strongest categorisation signal and
+      # only exist in Kali's index, which is the whole reason this runs here.
+      - name: Populate the package index
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: apt-get install -y -qq --no-install-recommends kali-tools-web || true
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Install loadout
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python3 -m venv /opt/lo
+          /opt/lo/bin/pip install -q --upgrade pip
+          /opt/lo/bin/pip install -q -e '.[dev]'
+
+      - name: Enrich the source tree
+        id: enrich
+        run: |
+          ARGS="--source catalog"
+          if [ "${{ inputs.add_new }}" = "true" ]; then ARGS="$ARGS --add-new"; fi
+          /opt/lo/bin/loadout catalog enrich $ARGS --json | tee /tmp/enrich.json
+          {
+            echo "changed=$(/opt/lo/bin/python -c 'import json;print(json.load(open("/tmp/enrich.json"))["changed"])')"
+            echo "described=$(/opt/lo/bin/python -c 'import json;print(json.load(open("/tmp/enrich.json"))["described"])')"
+            echo "entries=$(/opt/lo/bin/python -c 'import json;print(json.load(open("/tmp/enrich.json"))["entries"])')"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Validate and rebuild the compiled catalog
+        run: |
+          /opt/lo/bin/loadout catalog validate --source catalog
+          /opt/lo/bin/loadout catalog build --source catalog --output loadout/data/catalog.db
+
+      - name: Open a pull request
+        if: steps.enrich.outputs.changed != '0'
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e  # v7.0.8
+        with:
+          branch: catalog/enrich
+          delete-branch: true
+          commit-message: "catalog: enrich from APT metadata"
+          title: "catalog: enrich ${{ steps.enrich.outputs.changed }} entries from APT metadata"
+          body: |
+            Automated run of `loadout catalog enrich` on Kali rolling.
+
+            - **${{ steps.enrich.outputs.changed }}** entries updated
+            - **${{ steps.enrich.outputs.described }} / ${{ steps.enrich.outputs.entries }}** now have a summary
+
+            Summaries, homepages, sizes and categories come from APT metadata and
+            `kali-tools-*` meta-package membership. Curated values are never
+            overwritten — enrichment only fills fields an entry leaves empty.
+
+            The compiled `loadout/data/catalog.db` has been rebuilt to match.
+          labels: catalog

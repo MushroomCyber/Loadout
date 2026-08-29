@@ -1,8 +1,21 @@
 id: dnsenum
+summary: tool to enumerate domain DNS information
+description: 'Dnsenum is a multithreaded perl script to enumerate DNS information of a domain and to discover
+  non-contiguous ip blocks. The main purpose of Dnsenum is to gather as much information as possible about
+  a domain. The program currently performs the following operations: - Get the host''s addresses (A record).
+  - Get the namservers (threaded). - Get the MX record (threaded). - Perform axfr queries on nameservers
+  and get BIND versions(threaded). - Get extra names and subdomains via google scraping (google query
+  = "allinurl: -www site:domain"). - Brute force subdomains from file, can also perform recursion on subdomain
+  that have NS records (all threaded). - Calculate C class domain network ranges and perform whois queries
+  on them (threaded). - Perform reverse lookups on netranges (C class or/and whois netranges) (threaded).
+  - Write to domain_ips.txt file ip-blocks. This program is useful for pentesters, ethical hackers and
+  forensics experts. It also can be used for security tests.'
 categories:
 - recon
 tags:
 - dns
+homepage: https://github.com/SparrowOchon/dnsenum2
+size: 89088
 install:
 - provider: apt
   package: dnsenum
@@ -11,3 +24,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.2-1

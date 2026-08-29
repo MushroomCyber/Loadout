@@ -1,6 +1,11 @@
 id: hoaxshell
+summary: Windows reverse shell payload generator and handler that abuses http(s)
+description: Hoaxshell is a Windows reverse shell payload generator and handler that abuses the http(s)
+  protocol to establish a beacon-like reverse shell
 categories:
 - other
+homepage: https://github.com/t3l3machus/hoaxshell/
+size: 86016
 install:
 - provider: apt
   package: hoaxshell
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20250119.e1bba89-0kali2

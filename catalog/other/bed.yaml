@@ -1,8 +1,13 @@
 id: bed
+summary: A network protocol fuzzer
+description: BED is a program which is designed to check daemons for potential buffer overflows, format
+  strings et. al.
 categories:
-- other
+- vuln-scan
 tags:
 - fuzzing
+homepage: http://www.snake-basket.de
+size: 74752
 install:
 - provider: apt
   package: bed
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.5-1kali8

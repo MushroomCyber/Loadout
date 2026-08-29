@@ -1,6 +1,16 @@
 id: hashrat
+summary: hashing tool supporting several hashes and recursivity
+description: Hashrat is a hash-generation utility that supports the md5, sha1, sha256, sha512, whirlpool,
+  jh-244, jh256, jh-384 and jh-512 hash functions, and also the HMAC versions of those functions. It can
+  output in 'traditional' format (same as md5sum and shasum and the like), or it's own format. Hashes
+  can be output in octal, decimal, hexadecimal, uppercase hexadecimal or base64. Hashrat also supports
+  directory recursion, hashing entire devices, generating a hash for an entire directory, operations in
+  remote machines and several other features. It has a 'CGI' mode that can be used as a web-page to lookup
+  hashes. This tool is useful in forensics investigations and network security.
 categories:
 - other
+homepage: https://github.com/ColumPaget/Hashrat/
+size: 525312
 install:
 - provider: apt
   package: hashrat
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.25+ds-2

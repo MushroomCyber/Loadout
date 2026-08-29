@@ -1,6 +1,10 @@
 id: bettercap-ui
+summary: bettercap's web UI
+description: This package contains the bettercap's web UI.
 categories:
 - other
+homepage: https://github.com/bettercap/ui
+size: 19825664
 install:
 - provider: apt
   package: bettercap-ui
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.0+really1.3.0-0kali1

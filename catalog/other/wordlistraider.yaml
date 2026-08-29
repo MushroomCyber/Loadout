@@ -1,6 +1,13 @@
 id: wordlistraider
+summary: Tool to prepare existing wordlists
+description: This package contains a Python tool for preparing existing wordlists. It returns a selection
+  of words that matches the passed conditions in an existing list. As an example you have a GB big wordlist
+  and you only want passwords with a length of at least 8 characters. This optimizes word lists and saves
+  unnecessary requests.
 categories:
 - other
+homepage: https://github.com/GregorBiswanger/WordlistRaider
+size: 30720
 install:
 - provider: apt
   package: wordlistraider
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0~git20200927-0kali2

@@ -1,6 +1,14 @@
 id: javasnoop
+summary: Intercept Java applications locally
+description: Normally, without access to the original source code, testing the security of a Java client
+  is unpredictable at best and unrealistic at worst. With access the original source, you can run a simple
+  Java program and attach a debugger to it remotely, stepping through code and changing variables where
+  needed. Doing the same with an applet is a little bit more difficult. JavaSnoop attempts to solve this
+  problem by allowing you attach to an existing process (like a debugger) and instantly begin tampering
+  with method calls, run custom code, or just watch what's happening on the system.
 categories:
-- other
+- reverse
+size: 13785088
 install:
 - provider: apt
   package: javasnoop
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1-rc2-1kali4

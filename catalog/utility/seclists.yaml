@@ -1,5 +1,9 @@
 id: seclists
 summary: The collection of wordlists everything else expects
+description: SecLists is a collection of multiple types of lists used during security assessments. List
+  types include usernames, passwords, URLs, sensitive data grep strings, fuzzing payloads, and many more.
+  The goal is to enable a security tester to pull this repo onto a new testing box and have access to
+  every type of list that may be needed.
 categories:
 - utility
 tags:
@@ -8,6 +12,7 @@ tags:
 phases:
 - discovery
 homepage: https://github.com/danielmiessler/SecLists
+size: 1935140864
 install:
 - provider: apt
   package: seclists
@@ -18,3 +23,4 @@ install:
   - ubuntu
 - provider: brew
   formula: seclists
+version: 2025.3-0kali1

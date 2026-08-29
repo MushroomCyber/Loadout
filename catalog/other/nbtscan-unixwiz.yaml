@@ -1,6 +1,12 @@
 id: nbtscan-unixwiz
+summary: Scanner for open NETBIOS nameservers
+description: This package contains a command-line tool that scans for open NETBIOS nameservers on a local
+  or remote TCP/IP network, and this is a first step in finding of open shares. It is based on the functionality
+  of the standard Windows tool nbtstat, but it operates on a range of addresses instead of just one.
 categories:
 - other
+homepage: http://unixwiz.net/tools/nbtscan.html
+size: 54272
 install:
 - provider: apt
   package: nbtscan-unixwiz
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.35-0kali4

@@ -1,6 +1,11 @@
 id: dnstracer
+summary: trace DNS queries to the source
+description: dnstracer determines where a given Domain Name Server (DNS) gets its information from for
+  a given hostname, and follows the chain of DNS servers back to the authoritative answer.
 categories:
-- other
+- recon
+homepage: http://www.mavetju.org/unix/dnstracer.php
+size: 60416
 install:
 - provider: apt
   package: dnstracer
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9-8

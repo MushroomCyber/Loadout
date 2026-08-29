@@ -1,6 +1,17 @@
 id: readpe
+summary: command-line tools to manipulate Windows PE files
+description: readpe is a toolkit designed to analyze Microsoft Windows PE (Portable Executable) binary
+  files. Its tools can parse and compare PE32/PE32+ executable files (EXE, DLL, OCX, etc), and analyze
+  them in search of suspicious characteristics. It can be used to get information from those executable
+  files, such as headers, sections, resources and more. It also provides tools to disassemble PE files
+  and determine their security mitigations. It is useful for application security research, digital forensics
+  and incident response, and malware analysis. It is similar to elftools, only designed for PE files.
+  It has more features than other more specific PE tools, such as icoextract or ntldd. This package provides
+  the ofs2rva, pedis, pehash, peldd, pepack, peres, pescan, pesec, pestr, readpe and rva2ofs commands.
 categories:
-- other
+- forensics
+homepage: https://github.com/mentebinaria/readpe/wiki
+size: 1294336
 install:
 - provider: apt
   package: readpe
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.85.1-1+b2

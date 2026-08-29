@@ -1,6 +1,10 @@
 id: johnny
+summary: GUI for John the Ripper
+description: Johnny is provides a GUI for the John the Ripper password cracking tool.
 categories:
-- other
+- password
+homepage: https://openwall.info/wiki/john/johnny
+size: 944128
 install:
 - provider: apt
   package: johnny
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.2+git20160807-0kali2+b1

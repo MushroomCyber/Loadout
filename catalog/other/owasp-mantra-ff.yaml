@@ -1,6 +1,17 @@
 id: owasp-mantra-ff
+summary: Web application security testing framework built on top of Firefox
+description: Mantra is a browser especially designed for web application security testing. By having such
+  a product, more people will come to know the easiness and flexibility of being able to follow basic
+  testing procedures within the browser. Mantra believes that having such a portable, easy to use and
+  yet powerful platform can be helpful for the industry. Mantra has many built in tools to modify headers,
+  manipulate input strings, replay GET/POST requests, edit cookies, quickly switch between multiple proxies,
+  control forced redirects etc. This makes it a good software for performing basic security checks and
+  sometimes, exploitation. Thus, Mantra can be used to solve basic levels of various web based CTFs, showcase
+  security issues in vulnerable web applications etc.
 categories:
-- other
+- web
+homepage: https://www.owasp.org/index.php/OWASP_Mantra_-_Security_Framework
+size: 125464576
 install:
 - provider: apt
   package: owasp-mantra-ff
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9-1kali5

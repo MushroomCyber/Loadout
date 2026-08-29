@@ -1,6 +1,12 @@
 id: pdfid
+summary: Scans PDF files for certain PDF keywords
+description: This tool is not a PDF parser, but it will scan a file to look for certain PDF keywords,
+  allowing you to identify PDF documents that contain (for example) JavaScript or execute an action when
+  opened. PDFiD will also handle name obfuscation.
 categories:
-- other
+- forensics
+homepage: https://blog.didierstevens.com/programs/pdf-tools/
+size: 108544
 install:
 - provider: apt
   package: pdfid
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2.10-0kali1

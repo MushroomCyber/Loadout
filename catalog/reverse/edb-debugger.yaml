@@ -1,8 +1,14 @@
 id: edb-debugger
+summary: cross platform x86/x86-64 debugger
+description: edb is a graphical cross platform x86/x86-64 debugger. It was inspired by Ollydbg, but aims
+  to function on x86 and x86-64 as well as multiple OS's. Linux is the only officially supported platform
+  at the moment, but FreeBSD, OpenBSD, OSX and Windows ports are underway with varying degrees of functionality.
 categories:
 - reverse
 tags:
 - debugger
+homepage: https://github.com/eteran/edb-debugger
+size: 1769472
 install:
 - provider: apt
   package: edb-debugger
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.0-2.2+b1

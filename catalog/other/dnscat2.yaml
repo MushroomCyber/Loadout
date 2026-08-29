@@ -1,6 +1,11 @@
 id: dnscat2
+summary: DNS tunnel (metapackage)
+description: This tool is designed to create an encrypted command-and-control (C&C) channel over the DNS
+  protocol, which is an effective tunnel out of almost every network.
 categories:
 - other
+homepage: https://github.com/iagox86/dnscat2
+size: 16384
 install:
 - provider: apt
   package: dnscat2
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.07-0kali2

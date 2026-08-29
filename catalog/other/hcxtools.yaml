@@ -1,6 +1,12 @@
 id: hcxtools
+summary: Tools for converting captures to use with hashcat or John the Ripper
+description: 'Portable solution for capturing wlan traffic and conversion to hashcat formats (recommended
+  by hashcat) and to John the Ripper formats. hcx stands for: - h = hash - c = capture, convert and calculate
+  candidates - x = different hashtypes'
 categories:
 - other
+homepage: https://github.com/ZerBea/hcxtools
+size: 649216
 install:
 - provider: apt
   package: hcxtools
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 7.1.0-1

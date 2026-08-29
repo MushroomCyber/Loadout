@@ -1,6 +1,12 @@
 id: name-that-hash
+summary: Identify MD5, SHA256 and 300+ other hash types
+description: This package contains a utility to identify hash types. Have you ever come across a hash
+  such as 5f4dcc3b5aa765d61d8327deb882cf99 and wondered what type of hash type that is? Name-that-hash
+  will name it for you.
 categories:
 - other
+homepage: https://github.com/HashPals/Name-That-Hash
+size: 125952
 install:
 - provider: apt
   package: name-that-hash
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.11.0-0kali1

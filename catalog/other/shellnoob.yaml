@@ -1,6 +1,19 @@
 id: shellnoob
+summary: Shellcode writing toolkit
+description: 'Features: * convert shellcode between different formats and sources. Formats currently supported:
+  asm, bin, hex, obj, exe, C, Python, ruby, pretty, safeasm, completec, shellstorm. (All details in the
+  "Formats description" section.) * interactive asm-to-opcode conversion (and viceversa) mode. This is
+  useful when you cannot use specific bytes in the shellcode and you want to figure out if a specific
+  assembly instruction will cause problems. * support for both ATT & Intel syntax. Check the --intel switch.
+  * support for 32 and 64 bits (when playing on x86_64 machine). Check the --64 switch. * resolve syscall
+  numbers, constants, and error numbers * portable and easily deployable (it only relies on gcc/as/objdump
+  and Python) And it just one self-contained Python script! * in-place development: you run ShellNoob
+  directly on the target architecture * built-in support for Linux/x86, Linux/x86_64, Linux/ARM, FreeBSD/x86,
+  FreeBSD/x86_64. * "*prepend breakpoint*" option. Check the -c switch. * rea'
 categories:
-- other
+- exploitation
+homepage: https://github.com/reyammer/shellnoob
+size: 98304
 install:
 - provider: apt
   package: shellnoob
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1+git20170425-0kali5

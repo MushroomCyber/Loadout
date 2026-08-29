@@ -1,6 +1,14 @@
 id: gdisk
+summary: GPT fdisk text-mode partitioning tool
+description: 'GPT fdisk (aka gdisk) is a text-mode partitioning tool that provides utilities for Globally
+  Unique Identifier (GUID) Partition Table (GPT) disks. Features: - Edit GUID partition table definitions
+  - In place conversion of BSD disklabels to GPT - In place conversion of MBR to GPT - In place conversion
+  of GPT to MBR - Create hybrid MBR/GPT layouts - Repair damaged GPT data structures - Repair damaged
+  MBR structures - Back up GPT data to a file (and restore from file)'
 categories:
 - other
+homepage: http://sourceforge.net/projects/gptfdisk/
+size: 990208
 install:
 - provider: apt
   package: gdisk
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.10-3

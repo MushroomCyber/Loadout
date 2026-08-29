@@ -1,6 +1,12 @@
 id: blue-hydra
+summary: Bluetooth device discovery service
+description: BlueHydra is a Bluetooth device discovery service built on top of the bluez library. BlueHydra
+  makes use of ubertooth where available and attempts to track both classic and low energy (LE) bluetooth
+  devices over time.
 categories:
-- other
+- wireless
+homepage: https://github.com/ZeroChaos-/blue_hydra
+size: 8647680
 install:
 - provider: apt
   package: blue-hydra
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.20-0kali2

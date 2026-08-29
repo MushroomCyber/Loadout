@@ -1,6 +1,11 @@
 id: ldeep
+summary: In-depth ldap enumeration utility
+description: ldeep is an in-depth ldap enumeration utility that can either run against an Active Directory
+  LDAP server or locally on saved files.
 categories:
 - other
+homepage: https://github.com/franc-pentest/ldeep
+size: 260096
 install:
 - provider: apt
   package: ldeep
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.3-0kali1

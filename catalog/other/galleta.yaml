@@ -1,6 +1,11 @@
 id: galleta
+summary: Internet Explorer cookie forensic analysis tool
+description: Galleta is a forensics tool that examines the content of cookie files produced by Microsoft
+  Internet Explorer (MSIE). It parses the file and outputs a field separated that can be loaded in a spreadsheet.
 categories:
-- other
+- forensics
+homepage: https://odessa.sourceforge.net/
+size: 31744
 install:
 - provider: apt
   package: galleta
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0+20040505-12

@@ -1,6 +1,13 @@
 id: samdump2
+summary: Dump Windows 2k/NT/XP password hashes
+description: This tool is designed to dump Windows 2k/NT/XP password hashes from a SAM file, using the
+  syskey bootkey from the system hive. This package also provides the functionality of bkhive, which recovers
+  the syskey bootkey from a Windows NT/2K/XP system hive. Syskey is a Windows feature that adds an additional
+  encryption layer to the password hashes stored in the SAM database.
 categories:
-- other
+- password
+homepage: https://ophcrack.sourceforge.net/
+size: 44032
 install:
 - provider: apt
   package: samdump2
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.0-8

@@ -1,6 +1,13 @@
 id: ivre
+summary: network recon framework IVRE or DRUNK
+description: This package contains IVRE (Instrument de veille sur les réseaux extérieurs) or DRUNK (Dynamic
+  Recon of UNKnown networks), a network recon framework, including tools for passive recon (flow analytics
+  relying on Bro, Argus, Nfdump, fingerprint analytics based on Bro and p0f and active recon. IVRE uses
+  Nmap to run scans, can use ZMap as a pre-scanner; IVRE can also import XML output from Nmap and Masscan.
 categories:
 - other
+homepage: https://ivre.rocks
+size: 19034112
 install:
 - provider: apt
   package: ivre
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.21-0kali1

@@ -1,6 +1,11 @@
 id: passing-the-hash
+summary: Patched tools to use password hashes as authentication input
+description: This package contains modified versions of Curl, Iceweasel, FreeTDS, Samba 4, WinEXE and
+  WMI. They are installed as executables starting with the "pth-" string.
 categories:
-- other
+- password
+homepage: http://passing-the-hash.blogspot.fr
+size: 14663680
 install:
 - provider: apt
   package: passing-the-hash
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~2015.12.37+b1

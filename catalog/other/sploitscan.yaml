@@ -1,6 +1,19 @@
 id: sploitscan
+summary: Search for CVE information
+description: 'SploitScan is an efficient and easy-to-use command-line tool designed to consult CVE (Common
+  Vulnerabilities and Exposures). Extremely important for professionals, as it allows them to implement
+  measures that prevent the exploitation of discovered vulnerabilities. Tool is capable of exporting in
+  a single run results for JSON and CSV formats, from the main databases of entities and organizations
+  linked to cybersecurity: - MITER Corporation. non-profit organization that provides technical solutions
+  to critical security issue - EPSS (Exploit Prediction Scoring System) is a system that aims to predict
+  the probability of a specific vulnerability, helping organizations prioritize their mitigation activities.
+  - Gather PoCs (Proof of Concepts) Collecting PoCs is a common activity among vulnerability researchers
+  and security professionals, who reproduce the severity of vulnerabilities in a controlled environment,
+  aiming to take preventive measures. - CISA Infrastructure Security Agency - respon'
 categories:
 - other
+homepage: https://github.com/xaitax/SploitScan
+size: 275456
 install:
 - provider: apt
   package: sploitscan
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.14.3-1

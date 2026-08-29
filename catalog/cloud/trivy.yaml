@@ -1,5 +1,12 @@
 id: trivy
 summary: Vulnerability and misconfiguration scanner for images and IaC
+description: 'This package contains a comprehensive and versatile security scanner. Trivy has scanners
+  that look for security issues, and targets where it can find those issues. It can find vulnerabilities,
+  misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more. Targets
+  (what Trivy can scan): * Container Image * Filesystem * Git Repository (remote) * Virtual Machine Image
+  * Kubernetes * AWS Scanners (what Trivy can find there): * OS packages and software dependencies in
+  use (SBOM) * Known vulnerabilities (CVEs) * IaC issues and misconfigurations * Sensitive information
+  and secrets * Software licenses'
 categories:
 - cloud
 - vuln-scan
@@ -15,6 +22,7 @@ homepage: https://trivy.dev
 alternatives:
 - grype
 - syft
+size: 240533504
 install:
 - provider: apt
   package: trivy
@@ -28,3 +36,4 @@ install:
 - provider: github
   repo: aquasecurity/trivy
   checksums: '*checksums*.txt'
+version: 0.66.0-0kali1

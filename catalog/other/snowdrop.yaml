@@ -1,6 +1,19 @@
 id: snowdrop
+summary: plain text watermarking and watermark recovery
+description: 'Snowdrop provides reliable, difficult to remove steganographic watermarking of text documents
+  (internal memos, draft research papers, advisories and other writing) and C sources (limited distribution
+  software, licensed software, or freely available code) so that: (1) leaks can be identified if the data
+  goes public. (2) original source can be determined and demonstrated if part of the document is claimed
+  by somebody else, copied without permission, etc. Snowdrop uses redundant steganography using four different
+  logical channels, and should be proof to many modifications, including reformatting, spell checking
+  and so on. This package is useful in forensic investigations and security actions. It provides three
+  commands: sd-eng, sd-engf and sd-c. sd-eng and sd-engf provide watermarking for draft-quality and fine-quality
+  English language text documents, respectively, whereas sd-c provides experimental C source code watermarking.
+  Warning: Snowdrop is currently in beta, and may produce bad or'
 categories:
 - other
+homepage: http://lcamtuf.coredump.cx/
+size: 198656
 install:
 - provider: apt
   package: snowdrop
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.02b-18

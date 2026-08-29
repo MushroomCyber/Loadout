@@ -1,6 +1,19 @@
 id: quark-engine
+summary: Android Malware (Analysis | Scoring System)
+description: 'Quark-Engine is a full-featured Android analysis framework written in Python for hunting
+  threat intelligence inside the APK, DEX files. Since it is rule-based, you can use the ones built-in
+  or customize as needed. With ideas decoded from criminal law, Quark-Engine has its unique angles for
+  Android analysis. A Dalvik bytecode loader has been developed that has tainted analysis inside but also
+  defeats the obfuscation techniques used against reverse engineering. And surprisingly, the loader matches
+  perfectly the design of the malware scoring system. Quark-Engine is very easy to use and also provides
+  flexible output formats. There are three types of output reports: detail report, call graph, and summary
+  report. With these reports in mind, you can get an overview of the high-risk behavior inside Android
+  within seconds. Also, by integrating with other Android analysis tools such as Ghidra, APKLAB, Jadx,
+  Quark-Engine can greatly improve the efficiency of reverse engineers.'
 categories:
 - other
+homepage: https://github.com/ev-flow/quark-engine
+size: 321204224
 install:
 - provider: apt
   package: quark-engine
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 26.5.1-0kali1

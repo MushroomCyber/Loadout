@@ -1,5 +1,10 @@
 id: john
 summary: 'John the Ripper: offline password cracking, many formats'
+description: John the Ripper is a tool designed to help systems administrators to find weak (easy to guess
+  or crack through brute force) passwords, and even automatically mail users warning them about it, if
+  it is desired. Besides several crypt(3) password hash types most commonly found on various Unix flavors,
+  supported out of the box are Kerberos AFS and Windows NT/2000/XP/2003 LM hashes, plus several more with
+  contributed patches.
 categories:
 - password
 tags:
@@ -13,6 +18,7 @@ binaries:
 homepage: https://www.openwall.com/john/
 alternatives:
 - hashcat
+size: 81983488
 install:
 - provider: apt
   package: john
@@ -23,3 +29,4 @@ install:
   - ubuntu
 - provider: brew
   formula: john-jumbo
+version: 1.9.0-Jumbo-1+git20211102-0kali10

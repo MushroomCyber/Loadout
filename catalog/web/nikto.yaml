@@ -1,5 +1,10 @@
 id: nikto
 summary: Web server misconfiguration and known-issue scanner
+description: 'Nikto is a pluggable web server and CGI scanner written in Perl, using rfp''s LibWhisker
+  to perform fast security or informational checks. Features: - Easily updatable CSV-format checks database
+  - Output reports in plain text or HTML - Available HTTP versions automatic switching - Generic as well
+  as specific server software checks - SSL support (through libnet-ssleay-perl) - Proxy support (with
+  authentication) - Cookies support'
 categories:
 - web
 - vuln-scan
@@ -13,6 +18,7 @@ homepage: https://github.com/sullo/nikto
 alternatives:
 - nuclei
 - zaproxy
+size: 2225152
 install:
 - provider: apt
   package: nikto
@@ -23,3 +29,4 @@ install:
   - ubuntu
 - provider: brew
   formula: nikto
+version: 1:2.6.0-0kali4

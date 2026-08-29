@@ -1,6 +1,12 @@
 id: ropper
+summary: rop gadget finder and binary information tool
+description: This package contains scripts that display info about files in different formats and find
+  gadgets to build ROPs chains for different architectures (x86/x86_64, ARM/ARM64, MIPS, PowerPC). For
+  disassembly ropper uses the Capstone Framework.
 categories:
 - other
+homepage: https://scoding.de/ropper/
+size: 411648
 install:
 - provider: apt
   package: ropper
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.13.8-0kali1

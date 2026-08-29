@@ -1,6 +1,10 @@
 id: caido-cli
+summary: security auditing toolkit (CLI)
+description: This package contains caido CLI, a security auditing toolkit.
 categories:
 - other
+homepage: https://github.com/caido/caido
+size: 158941184
 install:
 - provider: apt
   package: caido-cli
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.56.2-0kali1

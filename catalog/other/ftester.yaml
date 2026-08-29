@@ -1,6 +1,13 @@
 id: ftester
+summary: Tool for testing firewalls and Intrusion Detection System (IDS)
+description: 'The Firewall Tester (FTester) is a tool designed for testing firewall filtering policies
+  and Intrusion Detection System (IDS) capabilities. Features: * firewall testing * IDS testing * simulation
+  of real tcp connections for stateful inspection firewalls and IDS * TCP connection spoofing * IP fragmentation
+  / TCP segmentation * IDS evasion techniques'
 categories:
-- other
+- recon
+homepage: https://dev.inversepath.com/ftester/
+size: 93184
 install:
 - provider: apt
   package: ftester
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0-1kali3

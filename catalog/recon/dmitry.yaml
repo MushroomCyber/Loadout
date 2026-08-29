@@ -1,8 +1,13 @@
 id: dmitry
+summary: Deepmagic Information Gathering Tool
+description: DMitry is a UNIX/(GNU)Linux command line application written in C. DMitry can find possible
+  subdomains, email addresses, uptime information, perform tcp port scan, whois lookups, and more.
 categories:
 - recon
 tags:
 - osint
+homepage: https://mor-pah.net/software/dmitry-deepmagic-information-gathering-tool/
+size: 51200
 install:
 - provider: apt
   package: dmitry
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3a-8

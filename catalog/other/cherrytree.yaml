@@ -1,6 +1,12 @@
 id: cherrytree
+summary: hierarchical note taking application
+description: CherryTree is a hierarchical note taking application, featuring rich text, syntax highlighting,
+  images handling, hyperlinks, import/export with support for multiple formats, support for multiple languages,
+  and more.
 categories:
 - other
+homepage: https://www.giuspen.net/cherrytree/
+size: 11544576
 install:
 - provider: apt
   package: cherrytree
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2.0+dfsg-1+b1

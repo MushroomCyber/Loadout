@@ -1,8 +1,17 @@
 id: sslstrip
+summary: SSL/TLS man-in-the-middle attack tool
+description: sslstrip is a tool that transparently hijacks HTTP traffic on a network, watch for HTTPS
+  links and redirects, and then map those links into look-alike HTTP links or homograph-similar HTTPS
+  links. It also supports modes for supplying a favicon which looks like a lock icon, selective logging,
+  and session denial.
 categories:
 - sniffing
 tags:
 - ssl-strip
+homepage: https://github.com/L1ghtn1ng/sslstrip
+alternatives:
+- bettercap
+size: 61440
 install:
 - provider: apt
   package: sslstrip
@@ -11,6 +20,5 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0+git20211125.9ac747b-0kali2
 deprecated_by: bettercap
-alternatives:
-- bettercap

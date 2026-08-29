@@ -1,6 +1,13 @@
 id: jboss-autopwn
+summary: JBoss script for obtaining remote shell access
+description: 'This JBoss script deploys a JSP shell on the target JBoss AS server. Once deployed, the
+  script uses its upload and command execution capability to provide an interactive session. Features
+  include: - Multiplatform support - tested on Windows, Linux and Mac targets - Support for bind and reverse
+  bind shells - Meterpreter shells and VNC support for Windows targets'
 categories:
-- other
+- web
+homepage: https://github.com/SpiderLabs/jboss-autopwn
+size: 116736
 install:
 - provider: apt
   package: jboss-autopwn
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1-1kali2

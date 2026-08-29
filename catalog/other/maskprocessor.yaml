@@ -1,6 +1,14 @@
 id: maskprocessor
+summary: high-performance word generator with a per-position configurable charset
+description: Maskprocessor is a fast word list generator. It enumerates all combinations from a given
+  user-defined keyspace and outputs the results. Since it supports different alphabets (which also can
+  be combined) at different positions in the generation template ('mask'), this approach allows a more
+  fine-tunable generation of candidates than using 'naive' brute force enumeration of words. Masks are
+  defined using the description also used in the Hashcat password recovery utility.
 categories:
-- other
+- password
+homepage: https://github.com/hashcat/maskprocessor
+size: 45056
 install:
 - provider: apt
   package: maskprocessor
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.73+git20170609.1708898-4

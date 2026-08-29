@@ -1,6 +1,11 @@
 id: 0trace
+summary: traceroute tool that can run within an existing TCP connection
+description: The package is traceroute tool that can be run within an existing, open TCP connection, therefore
+  bypassing some types of stateful packet filters with ease.
 categories:
-- other
+- recon
+homepage: https://lcamtuf.coredump.cx
+size: 44032
 install:
 - provider: apt
   package: 0trace
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.01-3kali6

@@ -1,6 +1,12 @@
 id: forensic-artifacts
+summary: knowledge base of forensic artifacts (data files)
+description: A free, community-sourced, machine-readable knowledge base of forensic artifacts that the
+  world can use both as an information source and within other tools. This package installs the data files
+  alone, without the Python toolkit.
 categories:
-- other
+- forensics
+homepage: https://github.com/ForensicArtifacts/artifacts
+size: 435200
 install:
 - provider: apt
   package: forensic-artifacts
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 20230928-1

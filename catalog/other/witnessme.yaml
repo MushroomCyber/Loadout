@@ -1,6 +1,12 @@
 id: witnessme
+summary: Web Inventory tool
+description: This package contains a Web Inventory tool inspired by Eyewitness, its also written to be
+  extensible allowing you to create custom functionality that can take advantage of the headless browser
+  it drives in the back-end.
 categories:
 - other
+homepage: https://github.com/byt3bl33d3r/WitnessMe
+size: 411648
 install:
 - provider: apt
   package: witnessme
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.5.0+git20201026-0kali4

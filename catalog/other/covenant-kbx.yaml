@@ -1,6 +1,13 @@
 id: covenant-kbx
+summary: .NET command and control framework
+description: 'This package contains Covenant:  .NET command and control framework that aims to highlight
+  the attack surface of .NET, make the use of offensive .NET tradecraft easier, and serve as a collaborative
+  command and control platform for red teamers. Covenant is an ASP.NET Core, cross-platform application
+  that includes a web-based interface that allows for multi-user collaboration.'
 categories:
 - other
+homepage: https://github.com/cobbr/Covenant
+size: 26351616
 install:
 - provider: apt
   package: covenant-kbx
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6-0kali7

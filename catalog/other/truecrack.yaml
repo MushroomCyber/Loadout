@@ -1,6 +1,12 @@
 id: truecrack
+summary: Bruteforce password cracker for TrueCrypt volumes
+description: TrueCrack is a bruteforce password cracker for TrueCrypt (Copyright) volume. It is optimazed
+  with Nvidia Cuda technology. It works with PBKDF2 (defined in PKCS5 v2.0) based on RIPEMD160 Key derivation
+  function and XTS block cipher mode of operation used for hard disk encryption based on AES.
 categories:
-- other
+- password
+homepage: https://github.com/lvaccaro/truecrack
+size: 2746368
 install:
 - provider: apt
   package: truecrack
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.6+git20150326-0kali6

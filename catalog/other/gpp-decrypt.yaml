@@ -1,6 +1,10 @@
 id: gpp-decrypt
+summary: Group Policy Preferences decrypter
+description: A simple ruby script that will decrypt a given GPP encrypted string.
 categories:
-- other
+- password
+homepage: http://carnal0wnage.attackresearch.com/2012/10/group-policy-preferences-and-getting.html
+size: 11264
 install:
 - provider: apt
   package: gpp-decrypt
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1-1kali3

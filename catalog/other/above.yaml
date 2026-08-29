@@ -1,6 +1,14 @@
 id: above
+summary: Network security sniffer for finding vulnerabilities in the network
+description: This package contains a network security sniffer for finding vulnerabilities in the network,
+  designed for pentesters and security professionals. It is based entirely on network traffic analysis,
+  so it does not make any noise on the air. Above allows pentesters to automate the process of finding
+  vulnerabilities in network hardware. Discovery protocols, dynamic routing, FHRP, STP, LLMNR/NBT-NS,
+  etc. The tool can also both listen to traffic on the interface and analyze already existing pcap files.
 categories:
-- other
+- sniffing
+homepage: https://github.com/caster0x00/Above
+size: 1489920
 install:
 - provider: apt
   package: above
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.8.1-0kali2

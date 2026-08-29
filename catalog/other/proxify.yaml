@@ -1,6 +1,18 @@
 id: proxify
+summary: Swiss Army knife Proxy tool for HTTP/HTTPS traffic capture, manipulation
+description: This package contains a Swiss Army Knife Proxy for rapid deployments. It supports multiple
+  operations such as request/response dump, filtering and manipulation via DSL language, upstream HTTP/Socks5
+  proxy. Additionally a replay utility allows to import the dumped traffic (request/responses with correct
+  domain name) into burp or any other proxy by simply setting the upstream proxy to proxify. Features
+  * Intercept / Manipulate HTTP/HTTPS & NON-HTTTP traffic * Invisible & Thick clients traffic proxy support
+  * TLS MITM support with client/server certificates * HTTP and SOCKS5 support for upstream proxy * Traffic
+  Match/Filter and Replace DSL support * Full traffic dump to file (request/responses) * Native embedded
+  DNS server * Plugin Support to decode specific protocols (e.g XMPP/SMTP/FTP/SSH/) * Proxify Traffic
+  replay in Burp
 categories:
 - other
+homepage: https://github.com/projectdiscovery/proxify
+size: 36789248
 install:
 - provider: apt
   package: proxify
@@ -9,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0.5-0kali3

@@ -1,6 +1,12 @@
 id: sliver
+summary: Implant framework
+description: This package contains a general purpose cross-platform implant framework that supports C2
+  over Mutual-TLS, HTTP(S), and DNS. Implants are dynamically compiled with unique X.509 certificates
+  signed by a per-instance certificate authority generated when you first run the binary.
 categories:
 - other
+homepage: https://github.com/BishopFox/sliver
+size: 305024000
 install:
 - provider: apt
   package: sliver
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7.1-0kali4

@@ -1,6 +1,12 @@
 id: patchleaks
+summary: Go from a CVE number to the exact patched code and its vulnerability analysis
+description: This package contains a tool to compare two versions of a code‑base, highlight lines changed
+  by vendor, and explain why they matter. Feed the tool an old and a patched version; PatchLeaks spots
+  the security fix and provides detailed description so you can validate—or weaponize—it fast.
 categories:
 - other
+homepage: https://github.com/hatlesswizard/PatchLeaks
+size: 28187648
 install:
 - provider: apt
   package: patchleaks
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20251113.3c53291-0kali1

@@ -1,6 +1,11 @@
 id: pipal
+summary: Statistical analysis on password dumps
+description: All this tool does is to give you the stats and the information to help you analyse the passwords.
+  The real work is done by you in interpreting the results.
 categories:
-- other
+- password
+homepage: https://www.digininja.org/projects/pipal.php
+size: 248832
 install:
 - provider: apt
   package: pipal
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.4.0-0kali1

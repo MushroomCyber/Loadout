@@ -1,6 +1,12 @@
 id: pocsuite3
+summary: Open-sourced remote vulnerability testing framework
+description: Pocsuite3 is an open-sourced remote vulnerability testing and proof-of-concept development
+  framework developed by the Knownsec 404 Team. It comes with a powerful proof-of-concept engine, many
+  nice features for the ultimate penetration testers and security researchers.
 categories:
 - other
+homepage: https://pocsuite.org
+size: 965632
 install:
 - provider: apt
   package: pocsuite3
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.0-1

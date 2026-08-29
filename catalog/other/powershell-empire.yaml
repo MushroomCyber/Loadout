@@ -1,6 +1,15 @@
 id: powershell-empire
+summary: PowerShell and Python post-exploitation agent
+description: This package contains a post-exploitation framework that includes a pure-PowerShell2.0 Windows
+  agent, and a pure Python Linux/OS X agent. It is the merge of the previous PowerShell Empire and Python
+  EmPyre projects. The framework offers cryptologically-secure communications and a flexible architecture.
+  On the PowerShell side, Empire implements the ability to run PowerShell agents without needing powershell.exe,
+  rapidly deployable post-exploitation modules ranging from key loggers to Mimikatz, and adaptable communications
+  to evade network detection, all wrapped up in a usability-focused framework.
 categories:
 - other
+homepage: https://github.com/BC-SECURITY/Empire
+size: 52293632
 install:
 - provider: apt
   package: powershell-empire
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 6.5.0-0kali4

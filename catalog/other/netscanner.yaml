@@ -1,6 +1,13 @@
 id: netscanner
+summary: Network scanner & diagnostic tool with modern TUI
+description: 'Netscanner is a network scanning tool with features like: - List HW Interfaces - Switching
+  active Interface for scanning & packet-dumping - WiFi networks scanning - WiFi signals strength (with
+  charts) - (IPv4) Pinging CIDR with hostname, oui & mac address - (IPv4) Packetdump (TCP, UDP, ICMP,
+  ARP) - (IPv6) Packetdump (ICMP6) - start/pause packetdump'
 categories:
 - other
+homepage: https://github.com/Chleba/netscanner
+size: 12440576
 install:
 - provider: apt
   package: netscanner
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6.41-0kali1

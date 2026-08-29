@@ -1,6 +1,14 @@
 id: regripper
+summary: perform forensic analysis of registry hives
+description: Regripper's CLI tool can be used to surgically extract, translate, and display information
+  (both data and metadata) from Registry-formatted files via plugins in the form of Perl-scripts. It allows
+  the analyst to select a hive-file to parse and a plugin or a profile, which is a list of plugins to
+  run against the given hive. The results go to STDOUT and can be redirected to a file, that the analyst
+  designates.
 categories:
-- other
+- forensics
+homepage: https://github.com/keydet89/RegRipper3.0
+size: 1129472
 install:
 - provider: apt
   package: regripper
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0~git20241212.bdf7ac2+dfsg-1

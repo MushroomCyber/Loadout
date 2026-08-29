@@ -1,6 +1,12 @@
 id: hotpatch
+summary: Hot patches Linux executables with .so file injection
+description: Hotpatch is a library that can be used to dynamically load a shared library (.so) file on
+  Linux from one process into another already running process, without affecting the execution of the
+  target process. The API is a C API, but also supported in C++.
 categories:
 - other
+homepage: https://github.com/vikasnkumar/hotpatch
+size: 226304
 install:
 - provider: apt
   package: hotpatch
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2-1kali4

@@ -1,5 +1,12 @@
 id: naabu
 summary: Fast SYN/CONNECT port scanner built for pipelines
+description: 'This package contains a port scanning tool written in Go that allows you to enumerate valid
+  ports for hosts in a fast and reliable manner. It is a really simple tool that does fast SYN/CONNECT
+  scans on the host/list of hosts and lists all ports that return a reply. Main features are: * Fast And
+  Simple SYN/CONNECT probe based scanning. * Optimized for ease of use and lightweight on resources *
+  Automatic handling of duplicate hosts between multiple subdomains * NMAP Integration for service discovery
+  * Piped input / output support for integrating in workflows * Multiple Output formats supported (JSON,
+  File, Stdout) * Multiple input support including HOST/IP/CIDR notation'
 categories:
 - recon
 tags:
@@ -13,6 +20,7 @@ homepage: https://github.com/projectdiscovery/naabu
 alternatives:
 - masscan
 - nmap
+size: 34948096
 install:
 - provider: apt
   package: naabu
@@ -26,3 +34,4 @@ install:
 - provider: github
   repo: projectdiscovery/naabu
   checksums: '*checksums*.txt'
+version: 2.6.1-0kali1

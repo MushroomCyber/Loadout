@@ -1,6 +1,19 @@
 id: firewalk
+summary: active reconnaissance network security tool
+description: Firewalk is an active reconnaissance network security tool that attempts to determine what
+  layer 4 protocols a given IP forwarding device will pass. It works by sending out TCP or UDP packets
+  with a TTL one hop greater than the targeted gateway. If the gateway allows the traffic, it will forward
+  the packets to the next hop where they will expire and elicit an ICMP_TIME_EXCEEDED message. Otherwise,
+  it will likely drop the packets and there will be no response. To get the correct IP TTL that will result
+  in packets expiring one hop beyond the gateway, Firewalk needs to ramp up hop counts. It does this in
+  the same manner that traceroute works. Once the scan is `bound` (that is, Firewalk knows the gateway
+  hop count), it begins the scan. The ultimate destination host does not have to be reached, it only needs
+  to be somewhere downstream, on the other side of the gateway, from the scanning host. Firewalk helps
+  in assessing the security configuration of packet filtering devices, such as those u
 categories:
-- other
+- recon
+homepage: http://packetfactory.openwall.net/projects/firewalk/
+size: 52224
 install:
 - provider: apt
   package: firewalk
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.0-6+b1

@@ -1,6 +1,12 @@
 id: kali-tweaks
+summary: tool to adjust advanced configuration settings for Kali Linux
+description: 'This package provides tweaks for Kali Linux. This include things like: * Shell configuration
+  * APT mirrors configuration * Kali Linux metapackages installation and removal * Hardening of the system
+  * Additional configuration for virtualized environments * Kernel settings'
 categories:
 - other
+homepage: https://gitlab.com/kalilinux/packages/kali-tweaks
+size: 160768
 install:
 - provider: apt
   package: kali-tweaks
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2026.2.0

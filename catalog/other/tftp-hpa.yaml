@@ -1,6 +1,13 @@
 id: tftp-hpa
+summary: HPA's tftp client
+description: Trivial File Transfer Protocol (TFTP) is a file transfer protocol, mainly to serve boot images
+  over the network to other machines (PXE). tftp-hpa is an enhanced version of the BSD TFTP client and
+  server. It possesses a number of bugfixes and enhancements over the original. This package contains
+  the client.
 categories:
-- other
+- network
+homepage: https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git/
+size: 60416
 install:
 - provider: apt
   package: tftp-hpa
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.3+20251209-2

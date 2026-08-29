@@ -1,6 +1,10 @@
 id: wordlists
+summary: Contains the rockyou wordlist
+description: This package contains the rockyou.txt wordlist and has an installation size of 134 MB.
 categories:
-- other
+- recon
+homepage: https://www.kali.org
+size: 53374976
 install:
 - provider: apt
   package: wordlists
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2026.2.0

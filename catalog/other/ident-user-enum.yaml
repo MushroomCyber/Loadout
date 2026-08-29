@@ -1,6 +1,13 @@
 id: ident-user-enum
+summary: Query ident to determine the owner of a TCP network process
+description: This package is a simple PERL script to query the ident service (113/TCP) in order to determine
+  the owner of the process listening on each TCP port of a target system. This can help to prioritise
+  target service during a pentest (you might want to attack services running as root first). Alternatively,
+  the list of usernames gathered can be used for password guessing attacks on other network services.
 categories:
 - other
+homepage: https://pentestmonkey.net/tools/user-enumeration/ident-user-enum
+size: 12288
 install:
 - provider: apt
   package: ident-user-enum
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0-0kali3

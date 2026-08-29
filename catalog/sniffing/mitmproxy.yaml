@@ -1,5 +1,15 @@
 id: mitmproxy
 summary: Interactive TLS-capable intercepting proxy
+description: 'mitmproxy is an interactive man-in-the-middle proxy for HTTP and HTTPS. It provides a console
+  interface that allows traffic flows to be inspected and edited on the fly. Also shipped is mitmdump,
+  the command-line version of mitmproxy, with the same functionality but without the frills. Think tcpdump
+  for HTTP. Features: - intercept and modify HTTP and HTTPS requests and responses and modify them on
+  the fly - save HTTP conversations for later replay and analysis - replay the client-side of an HTTP
+  conversation - reverse proxy mode to forward traffic to a specified server - transparent proxy mode
+  on OSX and Linux - make scripted changes to HTTP traffic using Python - SSL/TLS certificates for interception
+  are generated on the fly - ... This package contains the python-pathod module (previously provided by
+  other source package). The python-netlib module was also included but it has been dropped by upstream
+  in version 1.0.'
 categories:
 - sniffing
 - web
@@ -16,6 +26,7 @@ homepage: https://mitmproxy.org
 alternatives:
 - burpsuite
 - zaproxy
+size: 5207040
 install:
 - provider: apt
   package: mitmproxy
@@ -28,3 +39,4 @@ install:
   formula: mitmproxy
 - provider: pipx
   package: mitmproxy
+version: 12.2.3-0kali2

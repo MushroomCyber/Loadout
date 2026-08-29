@@ -1,6 +1,11 @@
 id: recordmydesktop
+summary: Captures audio-video data of a Linux desktop session
+description: The application produces an ogg-encapsulated theora-vorbis file. recordMyDesktop tries to
+  be as unobstrusive as possible by proccessing only regions of the screen that have changed
 categories:
-- other
+- reporting
+homepage: https://enselic.github.io/recordmydesktop/
+size: 131072
 install:
 - provider: apt
   package: recordmydesktop
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4.0-1+b3

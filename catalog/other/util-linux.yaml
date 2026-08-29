@@ -1,6 +1,13 @@
 id: util-linux
+summary: miscellaneous system utilities
+description: This package contains a number of important utilities, most of which are oriented towards
+  maintenance of your system. Some of the more important utilities included in this package allow you
+  to view kernel messages, create new filesystems, view block device information, interface with real
+  time clock, etc.
 categories:
-- other
+- recon
+homepage: https://github.com/util-linux/util-linux
+size: 4758528
 install:
 - provider: apt
   package: util-linux
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.42.1-3

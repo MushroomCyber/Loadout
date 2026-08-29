@@ -1,8 +1,13 @@
 id: set
+summary: Social-Engineer Toolkit
+description: The Social-Engineer Toolkit (SET) is an open-source Python-driven tool aimed at penetration
+  testing around Social-Engineering.
 categories:
 - social
 tags:
 - framework
+homepage: https://www.trustedsec.com/downloads/social-engineer-toolkit/
+size: 31879168
 install:
 - provider: apt
   package: set
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 8.0.3+git20241021-0kali1

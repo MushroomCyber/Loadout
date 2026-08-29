@@ -1,8 +1,14 @@
 id: rainbowcrack
+summary: Rainbow table password cracker
+description: RainbowCrack is a general propose implementation of Philippe Oechslin's faster time-memory
+  trade-off technique. It crack hashes with rainbow tables. RainbowCrack uses time-memory tradeoff algorithm
+  to crack hashes. It differs from the hash crackers that use brute force algorithm.
 categories:
 - password
 tags:
 - tables
+homepage: https://project-rainbowcrack.com/index.htm
+size: 508928
 install:
 - provider: apt
   package: rainbowcrack
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.8-0kali3

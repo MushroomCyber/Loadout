@@ -1,6 +1,13 @@
 id: iw
+summary: tool for configuring Linux wireless devices
+description: This package contains the 'iw' command line tool which allows one to configure and show information
+  about wireless devices. iw is based on the nl80211 kernel interface and supports the majority of fairly
+  recent hardware. The old tool iwconfig, which uses Wireless Extensions interface, is deprecated and
+  it is strongly recommended to switch to iw and nl80211.
 categories:
-- other
+- wireless
+homepage: https://wireless.wiki.kernel.org/en/users/documentation/iw
+size: 339968
 install:
 - provider: apt
   package: iw
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 6.17-1

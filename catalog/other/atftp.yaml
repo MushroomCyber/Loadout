@@ -1,8 +1,15 @@
 id: atftp
+summary: advanced TFTP client
+description: Interactive client for the Trivial File Transfer Protocol (TFTP). Its usage is mainly for
+  testing and debugging the atftp server. A TFTP client is usually implemented in UEFI/BIOS and bootstrap
+  programs like pxelinux when booting from LAN. The atftp client also supports non-interactive invocation
+  for easy use in scripts.
 categories:
-- other
+- network
 tags:
 - file-transfer
+homepage: https://sourceforge.net/projects/atftp
+size: 99328
 install:
 - provider: apt
   package: atftp
@@ -11,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8.0-8

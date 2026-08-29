@@ -1,6 +1,16 @@
 id: chkrootkit
+summary: rootkit detector
+description: 'The chkrootkit security scanner searches for signs that the system is infected with a ''rootkit''.
+  Rootkits are a form of malware that seek to exploit security flaws to grant unauthorised access to a
+  computer or its services, generally for malicious purposes. chkrootkit can identify signs of over 70
+  different rootkits (see the project''s website for a list). Please note that an automated tool like
+  chkrootkit can never guarantee a system is uncompromised. Nor does every report always signify a genuine
+  problem: human judgement and further investigation will always be needed to assure the security of your
+  system.'
 categories:
-- other
+- forensics
+homepage: https://www.chkrootkit.org/
+size: 1010688
 install:
 - provider: apt
   package: chkrootkit
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.59-1

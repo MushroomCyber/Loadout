@@ -1,6 +1,14 @@
 id: portspoof
+summary: enhance OS security through a set of techniques
+description: 'This package contains a service to enhance OS security through a set of following techniques:
+  * All 65535 TCP ports are always open Instead of informing an attacker that a particular port is in
+  a CLOSED or FILTERED state Portspoof will return SYN+ACK for every port connection attempt/ * Every
+  open TCP port emulates a service Portspoof has a huge database of dynamic service signatures, that will
+  be used to generate fake banners and fool scanners. This tool requires configuration before use.'
 categories:
 - other
+homepage: https://github.com/drk1wi/portspoof
+size: 1112064
 install:
 - provider: apt
   package: portspoof
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4-0kali2

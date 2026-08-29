@@ -1,6 +1,10 @@
 id: airgeddon
+summary: multi-use bash script for Linux systems to audit wireless networks
+description: airgeddon is a menu driven 3rd party tools wrapper to audit wireless networks with many features.
 categories:
-- other
+- wireless
+homepage: https://github.com/v1s1t0r1sh3r3/airgeddon
+size: 5306368
 install:
 - provider: apt
   package: airgeddon
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 12.0-0kali1

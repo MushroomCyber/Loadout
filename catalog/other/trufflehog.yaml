@@ -1,6 +1,11 @@
 id: trufflehog
+summary: Searches through git repositories for secrets
+description: This package contains a utitlity to search through git repositories for secrets, digging
+  deep into commit history and branches. This is effective at finding secrets accidentally committed.
 categories:
 - other
+homepage: https://github.com/trufflesecurity/truffleHog
+size: 124257280
 install:
 - provider: apt
   package: trufflehog
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.94.3-0kali1

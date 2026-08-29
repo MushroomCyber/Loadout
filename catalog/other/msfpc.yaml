@@ -1,6 +1,11 @@
 id: msfpc
+summary: MSFvenom Payload Creator (MSFPC)
+description: A quick way to generate various "basic" Meterpreter payloads using msfvenom which is part
+  of the Metasploit framework.
 categories:
-- other
+- exploitation
+homepage: https://github.com/g0tmi1k/msfpc
+size: 59392
 install:
 - provider: apt
   package: msfpc
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4.5-0kali3

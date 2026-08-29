@@ -1,6 +1,12 @@
 id: proxmark3
+summary: Firmware, flasher, and client for the Proxmark3
+description: This package contains the client and tools for the Proxmark3. It is dedicated to bringing
+  the most out of the new features for Proxmark3 RDV4.0 new hardware and design but it will also support
+  older hardware revisions.
 categories:
-- other
+- wireless
+homepage: https://github.com/RfidResearchGroup/proxmark3
+size: 5985280
 install:
 - provider: apt
   package: proxmark3
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.18994-0kali2+b1

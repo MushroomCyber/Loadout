@@ -1,6 +1,15 @@
 id: gqrx-sdr
+summary: Software defined radio receiver
+description: Gqrx works with hardware supported by gr-osmosdr, including Funcube Dongle, RTL-SDR, Airspy,
+  HackRF, BladeRF, RFSpace, USRP and SoapySDR. Gqrx can operate as an AM/FM/SSB receiver with audio output
+  or as an FFT-only instrument. The built-in Gqrx AFSK1200 decoder can decode and display AX.25 packets.  There
+  are also various hooks for interacting with external applications using network sockets. Wideband FM
+  mode has mono, stereo, and RDS (Radio Data System) modes. Displays FFT plot and spectrum waterfall.
+  It is powered by GNU Radio and the Qt GUI toolkit.
 categories:
-- other
+- wireless
+homepage: https://gqrx.dk/
+size: 2185216
 install:
 - provider: apt
   package: gqrx-sdr
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.17.7-1+b1

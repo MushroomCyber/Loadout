@@ -1,6 +1,19 @@
 id: tiger
+summary: security auditing and intrusion detection tools for Linux
+description: 'TIGER, or the ''tiger'' scripts, is a set of tools (Bourne shell scripts and C programs)
+  which are used to perform a security audit of different operating systems components. The tools can
+  be both run all at once to generate an audit report of the system and to detect elements that could
+  be fixed when hardening it. TIGER has one primary goal: report ways the system''s security can be compromised.
+  Most of the tools are independent, but some of them rely on specialised external security tools such
+  as John the Ripper, Chkroot and integrity check tools (like Tripwire, Integrit or Aide) to execute some
+  tasks. The same checks are also configured by default to run periodically and detect deviations or unauthorised
+  changes. This makes it possible to used them also as a host intrusion detection mechanism. This review
+  mechanism relies on the use of the cron task scheduler and an email delivery system to report errors
+  and deviations. This package provides all the security scripts and data files for'
 categories:
-- other
+- monitoring
+homepage: http://savannah.nongnu.org/projects/tiger/
+size: 7987200
 install:
 - provider: apt
   package: tiger
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:3.2.4~rc1-3.5

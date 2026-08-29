@@ -1,6 +1,15 @@
 id: exifprobe
+summary: read metadata from digital pictures
+description: Exifprobe reads image files produced by digital cameras (including several so-called "raw"
+  file formats) and reports the structure of the files and the auxiliary data and metadata contained within
+  them. In addition to TIFF, JPEG and EXIF, the program understands several formats which may contain
+  "raw" camera data, including MRW, CIFF/CRW, JP2/JPEG2000, RAF, and X3F, as well as most TIFF-derived
+  "raw" formats, including DNG, ORF, CR2, NEF, K25/KDC/DCR and PEF. This program is useful in forensics
+  investigations.
 categories:
-- other
+- forensics
+homepage: https://github.com/hfiguiere/exifprobe
+size: 518144
 install:
 - provider: apt
   package: exifprobe
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.1+git20201230.eee65ff-3

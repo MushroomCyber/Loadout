@@ -1,6 +1,12 @@
 id: hamster-sidejack
+summary: Sidejacking tool
+description: Hamster is tool or "sidejacking". It acts as a proxy server that replaces your cookies with
+  session cookies stolen from somebody else, allowing you to hijack their sessions. Cookies are sniffed
+  using the Ferret program. You need a copy of that as well.
 categories:
-- other
+- web
+homepage: http://www.erratasec.com/research.html
+size: 157696
 install:
 - provider: apt
   package: hamster-sidejack
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0-1kali6

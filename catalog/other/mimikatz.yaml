@@ -1,6 +1,11 @@
 id: mimikatz
+summary: Uses admin rights on Windows to display passwords in plaintext
+description: Mimikatz uses admin rights on Windows to display passwords of currently logged in users in
+  plaintext.
 categories:
-- other
+- password
+homepage: https://blog.gentilkiwi.com/mimikatz
+size: 2670592
 install:
 - provider: apt
   package: mimikatz
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.2.0-git20220919-0kali1

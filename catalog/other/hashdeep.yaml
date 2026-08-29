@@ -1,6 +1,14 @@
 id: hashdeep
+summary: recursively compute hashsums or piecewise hashings
+description: 'hashdeep is a set of tools to compute MD5, SHA1, SHA256, tiger and whirlpool hashsums of
+  arbitrary number of files recursively. The main hashdeep features are: * It can compare those hashsums
+  with a list of known hashes; * The tools can display those that match the list or those that does not
+  match; * It can  display a time estimation when processing large files. * It can do piecewise hashing
+  (hash input files in arbitrary sized blocks). This package is useful in forensics investigations.'
 categories:
-- other
+- forensics
+homepage: https://md5deep.sourceforge.net
+size: 1646592
 install:
 - provider: apt
   package: hashdeep
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.4+git20170824+ds-1

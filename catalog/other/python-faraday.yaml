@@ -1,6 +1,14 @@
 id: python-faraday
+summary: Collaborative Penetration Test IDE
+description: Faraday introduces a new concept (IPE) Integrated Penetration-Test Environment a multiuser
+  Penetration test IDE. Designed for distribution, indexation and analysis of the generated data during
+  the process of a security audit. The main purpose of Faraday is to re-use the available tools in the
+  community to take advantage of them in a multiuser way. This package is a transitional package. It can
+  be remove safely.
 categories:
 - other
+homepage: https://faradaysec.com
+size: 32768
 install:
 - provider: apt
   package: python-faraday
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.21.0-0kali1

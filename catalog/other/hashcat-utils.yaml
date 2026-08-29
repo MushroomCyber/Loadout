@@ -1,6 +1,12 @@
 id: hashcat-utils
+summary: Set of small utilities for advanced password cracking
+description: Hashcat-utils are a set of small utilities that are useful in advanced password cracking.
+  They all are packed into multiple stand-alone binaries. All of these utils are designed to execute only
+  one specific function.
 categories:
-- other
+- password
+homepage: https://github.com/hashcat/hashcat-utils/
+size: 523264
 install:
 - provider: apt
   package: hashcat-utils
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.10-0kali2

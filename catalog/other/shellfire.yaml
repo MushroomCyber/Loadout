@@ -1,6 +1,11 @@
 id: shellfire
+summary: exploiting LFI, RFI, and command injection vulnerabilities
+description: This package contains an exploitation shell which focuses on exploiting LFI, RFI, and command
+  injection vulnerabilities.
 categories:
 - other
+homepage: https://github.com/unix-ninja/shellfire
+size: 83968
 install:
 - provider: apt
   package: shellfire
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.14-0kali1

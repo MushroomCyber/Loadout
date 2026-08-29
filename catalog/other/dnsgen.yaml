@@ -1,6 +1,11 @@
 id: dnsgen
+summary: DNS generator
+description: This package provides a generator of a combination of domain names from the provided input.
+  Combinations are created based on wordlist. Custom words are extracted per execution.
 categories:
 - other
+homepage: https://github.com/ProjectAnte/dnsgen
+size: 37888
 install:
 - provider: apt
   package: dnsgen
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.4+git20200324-0kali1

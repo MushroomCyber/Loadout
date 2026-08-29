@@ -1,6 +1,10 @@
 id: hurl
+summary: Hexadecimal & URL encoder + decoder
+description: This package contains a hexadecimal & URL (en/de)coder.
 categories:
 - other
+homepage: https://github.com/fnord0/hURL
+size: 191488
 install:
 - provider: apt
   package: hurl
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1-0kali3

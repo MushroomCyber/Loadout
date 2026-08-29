@@ -1,6 +1,13 @@
 id: oclgausscrack
+summary: Cracks verification hashes of the Gauss Virus
+description: The goal of the program is to crack the verification hash of the encrypted payload of the
+  Gauss Virus. Uses OpenCL to accelerate the 10k MD5 loop Uses optimizations also used in oclHashcat-plus
+  for maximum performance Able to handle multi-GPU setups (of the same type) VCL (Virtual CL) v1.18 compatible
+  Open Source Supports integration into distributed computing environments Supports resume
 categories:
-- other
+- password
+homepage: https://github.com/jsteube/oclGaussCrack
+size: 128000
 install:
 - provider: apt
   package: oclgausscrack
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3-1kali3

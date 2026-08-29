@@ -1,9 +1,21 @@
 id: dsniff
 summary: Network auditing & testing suite
+description: 'This package contains several tools to listen to and create network traffic: * arpspoof  -
+  Send out unrequested (and possibly forged) arp replies. * dnsspoof  - forge replies to arbitrary DNS
+  address / pointer queries on the Local Area Network. * dsniff    - password sniffer for several protocols.
+  * filesnarf - saves selected files sniffed from NFS traffic. * macof     - flood the local network with
+  random MAC addresses. * mailsnarf - sniffs mail on the LAN and stores it in mbox format. * msgsnarf  -
+  record selected messages from different Instant Messengers. * sshmitm   - SSH monkey-in-the-middle.
+  proxies and sniffs SSH traffic. * sshow     - SSH traffic analyser. * tcpkill   - kills specified in-progress
+  TCP connections. * tcpnice   - slow down specified TCP connections via "active" traffic shaping. * urlsnarf  -
+  output selected URLs sniffed from HTTP traffic in CLF. * webmitm   - HTTP / HTTPS monkey-in-the-middle.
+  transparently proxies. * webspy    - sends URLs sniffed from a client'
 categories:
 - sniffing
 tags:
 - mitm
+homepage: https://github.com/hackerschoice/dsniff
+size: 595968
 install:
 - provider: apt
   package: dsniff
@@ -12,3 +24,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.5a2-1

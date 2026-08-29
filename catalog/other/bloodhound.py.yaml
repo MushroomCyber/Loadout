@@ -1,6 +1,14 @@
 id: bloodhound.py
+summary: ingestor for BloodHound, based on Impacket (Python 3)
+description: 'This package contains a Python based ingestor for BloodHound, based on Impacket. BloodHound.py
+  currently has the following limitations: * Supports most, but not all BloodHound (SharpHound) features.
+  Primary missing features are GPO local groups and some differences in session resolution between BloodHound
+  and SharpHound. * Kerberos authentication support is not yet complete, but can be used from the updatedkerberos
+  branch. This package installs the library for Python 3.'
 categories:
 - other
+homepage: https://github.com/dirkjanm/bloodhound.py
+size: 362496
 install:
 - provider: apt
   package: bloodhound.py
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.0-0kali1

@@ -1,6 +1,11 @@
 id: imhex
+summary: Hex Editor for Reverse Engineers, Programmers
+description: This package contains a Hex Editor for Reverse Engineers, Programmers and people who value
+  their retinas when working at 3 AM.
 categories:
 - other
+homepage: https://github.com/WerWolv/ImHex
+size: 94537728
 install:
 - provider: apt
   package: imhex
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.38.1-0kali1

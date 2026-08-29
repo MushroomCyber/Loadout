@@ -1,6 +1,15 @@
 id: tetragon
+summary: eBPF-based Security Observability and Runtime Enforcement (tetra CLI)
+description: 'Cilium’s new Tetragon component enables powerful realtime, eBPF-based Security Observability
+  and Runtime Enforcement. Tetragon detects and is able to react to security-significant events, such
+  as: - Process execution events - System call activity - I/O activity including network & file access
+  When used in a Kubernetes environment, Tetragon is Kubernetes-aware - that is, it understands Kubernetes
+  identities such as namespaces, pods and so-on - so that security event detection can be configured in
+  relation to individual workloads. This package contains the tool tetra CLI.'
 categories:
 - other
+homepage: https://github.com/cilium/tetragon
+size: 53168128
 install:
 - provider: apt
   package: tetragon
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7.0-0kali1

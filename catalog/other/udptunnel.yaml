@@ -1,6 +1,12 @@
 id: udptunnel
+summary: tunnel UDP packets over a TCP connection
+description: UDPTunnel is a small program which can tunnel UDP packets bi-directionally over a TCP connection.
+  Its primary purpose (and original motivation) is to allow multi-media conferences to traverse a firewall
+  which allows only outgoing TCP connections. UDPTunnel also can be used for security tests in networks.
 categories:
-- other
+- post-exploitation
+homepage: http://www1.cs.columbia.edu/~lennox/udptunnel/
+size: 37888
 install:
 - provider: apt
   package: udptunnel
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1-12+b1

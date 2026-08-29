@@ -1,6 +1,10 @@
 id: lapsdumper
+summary: Tool that dumps LAPS passwords
+description: A tool that dumps every LAPS password the account has the ability to read with a domain.
 categories:
 - other
+homepage: https://github.com/n00py/LAPSDumper
+size: 16384
 install:
 - provider: apt
   package: lapsdumper
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0+git20221207-0kali1

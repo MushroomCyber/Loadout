@@ -1,6 +1,12 @@
 id: hekatomb
+summary: Extract and decrypt all credentials from all domain computers
+description: Hekatomb is a Python script that connects to an LDAP directory to retrieve all computers
+  and users' information. From there, it will download all DPAPI blobs of all users from all computers
+  and use Domain backup keys to decrypt them.
 categories:
 - other
+homepage: https://github.com/ProcessusT/HEKATOMB
+size: 64512
 install:
 - provider: apt
   package: hekatomb
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.5.14+git20240731.bdd53cf-0kali1

@@ -1,6 +1,13 @@
 id: s3scanner
+summary: tool to find open S3 buckets and dump their contents
+description: 'This package contains a tool to find open S3 buckets and dump their contents. The features
+  are: * zap Multi-threaded scanning * telescope Supports tons of S3-compatible APIs * female_detective
+  Scans all bucket permissions to find misconfigurations * floppy_disk Dump bucket contents to a local
+  folder * whale Docker support'
 categories:
 - other
+homepage: https://github.com/sa7mon/s3scanner
+size: 18726912
 install:
 - provider: apt
   package: s3scanner
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.0-0kali2

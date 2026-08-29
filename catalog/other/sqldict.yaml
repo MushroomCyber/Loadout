@@ -1,6 +1,10 @@
 id: sqldict
+summary: Dictionary attack tool for SQL Server
+description: SQLdict is a dictionary attack tool for SQL Server.
 categories:
-- other
+- web
+homepage: https://ntsecurity.nu/toolbox/sqldict/
+size: 148480
 install:
 - provider: apt
   package: sqldict
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1-1kali6

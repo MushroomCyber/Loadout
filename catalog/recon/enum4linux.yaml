@@ -1,9 +1,18 @@
 id: enum4linux
 summary: Windows/Samba enumeration
+description: 'Enum4linux is a tool for enumerating information from Windows and Samba systems. It attempts
+  to offer similar functionality to enum.exe formerly available from www.bindview.com. It is written in
+  PERL and is basically a wrapper around the Samba tools smbclient, rpclient, net and nmblookup. The samba
+  package is therefore a dependency. Features include: RID Cycling (When RestrictAnonymous is set to 1
+  on Windows 2000) User Listing (When RestrictAnonymous is set to 0 on Windows 2000) Listing of Group
+  Membership Information Share Enumeration Detecting if host is in a Workgroup or a Domain Identifying
+  the remote Operating System Password Policy Retrieval (using polenum)'
 categories:
 - recon
 tags:
 - smb-ad
+homepage: https://labs.portcullis.co.uk/tools/enum4linux/
+size: 59392
 install:
 - provider: apt
   package: enum4linux
@@ -12,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.1-0kali2

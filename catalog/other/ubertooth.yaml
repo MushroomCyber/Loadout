@@ -1,6 +1,15 @@
 id: ubertooth
+summary: 2.4 GHz wireless development platform for Bluetooth experimentation
+description: Project Ubertooth is an open source wireless development platform suitable for Bluetooth
+  experimentation. This package contains everything necessary to use the hardware dongle. Ubertooth is
+  capable of sniffing BLE (Bluetooth Smart) connections and it also has some ability to sniff some data
+  from Basic Rate (BR) Bluetooth Classic connections. In addition to the Bluetooth specific capabilities,
+  there is also a simple spectrum analyzer for the 2.4 GHz band included (ubertooth-specan-ui) which can
+  be used to also observe other things in this frequency band.
 categories:
-- other
+- wireless
+homepage: https://github.com/greatscottgadgets/ubertooth/
+size: 347136
 install:
 - provider: apt
   package: ubertooth
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2020.12.R1-0kali3

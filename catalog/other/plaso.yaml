@@ -1,6 +1,10 @@
 id: plaso
+summary: super timeline all the things -- metapackage
+description: This is a metapackage that depends on the Python 3 package of the Plaso libraries and scripts.
 categories:
-- other
+- forensics
+homepage: https://github.com/log2timeline/plaso
+size: 39936
 install:
 - provider: apt
   package: plaso
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 20260119-1kali1

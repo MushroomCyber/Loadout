@@ -1,8 +1,13 @@
 id: extundelete
+summary: utility to recover deleted files from ext3/ext4 partition
+description: extundelete uses the information stored in the partition's journal to attempt to recover
+  a file that has been deleted. There is no guarantee that any particular file will be able to be undeleted.
 categories:
 - forensics
 tags:
 - recovery
+homepage: http://extundelete.sourceforge.net/
+size: 155648
 install:
 - provider: apt
   package: extundelete
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2.4-3+b2

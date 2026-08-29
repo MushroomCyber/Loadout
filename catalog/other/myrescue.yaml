@@ -1,6 +1,13 @@
 id: myrescue
+summary: rescue data from damaged disks
+description: myrescue is a program to rescue the still-readable data from a damaged harddisk, CD-ROM,
+  DVD, flash drives, etc. It is similar in purpose to dd_rescue (or ddrescue), but it tries to quickly
+  get out of damaged areas to first handle the not yet damaged part of the disk and return later. This
+  package is useful to recover data from any media and for forensics investigations.
 categories:
-- other
+- forensics
+homepage: https://myrescue.sf.net
+size: 82944
 install:
 - provider: apt
   package: myrescue
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.8-4

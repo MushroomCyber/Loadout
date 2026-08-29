@@ -1,6 +1,11 @@
 id: pdf-parser
+summary: Parses PDF files to identify fundamental elements
+description: This tool will parse a PDF document to identify the fundamental elements used in the analyzed
+  file. It will not render a PDF document.
 categories:
-- other
+- forensics
+homepage: https://blog.didierstevens.com/programs/pdf-tools/
+size: 89088
 install:
 - provider: apt
   package: pdf-parser
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.14-0kali1

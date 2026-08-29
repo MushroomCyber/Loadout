@@ -1,6 +1,12 @@
 id: ridenum
+summary: Null session RID cycle attack tool
+description: Rid Enum is a RID cycling attack that attempts to enumerate user accounts through null sessions
+  and the SID to RID enum. If you specify a password file, it will automatically attempt to brute force
+  the user accounts when its finished enumerating.
 categories:
 - other
+homepage: https://github.com/trustedsec/ridenum
+size: 32768
 install:
 - provider: apt
   package: ridenum
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7-0kali4

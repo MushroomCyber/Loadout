@@ -1,6 +1,13 @@
 id: upx-ucl
+summary: efficient live-compressor for executables
+description: 'UPX is an advanced executable file compressor. UPX will typically reduce the file size of
+  programs and DLLs by around 50%-70%, thus reducing disk space, network load times, download times etc.
+  The current version can compress executables for DOS, Linux/ELF (i386, amd64, ppc32) and some other
+  files for different OS. NOTE: This package is based on the UCL library, which is licensed under GPL.'
 categories:
-- other
+- exploitation
+homepage: https://upx.github.io/
+size: 2700288
 install:
 - provider: apt
   package: upx-ucl
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.2.4-1.1

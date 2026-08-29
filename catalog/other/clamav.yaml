@@ -1,6 +1,19 @@
 id: clamav
+summary: anti-virus utility for Unix - command-line interface
+description: 'Clam AntiVirus is an anti-virus toolkit for Unix. The main purpose of this software is the
+  integration with mail servers (attachment scanning). The package provides a flexible and scalable multi-threaded
+  daemon in the clamav-daemon package, a command-line scanner in the clamav package, and a tool for automatic
+  updating via the Internet in the clamav-freshclam package. The programs are based on libclamav, which
+  can be used by other software. This package contains the command line interface. Features: - built-in
+  support for various archive formats, including Zip, Tar, Gzip, Bzip2, OLE2, Cabinet, CHM, BinHex, SIS
+  and others; - built-in support for almost all mail file formats; - built-in support for ELF executables
+  and Portable Executable files compressed with UPX, FSG, Petite, NsPack, wwpack32, MEW, Upack and obfuscated
+  with SUE, Y0da Cryptor and others; - built-in support for popular document formats including Microsoft
+  Office and Mac Office files, HTML, RTF and PDF. For scanning to wor'
 categories:
-- other
+- recon
+homepage: https://www.clamav.net/
+size: 40144896
 install:
 - provider: apt
   package: clamav
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4.4+dfsg-1

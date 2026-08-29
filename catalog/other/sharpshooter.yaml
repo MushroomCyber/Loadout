@@ -1,6 +1,12 @@
 id: sharpshooter
+summary: Payload Generation Framework
+description: SharpShooter is a payload creation framework for the retrieval and execution of arbitrary
+  CSharp source code. SharpShooter is capable of creating payloads in a variety of formats, including
+  HTA, JS, VBS and WSF.
 categories:
 - other
+homepage: https://github.com/mdsecactivebreach/SharpShooter
+size: 550912
 install:
 - provider: apt
   package: sharpshooter
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0+git20240315.f3235c5-0kali2

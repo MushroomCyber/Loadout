@@ -1,6 +1,19 @@
 id: dnsmap
+summary: DNS domain name brute forcing tool
+description: dnsmap scans a domain for common subdomains using a built-in or an external wordlist (if
+  specified using -w option). The internal wordlist has around 1000 words in English and Spanish as ns1,
+  firewall servicios and smtp. So will be possible search for smtp.example.com inside example.com automatically.
+  Results can be saved in CSV and human-readable format for further processing. dnsmap does NOT require
+  root privileges to be run, and should NOT be run with such privileges for security reasons. dnsmap was
+  originally released back in 2006 and was inspired by the fictional story "The Thief No One Saw" by Paul
+  Craig, which can be found in the book "Stealing the Network - How to 0wn the Box". dnsmap is mainly
+  meant to be used by pentesters during the information gathering/enumeration phase of infrastructure
+  security assessments. During the enumeration stage, the security consultant would typically discover
+  the target company's IP netblocks, domain names, phone numbers, etc. Subdomain brute-fo
 categories:
-- other
+- recon
+homepage: https://github.com/resurrecting-open-source-projects/dnsmap
+size: 265216
 install:
 - provider: apt
   package: dnsmap
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.36-4

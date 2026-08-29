@@ -1,6 +1,15 @@
 id: mdk3
+summary: Wireless attack tool for IEEE 802.11 networks
+description: 'MDK is a proof-of-concept tool to exploit common IEEE 802.11 (Wi-Fi) protocol weaknesses.
+  Features: * Bruteforce MAC Filters. * Bruteforce hidden SSIDs (some small SSID wordlists included).
+  * Probe networks to check if they can hear you. * Intelligent Authentication-DoS to freeze APs (with
+  success checks). * FakeAP - Beacon Flooding with channel hopping (can crash NetStumbler and some buggy
+  drivers) * Disconnect everything (aka AMOK-MODE) with Deauthentication and Disassociation packets. *
+  WPA TKIP Denial-of-Service. * WDS Confusion - Shuts down large scale multi-AP installations.'
 categories:
-- other
+- wireless
+homepage: https://github.com/aircrack-ng/mdk3
+size: 178176
 install:
 - provider: apt
   package: mdk3
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 6.0-9

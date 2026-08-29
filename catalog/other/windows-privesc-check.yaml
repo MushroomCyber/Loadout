@@ -1,6 +1,17 @@
 id: windows-privesc-check
+summary: Windows privilege escalation checking tool
+description: Windows-privesc-check is standalone executable that runs on Windows systems (tested on XP,
+  Windows 7 only so far). It tries to find misconfigurations that could allow local unprivileged users
+  to escalate privileges to other users or to access local apps (e.g. databases). It is written in python
+  and converted to an executable using pyinstaller so it can be easily uploaded and run (as opposed to
+  unzipping python + other dependencies). It can run either as a normal user or as Administrator (obviously
+  it does a better job when running as Administrator because it can read more files).
 categories:
-- other
+- post-exploitation
+tags:
+- windows
+homepage: https://pentestmonkey.net/tools/windows-privesc-check
+size: 8345600
 install:
 - provider: apt
   package: windows-privesc-check
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.0+svn197-0kali5

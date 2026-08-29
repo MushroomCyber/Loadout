@@ -1,6 +1,11 @@
 id: siparmyknife
+summary: SIP fuzzing tool
+description: SIP Army Knife is a fuzzer that searches for cross site scripting, SQL injection, log injection,
+  format strings, buffer overflows, and more.
 categories:
-- other
+- vuln-scan
+homepage: https://packetstormsecurity.com/files/107301/SIP-Army-Knife-Fuzzer-11232011.html
+size: 31744
 install:
 - provider: apt
   package: siparmyknife
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 11232011-1kali3

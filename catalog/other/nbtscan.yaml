@@ -1,6 +1,13 @@
 id: nbtscan
+summary: scan networks searching for NetBIOS information
+description: NBTscan is a program for scanning IP networks for NetBIOS name information. It sends NetBIOS
+  status query to each address in supplied range and lists received information in human readable form.
+  For each responded host it lists IP address, NetBIOS computer name, logged-in user name and MAC address
+  (such as Ethernet). This program is useful for security checks, network discovery and forensics investigations.
 categories:
-- other
+- recon
+homepage: https://github.com/resurrecting-open-source-projects/nbtscan
+size: 58368
 install:
 - provider: apt
   package: nbtscan
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7.2-3

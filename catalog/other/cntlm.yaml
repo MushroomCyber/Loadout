@@ -1,6 +1,13 @@
 id: cntlm
+summary: Fast NTLM authentication proxy with tunneling
+description: Cntlm is a fast and efficient NTLM proxy, with support for TCP/IP tunneling, authenticated
+  connection caching, ACLs, proper daemon logging and behaviour and much more. It has up to ten times
+  faster responses than similar NTLM proxies, while using by orders or magnitude less RAM and CPU. Manual
+  page contains detailed information.
 categories:
-- other
+- password
+homepage: https://github.com/versat/cntlm/
+size: 719872
 install:
 - provider: apt
   package: cntlm
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.94.0+dfsg-2

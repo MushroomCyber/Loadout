@@ -1,6 +1,13 @@
 id: slimtoolkit
+summary: optimization of your containers
+description: This package contains Slim(toolkit). It was called DockerSlim, and it is now just Slim (SlimToolkit).
+  It is a tool for developers with a number of different commands (build, xray, lint, debug and others)
+  to simplify and optimize your developer experience with containers. It makes your containers better,
+  smaller and more secure while providing advanced visibility and improved usability working with the
 categories:
 - other
+homepage: https://github.com/slimtoolkit/slim
+size: 70666240
 install:
 - provider: apt
   package: slimtoolkit
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.40.11-0kali1

@@ -1,6 +1,12 @@
 id: mfterm
+summary: Terminal for working with Mifare Classic 1-4k Tags
+description: mfterm is a terminal interface for working with Mifare Classic tags. Tab completion on commands
+  is available. Also, commands that have file name arguments provide tab completion on files. There is
+  also a command history, like in most normal shells.
 categories:
 - other
+homepage: https://github.com/4ZM/mfterm
+size: 108544
 install:
 - provider: apt
   package: mfterm
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.7+git20190127-0kali3

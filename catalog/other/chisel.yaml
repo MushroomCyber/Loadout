@@ -1,6 +1,12 @@
 id: chisel
+summary: fast TCP/UDP tunnel over HTTP (program)
+description: This package contains a fast TCP/UDP tunnel, transported over HTTP, secured via SSH. Single
+  executable including both client and server.  Chisel is mainly useful for passing through firewalls,
+  though it can also be used to provide a secure endpoint into your network.
 categories:
 - other
+homepage: https://github.com/jpillora/chisel
+size: 10612736
 install:
 - provider: apt
   package: chisel
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.11.6-0kali1

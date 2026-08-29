@@ -1,6 +1,13 @@
 id: apple-bleee
+summary: scripts to show what an attacker get from Apple devices
+description: This package contains experimental scripts. They are PoCs that show what an attacker get
+  from Apple devices if they sniff Bluetooth traffic. To use these scripts you will need a Bluetooth adapter
+  for sending BLE messages and Wi-Fi card supporting active monitor mode with frame injection for communication
+  using AWDL (AirDrop).
 categories:
 - other
+homepage: https://github.com/hexway/apple_bleee
+size: 24687616
 install:
 - provider: apt
   package: apple-bleee
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1.5-0kali6

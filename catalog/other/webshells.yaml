@@ -1,6 +1,10 @@
 id: webshells
+summary: Collection of webshells
+description: A collection of webshells for ASP, ASPX, CFM, JSP, Perl, and PHP servers.
 categories:
-- other
+- web
+homepage: https://www.kali.org
+size: 72704
 install:
 - provider: apt
   package: webshells
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1+kali8

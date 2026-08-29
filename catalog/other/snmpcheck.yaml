@@ -1,6 +1,11 @@
 id: snmpcheck
+summary: SNMP service enumeration tool
+description: Like to snmpwalk, snmpcheck allows you to enumerate the SNMP devices and places the output
+  in a very human readable friendly format. It could be useful for penetration testing or systems monitoring.
 categories:
-- other
+- recon
+homepage: http://www.nothink.org/codes/snmpcheck/index.php
+size: 47104
 install:
 - provider: apt
   package: snmpcheck
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9-0kali2

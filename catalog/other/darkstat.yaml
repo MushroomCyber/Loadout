@@ -1,6 +1,13 @@
 id: darkstat
+summary: network traffic analyzer
+description: 'It is a packet sniffer which runs as a background process and serves its statistics to a
+  web browser: - input and output IP traffic by machines, ports and protocols, - last minute, hourly,
+  daily and monthly global input and output graphics. It is known to be smaller (in terms of memory footprint)
+  and stabler than ntop.'
 categories:
-- other
+- sniffing
+homepage: https://unix4lyfe.org/darkstat/
+size: 194560
 install:
 - provider: apt
   package: darkstat
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.722-1

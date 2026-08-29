@@ -274,6 +274,18 @@ def build_parser() -> argparse.ArgumentParser:
     q.add_argument("--no-strict", dest="strict", action="store_false")
     q = csub.add_parser("validate", help="Check the source tree without building.")
     q.add_argument("--source", type=Path, default=Path("catalog"))
+    q = csub.add_parser(
+        "enrich",
+        help="Fill gaps in the YAML source tree from local APT metadata.",
+    )
+    q.add_argument("--source", type=Path, default=Path("catalog"))
+    q.add_argument("--add-new", action="store_true",
+                   help="Also add security packages not yet in the tree.")
+    q.add_argument("--all-packages", action="store_true",
+                   help="With --add-new, include every APT package.")
+    q.add_argument("--no-binaries", dest="binaries", action="store_false", default=True,
+                   help="Skip dpkg -L binary resolution (much faster).")
+
     q = csub.add_parser("update", help="Enrich the catalog from local APT metadata.")
     q.add_argument("--all-packages", action="store_true",
                    help="Include every APT package, not just security tooling.")
@@ -845,6 +857,11 @@ def cmd_upgrade(ctx: Context) -> int:
 # ---------------------------------------------------------------------------
 
 
+def _apt_available(ctx: Context) -> bool:
+    status = ctx.provider_status.get("apt")
+    return bool(status and status.available)
+
+
 def cmd_catalog(ctx: Context) -> int:
     args = ctx.args
     command = args.catalog_command
@@ -912,12 +929,52 @@ def cmd_catalog(ctx: Context) -> int:
         out.print_ok(f"{len(report.tools)} tool(s) from {report.files_read} file(s)")
         return 0
 
+    if command == "enrich":
+        from ..catalog import enrich_source_tree
+
+        if not args.source.is_dir():
+            out.print_error(
+                f"No catalog source at {args.source}",
+                "Run this from a checkout of the repository, or pass --source.",
+            )
+            return 3
+        if not _apt_available(ctx):
+            out.print_error(
+                "apt is not available, so there is no local metadata to read.",
+                "Enrichment needs a Debian-family host. CI runs it in a Kali "
+                "container; see .github/workflows/catalog.yml.",
+            )
+            return 5
+
+        if not ctx.json_mode:
+            out.print_note(f"Reading APT metadata and updating {args.source}/ ...")
+        stats = enrich_source_tree(
+            args.source,
+            only_security=not args.all_packages,
+            resolve_binaries=args.binaries,
+            add_new=args.add_new,
+        )
+        if ctx.json_mode:
+            out.emit_json(stats)
+            return 0
+        out.print_ok(
+            f"{stats['changed']} entry(ies) updated, {stats['added']} added "
+            f"({stats['entries']} total)"
+        )
+        out.print_note(
+            f"described {stats['described']}/{stats['entries']}, "
+            f"categorised {stats['categorised']}/{stats['entries']}"
+        )
+        if stats["changed"]:
+            out.print_note("Next: loadout catalog build --source " + str(args.source))
+        return 0
+
     # update: enrich from local APT metadata
     from ..catalog import build_catalog
     from ..catalog.seed_apt import build_tools, enrich
     from ..paths import catalog_db
 
-    if ctx.provider_status.get("apt") is None or not ctx.provider_status["apt"].available:
+    if not _apt_available(ctx):
         out.print_error(
             "apt is not available, so there is no local metadata to read.",
             "On a non-Debian host, use `loadout catalog build` against the "

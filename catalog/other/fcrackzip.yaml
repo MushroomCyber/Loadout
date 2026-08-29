@@ -1,6 +1,13 @@
 id: fcrackzip
+summary: password cracker for zip archives
+description: fcrackzip is a fast password cracker partly written in assembler. It is able to crack password
+  protected zip files with brute force or dictionary based attacks, optionally testing with unzip its
+  results. It can also crack cpmask'ed images. This package is useful for pentesters, ethical hackers
+  and forensics experts.
 categories:
-- other
+- password
+homepage: http://oldhome.schmorp.de/marc/fcrackzip.html
+size: 81920
 install:
 - provider: apt
   package: fcrackzip
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0-12

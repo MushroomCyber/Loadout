@@ -1,6 +1,12 @@
 id: davtest
+summary: Testing tool for WebDAV servers
+description: DAVTest tests WebDAV enabled servers by uploading test executable files, and then (optionally)
+  uploading files which allow for command execution or other actions directly on the target. It is meant
+  for penetration testers to quickly and easily determine if enabled DAV services are exploitable.
 categories:
 - web
+homepage: https://github.com/cldrn/davtest
+size: 70656
 install:
 - provider: apt
   package: davtest
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2+git20230307.34d31db-0kali1

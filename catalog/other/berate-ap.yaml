@@ -1,8 +1,13 @@
 id: berate-ap
+summary: Script for orchestrating mana rogue Wi-Fi Access Points
+description: This package contains a script for orchestrating mana rogue Wi-Fi Access Points. It can also
+  handle regular hostapd AP and create AP easily.
 categories:
 - other
 tags:
 - wireless
+homepage: https://github.com/sensepost/berate_ap
+size: 105472
 install:
 - provider: apt
   package: berate-ap
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4.6+git20240824-0kali1

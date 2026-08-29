@@ -1,6 +1,13 @@
 id: wpa-sycophant
+summary: tool to relay phase 2 authentication attempts to access corporate wireless
+description: This package contains a tool to relay phase 2 authentication attempts to access corporate
+  wireless without cracking the password. To use this technique it is required that you run a rogue access
+  point so that a legitimate user will connect to you so that you may relay the authentication attempt
+  to Sycophant.
 categories:
 - other
+homepage: https://github.com/sensepost/wpa_sycophant
+size: 887808
 install:
 - provider: apt
   package: wpa-sycophant
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0+git20210103-0kali3+b1

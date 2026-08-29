@@ -1,6 +1,10 @@
 id: sctpscan
+summary: SCTP network scanner for discovery and security
+description: SCTP network scanner for discovery and security
 categories:
-- other
+- vuln-scan
+homepage: https://github.com/philpraxis/sctpscan
+size: 79872
 install:
 - provider: apt
   package: sctpscan
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1-1kali5+b1

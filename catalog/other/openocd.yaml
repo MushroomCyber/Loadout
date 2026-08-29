@@ -1,6 +1,16 @@
 id: openocd
+summary: Open on-chip JTAG/SWD debug solution for embedded target devices
+description: OpenOCD aims to provide debugging, in-system programming and boundary-scan testing for embedded
+  target devices. The debugger uses an IEEE 1149-1 compliant JTAG TAP bus master to access on-chip debug
+  functionality available on ARM based microcontrollers or system-on-chip solutions. For MIPS systems
+  the EJTAG interface is supported. Additionally there is support for eSi-RISC, Intel, OpenRISC, RISC-V
+  and ARC controllers. User interaction is realized through a telnet command line interface, a gdb (the
+  GNU debugger) remote protocol server, and a simplified RPC connection that can be used to interface
+  with OpenOCD's Jim Tcl engine. OpenOCD supports many different types of JTAG interfaces/programmers.
 categories:
-- other
+- hardware
+homepage: http://openocd.sourceforge.net/
+size: 9279488
 install:
 - provider: apt
   package: openocd
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.12.0-3+b2

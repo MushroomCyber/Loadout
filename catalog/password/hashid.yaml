@@ -1,9 +1,16 @@
 id: hashid
 summary: Hash type identifier
+description: Identify the different types of hashes used to encrypt data and especially passwords. hashID
+  is a tool written in Python 3.x which supports the identification of over 175 unique hash types using
+  regular expressions. It is able to identify a single hash or parse a file and identify the hashes within
+  it. There is also a nodejs version of hashID available which is easily set up to provide online hash
+  identification.
 categories:
 - password
 tags:
 - identification
+homepage: https://psypanda.github.io/hashID/
+size: 84992
 install:
 - provider: apt
   package: hashid
@@ -12,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.1.4-5

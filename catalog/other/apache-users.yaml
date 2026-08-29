@@ -1,6 +1,11 @@
 id: apache-users
+summary: Enumerate usernames on systems with Apache UserDir module
+description: This Perl script will enumerate the usernames on any system that uses Apache with the UserDir
+  module.
 categories:
-- other
+- web
+homepage: https://labs.portcullis.co.uk/downloads/
+size: 13312
 install:
 - provider: apt
   package: apache-users
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1-1kali6

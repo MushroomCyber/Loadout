@@ -1,6 +1,16 @@
 id: pack2
+summary: Password analysis and cracking kit 2
+description: 'This package contains a replacement for iphelix''s PACK. This is a work in progress. Not
+  all features are available and while being similar some will differ slightly. PACK was developed in
+  order to aid in a password cracking competition "Crack Me If You Can" that occurred during Defcon 2010.
+  The goal of this toolkit is to aid in preparation for the "better than bruteforce" password attacks
+  by analyzing common ways that people create passwords. After the analysis stage, the statistical database
+  can be used to generate attack masks for tools such as oclHashcat. NOTE: This tool itself can not crack
+  passwords, but helps other tools crack more passwords faster.'
 categories:
-- other
+- password
+homepage: https://github.com/hops/pack2
+size: 918528
 install:
 - provider: apt
   package: pack2
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1.0~git20200929.da4b245-0kali4

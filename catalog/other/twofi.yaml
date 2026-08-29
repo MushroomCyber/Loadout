@@ -1,6 +1,14 @@
 id: twofi
+summary: Twitter words of interest
+description: When attempting to crack passwords custom word lists are very useful additions to standard
+  dictionaries. An interesting idea originally released on the "7 Habits of Highly Effective Hackers"
+  blog was to use Twitter to help generate those lists based on searches for keywords related to the list
+  that is being cracked. I've expanded this idea into twofi which will take multiple search terms and
+  return a word list sorted by most common first.
 categories:
-- other
+- recon
+homepage: https://www.digininja.org/projects/twofi.php
+size: 38912
 install:
 - provider: apt
   package: twofi
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0-0kali2

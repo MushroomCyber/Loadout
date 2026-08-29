@@ -1,6 +1,10 @@
 id: caido
+summary: security auditing toolkit (desktop)
+description: This package contains caido desktop, a security auditing toolkit.
 categories:
 - other
+homepage: https://github.com/caido/caido
+size: 500733952
 install:
 - provider: apt
   package: caido
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.56.2-0kali1

@@ -1,6 +1,13 @@
 id: msitools
+summary: Windows Installer file manipulation tool
+description: 'msitools contains a number of programs to create, inspect and extract Windows Installer
+  (.msi) files. The following tools are included: - msiinfo: inspects MSI packages - msibuild: builds
+  MSI packages - msidiff: compares two MSI packages'' contents - msidump: dumps raw MSI tables and stream
+  contents - msiextract: extracts files contained in MSI packages'
 categories:
 - other
+homepage: https://wiki.gnome.org/msitools
+size: 313344
 install:
 - provider: apt
   package: msitools
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.106+repack-3

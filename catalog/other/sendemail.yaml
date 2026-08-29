@@ -1,6 +1,13 @@
 id: sendemail
+summary: lightweight, command line SMTP email client
+description: SendEmail is a lightweight, completely command line based, SMTP email agent. It was designed
+  to be used in bash scripts, Perl programs, and web sites, but it is also quite useful in many other
+  contexts. SendEmail is written in Perl and is unique in that it requires no special modules. It has
+  a straight forward interface, making it very easy to use.
 categories:
-- other
+- network
+homepage: http://caspian.dotconf.net/menu/Software/SendEmail/
+size: 109568
 install:
 - provider: apt
   package: sendemail
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.56-5.2

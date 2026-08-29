@@ -1,6 +1,11 @@
 id: dotdotpwn
+summary: Directory Traversal Fuzzer.
+description: DotDotPwn is a very flexible intelligent fuzzer to discover traversal directory vulnerabilities
+  in software such as HTTP/FTP/TFTP servers, Web platforms such as CMSs, ERPs, Blogs, etc.
 categories:
-- other
+- web
+homepage: https://dotdotpwn.blogspot.ca
+size: 241664
 install:
 - provider: apt
   package: dotdotpwn
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.2-0kali4

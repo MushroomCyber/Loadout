@@ -1,5 +1,6 @@
 id: wpscan
 summary: WordPress vulnerability and enumeration scanner
+description: WPScan scans remote WordPress installations to find security issues.
 categories:
 - web
 - vuln-scan
@@ -12,6 +13,7 @@ binaries:
 homepage: https://wpscan.com
 alternatives:
 - nuclei
+size: 406528
 install:
 - provider: apt
   package: wpscan
@@ -22,3 +24,4 @@ install:
   - ubuntu
 - provider: gem
   gem: wpscan
+version: 3.8.28-0kali1

@@ -1,6 +1,14 @@
 id: rkhunter
+summary: rootkit, backdoor, sniffer and exploit scanner
+description: 'Rootkit Hunter scans systems for known and unknown rootkits, backdoors, sniffers and exploits.
+  It checks for: - SHA256 hash changes; - files commonly created by rootkits; - executables with anomalous
+  file permissions; - suspicious strings in kernel modules; - hidden files in system directories; and
+  can optionally scan within files. Using rkhunter alone does not guarantee that a system is not compromised.
+  Running additional tests, such as chkrootkit, is recommended.'
 categories:
-- other
+- forensics
+homepage: https://rkhunter.sourceforge.net
+size: 1102848
 install:
 - provider: apt
   package: rkhunter
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4.6-14

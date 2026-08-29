@@ -1,6 +1,11 @@
 id: finalrecon
+summary: fast and simple Python script for web reconnaissance
+description: A fast and simple Python script for web reconnaissance that follows a modular structure and
+  provides detailed information on various areas.
 categories:
 - other
+homepage: https://github.com/thewhiteh4t/FinalRecon
+size: 430080
 install:
 - provider: apt
   package: finalrecon
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.8-0kali1

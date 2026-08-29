@@ -1,6 +1,12 @@
 id: kerberoast
+summary: tools for attacking MS Kerberos implementations
+description: 'This package contains a series of tools for attacking MS Kerberos implementations: - extract
+  all accounts in use as SPN using built in MS tools - extract the acquired tickets from ram with Mimikatz
+  - crack with tgsrepcrack - request Ticket(s) - etc'
 categories:
 - other
+homepage: https://github.com/nidem/kerberoast
+size: 82944
 install:
 - provider: apt
   package: kerberoast
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20221231.cc5aa6e-0kali1

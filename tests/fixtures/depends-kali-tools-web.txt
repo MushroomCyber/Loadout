@@ -1,0 +1,400 @@
+kali-tools-web
+  Depends: apache-users
+  Depends: apache2
+  Depends: beef-xss
+  Depends: burpsuite
+  Depends: cadaver
+  Depends: commix
+  Depends: cutycapt
+  Depends: davtest
+  Depends: default-mysql-server
+  Depends: dirb
+  Depends: dirbuster
+  Depends: dotdotpwn
+  Depends: eyewitness
+  Depends: ferret-sidejack
+  Depends: ftester
+  Depends: hakrawler
+  Depends: hamster-sidejack
+  Depends: heartleech
+  Depends: httprint
+  Depends: httrack
+  Depends: hydra
+  Depends: hydra-gtk
+  Depends: jboss-autopwn
+  Depends: joomscan
+  Depends: jsql-injection
+  Depends: laudanum
+  Depends: lbd
+  Depends: maltego
+  Depends: medusa
+  Depends: mitmproxy
+  Depends: ncrack
+  Depends: nikto
+  Depends: nishang
+  Depends: nmap
+  Depends: oscanner
+  Depends: owasp-mantra-ff
+  Depends: padbuster
+  Depends: paros
+  Depends: patator
+  Depends: php
+    php8.4
+    uwsgi-plugin-php
+  Depends: php-mysql
+  Depends: proxychains4
+  Depends: proxytunnel
+  Depends: qsslcaudit
+  Depends: redsocks
+  Depends: sidguesser
+  Depends: siege
+  Depends: skipfish
+  Depends: slowhttptest
+  Depends: sqldict
+  Depends: sqlitebrowser
+  Depends: sqlmap
+  Depends: sqlninja
+  Depends: sqlsus
+  Depends: ssldump
+  Depends: sslh
+  Depends: sslscan
+  Depends: sslsniff
+  Depends: sslsplit
+  Depends: sslyze
+  Depends: stunnel4
+  Depends: thc-ssl-dos
+  Depends: tlssled
+  Depends: tnscmd10g
+  Depends: uniscan
+  Depends: wafw00f
+  Depends: wapiti
+  Depends: watobo
+  Depends: webacoo
+  Depends: webscarab
+  Depends: webshells
+  Depends: weevely
+  Depends: wfuzz
+  Depends: whatweb
+  Depends: wireshark
+  Depends: wpscan
+  Depends: xsser
+  Depends: zaproxy
+apache-users
+  Depends: libio-socket-ip-perl
+    perl-base
+  Depends: libparallel-forkmanager-perl
+  Depends: libio-all-lwp-perl
+apache2
+  Depends: apache2-bin
+  Depends: apache2-data
+  Depends: apache2-utils
+  Depends: media-types
+  Depends: procps
+  Depends: <perl:any>
+    perl
+beef-xss
+  Depends: adduser
+  Depends: kali-defaults
+  Depends: lsof
+  Depends: nodejs
+  Depends: rubygems-integration
+  Depends: xdg-utils
+  Depends: ruby
+  Depends: ruby
+burpsuite
+  Depends: default-jre
+  Depends: java-wrappers
+cadaver
+  Depends: libc6
+  Depends: libneon27t64-gnutls
+  Depends: libreadline8t64
+commix
+  Depends: metasploit-framework
+  Depends: unicorn-magic
+  Depends: <python3:any>
+    python3
+cutycapt
+  Depends: libc6
+  Depends: libgcc-s1
+  Depends: libqt5core5t64
+ |Depends: libqt5gui5t64
+  Depends: libqt5gui5-gles
+ |Depends: libqt5quick5
+  Depends: libqt5quick5-gles
+  Depends: libqt5svg5
+  Depends: libqt5webengine5
+  Depends: libqt5webenginecore5
+  Depends: libqt5webenginewidgets5
+  Depends: libqt5widgets5t64
+  Depends: libstdc++6
+davtest
+  Depends: perl
+  Depends: libhttp-dav-perl
+default-mysql-server
+  Depends: mariadb-server-compat
+dirb
+  Depends: libc6
+  Depends: libcurl4t64
+dirbuster
+  Depends: default-jre
+dotdotpwn
+  Depends: perl
+  Depends: libnet-tftp-perl
+  Depends: libwww-perl
+eyewitness
+  Depends: python3
+  Depends: python3-fuzzywuzzy
+  Depends: python3-netaddr
+  Depends: python3-pyvirtualdisplay
+  Depends: python3-selenium
+  Depends: xvfb
+ |Depends: links
+  Depends: <www-browser>
+    chawan
+    chromium
+    dillo
+    edbrowse
+    elinks
+    epiphany-browser
+    falkon
+    firefox-esr
+    konqueror
+    links
+    links2
+    luakit
+    lynx
+    morph-browser
+    netrik
+    netsurf-fb
+    netsurf-gtk
+    privacybrowser
+    qutebrowser
+    sugar-browse-activity
+    surf
+    vimb
+    w3m
+  Depends: <python3:any>
+    python3
+ferret-sidejack
+  Depends: libc6
+  Depends: libgcc-s1
+  Depends: libstdc++6
+  Depends: libpcap-dev
+ftester
+  Depends: <perl:any>
+    perl
+  Depends: libnetpacket-perl
+  Depends: libnet-rawip-perl
+  Depends: libnet-pcap-perl
+hakrawler
+  Depends: libc6
+hamster-sidejack
+  Depends: libc6
+  Depends: libgcc-s1
+  Depends: libstdc++6
+heartleech
+  Depends: kali-defaults
+httprint
+httrack
+  Depends: libc6
+  Depends: libhttrack2
+hydra
+  Depends: libapr1t64
+  Depends: libbson2-2
+  Depends: libc6
+  Depends: libfbclient2
+  Depends: libfreerdp3-3
+  Depends: libgcrypt20
+  Depends: libidn12
+  Depends: libmariadb3
+  Depends: libmemcached11t64
+  Depends: libmongoc2-2
+  Depends: libpcre2-8-0
+  Depends: libpq5
+  Depends: libsmbclient0
+  Depends: libssh-4
+  Depends: libssl3t64
+  Depends: libsvn1
+  Depends: libsybdb5
+  Depends: libtinfo6
+  Depends: libwinpr3-3
+  Depends: zlib1g
+hydra-gtk
+  Depends: hydra
+  Depends: libatk1.0-0t64
+  Depends: libc6
+  Depends: libgdk-pixbuf-2.0-0
+  Depends: libglib2.0-0t64
+  Depends: libgtk-3-0t64
+jboss-autopwn
+  Depends: curl
+  Depends: metasploit-framework
+joomscan
+  Depends: perl
+  Depends: libwww-perl
+  Depends: liblwp-protocol-https-perl
+  Depends: libregexp-common-perl
+jsql-injection
+  Depends: default-jre
+  Depends: java-wrappers
+laudanum
+  Depends: kali-defaults
+  Depends: python3
+lbd
+maltego
+  Depends: openjdk-11-jre
+  Depends: openjdk-11-jdk-headless
+medusa
+  Depends: libc6
+  Depends: libfreerdp-client3-3
+  Depends: libfreerdp3-3
+  Depends: libpq5
+  Depends: libsmb2-6
+  Depends: libssh2-1t64
+  Depends: libssl3t64
+  Depends: libsvn1
+mitmproxy
+  PreDepends: dpkg
+  Depends: fonts-font-awesome
+  Depends: python3-aioquic
+  Depends: python3-h2
+  Depends: python3-hyperframe
+  Depends: python3-mitmproxy-rs
+  Depends: python3-mitmproxy-wireguard
+  Depends: python3-pkg-resources
+  Depends: python3-urwid
+  Depends: python3-argon2
+  Depends: python3-asgiref
+  Depends: python3-bcrypt
+  Depends: python3-brotli
+  Depends: python3-certifi
+  Depends: python3-cryptography
+  Depends: python3-cryptography
+  Depends: python3-flask
+  Depends: python3-flask
+  Depends: python3-h11
+  Depends: python3-kaitaistruct
+  Depends: python3-ldap3
+  Depends: python3-msgpack
+  Depends: python3-openssl
+  Depends: python3-publicsuffix2
+  Depends: python3-pyparsing
+  Depends: python3-pyperclip
+  Depends: python3-ruamel.yaml
+  Depends: python3-sortedcontainers
+ |Depends: <python3-supported-min>
+    python3
+  Depends: python3-typing-extensions
+  Depends: python3-tornado
+  Depends: python3-wsproto
+  Depends: python3-zstandard
+  Depends: <python3:any>
+    python3
+ncrack
+  Depends: libc6
+  Depends: libgcc-s1
+  Depends: libssl3t64
+  Depends: libstdc++6
+nikto
+  Depends: libdigest-perl-md5-perl
+  Depends: libio-socket-ssl-perl
+  Depends: libjson-perl
+  Depends: libjson-pp-perl
+    perl
+  Depends: libnet-ssleay-perl
+  Depends: libwhisker2-perl
+  Depends: libxml-libxml-perl
+  Depends: libxml-writer-perl
+  Depends: <perl:any>
+    perl
+nishang
+  Depends: kali-defaults
+nmap
+  Depends: nmap-common
+  Depends: libc6
+  Depends: libgcc-s1
+  Depends: liblinear4
+  Depends: liblua5.4-0
+  Depends: libpcap0.8t64
+  Depends: libpcre2-8-0
+  Depends: libssh2-1t64
+  Depends: libssl3t64
+  Depends: libstdc++6
+  Depends: zlib1g
+oscanner
+  Depends: default-jre
+owasp-mantra-ff
+  Depends: xterm
+padbuster
+  Depends: libcompress-raw-zlib-perl
+    perl
+  Depends: libcrypt-ssleay-perl
+  Depends: libnet-ssleay-perl
+  Depends: libwww-perl
+  Depends: <perl:any>
+    perl
+paros
+  Depends: default-jre
+  Depends: java-wrappers
+patator
+  Depends: default-jre
+  Depends: ldap-utils
+  Depends: python3-psycopg2
+  Depends: unzip
+  Depends: python3-ajpy
+  Depends: python3-dnspython
+  Depends: python3-impacket
+  Depends: python3-ipy
+  Depends: python3-mysqldb
+  Depends: python3-paramiko
+  Depends: python3-pycryptodome
+  Depends: python3-pycurl
+  Depends: python3-pysnmp
+  Depends: <python3:any>
+    python3
+php
+  Depends: php8.4
+php8.4
+ |Depends: libapache2-mod-php8.4
+ |Depends: php8.4-fpm
+  Depends: php8.4-cgi
+  Depends: php8.4-common
+uwsgi-plugin-php
+  Depends: libc6
+  Depends: libphp8.4-embed
+  Depends: <phpapi-20240924>
+    libapache2-mod-php8.4
+    libphp8.4-embed
+    php8.4-cgi
+    php8.4-cli
+    php8.4-fpm
+    php8.4-litespeed
+    php8.4-phpdbg
+  Depends: <uwsgi-abi-3ae50573f15f0ea42634e94ff97c81ba>
+    uwsgi-core
+php-mysql
+  Depends: php-common
+  Depends: php8.4-mysql
+proxychains4
+  Depends: libproxychains4
+  Depends: libc6
+proxytunnel
+  Depends: libc6
+  Depends: libssl3t64
+qsslcaudit
+  Depends: libc6
+  Depends: libcrypto++8t64
+  Depends: libgcc-s1
+  Depends: libgnutls30t64
+  Depends: libqt5core5t64
+  Depends: libqt5network5t64
+  Depends: libstdc++6
+  Depends: libunsafessl1.0.2
+redsocks
+  Depends: libc6
+  Depends: libevent-core-2.1-7t64
+  Depends: adduser
+  Depends: lsb-base
+    sysvinit-utils
+sidguesser
+  Depends: libc6

@@ -1,6 +1,12 @@
 id: obsidian
+summary: Private and flexible writing app that adapts to the way you think
+description: Obsidian stores notes on your device, so you can access them quickly, even offline. With
+  hundreds of plugins and themes, you can shape Obsidian to fit your way of thinking. Obsidian uses open,
+  non-proprietary files, so you're never locked in, and can preserve your data for the long term.
 categories:
 - other
+homepage: https://obsidian.md/
+size: 301233152
 install:
 - provider: apt
   package: obsidian
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7.7-0kali1

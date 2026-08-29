@@ -1,6 +1,12 @@
 id: gdb-peda
+summary: Python Exploit Development Assistance for GDB
+description: This package contains a Python GDB script with many handy commands to help speed up exploit
+  development process on Linux/Unix. It is also a framework for writing custom interactive Python GDB
+  commands.
 categories:
 - other
+homepage: https://github.com/longld/peda
+size: 326656
 install:
 - provider: apt
   package: gdb-peda
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2-0kali2

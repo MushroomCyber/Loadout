@@ -1,6 +1,12 @@
 id: spike
+summary: Network protocol fuzzer
+description: When you need to analyze a new network protocol for buffer overflows or similar weaknesses,
+  the SPIKE is the tool of choice for professionals. While it requires a strong knowledge of C to use,
+  it produces results second to none in the field.
 categories:
-- other
+- vuln-scan
+homepage: http://www.immunitysec.com/resources-freesoftware.shtml
+size: 3968000
 install:
 - provider: apt
   package: spike
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.9-1kali11

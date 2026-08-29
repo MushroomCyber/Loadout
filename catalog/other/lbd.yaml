@@ -1,6 +1,10 @@
 id: lbd
+summary: Load balancer detector
+description: Checks if a given domain uses load-balancing.
 categories:
-- other
+- recon
+homepage: http://ge.mine.nu/code/
+size: 15360
 install:
 - provider: apt
   package: lbd
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4-1kali3

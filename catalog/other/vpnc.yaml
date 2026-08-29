@@ -1,6 +1,14 @@
 id: vpnc
+summary: Cisco-compatible VPN client
+description: 'vpnc is a VPN client compatible with cisco3000 VPN Concentrator (also known as Cisco''s
+  EasyVPN equipment). vpnc runs entirely in userspace and does not require kernel modules except for the
+  tun driver to communicate with the network layer. It supports most of the features needed to establish
+  connection to the VPN concentrator: MD5 and SHA1 hashes, 3DES and AES ciphers, PFS and various IKE DH
+  group settings.'
 categories:
-- other
+- network
+homepage: https://github.com/streambinder/vpnc
+size: 239616
 install:
 - provider: apt
   package: vpnc
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.5.3+git20241220-2

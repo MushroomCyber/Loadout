@@ -1,6 +1,14 @@
 id: statsprocessor
+summary: word generator based on per-position Markov chains
+description: Statsprocessor is a word generator based on per-position Markov chains packed into a single
+  stand-alone binary. It generates candidate words based on a Hashcat format .hcstat file by using this
+  information to determine which letter is following which letter based on the analysis of the original
+  input dictionary used to generate the .hcstat. The resulting words can then, for example, be postprocessed
+  and fed into Hashcat or other password recovery tools.
 categories:
-- other
+- password
+homepage: https://github.com/hashcat/statsprocessor
+size: 46080
 install:
 - provider: apt
   package: statsprocessor
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.11+git20160316-5

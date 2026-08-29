@@ -1,8 +1,18 @@
 id: assetfinder
+summary: Find domains and subdomains related to a given domain
+description: 'assetfinder is a command-line tool designed to find domains and subdomains associated with
+  a specific domain. The main objective of the tool is to help security researchers and IT professionals
+  discover and understand how the domains and sub-domains of a given organization are distributed, trying
+  to find possible security flaws and vulnerabilities. assetfinder uses multiple data sources to perform
+  its research, including: - crt.sh - certspotter - hackertarget - threatcrowd - Wayback Machine - dns.bufferover.run
+  - Facebook Graph API - Virustotal - findsubdomains This expands coverage and increases the accuracy
+  of results.'
 categories:
 - recon
 tags:
 - subdomains
+homepage: https://github.com/tomnomnom/assetfinder
+size: 6254592
 install:
 - provider: apt
   package: assetfinder
@@ -11,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1.1-1+b12

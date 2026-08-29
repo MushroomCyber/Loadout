@@ -1,6 +1,19 @@
 id: poshc2
+summary: proxy aware C2 framework
+description: 'This package contains a proxy aware C2 framework used to aid penetration testers with red
+  teaming, post-exploitation and lateral movement. PoshC2 is primarily written in Python3 and follows
+  a modular format to enable users to add their own modules and tools, allowing an extendible and flexible
+  C2 framework. Out-of-the-box PoshC2 comes PowerShell/C# and Python3 implants with payloads written in
+  PowerShell v2 and v4, C++ and C# source code, a variety of executables, DLLs and raw shellcode in addition
+  to a Python3 payload. These enable C2 functionality on a wide range of devices and operating systems,
+  including Windows, *nix and OSX. Other notable features of PoshC2 include: - Consistent and Cross-Platform
+  support using Docker. - Highly configurable payloads, including default beacon times, jitter, kill dates,
+  user agents and more. - A large number of payloads generated out-of-the-box which are frequently updated
+  and maintained to bypass common Anti-Virus products. - Auto-generated Apache'
 categories:
 - other
+homepage: https://github.com/nettitude/PoshC2
+size: 94087168
 install:
 - provider: apt
   package: poshc2
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 9.0-0kali1

@@ -1,6 +1,13 @@
 id: vinetto
+summary: forensics tool to examine Thumbs.db files
+description: 'vinetto is a console program to extract thumbnail pictures and their metadata from Thumbs.db
+  files, that are generated under Microsoft Windows. vinetto can help *nix-based forensics investigators
+  to: - easily preview thumbnails of deleted pictures on Windows systems; - obtain information (dates,
+  path, ...) about deleted pictures.'
 categories:
-- other
+- forensics
+homepage: https://github.com/AtesComp/Vinetto
+size: 239616
 install:
 - provider: apt
   package: vinetto
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:0.9.15+dfsg-1

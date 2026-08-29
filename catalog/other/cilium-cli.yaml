@@ -1,6 +1,11 @@
 id: cilium-cli
+summary: Cilium CLI (program)
+description: This package contains a CLI to install, manage & troubleshoot Kubernetes clusters running
+  Cilium.
 categories:
 - other
+homepage: https://github.com/cilium/cilium-cli
+size: 195690496
 install:
 - provider: apt
   package: cilium-cli
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.19.1-0kali1

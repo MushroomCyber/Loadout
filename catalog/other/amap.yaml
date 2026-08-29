@@ -1,6 +1,13 @@
 id: amap
+summary: next-generation scanning tool for pentesters
+description: AMAP stands for Application MAPper. It is a next-generation scanning tool for pentesters.
+  It attempts to identify applications even if they are running on a different port than normal. It also
+  identifies non-ascii based applications. This is achieved by sending trigger packets, and looking up
+  the responses in a list of response strings.
 categories:
 - other
+homepage: https://www.thc.org
+size: 288768
 install:
 - provider: apt
   package: amap
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.4-4kali6

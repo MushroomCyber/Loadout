@@ -1,8 +1,14 @@
 id: bluez
+summary: Bluetooth tools and daemons
+description: This package contains tools and system daemons for using Bluetooth devices. BlueZ is the
+  official Linux Bluetooth protocol stack. It is an Open Source project distributed under GNU General
+  Public License (GPL).
 categories:
-- other
+- wireless
 tags:
 - bluetooth
+homepage: http://www.bluez.org
+size: 5107712
 install:
 - provider: apt
   package: bluez
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.85-4

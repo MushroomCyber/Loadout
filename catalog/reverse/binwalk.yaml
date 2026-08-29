@@ -1,5 +1,12 @@
 id: binwalk
 summary: Firmware image analysis and extraction
+description: Binwalk is a tool for searching a given binary image for embedded files and executable code.
+  Specifically, it is designed for identifying files and code embedded inside of firmware images. Binwalk
+  uses the libmagic library, so it is compatible with magic signatures created for the Unix file utility.
+  Binwalk also includes a custom magic signature file which contains improved signatures for files that
+  are commonly found in firmware images such as compressed/archived files, firmware headers, Linux kernels,
+  bootloaders, filesystems, etc. This package is an empty package, because the binary tool is already
+  provided with the library, dependency of this package.
 categories:
 - reverse
 - forensics
@@ -11,6 +18,7 @@ phases:
 binaries:
 - binwalk
 homepage: https://github.com/ReFirmLabs/binwalk
+size: 16384
 install:
 - provider: apt
   package: binwalk
@@ -21,3 +29,4 @@ install:
   - ubuntu
 - provider: brew
   formula: binwalk
+version: 2.4.3+dfsg1-2

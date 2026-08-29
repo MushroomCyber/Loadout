@@ -1,6 +1,13 @@
 id: hb-honeypot
+summary: Heartbleed Honeypot Script
+description: This Perl script listens on TCP port 443 and responds with completely bogus SSL heartbeat
+  responses, unless it detects the start of a byte pattern similar to that used in Jared Stafford's (jspenguin@jspenguin.org)
+  demo for CVE-2014-0160 'Heartbleed'. Run as root for the privileged port. Outputs IPs of suspected heartbleed
+  scan to the console. Rickrolls scanner in the hex dump.
 categories:
 - other
+homepage: https://packetstormsecurity.com/files/126068/Heartbleed-Honeypot-Script.html
+size: 13312
 install:
 - provider: apt
   package: hb-honeypot
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1.1-1kali5

@@ -1,6 +1,14 @@
 id: dump
+summary: backup and restore for ext2/3/4 filesystems
+description: This is a port of the 4.4BSD filesystem backup suite. Dump examines files on a filesystem
+  and determines which files need to be backed up. These files are copied to the given disk, tape or other
+  storage medium for safe keeping. The restore command performs the inverse function of dump. A full backup
+  of a filesystem may be restored and subsequent incremental backups layered on top of it. Single files
+  and directory subtrees may be restored from full or partial backups.
 categories:
 - other
+homepage: http://dump.sourceforge.net
+size: 412672
 install:
 - provider: apt
   package: dump
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4b54-1

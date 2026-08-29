@@ -1,6 +1,11 @@
 id: enumiax
+summary: IAX protocol username enumerator
+description: enumIAX is an Inter Asterisk Exchange protocol username brute-force enumerator. enumIAX may
+  operate in two distinct modes; Sequential Username Guessing or Dictionary Attack.
 categories:
-- other
+- vuln-scan
+homepage: https://enumiax.sourceforge.net/
+size: 35840
 install:
 - provider: apt
   package: enumiax
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4a-1kali4

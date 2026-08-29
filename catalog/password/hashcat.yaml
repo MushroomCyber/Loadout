@@ -1,5 +1,15 @@
 id: hashcat
 summary: GPU-accelerated offline password recovery
+description: 'Hashcat supports five unique modes of attack for over 300 highly-optimized hashing algorithms.
+  hashcat currently supports CPUs, GPUs, and other hardware accelerators on Linux, and has facilities
+  to help enable distributed password cracking. Examples of hashcat supported hashing algorithms are:
+  MD5, HMAC-MD5, SHA1, HMAC-SHA1, MySQL323, MySQL4.1/MySQL5, phpass, MD5(Wordpress), MD5(phpBB3), MD5(Joomla),
+  md5crypt, MD5(Unix), FreeBSD MD5, Cisco-IOS, MD4, NTLM, Domain Cached Credentials (DCC), MS Cache, SHA256,
+  HMAC-SHA256, md5apr1, MD5(APR), Apache MD5, SHA512, HMAC-SHA512, Cisco-PIX, Cisco-ASA, WPA/WPA2, Double
+  MD5, bcrypt, Blowfish(OpenBSD), MD5(Sun), Double SHA1, SHA-3(Keccak), Half MD5, Password Safe SHA-256,
+  IKE-PSK MD5, IKE-PSK SHA1, NetNTLMv1-VANILLA/NetNTLMv1-ESS, NetNTLMv2, Cisco-IOS SHA256, Android PIN,
+  AIX {smd5}, AIX {ssha256}, AIX {ssha512}, AIX {ssha1}, GOST, GOST R 34, Fortigate (FortiOS), OS X v10.8+,
+  GRUB 2, IPMI2, RAKP, HMAC-SHA1, sha256crypt, SHA256(Unix), Drupal7, WBB3,'
 categories:
 - password
 tags:
@@ -13,6 +23,7 @@ homepage: https://hashcat.net/hashcat/
 verify: hashcat --version
 alternatives:
 - john
+size: 125333504
 install:
 - provider: apt
   package: hashcat
@@ -23,3 +34,4 @@ install:
   - ubuntu
 - provider: brew
   formula: hashcat
+version: 7.1.2+ds1-4

@@ -1,6 +1,14 @@
 id: tcpick
+summary: TCP stream sniffer and connection tracker
+description: 'This libpcap-based textmode sniffer can: * track, reassemble and reorder TCP streams * save
+  the captured flows in different files or display them in the terminal * display all the stream on the
+  terminal with different display modes like hexdump, hexdump + ascii, only printable characters, raw
+  mode, colorized mode ... * handle several network interface types, including ethernet cards and PPP
+  interfaces'
 categories:
-- other
+- forensics
+homepage: http://tcpick.sourceforge.net
+size: 90112
 install:
 - provider: apt
   package: tcpick
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2.1-12

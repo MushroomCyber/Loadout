@@ -1,6 +1,10 @@
 id: fragrouter
+summary: IDS evasion toolkit
+description: Fragrouter is a network intrusion detection evasion toolkit.
 categories:
-- other
+- recon
+homepage: http://www.anzen.com/research/nidsbench/fragrouter.html
+size: 73728
 install:
 - provider: apt
   package: fragrouter
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7-3kali6

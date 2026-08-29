@@ -1,5 +1,10 @@
 id: gowitness
 summary: Web screenshot utility for triaging large host lists
+description: gowitness is a website screenshot utility written in Golang, that uses Chrome Headless to
+  generate screenshots of web interfaces using the command line, with a handy report viewer to process
+  results. Both Linux and macOS is supported, with Windows support mostly working. Inspiration for gowitness
+  comes from Eyewitness. If you are looking for something with lots of extra features, be sure to check
+  it out along with these other projects.
 categories:
 - web
 - recon
@@ -14,6 +19,7 @@ homepage: https://github.com/sensepost/gowitness
 alternatives:
 - aquatone
 - eyewitness
+size: 52666368
 install:
 - provider: apt
   package: gowitness
@@ -27,3 +33,4 @@ install:
 - provider: github
   repo: sensepost/gowitness
   checksums: '*checksums*.txt'
+version: 3.1.1-0kali1

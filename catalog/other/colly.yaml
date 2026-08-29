@@ -1,6 +1,13 @@
 id: colly
+summary: Elegant Scraper and Crawler Framework for Golang (program)
+description: This package contains a Colly Lightning Fast and Elegant Scraping Framework for Gophers.  Colly
+  provides a clean interface to write any kind of crawler/scraper/spider. With Colly you can easily extract
+  structured data from websites, which can be used for a wide range of applications, like data mining,
+  data processing or archiving.
 categories:
 - other
+homepage: https://github.com/gocolly/colly
+size: 1460224
 install:
 - provider: apt
   package: colly
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.0+git20220308.a611094-0kali1

@@ -1,6 +1,10 @@
 id: powershell
+summary: PowerShell is an automation and configuration management platform.
+description: It consists of a cross-platform command-line shell and associated scripting language.
 categories:
 - other
+homepage: https://microsoft.com/powershell
+size: 197821440
 install:
 - provider: apt
   package: powershell
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 7.6.2-1.deb

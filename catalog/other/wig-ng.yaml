@@ -1,6 +1,13 @@
 id: wig-ng
+summary: utility for Wi-Fi device fingerprinting
+description: 'This package contains WIG (Wi-Fi Information Gathering), a utility for Wi-Fi device fingerprinting.
+  Supported protocols and standards: * Apple Wireless Direct Link (AWDL) * Cisco Client Extension (CCX)
+  * HP Printers Custom Information Element * Wi-Fi Direct (P2P) * Wi-Fi Protected Setup (WPS) This tool
+  doesn''t perform channel hopping, use tools such as chopping or airodump-ng.'
 categories:
 - other
+homepage: https://github.com/6e726d/wig-ng
+size: 342016
 install:
 - provider: apt
   package: wig-ng
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1-0kali1

@@ -1,6 +1,12 @@
 id: mdbtools
+summary: JET / MS Access database (MDB) tools
+description: 'These are various tools for manipulating JET / MS Access database (MDB) files: * utils     -
+  provides command line utilities to list tables, export schema, and data, show file versions, and other
+  useful stuff. * mdb-sql   - a command line SQL tool that allows one to type SQL queries and get results.'
 categories:
-- other
+- database
+homepage: https://github.com/mdbtools/mdbtools
+size: 274432
 install:
 - provider: apt
   package: mdbtools
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.1-0.1+b2

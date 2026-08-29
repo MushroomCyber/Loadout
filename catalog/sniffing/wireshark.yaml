@@ -1,5 +1,7 @@
 id: wireshark
 summary: Deep protocol analysis of captured network traffic
+description: Wireshark is a network "sniffer" - a tool that captures and analyzes packets off the wire.
+  Wireshark can decode too many protocols to list here.
 categories:
 - sniffing
 tags:
@@ -16,6 +18,7 @@ homepage: https://www.wireshark.org
 alternatives:
 - tcpdump
 - termshark
+size: 17477632
 install:
 - provider: apt
   package: wireshark
@@ -26,3 +29,4 @@ install:
   - ubuntu
 - provider: brew
   formula: wireshark
+version: 4.6.6-1

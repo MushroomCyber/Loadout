@@ -1,8 +1,14 @@
 id: bind9
+summary: Internet Domain Name Server
+description: The Berkeley Internet Name Domain (BIND 9) implements an Internet domain name server.  BIND
+  9 is the most widely-used name server software on the Internet, and is supported by the Internet Software
+  Consortium, www.isc.org. This package provides the server and related configuration files.
 categories:
-- other
+- network
 tags:
 - dns-server
+homepage: https://www.isc.org/downloads/bind/
+size: 905216
 install:
 - provider: apt
   package: bind9
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:9.20.23-1

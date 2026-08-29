@@ -1,6 +1,10 @@
 id: merlin-agent
+summary: Cross-platform post-exploitation HTTP/2 Command & Control agent
+description: This package contains the Agent code for Merlin post-exploitation command and control framework.
 categories:
 - other
+homepage: https://github.com/Ne0nd0g/merlin-agent
+size: 12111872
 install:
 - provider: apt
   package: merlin-agent
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.4.2-0kali1

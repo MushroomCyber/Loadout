@@ -1,6 +1,10 @@
 id: wgetpaste
+summary: Command-line interface to various online pastebin services
+description: This package contains a script that automates pasting to a number of pastebin services.
 categories:
 - other
+homepage: http://wgetpaste.zlin.dk/
+size: 50176
 install:
 - provider: apt
   package: wgetpaste
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.30-0kali1

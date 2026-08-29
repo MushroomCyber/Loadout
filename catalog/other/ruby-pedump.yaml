@@ -1,6 +1,10 @@
 id: ruby-pedump
+summary: dump win32 PE executable files with a pure ruby
+description: This package contains a script to dump headers, sections, extract resources of win32 PE exe,dll,etc
 categories:
 - other
+homepage: http://github.com/zed-0xff/pedump
+size: 2533376
 install:
 - provider: apt
   package: ruby-pedump
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6.5-0kali1

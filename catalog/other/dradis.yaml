@@ -1,6 +1,13 @@
 id: dradis
+summary: Collaboration tools for penetration testing
+description: Dradis is a tool to help you simplify reporting and collaboration. - Spend more time testing
+  and less time reporting - Ensure consistent quality across your assessments - Combine the output of
+  your favorite scanners Dradis is an open-source project released in 2007 that has been refined for over
+  a decade by security professionals around the world.
 categories:
-- other
+- reporting
+homepage: https://dradis.com/ce/
+size: 161421312
 install:
 - provider: apt
   package: dradis
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.0.0-0kali2

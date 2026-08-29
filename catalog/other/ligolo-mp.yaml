@@ -1,6 +1,12 @@
 id: ligolo-mp
+summary: Multiplayer pivoting solution
+description: Ligolo-MP is an advanced version of Ligolo-ng, with client-server architecture, enabling
+  pentesters to play with multiple concurrent tunnels collaboratively. It manages all your TUNs automatically,
+  while also providing a clean GUI to track everything.
 categories:
 - other
+homepage: https://github.com/ttpreport/ligolo-mp
+size: 135668736
 install:
 - provider: apt
   package: ligolo-mp
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.2.1-0kali1

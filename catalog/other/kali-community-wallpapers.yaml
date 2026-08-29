@@ -1,6 +1,11 @@
 id: kali-community-wallpapers
+summary: Transitional package to install kali-wallpapers-community
+description: The package has been renamed kali-wallpapers-community and is part of the kali-wallpapers
+  source package now. This dummy package can be safely removed once kali-wallpapers-community is installed
+  on the system.
 categories:
 - other
+size: 125371392
 install:
 - provider: apt
   package: kali-community-wallpapers
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2025.4.1

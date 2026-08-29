@@ -1,6 +1,10 @@
 id: hak5-wifi-coconut
+summary: Userspace driver for the Hak5 Wi-Fi Coconut
+description: Userspace drive for USB Wi-Fi NICs and the Hak5 Wi-Fi Coconut
 categories:
 - other
+homepage: https://hak5.org
+size: 180224
 install:
 - provider: apt
   package: hak5-wifi-coconut
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.0-0kali2

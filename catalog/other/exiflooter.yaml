@@ -1,6 +1,10 @@
 id: exiflooter
+summary: finds geolocation on all image urls and directories
+description: ExifLooter finds geolocation on all image urls and directories also integrates with OpenStreetMap.
 categories:
 - other
+homepage: https://github.com/aydinnyunus/exiflooter
+size: 6355968
 install:
 - provider: apt
   package: exiflooter
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.0+git20260116.b8cc568-0kali1

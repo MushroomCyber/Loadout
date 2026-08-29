@@ -1,8 +1,17 @@
 id: httprint
+summary: Web server fingerprinting tool
+description: httprint is a web server fingerprinting tool. It relies on web server characteristics to
+  accurately identify web servers, despite the fact that they may have been obfuscated by changing the
+  server banner strings, or by plug-ins such as mod_security or servermask. httprint can also be used
+  to detect web enabled devices which do not have a server banner string, such as wireless access points,
+  routers, switches, cable modems, etc. httprint uses text signature strings and it is very easy to add
+  signatures to the signature database.
 categories:
 - web
 tags:
 - fingerprint
+homepage: https://www.net-square.com/httprint.html
+size: 1521664
 install:
 - provider: apt
   package: httprint
@@ -11,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.301-0kali4

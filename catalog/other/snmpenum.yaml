@@ -1,6 +1,11 @@
 id: snmpenum
+summary: SNMP tabledump
+description: This package contains a simple Perl script to enumerate information on Machines that are
+  running SNMP.
 categories:
 - other
+homepage: https://packetstormsecurity.com/files/download/31079/snmpenum.zip
+size: 21504
 install:
 - provider: apt
   package: snmpenum
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0-0kali5

@@ -1,6 +1,11 @@
 id: i2c-tools
+summary: heterogeneous set of I2C tools for Linux
+description: 'This package contains a heterogeneous set of I2C tools for Linux: a bus probing tool, a
+  chip dumper, register-level access helpers, EEPROM decoding scripts, and more.'
 categories:
 - other
+homepage: https://www.kernel.org/pub/software/utils/i2c-tools/
+size: 329728
 install:
 - provider: apt
   package: i2c-tools
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.4-3

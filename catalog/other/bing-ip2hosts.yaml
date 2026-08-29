@@ -1,8 +1,19 @@
 id: bing-ip2hosts
+summary: Enumerate hostnames for an IP using bing.com
+description: This package contains a Bing.com web scraper that discovers hostnames by IP address. Bing
+  is the flagship Microsoft search engine formerly known as MSN Search and Live Search. It provides a
+  feature unique to search engines - it allows searching by IP address. Bing-ip2hosts uses this feature.
+  It can be used to discover subdomains and other related domains. It also helps to identify websites
+  hosted in a shared hosting environment. This technique follows best practices during the reconnaissance
+  phase of a penetration test or bug bounty, to expand the target's attack surface. Unlike other many
+  other recon tools that web scrape Bing, this tool has smart scraping behaviour to maximize the discovery
+  of hostnames.
 categories:
 - other
 tags:
 - recon
+homepage: https://www.morningstarsecurity.com/research/bing-ip2hosts
+size: 29696
 install:
 - provider: apt
   package: bing-ip2hosts
@@ -11,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.5-0kali1

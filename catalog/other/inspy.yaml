@@ -1,6 +1,11 @@
 id: inspy
+summary: LinkedIn enumeration tool
+description: This package contains a Python based LinkedIn enumeration tool. You will need an API key
+  from HunterIO.
 categories:
 - other
+homepage: https://github.com/gojhonny/InSpy
+size: 46080
 install:
 - provider: apt
   package: inspy
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.0-0kali4

@@ -1,9 +1,15 @@
 id: dirsearch
 summary: Web path scanner
+description: This package contains is a command-line tool designed to brute force directories and files
+  in webservers. As a feature-rich tool, dirsearch gives users the opportunity to perform a complex web
+  content discovering, with many vectors for the wordlist, high accuracy, impressive performance, advanced
+  connection/request settings, modern brute-force techniques and nice output.
 categories:
 - web
 tags:
 - discovery
+homepage: https://github.com/maurosoria/dirsearch
+size: 457728
 install:
 - provider: apt
   package: dirsearch
@@ -12,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4.3-1

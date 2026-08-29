@@ -1,6 +1,12 @@
 id: fuse3
+summary: Filesystem in Userspace (3.x version)
+description: Filesystem in Userspace (FUSE) is a simple interface for userspace programs to export a virtual
+  filesystem to the Linux kernel. It also aims to provide a secure method for non privileged users to
+  create and mount their own filesystem implementations.
 categories:
-- other
+- recon
+homepage: https://github.com/libfuse/libfuse/wiki
+size: 111616
 install:
 - provider: apt
   package: fuse3
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.18.2-2

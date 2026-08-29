@@ -1,6 +1,14 @@
 id: emailharvester
+summary: Email addresses harvester
+description: 'This package contains EmailHarvester, a tool to retrieve Domain email addresses from Search
+  Engines. Features: * Retrieve Domain email addresses from popular Search engines (Google, Bing, Yahoo,
+  ASK, Baidu, Dogpile, Exalead) * Export results to txt and xml files * Limit search results * Define
+  your own User-Agent string * Use proxy server * Plugins system * Search in popular web sites using Search
+  engines (Twitter, LinkedIn, Google+, Github, Instagram, Reddit, Youtube)'
 categories:
 - other
+homepage: https://github.com/maldevel/EmailHarvester
+size: 71680
 install:
 - provider: apt
   package: emailharvester
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.2+git20191005-0kali3

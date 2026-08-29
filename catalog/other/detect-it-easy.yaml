@@ -1,6 +1,14 @@
 id: detect-it-easy
+summary: Program for determining types of files
+description: Detect It Easy (DiE) is a powerful tool for file type identification, popular among malware
+  analysts, cybersecurity experts, and reverse engineers worldwide. Supporting both signature-based and
+  heuristic analysis, DiE enables efficient file inspections across a broad range of platforms, including
+  Windows, Linux, and MacOS. Its adaptable, script-driven detection architecture makes it one of the most
+  versatile tools in the field, with a comprehensive list of supported OS images.
 categories:
 - other
+homepage: https://github.com/horsicq/Detect-It-Easy
+size: 43420672
 install:
 - provider: apt
   package: detect-it-easy
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.21-0kali1

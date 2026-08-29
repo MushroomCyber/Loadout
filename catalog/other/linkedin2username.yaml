@@ -1,6 +1,12 @@
 id: linkedin2username
+summary: Generate username lists for companies on LinkedIn
+description: 'OSINT Tool: Generate username lists from companies on LinkedIn. This is a pure web-scraper,
+  no API key required. You use your valid LinkedIn username and password to login, it will create several
+  lists of possible username formats for all employees of a company you point it at.'
 categories:
 - other
+homepage: https://github.com/initstring/linkedin2username
+size: 39936
 install:
 - provider: apt
   package: linkedin2username
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.30-0kali1

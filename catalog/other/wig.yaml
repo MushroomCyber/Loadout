@@ -1,6 +1,18 @@
 id: wig
+summary: WebApp Information Gatherer
+description: This package contains a web application information gathering tool, which can identify numerous
+  Content Management Systems and other administrative applications. The application fingerprinting is
+  based on checksums and string matching of known files for different versions of CMSes. This results
+  in a score being calculated for each detected CMS and its versions. Each detected CMS is displayed along
+  with the most probable version(s) of it. The score calculation is based on weights and the amount of
+  "hits" for a given checksum. wig also tries to guess the operating system on the server based on the
+  'server' and 'x-powered-by' headers. A database containing known header values for different operating
+  systems is included in wig, which allows wig to guess Microsoft Windows versions and Linux distribution
+  and version.
 categories:
 - other
+homepage: https://github.com/jekyc/wig
+size: 6677504
 install:
 - provider: apt
   package: wig
@@ -9,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6-4

@@ -1,6 +1,11 @@
 id: redeye
+summary: tool to help you manage your data during a pentest operation
+description: This package contains a tool intended to help you manage your data during a pentest operation
+  in the most efficient and organized way.
 categories:
 - other
+homepage: https://github.com/redeye-framework/Redeye
+size: 23375872
 install:
 - provider: apt
   package: redeye
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20230722.347f493-0kali5

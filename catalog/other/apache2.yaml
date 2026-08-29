@@ -1,6 +1,13 @@
 id: apache2
+summary: Apache HTTP Server
+description: The Apache HTTP Server Project's goal is to build a secure, efficient and extensible HTTP
+  server as standards-compliant open source software. The result has long been the number one web server
+  on the Internet. Installing this package results in a full installation, including the configuration
+  files, init scripts and support scripts.
 categories:
-- other
+- web
+homepage: https://httpd.apache.org/
+size: 600064
 install:
 - provider: apt
   package: apache2
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.4.68-1

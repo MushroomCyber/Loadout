@@ -1,6 +1,12 @@
 id: legion
+summary: semi-automated network penetration testing tool
+description: This package contains an open source, easy-to-use, super-extensible and semi-automated network
+  penetration testing tool that aids in discovery, reconnaissance and exploitation of information systems.
+  Legion is a fork of SECFORCE's Sparta.
 categories:
-- other
+- recon
+homepage: https://github.com/Hackman238/legion
+size: 7878656
 install:
 - provider: apt
   package: legion
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.0-0kali2

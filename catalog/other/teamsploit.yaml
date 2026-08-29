@@ -1,6 +1,15 @@
 id: teamsploit
+summary: Tools for group based penetration testing
+description: 'TeamSploit makes group-based penetration testing fun and easy, providing real-time collaboration
+  and automation. TeamSploit is a suite of tools for the Metasploit Framework. TeamSploit should work
+  with any MSF product (including OpenSource, Express, or Pro). Features include: * Exploitation Automation
+  * Automated Post-Exploitation * Information and Data Gathering * Session Sharing * Trojans and Trollware
+  TeamSploit''s primary goal is to automate common penetration testing tasks, and provide access and information
+  to fellow team members.'
 categories:
 - other
+homepage: http://www.teamsploit.com
+size: 2373632
 install:
 - provider: apt
   package: teamsploit
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~20151123-0kali5

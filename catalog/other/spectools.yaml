@@ -1,6 +1,13 @@
 id: spectools
+summary: Utilities for using the Wi-Spy USB spectrum analyzer hardware
+description: Spectrum-Tools is a set of utilities for using the Wi-Spy USB spectrum analyzer tools from
+  Metageek LLC.  They include userspace drivers for the hardware (implemented via libusb), a graphing
+  UI built on GTK/Cairo, network servers for remote devices, and simple utilities for developing additional
+  tools.
 categories:
-- other
+- monitoring
+homepage: https://www.kismetwireless.net/static/spectools/
+size: 222208
 install:
 - provider: apt
   package: spectools
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 201601r1-6

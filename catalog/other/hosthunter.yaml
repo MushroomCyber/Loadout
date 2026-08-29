@@ -1,6 +1,13 @@
 id: hosthunter
+summary: tool to discover and extract hostnames providing a set of target IP addresses
+description: This package contains a tool to efficiently discover and extract hostnames providing a large
+  set of target IP addresses. HostHunter utilises simple OSINT techniques to map IP addresses with virtual
+  hostnames. It generates a CSV or TXT file containing the results of the reconnaissance. Latest version
+  of HostHunter also takes screenshots of the targets, it is currently a beta functionality.
 categories:
 - other
+homepage: https://github.com/SpiderLabs/HostHunter
+size: 33792
 install:
 - provider: apt
   package: hosthunter
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6-0kali2

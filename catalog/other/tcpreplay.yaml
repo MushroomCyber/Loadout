@@ -1,6 +1,17 @@
 id: tcpreplay
+summary: Tool to replay saved tcpdump files at arbitrary speeds
+description: Tcpreplay is aimed at testing the performance of a NIDS by replaying real background network
+  traffic in which to hide attacks. Tcpreplay allows you to control the speed at which the traffic is
+  replayed, and can replay arbitrary tcpdump traces. Unlike programmatically-generated artificial traffic
+  which doesn't exercise the application/protocol inspection that a NIDS performs, and doesn't reproduce
+  the real-world anomalies that appear on production networks (asymmetric routes, traffic bursts/lulls,
+  fragmentation, retransmissions, etc.), tcpreplay allows for exact replication of real traffic seen on
+  real networks. It included the following executables tcpprep, tcprewrite, tcpreplay-edit, tcpbridge
+  and pcap based captures are possible.
 categories:
-- other
+- sniffing
+homepage: http://tcpreplay.appneta.com/
+size: 2238464
 install:
 - provider: apt
   package: tcpreplay
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.5.2-1

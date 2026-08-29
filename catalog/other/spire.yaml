@@ -1,6 +1,15 @@
 id: spire
+summary: toolchain of APIs for establishing trust between software systems
+description: This package contains SPIRE (the SPIFFE Runtime Environment). It is a toolchain of APIs for
+  establishing trust between software systems across a wide variety of hosting platforms. SPIRE exposes
+  the SPIFFE Workload API, which can attest running software systems and issue SPIFFE IDs and SVIDs to
+  them. This in turn allows two workloads to establish trust between each other, for example by establishing
+  an mTLS connection or by signing and verifying a JWT token. SPIRE can also enable workloads to securely
+  authenticate to a secret store, a database, or a cloud provider service.
 categories:
 - other
+homepage: https://github.com/spiffe/spire
+size: 214506496
 install:
 - provider: apt
   package: spire
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.15.0-0kali1

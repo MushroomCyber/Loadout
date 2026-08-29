@@ -1,6 +1,14 @@
 id: miredo
+summary: Teredo IPv6 tunneling through NATs
+description: 'The Teredo IPv6 tunneling protocol encapsulates IPv6 packets into UDP/IPv4 datagrams, to
+  allow hosts behind NAT devices to access the IPv6 Internet. Miredo is a Teredo client (as per RFC 4380):
+  it can provide IPv6 connectivity to a dual-stack IPv6/IPv4 host even if it is located behind a NAT.
+  It can also operate as a Teredo relay which forwards IPv6 packets between the IPv6 Internet and remote
+  Teredo clients.'
 categories:
-- other
+- post-exploitation
+homepage: http://www.remlab.net/miredo/
+size: 397312
 install:
 - provider: apt
   package: miredo
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2.6-7.2

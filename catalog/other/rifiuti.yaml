@@ -1,6 +1,11 @@
 id: rifiuti
+summary: MS Windows recycle bin analysis tool
+description: Rifiuti is a tool to examine the INFO2 files. The INFO2 file gives meta information about
+  the files found in the MS Windows recycle bin. This package is useful in forensics investigations.
 categories:
-- other
+- forensics
+homepage: https://sf.net/projects/odessa
+size: 30720
 install:
 - provider: apt
   package: rifiuti
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 20040505-4

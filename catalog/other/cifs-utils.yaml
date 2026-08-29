@@ -1,6 +1,12 @@
 id: cifs-utils
+summary: Common Internet File System utilities
+description: The SMB/CIFS protocol provides support for cross-platform file sharing with Microsoft Windows,
+  OS X, and other Unix systems. This package provides utilities for managing mounts of CIFS network file
+  systems.
 categories:
 - other
+homepage: https://wiki.samba.org/index.php/LinuxCIFS_utils
+size: 359424
 install:
 - provider: apt
   package: cifs-utils
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2:7.4-1

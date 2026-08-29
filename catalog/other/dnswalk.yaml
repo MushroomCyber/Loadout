@@ -1,6 +1,11 @@
 id: dnswalk
+summary: Checks dns zone information using nameserver lookups
+description: dnswalk is a DNS debugger.  It performs zone transfers of specified domains, and checks the
+  database in numerous ways for internal consistency, as well as accuracy.
 categories:
-- other
+- recon
+homepage: https://github.com/davebarr/dnswalk
+size: 47104
 install:
 - provider: apt
   package: dnswalk
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.2.dfsg.1-3

@@ -1,6 +1,11 @@
 id: rfcat
+summary: Swiss army knife of sub-GHz radio
+description: Rfcat is a sub GHz analysis tool. The goals of the project are to reduce the time for security
+  researchers to create needed tools for analyzing unknown targets, to aid in reverse-engineering of hardware.
 categories:
-- other
+- wireless
+homepage: https://github.com/atlas0fd00m/rfcat
+size: 453632
 install:
 - provider: apt
   package: rfcat
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:2.0.1+20240201.07f99bb-0kali1

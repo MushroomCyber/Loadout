@@ -1,6 +1,12 @@
 id: sqlmc
+summary: Check all urls of a domain for SQL injections
+description: SQLMC (SQL Injection Massive Checker) is a tool designed to scan a domain for SQL injection
+  vulnerabilities. It crawls the given URL up to a specified depth, checks each link for SQL injection
+  vulnerabilities, and reports its findings.
 categories:
 - other
+homepage: https://github.com/malvads/sqlmc
+size: 66560
 install:
 - provider: apt
   package: sqlmc
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.0-0kali2

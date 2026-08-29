@@ -1,6 +1,13 @@
 id: hubble
+summary: Network, Service & Security Observability for Kubernetes using eBPF (program)
+description: Hubble is a fully distributed networking and security observability platform for cloud native
+  workloads. It is built on top of Cilium (https://github.com/cilium/cilium) and eBPF (https://ebpf.io)
+  to enable deep visibility into the communication and behavior of services as well as the networking
+  infrastructure in a completely transparent manner.
 categories:
 - other
+homepage: https://github.com/cilium/hubble
+size: 109249536
 install:
 - provider: apt
   package: hubble
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.19.3-0kali1

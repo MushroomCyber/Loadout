@@ -1,6 +1,12 @@
 id: crack
+summary: Password guessing program (crypt() variant)
+description: Crack is program designed to quickly locate vulnerabilities in Unix (or other) password files
+  by scanning the contents of a password file, looking for users who have misguidedly chosen a weak login
+  password. This package provides the runtime files for the crypt() version.
 categories:
-- other
+- password
+homepage: https://alecmuffett.com/alecm/software/crack/
+size: 156672
 install:
 - provider: apt
   package: crack
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.0a-20

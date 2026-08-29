@@ -1,6 +1,11 @@
 id: villain
+summary: High level C2 framework
+description: Villain is a C2 framework that can handle multiple TCP socket & HoaxShell-based reverse shells,
+  enhance their functionality with additional features and share them among connected sibling servers.
 categories:
 - other
+homepage: https://github.com/t3l3machus/Villain
+size: 333824
 install:
 - provider: apt
   package: villain
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.2.1-0kali1

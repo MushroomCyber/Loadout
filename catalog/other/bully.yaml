@@ -1,6 +1,13 @@
 id: bully
+summary: Implementation of the WPS brute force attack, written in C
+description: Bully is a new implementation of the WPS brute force attack, written in C. It is conceptually
+  identical to other programs, in that it exploits the (now well known) design flaw in the WPS specification.
+  It has several advantages over the original reaver code. These include fewer dependencies, improved
+  memory and cpu performance, correct handling of endianness, and a more robust set of options.
 categories:
-- other
+- wireless
+homepage: https://github.com/kimocoder/bully
+size: 179200
 install:
 - provider: apt
   package: bully
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4.00-2+b1

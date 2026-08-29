@@ -1,6 +1,19 @@
 id: flashrom
+summary: Identify, read, write, erase, and verify BIOS/ROM/flash chips
+description: 'flashrom is a tool for identifying, reading, writing, verifying and erasing flash chips.
+  It''s often used to flash BIOS/EFI/coreboot/firmware/optionROM images in-system using a supported mainboard,
+  but it also supports flashing of network cards (NICs), SATA controller cards, and other external devices
+  which can program flash chips. It supports a wide range of DIP32, PLCC32, DIP8, SO8/SOIC8, TSOP32/40/48,
+  and BGA chips, which use various protocols such as LPC, FWH, parallel flash, or SPI. The tool can be
+  used to flash BIOS/firmware images for example -- be it proprietary BIOS images or coreboot (previously
+  known as LinuxBIOS) images. It can also be used to read the current existing BIOS/firmware from a flash
+  chip. Currently supported programmers include: * internal (for in-system flashing in the mainboard)
+  * dummy (virtual programmer for testing flashrom) * nic3com (for flash ROMs on 3COM network cards) *
+  nicrealtek (for flash ROMs on Realtek and SMC 1211 network cards) * nicnatsemi (for'
 categories:
-- other
+- hardware
+homepage: http://www.flashrom.org
+size: 1219584
 install:
 - provider: apt
   package: flashrom
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6.0-3

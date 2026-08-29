@@ -1,6 +1,14 @@
 id: unar
+summary: Unarchiver for a variety of file formats
+description: The Unarchiver is an archive unpacker program with support for the popular zip, RAR, 7z,
+  tar, gzip, bzip2, LZMA, XZ, CAB, MSI, NSIS, EXE, ISO, BIN, and split file formats, as well as the old
+  Stuffit, Stuffit X, DiskDouble, Compact Pro, Packit, cpio, compress (.Z), ARJ, ARC, PAK, ACE, ZOO, LZH,
+  ADF, DMS, LZX, PowerPacker, LBR, Squeeze, Crunch, and other old formats. This package contains the lsar
+  tool which lists the contents of archives and the unar tool which extracts those contents.
 categories:
-- other
+- forensics
+homepage: https://theunarchiver.com/command-line
+size: 6136832
 install:
 - provider: apt
   package: unar
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.10.8+ds1-9+b1

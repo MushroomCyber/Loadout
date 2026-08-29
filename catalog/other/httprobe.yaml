@@ -1,6 +1,11 @@
 id: httprobe
+summary: Take a list of domains and probe for working HTTP and HTTPS servers
+description: This package contains a tool to test a domains list. It takes a list of domains and probe
+  for working http and https servers.
 categories:
 - other
+homepage: https://github.com/tomnomnom/httprobe
+size: 4653056
 install:
 - provider: apt
   package: httprobe
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2-0kali1

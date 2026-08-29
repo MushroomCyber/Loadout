@@ -1,6 +1,13 @@
 id: gitxray
+summary: Scan GitHub repositories and contributors to collect data
+description: Gitxray (short for Git X-Ray) is a multifaceted security tool designed for use on GitHub
+  repositories. It can serve many purposes, including OSINT and Forensics. gitxray leverages public GitHub
+  REST APIs to gather information that would otherwise be very time-consuming to obtain manually. Additionally,
+  it seeks out information in unconventional places.
 categories:
 - other
+homepage: https://kulkansecurity.github.io/gitxray/
+size: 391168
 install:
 - provider: apt
   package: gitxray
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.20-0kali1

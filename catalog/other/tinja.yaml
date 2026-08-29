@@ -1,6 +1,11 @@
 id: tinja
+summary: CLI tool for testing web pages for template injection
+description: TInjA is a CLI tool for testing web pages for template injection vulnerabilities and supports
+  44 of the most relevant template engines for eight different programming languages.
 categories:
 - other
+homepage: https://github.com/Hackmanit/TInjA
+size: 13243392
 install:
 - provider: apt
   package: tinja
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2.0-0kali1

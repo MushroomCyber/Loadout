@@ -1,6 +1,13 @@
 id: kali-autopilot
+summary: tool for automatic attack scripts in Kali
+description: Kali Autopilot is a tool to help develop automatic attack scripts for red and purple teaming.
+  It is primarily intended to create scripts that attack vulnerable machines in the Kali Purple platform
+  for detection and response training but it is also useful for creating scripts used for penetration
+  testing.
 categories:
 - other
+homepage: https://gitlab.com/kalilinux/packages/kali-autopilot
+size: 100352
 install:
 - provider: apt
   package: kali-autopilot
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.4-0kali3

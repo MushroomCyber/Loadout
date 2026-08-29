@@ -1,6 +1,15 @@
 id: winregfs
+summary: Windows registry FUSE filesystem
+description: Winregfs is a FUSE-based filesystem driver that enables accessing of Windows registry hive
+  files as ordinary filesystems. Registry hive file editing can be performed with ordinary shell scripts
+  and command-line tools once mounted. fsck.winregfs scans a Windows registry hive file for problems that
+  indicate the hive has been damaged by hardware or software issues, reading recursively the  key  and  value  data
+  structures in the registry hive. This package provides mount.winregfs and fsck.winregfs commands. Winregfs
+  is useful for pentesters, ethical hackers and forensics experts.
 categories:
-- other
+- forensics
+homepage: https://codeberg.org/jbruchon/winregfs
+size: 108544
 install:
 - provider: apt
   package: winregfs
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8-1

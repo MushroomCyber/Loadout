@@ -1,6 +1,14 @@
 id: juice-shop
+summary: insecure web application
+description: 'This package contains a modern and sophisticated insecure web application! It can be used
+  in security trainings, awareness demos, CTFs and as a guinea pig for security tools! Juice Shop encompasses
+  vulnerabilities from the entire OWASP Top Ten along with many other security flaws found in real-world
+  applications! WARNING: Do not upload it to your hosting provider''s public html folder or any Internet
+  facing servers, as they will be compromised.'
 categories:
 - other
+homepage: https://github.com/juice-shop/juice-shop
+size: 1123794944
 install:
 - provider: apt
   package: juice-shop
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 19.1.1-0kali4+b1

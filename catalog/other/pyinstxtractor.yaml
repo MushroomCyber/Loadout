@@ -1,6 +1,11 @@
 id: pyinstxtractor
+summary: PyInstalller Extractor
+description: PyInstaller Extractor is a Python script to extract the contents of a PyInstaller generated
+  executable file.
 categories:
 - other
+homepage: https://github.com/extremecoders-re/pyinstxtractor
+size: 28672
 install:
 - provider: apt
   package: pyinstxtractor
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2026.04-0kali1

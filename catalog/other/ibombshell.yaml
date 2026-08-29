@@ -1,6 +1,17 @@
 id: ibombshell
+summary: Dynamic Remote Shell
+description: This package contains a tool written in Powershell that allows you to have a prompt at any
+  time with post-exploitation functionalities (and in some cases exploitation). It is a shell that is
+  downloaded directly to memory providing access to a large number of pentesting features. These functionalities
+  can be downloaded directly to memory, in the form of a Powershell function. This form of execution is
+  known as everywhere. In addition, ibombshell provides a second execution mode called Silently, so the
+  pentester can execute an instance of ibombshell (called warrior). The compromised computer will be connected
+  to a C2 panel through HTTP. Therefore, it will be possible to control the warrior and be able to load
+  functions in memory that help the pentester. This is happening whithin the post-exploitation phase.
 categories:
 - other
+homepage: https://github.com/Telefonica/ibombshell
+size: 5182464
 install:
 - provider: apt
   package: ibombshell
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~git20201107-0kali2

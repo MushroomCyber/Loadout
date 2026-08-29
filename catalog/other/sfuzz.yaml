@@ -1,6 +1,12 @@
 id: sfuzz
+summary: Black Box testing utilities
+description: In the same vein as the Generic Protocol Framework, sfuzz is a really simple to use black
+  box testing suite called Simple Fuzzer (what else would you expect?). The goal is to provide a simple
+  to use, but fairly powerful and flexible black box testing utility.
 categories:
-- other
+- vuln-scan
+homepage: http://aconole.brad-x.com/programs/sfuzz.html
+size: 195584
 install:
 - provider: apt
   package: sfuzz
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.0-1kali4

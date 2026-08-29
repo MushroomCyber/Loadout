@@ -1,6 +1,13 @@
 id: undbx
+summary: tool to extract, recover and undelete e-mail messages from .dbx files
+description: UnDBX is a tool to extract, recover and undelete e-mail messages from MS Outlook Express
+  .dbx files (or similar e-mail programs in MS Windows). Corrupted .dbx files can be parsed to try to
+  recover messages from it. It can also try to undelete messages, not only from Deleted Items but also
+  from fragments of deleted messages that were not overwritten. UnDBX is useful in forensics investigations.
 categories:
-- other
+- forensics
+homepage: https://github.com/ZungBang/undbx
+size: 62464
 install:
 - provider: apt
   package: undbx
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.21-4

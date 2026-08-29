@@ -1,6 +1,11 @@
 id: uniscan
+summary: LFI, RFI, and RCE vulnerability scanner
+description: Uniscan is a simple Remote File Include, Local File Include and Remote Command Execution
+  vulnerability scanner.
 categories:
-- other
+- web
+homepage: https://sourceforge.net/projects/uniscan/
+size: 1257472
 install:
 - provider: apt
   package: uniscan
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 6.3-0kali3

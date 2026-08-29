@@ -1,8 +1,13 @@
 id: jd-gui
+summary: GUI Java .class decompiler
+description: JD-GUI is a standalone graphical utility that displays Java source codes of ".class" files.
+  You can browse the reconstructed source code with the JD-GUI for instant access to methods and fields.
 categories:
 - reverse
 tags:
 - java
+homepage: http://jd.benow.ca/
+size: 1500160
 install:
 - provider: apt
   package: jd-gui
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6.6-0kali1

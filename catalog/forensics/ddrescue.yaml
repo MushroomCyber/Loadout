@@ -1,8 +1,18 @@
 id: ddrescue
+summary: data recovery and protection tool
+description: When your disk has crashed and you try to copy it over to another one, standard Unix tools
+  like cp, cat, and dd will abort on every I/O error, dd_rescue does not. It optimizes copying by using
+  large blocks as long as no errors occur and falls back to smaller blocks. It supports reverse direction
+  copying (to approach a bad spot from the top), sparse copying, preallocating space, splice zerocopy,
+  and bypassing the kernel pagecache with O_DIRECT. dd_rescue provides safe deletion of data by overwriting
+  files (or better partitions/disks) multiple times with fast random numbers. With the ddr_hash plugin,
+  it supports calculating a hash value (such as a sha256sum) or an HMAC during copying.
 categories:
 - forensics
 tags:
 - recovery
+homepage: http://www.garloff.de/kurt/linux/ddrescue/
+size: 420864
 install:
 - provider: apt
   package: ddrescue
@@ -11,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.99.13-0kali2

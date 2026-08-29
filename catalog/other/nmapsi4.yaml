@@ -1,6 +1,11 @@
 id: nmapsi4
+summary: graphical interface to nmap, the network scanner
+description: NmapSI4 is a complete Qt-based Gui with the design goal to provide a complete nmap interface
+  for users, in order to manage all options of this power security net scanner.
 categories:
-- other
+- recon
+homepage: https://www.nmapsi4.org
+size: 1379328
 install:
 - provider: apt
   package: nmapsi4
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6~alpha1-1

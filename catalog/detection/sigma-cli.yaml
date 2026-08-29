@@ -1,5 +1,7 @@
 id: sigma-cli
 summary: Convert Sigma detection rules to your SIEM's query language
+description: This package contains the Sigma command line interface using the pySigma library to manage,
+  list and convert Sigma rules into query languages.
 categories:
 - detection
 tags:
@@ -11,6 +13,8 @@ phases:
 binaries:
 - sigma
 homepage: https://github.com/SigmaHQ/sigma-cli
+size: 112640
 install:
 - provider: pipx
   package: sigma-cli
+version: 3.0.2-0kali1

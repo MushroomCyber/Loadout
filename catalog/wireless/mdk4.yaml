@@ -1,9 +1,16 @@
 id: mdk4
 summary: WiFi testing & DoS tool
+description: 'This package contains a proof-of-concept tool to exploit common IEEE 802.11 protocol weaknesses.
+  MDK4 is a new version of MDK3. MDK4 is a Wi-Fi testing tool from E7mer of 360PegasusTeam, ASPj of k2wrlz,
+  it uses the osdep library from the aircrack-ng project to inject frames on several operating systems.
+  IMPORTANT: It is your responsibility to make sure you have permission from the network owner before
+  running MDK against it.'
 categories:
 - wireless
 tags:
 - dos-attacks
+homepage: https://github.com/aircrack-ng/mdk4
+size: 241664
 install:
 - provider: apt
   package: mdk4
@@ -12,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.2-5+b1

@@ -1,6 +1,12 @@
 id: peirates
+summary: Kubernetes Penetration Testing tool
+description: This package contains a Kubernetes penetration tool, enables an attacker to escalate privilege
+  and pivot through a Kubernetes cluster. It automates known techniques to steal and collect service accounts,
+  obtain further code execution, and gain control of the cluster.
 categories:
 - other
+homepage: https://github.com/inguardians/peirates
+size: 84747264
 install:
 - provider: apt
   package: peirates
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.28-0kali1

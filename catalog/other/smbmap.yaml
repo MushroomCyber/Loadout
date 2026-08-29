@@ -1,6 +1,17 @@
 id: smbmap
+summary: handy SMB enumeration tool
+description: 'SMBMap allows users to enumerate samba share drives across an entire domain. List share
+  drives, drive permissions, share contents, upload/download functionality, file name auto-download pattern
+  matching, and even execute remote commands. This tool was designed with pen testing in mind, and is
+  intended to simplify searching for potentially sensitive data across large networks. Features: Pass-the-Hash
+  Support File upload/download/delete Permission enumeration (writable share, meet Metasploit) Remote
+  Command Execution Distrubted file content searching (beta!) File name matching (with an auto downoad
+  capability) Host file parser supports IPs, host names, and CIDR SMB sigining detection Server version
+  output Kerberos support! (super beta)'
 categories:
-- other
+- recon
+homepage: https://github.com/ShawnDEvans/smbmap
+size: 137216
 install:
 - provider: apt
   package: smbmap
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.10.7-1

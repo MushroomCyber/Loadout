@@ -1,8 +1,13 @@
 id: bloodhound-ce-python
+summary: Python based ingestor for BloodHound CE
+description: This package contains a Python based ingestor for BloodHound CE, based on Impacket. This
+  tool is only compatible with BloodHound CE. For legacy Bloodhound (<= 4.3.1) use bloodhound-python package.
 categories:
 - other
 tags:
 - ad-mapping
+homepage: https://github.com/dirkjanm/BloodHound.py/tree/bloodhound-ce
+size: 365568
 install:
 - provider: apt
   package: bloodhound-ce-python
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.1-0kali1

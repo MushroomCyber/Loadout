@@ -1,6 +1,10 @@
 id: robotstxt
+summary: robots.txt exclusion protocol implementation for Go language
+description: This package contains a robots.txt exclusion protocol implementation for Go language (golang).
 categories:
 - other
+homepage: https://github.com/temoto/robotstxt
+size: 5428224
 install:
 - provider: apt
   package: robotstxt
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.1-0kali2

@@ -1,6 +1,11 @@
 id: sidguesser
+summary: Guesses sids against an Oracle database
+description: Guesses sids/instances against an Oracle database according to a predefined dictionary file.
+  The speed is slow (80-100 guesses per second) but it does the job.
 categories:
-- other
+- web
+homepage: http://www.cqure.net/wp/tools/database/sidguesser/
+size: 25600
 install:
 - provider: apt
   package: sidguesser
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.5-1kali3

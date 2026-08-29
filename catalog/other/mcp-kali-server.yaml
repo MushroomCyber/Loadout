@@ -1,6 +1,14 @@
 id: mcp-kali-server
+summary: API bridge connecting MCP Clients to the API server
+description: 'This package contains a lightweight API bridge that connects MCP Clients (e.g: Claude Desktop,
+  5ire) to the API server which allows excuting commands on a Linux terminal. This allows the MCP to run
+  terminal commands like nmap, nxc or any other tool, interact with web applications using tools like
+  curl, wget, gobuster. And perform AI-assisted penetration testing, solving CTF web challenge in real
+  time, helping in solving machines from HTB or THM.'
 categories:
 - other
+homepage: https://github.com/Wh0am123/MCP-Kali-Server
+size: 76800
 install:
 - provider: apt
   package: mcp-kali-server
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20260317.00154c0-0kali1

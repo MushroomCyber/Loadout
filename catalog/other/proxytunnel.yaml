@@ -1,6 +1,15 @@
 id: proxytunnel
+summary: Help SSH and other protocols through HTTP(S) proxies
+description: Proxytunnel creates tunnels through HTTP(S) proxies for any TCP based protocol. It comes
+  in handy when one sits behind a firewall that allows for HTTP(S) traffic only. The program connects
+  stdin and stdout to an origin server somewhere in the Internet through an industry standard HTTP or
+  HTTPS proxy. It was originally written as an extension to SSH, to be used to SSH to a box at home. It's
+  possible to use proxytunnel along with other applications as well, by running it from inetd or as daemon
+  listening on a local port to be forwarded through the tunnel.
 categories:
-- other
+- web
+homepage: https://proxytunnel.sourceforge.io/
+size: 100352
 install:
 - provider: apt
   package: proxytunnel
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.13.0-1

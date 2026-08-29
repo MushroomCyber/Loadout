@@ -1,6 +1,13 @@
 id: kustomize
+summary: Customization of Kubernetes YAML configurations (program)
+description: Kustomize is a standalone binary tool for managing Kubernetes configurations without requiring
+  templates. It allows users to customize resource configurations through overlays, making it easy to
+  reuse and share manifests across environments. Kustomize operates natively with Kubernetes YAML, offering
+  functionality like applying patches, setting images, and managing common labels and annotations.
 categories:
 - other
+homepage: https://github.com/kubernetes-sigs/kustomize
+size: 23992320
 install:
 - provider: apt
   package: kustomize
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.8.1+ds-1

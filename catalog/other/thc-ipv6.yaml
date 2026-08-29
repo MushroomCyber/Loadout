@@ -1,6 +1,19 @@
 id: thc-ipv6
+summary: The Hacker Choice's IPv6 Attack Toolkit
+description: 'Attack toolkit for testing IPv6 and ICMPv6 protocol weaknesses. Some of the tools included:
+  alive6: an effective alive scanning. denial6: try a collection of denial-of-service tests against a
+  target. detect-new-ip6: detect new ip6 devices which join the network. dnsdict6: parallelized dns ipv6
+  dictionary bruteforcer. dos-new-ip6: detect new ip6 devices and tell them that their chosen IP collides
+  on the network (DOS). exploit6: test known ipv6 vulnerabilities against a target. fake_mld6: announce
+  yourself in a multicast group of your choice on the net. fake_router6: announce yourself as a router
+  on the network. flood_advertise6: flood a target with random neighbor advertisements. flood_router6:
+  flood a target with random router advertisements. implementation6: performs various implementation checks
+  on ipv6. parasite6: icmp neighbor solitication/advertisement spoofer. redir6: redirect traffic to you
+  intelligently (man-in-the-middle) with a clever icmp6 redirect spoofer. rsmurf6: remote s'
 categories:
-- other
+- recon
+homepage: http://www.thc.org/thc-ipv6/
+size: 3860480
 install:
 - provider: apt
   package: thc-ipv6
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.8-2

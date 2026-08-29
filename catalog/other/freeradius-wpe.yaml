@@ -1,6 +1,12 @@
 id: freeradius-wpe
+summary: FreeRadius Wireless Pawn Edition
+description: 'This package is FreeRadius Wireless Pawn Edition. There are supported and tested EAP Types/Inner
+  Authentication Methods (others may also work): * PEAP/PAP (OTP) * PEAP/MSCHAPv2 * EAP-TTLS/PAP (includes
+  OTPs) * EAP-TTLS/MSCHAPv1 * EAP-TTLS/MSCHAPv2 * EAP-MD5'
 categories:
-- other
+- wireless
+homepage: https://www.freeradius.org/
+size: 4924416
 install:
 - provider: apt
   package: freeradius-wpe
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.2.5+dfsg-3kali1

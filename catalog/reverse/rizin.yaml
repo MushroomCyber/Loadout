@@ -1,8 +1,15 @@
 id: rizin
+summary: reverse engineering framework and command-line toolset
+description: Rizin is a fork of the radare2 reverse engineering framework with a focus on usability, working
+  features and code cleanliness. Rizin is portable and it can be used to analyze binaries, disassemble
+  code, debug programs, as a forensics tool, as a scriptable command-line hexadecimal editor able to open
+  disk files, and much more!
 categories:
 - reverse
 tags:
 - disassembler
+homepage: https://rizin.re/
+size: 276480
 install:
 - provider: apt
   package: rizin
@@ -11,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8.2-0kali1

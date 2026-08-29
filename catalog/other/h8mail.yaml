@@ -1,6 +1,12 @@
 id: h8mail
+summary: email open source intelligence and breach hunting tool
+description: This package contains an email OSINT and breach hunting tool using different breach and reconnaissance
+  services, or local breaches such as Troy Hunt's "Collection1" and the infamous "Breach Compilation"
+  torrent.
 categories:
 - other
+homepage: https://github.com/khast3x/h8mail
+size: 145408
 install:
 - provider: apt
   package: h8mail
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.5.6-0kali1

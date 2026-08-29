@@ -1,6 +1,12 @@
 id: goshs
+summary: SimpleHTTPServer written in Go
+description: This tool provides a SimpleHTTPServer written in Go, enhanced with features and security.
+  This package contains a simple http server like the Python SimpleHTTPServer but enhanced with a lot
+  of helpful features and security in mind.
 categories:
 - other
+homepage: https://github.com/patrickhener/goshs
+size: 23079936
 install:
 - provider: apt
   package: goshs
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.0-0kali1

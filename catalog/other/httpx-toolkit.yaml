@@ -1,6 +1,17 @@
 id: httpx-toolkit
+summary: fast and multi-purpose HTTP toolkit
+description: This package contains the httpX toolkit developed by ProjectDiscovery. It's a fast and multi-purpose
+  HTTP toolkit allow to run multiple probers using retryablehttp library, it is designed to maintain the
+  result reliability with increased threads. Features * Simple and modular code base making it easy to
+  contribute. * Fast And fully configurable flags to probe multiple elements. * Supports multiple HTTP
+  based probings. * Smart auto fallback from https to http as default. * Supports hosts, URLs and CIDR
+  as input. * Handles edge cases doing retries, backoffs etc for handling WAFs. This tool is packaged
+  as 'httpx-toolkit' to avoid confusion and conflicts with the package python3-httpx that provides a script
+  /usr/bin/httpx.
 categories:
-- other
+- recon
+homepage: https://github.com/projectdiscovery/httpx
+size: 56858624
 install:
 - provider: apt
   package: httpx-toolkit
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.0-0kali2

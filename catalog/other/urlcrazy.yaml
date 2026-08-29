@@ -1,6 +1,11 @@
 id: urlcrazy
+summary: Domain typo generator
+description: Generate and test domain typos and variations to detect and perform typo squatting, URL hijacking,
+  phishing, and corporate espionage.
 categories:
-- other
+- recon
+homepage: https://www.morningstarsecurity.com/research/urlcrazy
+size: 1377280
 install:
 - provider: apt
   package: urlcrazy
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.3-0kali1

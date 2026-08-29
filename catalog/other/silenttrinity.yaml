@@ -1,6 +1,19 @@
 id: silenttrinity
+summary: asynchronous, collaborative post-exploitation agent
+description: 'This package contains a modern, asynchronous, multiplayer & multiserver C2/post-exploitation
+  framework powered by Python 3 and .NETs DLR. It''s the culmination of an extensive amount of research
+  into using embedded third-party .NET scripting languages to dynamically call .NET API''s, a technique
+  the author coined as BYOI (Bring Your Own Interpreter). The aim of this tool and the BYOI concept is
+  to shift the paradigm back to PowerShell style like attacks (as it offers much more flexibility over
+  traditional C# tradecraft) only without using PowerShell in anyway. Some of the main features that distinguish
+  SILENTTRINITY are: - Multi-User & Multi-Server - Supports multi-user collaboration. Additionally, the
+  client can connect to and control multiple Teamservers. - Client and Teamserver Built in Python 3.7
+  - Latest and greatest features of the Python language are used, heavy use of Asyncio provides ludicrous
+  speeds. - Real-time Updates and Communication - Use of Websockets allow for real-time'
 categories:
 - other
+homepage: https://github.com/byt3bl33d3r/SILENTTRINITY
+size: 5133312
 install:
 - provider: apt
   package: silenttrinity
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4.6dev~20211029-0kali1

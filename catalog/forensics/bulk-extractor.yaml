@@ -1,9 +1,16 @@
 id: bulk-extractor
 summary: Digital forensics evidence tool
+description: bulk_extractor is a C++ program that scans a disk image, a file, or a directory of files
+  and extracts useful information without parsing the file system or file system structures. The results
+  are stored in feature files that can be easily inspected, parsed, or processed with automated tools.
+  bulk_extractor also creates histograms of features that it finds, as features that are more common tend
+  to be more important.
 categories:
 - forensics
 tags:
 - carving
+homepage: https://github.com/simsong/bulk_extractor
+size: 16593920
 install:
 - provider: apt
   package: bulk-extractor
@@ -12,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.1+git20260109.898db1-0kali2

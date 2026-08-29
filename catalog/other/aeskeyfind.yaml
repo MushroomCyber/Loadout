@@ -1,6 +1,14 @@
 id: aeskeyfind
+summary: tool for locating AES keys in a captured memory image
+description: This program illustrates automatic techniques for locating 128-bit and 256-bit AES keys in
+  a captured memory image. The program uses various algorithms and also performs a simple entropy test
+  to filter out blocks that are not keys.  It counts the number of repeated bytes and skips blocks that
+  have too many repeats. This method works even if several bits of the key schedule have been corrupted
+  due to memory decay. This package is useful to several activities, as forensics investigations.
 categories:
-- other
+- crypto
+homepage: https://citp.princeton.edu/our-work/memory/code/
+size: 33792
 install:
 - provider: apt
   package: aeskeyfind
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:1.0-11

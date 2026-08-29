@@ -1,6 +1,13 @@
 id: rephrase
+summary: Specialized passphrase recovery tool for GnuPG
+description: If you can nearly remember your GnuPG passphrase - but not quite - then Rephrase may be able
+  to help. Tell Rephrase the parts of the passphrase you know, and any number of alternatives for the
+  parts you're not sure about; and Rephrase will try all the alternatives, in all possible combinations,
+  and tell you which combination (if any) gives you the correct passphrase.
 categories:
-- other
+- forensics
+homepage: https://www.roguedaemon.net/rephrase/
+size: 44032
 install:
 - provider: apt
   package: rephrase
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2-4

@@ -1,6 +1,11 @@
 id: google-nexus-tools
+summary: ADB and Fastboot for use with Nexus devices
+description: Nexus Tools is an installer for the Android debug/development command-line tools ADB (Android
+  Device Bridge) and Fastboot for Mac OS X, Linux, and Google Chrome/Chromium OS.
 categories:
 - other
+homepage: https://github.com/corbindavenport/nexus-tools
+size: 1454080
 install:
 - provider: apt
   package: google-nexus-tools
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.3-0kali7

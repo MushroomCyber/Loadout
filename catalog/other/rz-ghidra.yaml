@@ -1,6 +1,12 @@
 id: rz-ghidra
+summary: ghidra decompiler and sleigh disassembler for rizin
+description: This is an integration of the Ghidra decompiler and Sleigh Disassembler for rizin. It is
+  solely based on the decompiler part of Ghidra, which is written entirely in C++, so Ghidra itself is
+  not required at all and the plugin can be built self-contained.
 categories:
-- other
+- reverse
+homepage: https://github.com/rizinorg/rz-ghidra
+size: 455245824
 install:
 - provider: apt
   package: rz-ghidra
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8.0-0kali1+b2

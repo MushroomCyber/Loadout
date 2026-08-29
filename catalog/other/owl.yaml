@@ -1,6 +1,14 @@
 id: owl
+summary: open Apple Wireless Direct Link (AWDL)
+description: This package contains an open implementation of the Apple Wireless Direct Link (AWDL) ad
+  hoc protocol for Linux and macOS written in C and part of the Open Wireless Link project. OWL runs in
+  user space and makes use of Linux’s Netlink API for Wi-Fi specific operations such as channel switching
+  and to integrate itself in the Linux networking stack by providing a virtual network interface such
+  that existing IPv6-capable programs can use AWDL without modification.
 categories:
 - other
+homepage: https://owlink.org/
+size: 88064
 install:
 - provider: apt
   package: owl
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~git20220130-0kali1+b1

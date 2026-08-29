@@ -1,6 +1,10 @@
 id: command-not-found
+summary: Suggest installation of packages in interactive bash sessions
+description: This package will install a handler for command_not_found that looks up programs not currently
+  installed but available from the repositories.
 categories:
 - other
+size: 536576
 install:
 - provider: apt
   package: command-not-found
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 23.04.0-3+kali1

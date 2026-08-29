@@ -1,6 +1,14 @@
 id: sherlock
+summary: Find usernames across social networks
+description: 'Sherlock relies on the site''s designers providing a  unique URL for a registered username.
+  To determine if a username is available, Sherlock queries that URL, and uses to response to understand
+  if there is a claimed username already there. Currently, the tool is capable of locating users on more
+  than 300 social networks: Apple Developer, Arduino, Docker Hub, GitHub, GitLab,  Facebook, BitCoinForum,
+  CNET, IFTTT, Instagram, PlayStore  PyPI, Scribd, Telegram, TikTok, Tinder etc.'
 categories:
 - other
+homepage: https://github.com/sherlock-project/sherlock
+size: 192512
 install:
 - provider: apt
   package: sherlock
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.16.0-2

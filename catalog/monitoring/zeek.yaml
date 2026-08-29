@@ -1,5 +1,12 @@
 id: zeek
 summary: Network security monitor producing rich protocol logs
+description: Zeek is primarily a security monitor that inspects all traffic on a link in depth for signs
+  of suspicious activity. More generally, however, Zeek supports a wide range of traffic analysis tasks
+  even outside of the security domain, including performance measurements and helping with trouble-shooting.
+  Zeek comes with built-in functionality for a range of analysis and detection tasks, including detecting
+  malware by interfacing to external registries, reporting vulnerable versions of software seen on the
+  network, identifying popular web applications, detecting SSH brute-forcing, validating SSL certificate
+  chains, among others.
 categories:
 - monitoring
 - detection
@@ -14,6 +21,7 @@ binaries:
 homepage: https://zeek.org
 alternatives:
 - suricata
+size: 47982592
 install:
 - provider: apt
   package: zeek
@@ -24,3 +32,4 @@ install:
   - ubuntu
 - provider: brew
   formula: zeek
+version: 5.1.1-0kali3

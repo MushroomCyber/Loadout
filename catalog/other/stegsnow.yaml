@@ -1,6 +1,15 @@
 id: stegsnow
+summary: steganography using ASCII files
+description: 'This utility can conceal messages in ASCII text by appending whitespaces to the end of lines.
+  Because spaces and tabs are generally not visible in text viewers, the message is effectively hidden
+  from casual observers. And if the built-in encryption is used, the message cannot be read even if it
+  is detected. About the name: locating trailing whitespace in text is like finding a polar bear in a
+  snowstorm. And it uses the ICE encryption algorithm, so the name is thematically consistent. This package
+  is useful for personal security, forensics investigations and other actions.'
 categories:
-- other
+- crypto
+homepage: https://www.darkside.com.au/snow
+size: 57344
 install:
 - provider: apt
   package: stegsnow
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 20130616-8

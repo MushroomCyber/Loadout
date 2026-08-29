@@ -1,6 +1,19 @@
 id: horst
+summary: Highly Optimized Radio Scanning Tool
+description: horst is a small, lightweight IEEE802.11 WLAN analyzer with a text interface. Its basic function
+  is similar to tcpdump, Wireshark or Kismet, but it's much smaller and shows different, aggregated information
+  which is not easily available from other tools. It is made for debugging wireless LANs with a focus
+  on getting a quick overview instead of deep packet inspection and has special features for Ad-hoc (IBSS)
+  mode and mesh networks. It can be useful to get a quick overview of what's going on all wireless LAN
+  channels and to identify problems. * Shows signal (RSSI) values per station, something hard to get,
+  especially in IBSS mode * Calculates channel utilization ("usage") by adding up the amount of time the
+  packets actually occupy the medium * "Spectrum Analyzer" shows signal levels and usage per channel *
+  Graphical packet history, with signal, packet type and physical rate * Shows all stations per ESSID
+  and the live TSF per node as it is counting * Detects IBSS "splits" (same ESSID but
 categories:
 - other
+homepage: https://github.com/br101/horst
+size: 158720
 install:
 - provider: apt
   package: horst
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.1-3+b1

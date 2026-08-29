@@ -1,6 +1,13 @@
 id: isr-evilgrade
+summary: Evilgrade framework
+description: Evilgrade is a modular framework that allows the user to take advantage of poor upgrade implementations
+  by injecting fake updates. It comes with pre-made binaries (agents), a working default configuration
+  for fast pentests, and has it's own WebServer and DNSServer modules. Easy to set up new settings, and
+  has an autoconfiguration when new binary agents are set.
 categories:
-- other
+- sniffing
+homepage: https://github.com/infobyte/evilgrade
+size: 13787136
 install:
 - provider: apt
   package: isr-evilgrade
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.0.9-0kali2

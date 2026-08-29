@@ -1,8 +1,16 @@
 id: jadx
+summary: Dex to Java decompiler
+description: 'This package contains a Dex to Java decompiler. It contains a command line and GUI tools
+  for produce Java source code from Android Dex and Apk files. Main features: - decompile Dalvik bytecode
+  to java classes from APK, dex, aar and zip files - decode AndroidManifest.xml and other resources from
+  resources.arsc - deobfuscator included jadx-gui features: - view decompiled code with highlighted syntax
+  - jump to declaration - find usage - full text search'
 categories:
 - reverse
 tags:
 - android
+homepage: https://github.com/skylot/jadx
+size: 63714304
 install:
 - provider: apt
   package: jadx
@@ -11,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.5.5-0kali1

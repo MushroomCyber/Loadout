@@ -1,6 +1,12 @@
 id: nishang
+summary: Collection of PowerShell scripts and payloads
+description: Nishang is a framework and collection of scripts and payloads which enables usage of PowerShell
+  for offensive security and post exploitation during Penetration Tests. The scripts are written on the
+  basis of requirement by the author during real Penetration Tests.
 categories:
-- other
+- web
+homepage: https://github.com/samratashok/nishang
+size: 6723584
 install:
 - provider: apt
   package: nishang
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.7.6+git20210724.414ee11-0kali1

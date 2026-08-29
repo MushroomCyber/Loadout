@@ -1,6 +1,12 @@
 id: evil-ssdp
+summary: Spoof SSDP replies to phish for NTLM hashes on a network
+description: This tool responds to SSDP multicast discover requests, posing as a generic UPNP device on
+  a local network. Your spoofed device will magically appear in Windows Explorer on machines in your local
+  network. Users who are tempted to open the device are shown a configurable webpage.
 categories:
 - other
+homepage: https://github.com/initstring/evil-ssdp
+size: 102400
 install:
 - provider: apt
   package: evil-ssdp
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.8~beta-0kali2

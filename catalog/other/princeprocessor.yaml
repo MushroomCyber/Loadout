@@ -1,6 +1,15 @@
 id: princeprocessor
+summary: standalone password candidate generator using the PRINCE algorithm
+description: Princeprocessor is a password candidate generator and can be thought of as an advanced combinator
+  attack. Rather than taking as input two different wordlists and then outputting all the possible two
+  word combinations though, princeprocessor only has one input wordlist and builds "chains" of combined
+  words. These chains can have 1 to N words from the input wordlist concatenated together. The name PRINCE
+  is used as an acronym and stands for PRobability INfinite Chained Elements, which are the building blocks
+  of the algorithm.
 categories:
 - other
+homepage: https://github.com/hashcat/princeprocessor
+size: 123904
 install:
 - provider: apt
   package: princeprocessor
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.22-6

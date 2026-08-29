@@ -1,6 +1,14 @@
 id: slowhttptest
+summary: application layer Denial of Service attacks simulation tool
+description: SlowHTTPTest is a highly configurable tool that simulates some application layer Denial of
+  Service attacks. It implements most common low-bandwidth application layer Denial of Service attacks,
+  such as * Slowloris * Slow HTTP POST * Slow Read attack (based on TCP persist timer exploit) by draining
+  concurrent connections pool * Apache Range Header attack by causing very significant memory and CPU
+  usage on the server.
 categories:
-- other
+- vuln-scan
+homepage: https://github.com/shekyan/slowhttptest
+size: 91136
 install:
 - provider: apt
   package: slowhttptest
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.0-1+b1

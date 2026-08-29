@@ -1,6 +1,11 @@
 id: ethtool
+summary: display or change Ethernet device settings
+description: ethtool can be used to query and change settings such as speed, auto- negotiation and checksum
+  offload on many network devices, especially Ethernet devices.
 categories:
-- other
+- wireless
+homepage: https://www.kernel.org/pub/software/network/ethtool/
+size: 1114112
 install:
 - provider: apt
   package: ethtool
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:7.0-1

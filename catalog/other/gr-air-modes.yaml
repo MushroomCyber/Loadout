@@ -1,6 +1,14 @@
 id: gr-air-modes
+summary: Gnuradio Mode-S/ADS-B radio
+description: 'A software-defined radio receiver for Mode S transponder signals, including ADS-B reports
+  from equipped aircraft. Multiple output formats are supported: * Raw (or minimally processed) output
+  of packet data * Parsed text * SQLite database * KML for use with Google Earth * SBS-1-compatible output
+  for use with e.g. PlanePlotter or Virtual Radar Server * FlightGear multiplayer interface for real-time
+  display of traffic within the simulator'
 categories:
-- other
+- wireless
+homepage: https://github.com/bistromath/gr-air-modes
+size: 394240
 install:
 - provider: apt
   package: gr-air-modes
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0.20210211-3.1+b7

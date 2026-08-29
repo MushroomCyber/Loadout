@@ -1,6 +1,10 @@
 id: crlfuzz
+summary: Fast tool to scan CRLF vulnerability written in Go
+description: CRLFuzz is a tool to scan for CRLF vulnerabilities in a fast way using Go
 categories:
 - other
+homepage: https://github.com/dwisiswant0/crlfuzz
+size: 5746688
 install:
 - provider: apt
   package: crlfuzz
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4.1-0kali1

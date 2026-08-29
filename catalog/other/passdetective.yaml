@@ -1,6 +1,12 @@
 id: passdetective
+summary: CLI tool that scans shell command history
+description: This package contains a command-line tool that scans the shell command history for mistakenly
+  written passwords, API keys, and secrets. It uses regular expressions to identify potential sensitive
+  information and helps avoid accidentally exposing sensitive data in the command history.
 categories:
 - other
+homepage: https://github.com/aydinnyunus/PassDetective
+size: 3997696
 install:
 - provider: apt
   package: passdetective
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.7-0kali1

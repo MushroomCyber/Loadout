@@ -1,6 +1,14 @@
 id: iaxflood
+summary: VoIP flooder tool
+description: A UDP Inter-Asterisk_eXchange (i.e. IAX) packet was captured from an IAX channel between
+  two Asterisk IP PBX's. The content of that packet is the source of the payload for the attack embodied
+  by this tool. While the IAX protocol header might not match the Asterisk PBX you'll attack with this
+  tool, it may require more processing on the part of the PBX than a simple udpflood without any payload
+  that even resembles an IAX payload.
 categories:
-- other
+- vuln-scan
+homepage: http://www.hackingexposedvoip.com/sec_tools.html
+size: 25600
 install:
 - provider: apt
   package: iaxflood
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1-1kali5

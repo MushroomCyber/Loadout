@@ -1,6 +1,12 @@
 id: eksctl
+summary: official CLI for Amazon EKS (program)
+description: eksctl is a simple CLI tool for creating clusters on EKS - Amazon's new managed Kubernetes
+  service for EC2. It is written in Go, and uses CloudFormation. You can create a cluster in minutes with
+  just one command – **eksctl create cluster**!
 categories:
 - other
+homepage: https://github.com/weaveworks/eksctl
+size: 154756096
 install:
 - provider: apt
   package: eksctl
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.226.0-0kali1

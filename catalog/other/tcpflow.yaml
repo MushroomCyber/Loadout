@@ -1,6 +1,18 @@
 id: tcpflow
+summary: TCP flow recorder
+description: tcpflow is a program that captures data transmitted as part of TCP connections (flows), and
+  stores the data in a way that is convenient for protocol analysis or debugging. A program like 'tcpdump'
+  shows a summary of packets seen on the wire, but usually doesn't store the data that's actually being
+  transmitted. In contrast, tcpflow reconstructs the actual data streams and stores each flow in a separate
+  file for later analysis. tcpflow understands sequence numbers and will correctly reconstruct data streams
+  regardless of retransmissions or out-of-order delivery. However, it currently does not understand IP
+  fragments; flows containing IP fragments will not be recorded properly. tcpflow is based on the LBL
+  Packet Capture Library and therefore supports the same rich filtering expressions that programs like
+  'tcpdump' support. tcpflow can also rebuild flows from data captured with 'tcpdump -w'.
 categories:
-- other
+- sniffing
+homepage: https://github.com/simsong/tcpflow
+size: 838656
 install:
 - provider: apt
   package: tcpflow
@@ -9,3 +21,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6.1-3+b1

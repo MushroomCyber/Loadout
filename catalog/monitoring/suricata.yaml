@@ -1,5 +1,11 @@
 id: suricata
 summary: High-performance IDS, IPS and network security monitor
+description: Suricata is a network Intrusion Detection System (IDS). It is based on rules (and is fully
+  compatible with snort rules) to detect a variety of attacks / probes by searching packet content. It
+  can also be used as Intrusion Prevention System (IPS), and as higher layer firewall. This new Engine
+  supports Multi-Threading, Automatic Protocol Detection (IP, TCP, UDP, ICMP, HTTP, TLS, FTP and SMB),
+  Gzip Decompression, Fast IP Matching and coming soon hardware acceleration on CUDA and OpenCL GPU cards.
+  This version has inline (NFQUEUE) support enabled.
 categories:
 - monitoring
 - detection
@@ -14,6 +20,7 @@ homepage: https://suricata.io
 alternatives:
 - zeek
 - snort
+size: 16154624
 install:
 - provider: apt
   package: suricata
@@ -24,3 +31,4 @@ install:
   - ubuntu
 - provider: brew
   formula: suricata
+version: 1:8.0.5-1

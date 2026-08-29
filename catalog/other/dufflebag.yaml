@@ -1,6 +1,17 @@
 id: dufflebag
+summary: Search exposed EBS volumes for secrets (program)
+description: Dufflebag is a tool that searches through public Elastic Block Storage (EBS) snapshots for
+  secrets that may have been accidentally left in. The tool is organized as an Elastic Beanstalk ("EB",
+  not to be confused with EBS) application, and definitely won't work if you try to run it on your own
+  machine. Dufflebag has a lot of moving pieces because it's fairly nontrivial to actually read EBS volumes
+  in practice. You have to be in an AWS environment, clone the snapshot, make a volume from the snapshot,
+  attach the volume, mount the volume, etc... This is why it's made as an Elastic Beanstalk app, so it
+  can automagically scale up or down however much you like, and so that the whole thing can be easily
+  torn down when you're done with it.
 categories:
 - other
+homepage: https://github.com/BishopFox/dufflebag
+size: 6189056
 install:
 - provider: apt
   package: dufflebag
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20200205.9a01942-0kali3

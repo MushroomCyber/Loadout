@@ -1,6 +1,10 @@
 id: webacoo
+summary: Web backdoor cookie script kit
+description: Scripts for creating Web backdoors using cookies, with module support
 categories:
-- other
+- web
+homepage: https://github.com/anestisb/WeBaCoo
+size: 66560
 install:
 - provider: apt
   package: webacoo
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2.3-1kali3

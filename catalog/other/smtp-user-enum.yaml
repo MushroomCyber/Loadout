@@ -1,6 +1,11 @@
 id: smtp-user-enum
+summary: Username guessing tool for the SMTP service
+description: Username guessing tool primarily for use against the default Solaris SMTP service. Can use
+  either EXPN, VRFY or RCPT TO.
 categories:
-- other
+- recon
+homepage: http://pentestmonkey.net/tools/user-enumeration/smtp-user-enum
+size: 100352
 install:
 - provider: apt
   package: smtp-user-enum
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2-1kali4

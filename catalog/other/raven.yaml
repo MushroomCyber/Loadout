@@ -1,6 +1,15 @@
 id: raven
+summary: Python tool that extends the capabilities of the http.server Python module
+description: This package contains a Python tool that extends the capabilities of the http.server Python
+  module by offering a self-contained file upload web server. While the common practice is to use python3
+  -m http.server 80 to serve files for remote client downloads, Raven addresses the need for a similar
+  solution when you need the ability to receive files from remote clients. This becomes especially valuable
+  in scenarios such as penetration testing and incident response procedures when protocols such as SMB
+  may not be a viable option.
 categories:
 - other
+homepage: https://github.com/gh0x0st/raven
+size: 47104
 install:
 - provider: apt
   package: raven
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.0-1

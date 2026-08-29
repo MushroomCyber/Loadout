@@ -1,6 +1,11 @@
 id: merlin
+summary: Command & Control server & agent (metapackage)
+description: This package contains a cross-platform post-exploitation HTTP/2 Command & Control server
+  and agent written in golang as well as an identification tool.
 categories:
 - other
+homepage: https://github.com/Ne0nd0g/merlin
+size: 23552
 install:
 - provider: apt
   package: merlin
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.4-0kali1

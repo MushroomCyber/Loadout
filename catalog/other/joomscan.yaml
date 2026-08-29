@@ -1,6 +1,11 @@
 id: joomscan
+summary: OWASP Joomla Vulnerability Scanner Project
+description: This package contains JoomScan, short for [Joom]la Vulnerability [Scan]ner. It's a project
+  in perl programming language to detect Joomla CMS vulnerabilities and analysis them.
 categories:
-- other
+- web
+homepage: https://www.owasp.org/index.php/Category:OWASP_Joomla_Vulnerability_Scanner_Project
+size: 280576
 install:
 - provider: apt
   package: joomscan
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0.7-0kali2

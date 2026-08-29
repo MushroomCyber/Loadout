@@ -1,6 +1,13 @@
 id: metagoofil
+summary: Tool designed for extracting metadata of public documents
+description: Metagoofil is an information gathering tool designed for extracting metadata of public documents
+  (pdf,doc,xls,ppt,docx,pptx,xlsx) belonging to a target company. Metagoofil will perform a search in
+  Google to identify and download the documents to local disk. Metagoofil does no longer extract the metadata.
+  See /usr/share/doc/metagoofil/README.md.gz.
 categories:
-- other
+- recon
+homepage: https://github.com/opsdisk/metagoofil
+size: 129024
 install:
 - provider: apt
   package: metagoofil
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1:1.2.0+git20221009-0kali1

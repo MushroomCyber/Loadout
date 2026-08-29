@@ -1,6 +1,15 @@
 id: tlssled
+summary: Evaluates the security of a target SSL/TLS (HTTPS) server
+description: TLSSLed is a Linux shell script whose purpose is to evaluate the security of a target SSL/TLS
+  (HTTPS) web server implementation. It is based on sslscan, a thorough SSL/TLS scanner that is based
+  on the openssl library, and on the "openssl s_client" command line tool. The current tests include checking
+  if the target supports the SSLv2 protocol, the NULL cipher, weak ciphers based on their key length (40
+  or 56 bits), the availability of strong ciphers (like AES), if the digital certificate is MD5 signed,
+  and the current SSL/TLS renegotiation capabilities.
 categories:
-- other
+- recon
+homepage: http://www.taddong.com/en/lab.html
+size: 38912
 install:
 - provider: apt
   package: tlssled
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3-0kali2

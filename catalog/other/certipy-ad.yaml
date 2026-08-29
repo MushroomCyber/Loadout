@@ -1,6 +1,10 @@
 id: certipy-ad
+summary: Tool for attacking AD Certificate Services
+description: Offensive tool for enumerating and abusing Active Directory Certificate Services (AD CS).
 categories:
 - other
+homepage: https://github.com/ly4k/Certipy
+size: 763904
 install:
 - provider: apt
   package: certipy-ad
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.0.4-0kali3

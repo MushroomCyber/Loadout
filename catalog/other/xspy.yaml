@@ -1,6 +1,10 @@
 id: xspy
+summary: X server sniffer
+description: Sniffs keystrokes on remote or local X-Windows servers.
 categories:
 - other
+homepage: https://www.kali.org
+size: 25600
 install:
 - provider: apt
   package: xspy
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1-1kali5

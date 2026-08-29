@@ -1,6 +1,14 @@
 id: onesixtyone
+summary: fast and simple SNMP scanner
+description: onesixtyone is a simple SNMP scanner which sends SNMP requests for the sysDescr value asynchronously
+  with user-adjustable sending times and then logs the responses which gives the description of the software
+  running on the device. Running onesixtyone on a class B network (switched 100Mbs with 1Gbs backbone)
+  with -w 10 gives a performance of 3 seconds per class C, with no dropped packets, and all 65536 IP addresses
+  were scanned in less than 13 minutes.
 categories:
-- other
+- recon
+homepage: https://github.com/trailofbits/onesixtyone
+size: 181248
 install:
 - provider: apt
   package: onesixtyone
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.3.4-1

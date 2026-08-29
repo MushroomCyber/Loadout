@@ -1,6 +1,12 @@
 id: creddump7
+summary: Python tool to extract credentials and secrets from Windows registry hives
+description: This package contains a Python tool to extract various credentials and secrets from Windows
+  registry hives. It's based on the creddump program. Many patches and fixes have been applied by Ronnie
+  Flathers.
 categories:
-- other
+- password
+homepage: https://github.com/CiscoCXSecurity/creddump7
+size: 79872
 install:
 - provider: apt
   package: creddump7
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1+git20190429-1.1

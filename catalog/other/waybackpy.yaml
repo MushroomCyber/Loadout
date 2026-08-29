@@ -1,6 +1,13 @@
 id: waybackpy
+summary: Access Wayback Machine's API using Python
+description: waybackpy is a Python package and a CLI tool that interfaces with the Wayback Machine's APIs.
+  Internet Archive's Wayback Machine has 3 useful public APIs. SavePageNow API (also known as Save API)
+  CDX Server API Availability API These three APIs can be accessed via the waybackpy either by importing
+  it from a Python file/module or from the command-line interface.
 categories:
 - other
+homepage: https://github.com/akamhy/waybackpy
+size: 99328
 install:
 - provider: apt
   package: waybackpy
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.6-0kali2

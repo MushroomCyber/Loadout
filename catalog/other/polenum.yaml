@@ -1,6 +1,13 @@
 id: polenum
+summary: Extracts the password policy from a Windows system
+description: polenum is a Python script which uses the Impacket Library from CORE Security Technologies
+  to extract the password policy information from a windows machine. This allows a non-windows (Linux,
+  Mac OSX, BSD etc..) user to query the password policy of a remote windows box without the need to have
+  access to a windows machine.
 categories:
-- other
+- recon
+homepage: https://github.com/Wh1t3Fox/polenum/
+size: 26624
 install:
 - provider: apt
   package: polenum
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7-1

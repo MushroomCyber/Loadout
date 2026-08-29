@@ -1,6 +1,14 @@
 id: pacu
+summary: Open Source AWS Exploitation Framework
+description: This package contains an open-source AWS exploitation framework, designed for offensive security
+  testing against cloud environments. Created and maintained by Rhino Security Labs, Pacu allows penetration
+  testers to exploit configuration flaws within an AWS account, using modules to easily expand its functionality.
+  Current modules enable a range of attacks, including user privilege escalation, backdooring of IAM users,
+  attacking vulnerable Lambda functions, and much more.
 categories:
 - other
+homepage: https://rhinosecuritylabs.com/aws/pacu-open-source-aws-exploitation-framework/
+size: 13986816
 install:
 - provider: apt
   package: pacu
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6.0-0kali1

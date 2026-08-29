@@ -1,6 +1,11 @@
 id: sipsak
+summary: SIP Swiss army knife
+description: sipsak is a small command line tool for developers and administrators of Session Initiation
+  Protocol (SIP) applications. It can be used for some simple tests on SIP applications and devices.
 categories:
-- other
+- vuln-scan
+homepage: https://github.com/nils-ohlmeier/sipsak
+size: 136192
 install:
 - provider: apt
   package: sipsak
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.8.1-1.1

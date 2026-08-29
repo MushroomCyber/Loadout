@@ -1,6 +1,12 @@
 id: gemini-cli
+summary: open-source AI agent
+description: This package contains an open-source AI agent that brings the power of Gemini directly into
+  your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt
+  to the model.
 categories:
 - other
+homepage: https://github.com/google-gemini/gemini-cli
+size: 47766528
 install:
 - provider: apt
   package: gemini-cli
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.42.0-0kali1

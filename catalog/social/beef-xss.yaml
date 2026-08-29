@@ -1,8 +1,19 @@
 id: beef-xss
+summary: Browser Exploitation Framework (BeEF)
+description: 'BeEF is short for The Browser Exploitation Framework. It is a penetration testing tool that
+  focuses on the web browser. Amid growing concerns about web-born attacks against clients, including
+  mobile clients, BeEF allows the professional penetration tester to assess the actual security posture
+  of a target environment by using client-side attack vectors. Unlike other security frameworks, BeEF
+  looks past the hardened network perimeter and client system, and examines exploitability within the
+  context of the one open door: the web browser. BeEF will hook one or more web browsers and use them
+  as beachheads for launching directed command modules and further attacks against the system from within
+  the browser context.'
 categories:
 - social
 tags:
 - browser
+homepage: https://beefproject.com/
+size: 86747136
 install:
 - provider: apt
   package: beef-xss
@@ -11,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.6.0.0-0kali6

@@ -1,6 +1,11 @@
 id: websploit
+summary: Web exploitation framework
+description: WebSploit is an open source project which is used to scan and analysis remote system in order
+  to find various type of vulnerabilites. This tool is very powerful and supports multiple vulnerabilities.
 categories:
 - other
+homepage: https://sourceforge.net/projects/websploit/
+size: 77824
 install:
 - provider: apt
   package: websploit
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.0.4-3

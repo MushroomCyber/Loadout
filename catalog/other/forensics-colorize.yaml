@@ -1,6 +1,17 @@
 id: forensics-colorize
+summary: show differences between files using color graphics
+description: 'forensics-colorize is a set of tools to visually compare large files, as filesystem images,
+  creating graphics of them. It is intuitive because the produced graphics provide a quick and perfect
+  sense about the percentage of changes between two files. Comparing large textual files using a simple
+  diff can produce a very big result in lines, causing confusion. On the other hand, diff is improper
+  to compare binary files. This package provides two command line programs: filecompare and colorize.
+  The filecompare command is used to create a special and auxiliary input file for colorize. The colorize
+  command will generate an intuitive graphic that will make easier to perceive the level of changes between
+  the files.'
 categories:
-- other
+- forensics
+homepage: https://github.com/jessek/colorize
+size: 2150400
 install:
 - provider: apt
   package: forensics-colorize
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1-7

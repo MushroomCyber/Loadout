@@ -1,6 +1,17 @@
 id: whatmask
+summary: helper for network settings
+description: 'This package contains a small C program that will help you with network settings. Whatmask
+  can work in two modes. The first mode is to invoke Whatmask with only a subnet mask as the argument.
+  In this mode Whatmask will echo back the subnet mask in four formats, plus the number of useable addresses
+  in the range. The second mode is to invoke Whatmask with any ip address within the subnet, followed
+  by a slash (''/''), followed by the subnet mask in any format. Whatmask will echo back the following:
+  - The netmask in the following formats: CIDR, Netmask, Netmask (Hex) Wildcard Bits - The Network Address
+  - The Broadcast Address - The number of Usable IP Addresses - The First Usable IP Address - The Last
+  Usable IP Address'
 categories:
 - other
+homepage: http://www.laffeycomputer.com/whatmask.html
+size: 40960
 install:
 - provider: apt
   package: whatmask
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2-0kali1

@@ -1,6 +1,11 @@
 id: gparted
+summary: GNOME partition editor
+description: GParted uses libparted to detect and manipulate devices and partition tables while several
+  (optional) filesystem tools provide support for filesystems not included in libparted.
 categories:
-- other
+- forensics
+homepage: https://gparted.org
+size: 2368512
 install:
 - provider: apt
   package: gparted
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.8.0-1

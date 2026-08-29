@@ -1,6 +1,13 @@
 id: defectdojo
+summary: security orchestration and vulnerability management platform
+description: This package contains a security orchestration and vulnerability management platform. DefectDojo
+  allows you to manage your application security program, maintain product and application information,
+  triage vulnerabilities and push findings to systems like JIRA and Slack. DefectDojo enriches and refines
+  vulnerability data using a number of heuristic algorithms that improve with the more you use the platform.
 categories:
 - other
+homepage: https://github.com/DefectDojo/django-DefectDojo
+size: 112930816
 install:
 - provider: apt
   package: defectdojo
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.37.3-0kali6+b1

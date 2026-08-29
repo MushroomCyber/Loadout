@@ -1,6 +1,10 @@
 id: uhd-images
+summary: Various UHD Images
+description: Various UHD Images
 categories:
-- other
+- wireless
+homepage: https://www.ettus.com
+size: 112222208
 install:
 - provider: apt
   package: uhd-images
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.0.0.0-0kali2

@@ -1,6 +1,10 @@
 id: libfindrtp
+summary: Library required by multiple VoIP tools
+description: This package contains a library used by multiple VoIP tools.
 categories:
-- other
+- vuln-scan
+homepage: http://www.hackingvoip.com/sec_tools.html
+size: 35840
 install:
 - provider: apt
   package: libfindrtp
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.4b-1kali3

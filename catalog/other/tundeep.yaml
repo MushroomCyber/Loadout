@@ -1,6 +1,10 @@
 id: tundeep
+summary: Layer 2 VPN/injection tool
+description: The tool resides [almost] entirely in user space on the victim aside from the pcap requirement.
 categories:
 - other
+homepage: https://www.adampalmer.me/iodigitalsec/tundeep/
+size: 50176
 install:
 - provider: apt
   package: tundeep
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1~git20190802-0kali2+b1

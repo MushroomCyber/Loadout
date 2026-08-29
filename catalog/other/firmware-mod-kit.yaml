@@ -1,6 +1,13 @@
 id: firmware-mod-kit
+summary: Deconstruct and reconstruct firmware images
+description: The Firmware Mod Kit allows for easy deconstruction and reconstruction of firmware images
+  for various embedded devices. While it primarily targets Linux based routers, it should be compatible
+  with most firmware that makes use of common firmware formats and file systems such as TRX/uImage and
+  SquashFS/CramFS.
 categories:
-- other
+- forensics
+homepage: https://github.com/rampageX/firmware-mod-kit
+size: 55463936
 install:
 - provider: apt
   package: firmware-mod-kit
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.99+git20190714-0kali4

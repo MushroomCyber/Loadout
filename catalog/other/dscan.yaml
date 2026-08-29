@@ -1,6 +1,12 @@
 id: dscan
+summary: wrapper around nmap
+description: This package provides a wrapper around nmap, and distribute scans across several hosts. It
+  aggregates / splits address ranges, uses a configuration file where scan configuration can be adjusted,
+  supports resume.
 categories:
 - other
+homepage: https://github.com/0x4E0x650x6F/dscan
+size: 97280
 install:
 - provider: apt
   package: dscan
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1.5-0kali1

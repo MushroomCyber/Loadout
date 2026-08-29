@@ -1,5 +1,9 @@
 id: apktool
 summary: Decode and rebuild Android APK resources
+description: A tool for reverse engineering 3rd party, closed, binary Android apps. It can decode resources
+  to nearly original form and rebuild them after making some modifications; it makes possible to debug
+  smali code step by step. Also it makes working with an app easier because of project-like file structure
+  and automation of some repetitive tasks like building apk.
 categories:
 - reverse
 - mobile
@@ -12,6 +16,7 @@ binaries:
 homepage: https://apktool.org
 alternatives:
 - jadx
+size: 275456
 install:
 - provider: apt
   package: apktool
@@ -22,3 +27,4 @@ install:
   - ubuntu
 - provider: brew
   formula: apktool
+version: 2.7.0+dfsg-7.2

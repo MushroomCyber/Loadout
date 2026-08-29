@@ -1,6 +1,17 @@
 id: ext4magic
+summary: recover deleted files from ext3 or ext4 partitions
+description: ext4magic is a file carver (or file carving). It can be used when recovering from disasters
+  or in digital forensics activities. The deletion of files in ext3/4 filesystems can not be easily reversed.
+  Zero out of the block references in the inodes makes that impossible. Experiences with other programs
+  have proved that is possible restore sufficient information for a recover of many data files, directly
+  from the filesystem journal. ext4magic can extract the information from the journal and restore files
+  in an entire directory tree, if the information in the journal are sufficient. This tool can recover
+  the most file types, with original filename, owner and group, file mode bits and also the old atime/mtime
+  stamps.
 categories:
-- other
+- forensics
+homepage: http://ext4magic.sf.net/ext4magic_en.html
+size: 240640
 install:
 - provider: apt
   package: ext4magic
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.3.2-15

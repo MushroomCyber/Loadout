@@ -1,6 +1,14 @@
 id: cisco7crack
+summary: Crypt and decrypt the cisco type 7 passwords
+description: This tool is used to crack Cisco Type 7 passwords. Can be used to encrypt and decrypt Cisco
+  device passwords. Originally designed in order to allow quick decryption of stored passwords, Type 7
+  passwords are not a secure form of password storage. There are many tools available that can easily
+  decrypt these passwords. Use of Type 7 passwords should be avoided unless required by a feature that
+  is in use on the Cisco IOS device.
 categories:
 - other
+homepage: https://github.com/madrisan/cisco7crack
+size: 28672
 install:
 - provider: apt
   package: cisco7crack
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.0~git20121221.f1c21dd-4

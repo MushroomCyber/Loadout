@@ -1,5 +1,10 @@
 id: gobuster
 summary: Directory, DNS and vhost brute-forcer
+description: 'Gobuster is a high-performance tool used to brute-force and discover: * URIs (directories
+  and files) in web sites * DNS subdomains (with wildcard support) * Virtual Host names on target web
+  servers * Open Amazon S3 and Google Cloud Storage (GCS) buckets * Open TFTP servers * Custom fuzzing
+  with customizable parameters Gobuster is designed for penetration testers, security professionals, and
+  forensics experts to perform security assessments and reconnaissance.'
 categories:
 - web
 tags:
@@ -12,6 +17,7 @@ homepage: https://github.com/OJ/gobuster
 alternatives:
 - ffuf
 - feroxbuster
+size: 9619456
 install:
 - provider: apt
   package: gobuster
@@ -24,3 +30,4 @@ install:
   formula: gobuster
 - provider: go
   module: github.com/OJ/gobuster/v3@latest
+version: 3.8.2-1

@@ -1,6 +1,10 @@
 id: payloadsallthethings
+summary: Collection of useful payloads and bypasses
+description: A list of useful payloads and bypasses for Web Application Security and Pentest/CTF.
 categories:
 - other
+homepage: https://github.com/swisskyrepo/PayloadsAllTheThings
+size: 7892992
 install:
 - provider: apt
   package: payloadsallthethings
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1-0kali2

@@ -1,6 +1,12 @@
 id: sickle-tool
+summary: Payload development tool
+description: Sickle is a payload development tool originally created to aid in crafting shellcode, however
+  it can be used in crafting payloads for other exploit types as well (non-binary). Although the current
+  modules are mostly aimed towards assembly this tool is not limited to shellcode.
 categories:
 - other
+homepage: https://github.com/wetw0rk/Sickle
+size: 482304
 install:
 - provider: apt
   package: sickle-tool
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.1.1-0kali1

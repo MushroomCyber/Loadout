@@ -1,6 +1,14 @@
 id: pyinstaller
+summary: Utility to bundle a Python application into a single package
+description: PyInstaller reads a Python script written by you. It analyzes your code to discover every
+  other module and library your script needs in order to execute. Then it collects copies of all those
+  files and puts them with your script in a single folder, or optionally in a single executable file.
+  This package contains the executables.  It depends on 'python3-pyinstaller', which contains the Python
+  modules.
 categories:
 - other
+homepage: https://pyinstaller.org/en/stable/
+size: 106496
 install:
 - provider: apt
   package: pyinstaller
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 6.18.0+ds-3

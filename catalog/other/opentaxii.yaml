@@ -1,6 +1,12 @@
 id: opentaxii
+summary: TAXII server implementation from EclecticIQ
+description: This package contains a robust Python implementation of TAXII Services that delivers rich
+  feature set and friendly pythonic API built on top of well designed application. OpenTAXII is guaranteed
+  to be compatible with Cabby, TAXII client library.
 categories:
 - other
+homepage: https://github.com/eclecticiq/OpenTAXII
+size: 355328
 install:
 - provider: apt
   package: opentaxii
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.9.3-0kali3

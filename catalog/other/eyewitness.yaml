@@ -1,6 +1,15 @@
 id: eyewitness
+summary: Rapid web application triage tool
+description: EyeWitness is designed to take screenshots of websites, provide some server header info,
+  and identify default credentials if possible. Inspiration came from Tim Tomes's PeepingTom Script. EyeWitness
+  is designed to run on Kali Linux. It will auto detect the file you give it with the -f flag as either
+  being a text file with URLs on each new line, nmap xml output, or nessus xml output. The -t (timeout)
+  flag is completely optional, and lets you provice the max time to wait when trying to render and screenshot
+  a web page. The --open flag, which is optional, will open the URL in a new tab within Firefox.
 categories:
-- other
+- recon
+homepage: https://www.christophertruncer.com/eyewitness-triage-tool/
+size: 6066176
 install:
 - provider: apt
   package: eyewitness
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 20230525.1+git20230720-0kali4

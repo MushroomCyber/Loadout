@@ -1,6 +1,13 @@
 id: pwnat
+summary: NAT to NAT client-server communication
+description: pwnat, pronounced "poe-nat", is a tool that allows any number of clients behind NATs to communicate
+  with a server behind a separate NAT with *no* port forwarding and *no* DMZ setup on any routers in order
+  to directly communicate with each other. The server does not need to know anything about the clients
+  trying to connect.
 categories:
-- other
+- post-exploitation
+homepage: https://samy.pl/pwnat/
+size: 66560
 install:
 - provider: apt
   package: pwnat
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.3.0-0kali2

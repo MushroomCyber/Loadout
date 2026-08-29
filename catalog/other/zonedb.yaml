@@ -1,6 +1,13 @@
 id: zonedb
+summary: Public Zone Database (program)
+description: This package provides a free, open-source database (http://opendatacommons.org/licenses/odbl/1.0/)
+  containing a list and associated metadata of public DNS zones (http://en.wikipedia.org/wiki/DNS_zone)
+  (domain name extensions). It attempts to be exhaustive, including current, retired, and withdrawn top-level
+  domains and subdomains.
 categories:
 - other
+homepage: https://github.com/zonedb/zonedb
+size: 15587328
 install:
 - provider: apt
   package: zonedb
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.3170-0kali1

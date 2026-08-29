@@ -1,6 +1,10 @@
 id: paros
+summary: Web application proxy
+description: Lightweight web application testing proxy
 categories:
-- other
+- web
+homepage: http://www.parosproxy.org/index.shtml
+size: 8379392
 install:
 - provider: apt
   package: paros
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.2.13-1kali6

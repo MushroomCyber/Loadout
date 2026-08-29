@@ -1,6 +1,13 @@
 id: mfoc
+summary: MIFARE Classic offline cracker
+description: 'MFOC is an open source implementation of "offline nested" attack by Nethemba. This program
+  allow one to recover authentication keys from MIFARE Classic card. Please note that MFOC is able to
+  recover keys from target only if it have a known key: default one (hardcoded in MFOC) or custom one
+  (user provided using command line).'
 categories:
 - other
+homepage: https://github.com/nfc-tools/mfoc
+size: 70656
 install:
 - provider: apt
   package: mfoc
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.10.7+git20180724-2

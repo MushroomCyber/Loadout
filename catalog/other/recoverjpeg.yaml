@@ -1,6 +1,15 @@
 id: recoverjpeg
+summary: recover JFIF (JPEG) pictures and MOV movies
+description: 'recoverjpeg tries to recover JFIF (JPEG) pictures and MOV movies from a peripheral. This
+  may be useful if you mistakenly overwrite a partition or if a device such as a digital camera memory
+  card is bogus. This package provides these executables: recoverjpeg, recovermov, remove-duplicates and
+  sort-pictures. The remove-duplicates is useful to remove duplicate files found. sort-pictures can be
+  used to sort pictures according to exif date. This package acts as a carver (data carving) and is useful
+  in forensics investigations.'
 categories:
-- other
+- forensics
+homepage: https://www.rfc1149.net/devel/recoverjpeg
+size: 66560
 install:
 - provider: apt
   package: recoverjpeg
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.6.3-7

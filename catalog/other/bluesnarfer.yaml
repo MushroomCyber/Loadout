@@ -1,8 +1,12 @@
 id: bluesnarfer
+summary: Bluesnarfing utility
+description: A bluetooth bluesnarfing utility
 categories:
-- other
+- wireless
 tags:
 - bluetooth
+homepage: http://www.alighieri.org/
+size: 30720
 install:
 - provider: apt
   package: bluesnarfer
@@ -11,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.1-1kali4

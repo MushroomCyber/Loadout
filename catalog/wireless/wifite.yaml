@@ -1,5 +1,8 @@
 id: wifite
 summary: Automated wireless auditing wrapper around the aircrack suite
+description: Wifite is a tool to audit WEP or WPA encrypted wireless networks. It uses aircrack-ng, pyrit,
+  reaver, tshark tools to perform the audit. This tool is customizable to be automated with only a few
+  arguments and can be trusted to run without supervision.
 categories:
 - wireless
 tags:
@@ -13,6 +16,7 @@ homepage: https://github.com/kimocoder/wifite2
 requires_root: true
 alternatives:
 - aircrack-ng
+size: 8406016
 install:
 - provider: apt
   package: wifite
@@ -21,3 +25,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.8.2-1

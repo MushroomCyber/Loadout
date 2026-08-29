@@ -1,6 +1,15 @@
 id: fatcat
+summary: FAT filesystem explore, extract, repair, and forensic tool
+description: 'fatcat is a tool to explore, extract, repair and forensic FAT filesystem. Its features:
+  - Get information about FAT filesystem; - Explore FAT file system; - Read file or extract directories;
+  - Retrieve file & directories that are deleted; - Backup & restore the FAT tables; - Hack the FAT table
+  by writing on it; - Hack the entries by changing clusters and file sizes; - Perform a search for orphaned
+  files & directories; - Compare and merge the FAT tables; - Repair unallocated directories &  files;
+  - Supports FAT12, FAT16 and FAT32.'
 categories:
 - other
+homepage: https://github.com/Gregwar/fatcat
+size: 144384
 install:
 - provider: apt
   package: fatcat
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1.1-4

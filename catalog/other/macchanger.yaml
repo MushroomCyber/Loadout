@@ -1,6 +1,17 @@
 id: macchanger
+summary: utility for manipulating the MAC address of network interfaces
+description: 'GNU MAC Changer is an utility that makes the maniputation of MAC addresses of network interfaces
+  easier.  MAC addresses are unique identifiers on networks, they only need to be unique, they can be
+  changed on most network hardware. MAC addresses have started to be abused by unscrupulous marketing
+  firms, government agencies, and others to provide an easy way to track a computer across multiple networks.  By
+  changing the MAC address regularly, this kind of tracking can be thwarted, or at least made a lot more
+  difficult. Features: * set specific MAC address of a network interface * set the MAC randomly * set
+  a MAC of another vendor * set another MAC of the same vendor * set a MAC of the same kind (eg: wireless
+  card) * display a vendor MAC list (today, 6200 items) to choose from'
 categories:
-- other
+- wireless
+homepage: https://github.com/alobbs/macchanger
+size: 656384
 install:
 - provider: apt
   package: macchanger
@@ -9,3 +20,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7.0-6

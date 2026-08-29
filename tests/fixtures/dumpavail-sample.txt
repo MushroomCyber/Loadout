@@ -1,0 +1,80 @@
+Package: nmap
+Version: 7.99+dfsg-1kali1
+Architecture: amd64
+Maintainer: Kali Developers <devel@kali.org>
+Installed-Size: 4823
+Depends: nmap-common (= 7.99+dfsg-1kali1), libc6 (>= 2.38), libgcc-s1 (>= 3.0), liblinear4 (>= 2.01+dfsg), liblua5.4-0 (>= 5.4.6), libpcap0.8t64 (>= 1.5.1), libpcre2-8-0 (>= 10.32), libssh2-1t64 (>= 1.11.0), libssl3t64 (>= 3.0.0), libstdc++6 (>= 5.2), zlib1g (>= 1:1.1.4)
+Suggests: ncat, ndiff, zenmap
+Homepage: https://nmap.org/
+Priority: optional
+Section: non-free/net
+Filename: pool/non-free/n/nmap/nmap_7.99+dfsg-1kali1_amd64.deb
+Size: 1986744
+SHA256: b9162d1772293e8737ce685a519b10e4c3ed21c2c5303acdca9df795b8c722db
+SHA1: 8664c70d960b79890f686d57bb1380147fcb371d
+MD5sum: f16ce2ea1450d9c87d44c42611f9a35b
+Description: The Network Mapper
+ Nmap is a utility for network exploration or security auditing. It
+ supports ping scanning (determine which hosts are up), many port
+ scanning techniques, version detection (determine service protocols
+ and application versions listening behind ports), and TCP/IP
+ fingerprinting (remote host OS or device identification). Nmap also
+ offers flexible target and port specification, decoy/stealth scanning,
+ sunRPC scanning, and more. Most Unix and Windows platforms are
+ supported in both GUI and commandline modes. Several popular handheld
+ devices are also supported, including the Sharp Zaurus and the iPAQ.
+Description-md5: 
+Original-Maintainer: Debian Security Tools <team+pkg-security@tracker.debian.org>
+
+Package: binwalk
+Version: 2.4.3+dfsg1-2
+Installed-Size: 16
+Maintainer: Debian Security Tools <team+pkg-security@tracker.debian.org>
+Architecture: all
+Depends: python3-binwalk, python3:any
+Size: 6184
+SHA256: b614f9bf842173f363836d423ee9a8d1e223f9479d0f1674e95716ec1adf6c15
+SHA1: 7fd6776dd28fdce6f667d0b3d5f8ebfd663a9904
+MD5sum: 796f1e0af447bc3051cfc69946636af0
+Description: tool library for analyzing binary blobs and executable code
+ Binwalk is a tool for searching a given binary image for embedded files
+ and executable code. Specifically, it is designed for identifying files
+ and code embedded inside of firmware images. Binwalk uses the libmagic
+ library, so it is compatible with magic signatures created for the Unix
+ file utility.
+ .
+ Binwalk also includes a custom magic signature file which contains
+ improved signatures for files that are commonly found in firmware images
+ such as compressed/archived files, firmware headers, Linux kernels,
+ bootloaders, filesystems, etc.
+ .
+ This package is an empty package, because the binary tool is already
+ provided with the library, dependency of this package.
+Description-md5: 
+Homepage: https://github.com/ReFirmLabs/binwalk
+Tag: implemented-in::python, interface::commandline, role::program
+Section: devel
+Priority: optional
+Filename: pool/main/b/binwalk/binwalk_2.4.3+dfsg1-2_all.deb
+
+Package: yara
+Version: 4.5.6-1
+Installed-Size: 637
+Maintainer: Debian Security Tools <team+pkg-security@tracker.debian.org>
+Architecture: amd64
+Depends: libc6 (>= 2.38), libjansson4 (>= 2.14), libmagic1t64 (>= 5.12), libssl3t64 (>= 3.0.0), libyara10 (>= 4.2.0~)
+Size: 206304
+SHA256: 9d6e2102d45747349bb5abfb24efc21705b269060c7cb60a689b4ebb588c488b
+SHA1: ab640922114c0d9321ae2a0ee710d1c066fda389
+MD5sum: 336b6673d0c8abfc6689b315eb87604c
+Description: Pattern matching swiss knife for malware researchers
+ YARA is a tool aimed at helping malware researchers to identify and
+ classify malware samples. With YARA, it is possible to create
+ descriptions of malware families based on textual or binary patterns
+ contained in samples of those families. Each description consists of
+ a set of strings and a Boolean expression which determines its logic.
+ .
+ Complex and powerful rules can be created by using binary strings with
+ wild-cards, case-insensitive text strings, special operators, regular
+ expressions and many other features.
+Description-md5: 

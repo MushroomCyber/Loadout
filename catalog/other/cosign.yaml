@@ -1,6 +1,14 @@
 id: cosign
+summary: Code signing/transparency for containers and binaries (program)
+description: 'Signing OCI containers (and other artifacts) using Sigstore Cosign supports: * "Keyless
+  signing" with the Sigstore public good Fulcio certificate authority and Rekor transparency log (default)
+  * Hardware and KMS signing * Signing with a cosign generated encrypted private/public keypair * Container
+  Signing, Verification and Storage in an OCI registry. * Bring-your-own PKI This package contains the
+  command-line tool cosign.'
 categories:
 - other
+homepage: https://github.com/sigstore/cosign
+size: 88803328
 install:
 - provider: apt
   package: cosign
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.0.6-1

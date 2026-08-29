@@ -1,6 +1,15 @@
 id: ssdeep
+summary: recursive piecewise hashing tool
+description: ssdeep is a tool for recursive computing and matching of Context Triggered Piecewise Hashing
+  (aka Fuzzy Hashing). Fuzzy hashing is a method for comparing similar but not identical files. This tool
+  can be used to compare files like regular hashing does (like md5sum or sha1sum) but it will find similar
+  files with little differences. For example, it can be used to identify modified versions of known files
+  even if data has been inserted, modified, or deleted in the new files. This package is useful in forensics
+  investigations.
 categories:
-- other
+- forensics
+homepage: https://github.com/ssdeep-project/ssdeep
+size: 84992
 install:
 - provider: apt
   package: ssdeep
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.14.1+git20180629.57fcfff-3+b3

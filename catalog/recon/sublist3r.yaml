@@ -1,9 +1,19 @@
 id: sublist3r
 summary: Subdomain enumeration tool
+description: This package contains a Python security tool designed to enumerate subdomains of websites
+  using OSINT. It helps penetration testers and bug hunters collect and gather subdomains for the domain
+  they are targeting over the network. Sublist3r enumerates subdomains using many search engines such
+  as Google, Yahoo, Bing, Baidu, and Ask. Sublist3r also enumerates subdomains using Netcraft, Virustotal,
+  ThreatCrowd, DNSdumpster, and ReverseDNS. Subbrute was integrated with Sublist3r to increase the possibility
+  of finding more subdomains using bruteforce with an improved wordlist.
 categories:
 - recon
 tags:
 - subdomains
+homepage: https://github.com/aboul3la/Sublist3r
+alternatives:
+- subfinder
+size: 1946624
 install:
 - provider: apt
   package: sublist3r
@@ -12,6 +22,5 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.1-5
 deprecated_by: subfinder
-alternatives:
-- subfinder

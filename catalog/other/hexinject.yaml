@@ -1,6 +1,13 @@
 id: hexinject
+summary: Versatile packet injector and sniffer
+description: HexInject is a very versatile packet injector and sniffer, that provide a command-line framework
+  for raw network access. It's designed to work together with others command-line utilities, and for this
+  reason it facilitates the creation of powerful shell scripts capable of reading, intercepting and modifying
+  network traffic in a transparent manner.
 categories:
-- other
+- sniffing
+homepage: https://hexinject.sourceforge.net/
+size: 102400
 install:
 - provider: apt
   package: hexinject
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6-0kali3+b1

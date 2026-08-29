@@ -1,6 +1,14 @@
 id: inetsim
+summary: Software suite for simulating common internet services
+description: 'INetSim is a software suite for simulating common internet services in a lab environment,
+  e.g. for analyzing the network behaviour of unknown malware samples. INetSim supports simulation of
+  the following services: HTTP, SMTP, POP3, DNS, FTP, NTP, TFTP, IRC, Ident, Finger, Syslog, ''Small servers''
+  (Daytime, Time, Echo, Chargen, Discard, Quotd) Additional features: * Faketime * Connection redirection
+  * Detailed logging and reports * TLS/SSL support for several services'
 categories:
-- other
+- forensics
+homepage: https://www.inetsim.org/index.html
+size: 1114112
 install:
 - provider: apt
   package: inetsim
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.3.2+dfsg.1-6

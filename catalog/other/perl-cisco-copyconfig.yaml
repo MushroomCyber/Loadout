@@ -1,6 +1,12 @@
 id: perl-cisco-copyconfig
+summary: Provides methods for manipulating Cisco devices
+description: Cisco::CopyConfig provides methods for manipulating the running-config of Cisco devices running
+  IOS via SNMP directed TFTP.  This is handy for making changes or backups on many devices without having
+  to log into each device or write messy expect type scripts that need constant tweaking.
 categories:
-- other
+- vuln-scan
+homepage: https://metacpan.org/pod/Cisco::CopyConfig
+size: 32768
 install:
 - provider: apt
   package: perl-cisco-copyconfig
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4-1kali3

@@ -1,6 +1,15 @@
 id: redsnarf
+summary: Pentesting tool for retrieving credentials from Windows workstations
+description: 'This package contains a pentesting / redteaming tool by Ed Williams for retrieving hashes
+  and credentials from Windows workstations, servers and domain controllers using OpSec Safe Techniques.  RedSnarf
+  functionality includes: * Retrieval of local SAM hashes * Enumeration of user/s running with elevated
+  system privileges and their corresponding lsa secrets password; * Retrieval of MS cached credentials;
+  * Pass-the-hash; * Quickly identify weak and guessable username/password combinations (default of administrator/Password01);
+  * The ability to retrieve hashes across a range; * Hash spraying'
 categories:
 - other
+homepage: https://github.com/nccgroup/redsnarf
+size: 12583936
 install:
 - provider: apt
   package: redsnarf
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~git20170822-0kali6

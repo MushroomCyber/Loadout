@@ -1,6 +1,16 @@
 id: email2phonenumber
+summary: OSINT tool to obtain a target's phone number by having their email address
+description: 'This package contains an OSINT tool that allows you to obtain a target''s phone number just
+  by having their email address. This tool helps automate discovering someone''s phone number by abusing
+  password reset design weaknesses and publicly available data. It supports 3 main functions: * "scrape"
+  - scrapes websites for phone number digits by initiating password reset using the target''s email address.
+  * "generate" - creates a list of valid phone numbers based on the country''s Phone Numbering Plan publicly
+  available information. * "bruteforce" - iterates over a list of phone numbers and initiates password
+  reset on different websites to obtain associated masked emails and correlate it to the victim''s one.'
 categories:
 - other
+homepage: https://github.com/martinvigo/email2phonenumber
+size: 73728
 install:
 - provider: apt
   package: email2phonenumber
@@ -9,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0~git20220216-0kali2

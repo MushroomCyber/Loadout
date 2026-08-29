@@ -1,6 +1,19 @@
 id: inspectrum
+summary: tool for visualising captured radio signals
+description: 'inspectrum is a tool for analysing captured signals, primarily from software-defined radio
+  receivers. inspectrum supports the following file types: *.sigmf-meta, *.sigmf-data - Signal Metadata
+  Format (SigMF) recordings *.cf32, *.cfile - Complex 32-bit floating point (GNURadio, osmocom_fft) *.cf64
+  - Complex 64-bit floating point samples *.cs16 - Complex 16-bit signed integer (BladeRF) *.cs8 - Complex
+  8-bit signed integer (HackRF) *.cu8 - Complex 8-bit unsigned integer (RTL-SDR) *.f32 - Real 32-bit floating
+  point samples *.f64 - Real 64-bit floating point samples (MATLAB) *.s16 - Real 16-bit signed integer
+  samples *.s8 - Real 8-bit signed integer samples *.u8 - Real 8-bit unsigned integer samples Features:
+  * Large (100GB+) file support * Spectrogram with zoom/pan * Plots of amplitude, frequency, phase and
+  IQ samples * Cursors for measuring period, symbol rate and extracting symbols * Export of selected time
+  period, filtered samples and demodulated data'
 categories:
-- other
+- wireless
+homepage: https://github.com/miek/inspectrum
+size: 330752
 install:
 - provider: apt
   package: inspectrum
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.3.1-2

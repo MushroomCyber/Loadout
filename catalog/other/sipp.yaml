@@ -1,6 +1,15 @@
 id: sipp
+summary: Traffic generator for the SIP protocol
+description: SIPp is a free Open Source test tool / traffic generator for the SIP protocol. It includes
+  a few basic SipStone user agent scenarios (UAC and UAS) and establishes and releases multiple calls
+  with the INVITE and BYE methods. It can also reads custom XML scenario files describing from very simple
+  to complex call flows. It features the dynamic display of statistics about running tests (call rate,
+  round trip delay, and message statistics), periodic CSV statistics dumps, TCP and UDP over multiple
+  sockets or multiplexed with retransmission management and dynamically adjustable call rates.
 categories:
-- other
+- vuln-scan
+homepage: https://sipp.sourceforge.net/
+size: 752640
 install:
 - provider: apt
   package: sipp
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.3-1kali6

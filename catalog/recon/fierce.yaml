@@ -1,8 +1,19 @@
 id: fierce
+summary: Domain DNS scanner
+description: Fierce is a semi-lightweight scanner that helps locate non-contiguous IP space and hostnames
+  against specified domains. It's really meant as a pre-cursor to nmap, unicornscan, nessus, nikto, etc,
+  since all of those require that you already know what IP space you are looking for. This does not perform
+  exploitation and does not scan the whole internet indiscriminately. It is meant specifically to locate
+  likely targets both inside and outside a corporate network. Because it uses DNS primarily you will often
+  find mis-configured networks that leak internal address space. That's especially useful in targeted
+  malware. Originally written by RSnake along with others at http://ha.ckers.org/. This is simply a conversion
+  to Python 3 to simplify and modernize the codebase.
 categories:
 - recon
 tags:
 - dns
+homepage: https://github.com/mschwager/fierce
+size: 247808
 install:
 - provider: apt
   package: fierce
@@ -11,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6.0-2

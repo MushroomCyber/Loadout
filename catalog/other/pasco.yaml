@@ -1,6 +1,12 @@
 id: pasco
+summary: Internet Explorer cache forensic analysis tool
+description: Pasco is a forensic tool that examines the content of cache files (index.dat) produced by
+  Microsoft Internet Explorer. It parses the file and outputs a field separated that can be loaded in
+  a spreadsheet. This package is useful in forensics investigations.
 categories:
-- other
+- forensics
+homepage: https://sf.net/projects/odessa
+size: 34816
 install:
 - provider: apt
   package: pasco
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 20040505-4

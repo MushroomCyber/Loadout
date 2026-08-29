@@ -1,6 +1,11 @@
 id: faraday-agent-dispatcher
+summary: helper to develop integrations with Faraday (Python 3)
+description: This package contains Faraday Agents Dispatcher. It helps user develop integrations with
+  Faraday written in any language. This package installs the library for Python 3.
 categories:
 - other
+homepage: https://github.com/infobyte/faraday_agent_dispatcher
+size: 290816
 install:
 - provider: apt
   package: faraday-agent-dispatcher
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 3.2.1-0kali2

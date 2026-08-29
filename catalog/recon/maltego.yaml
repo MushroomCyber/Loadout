@@ -1,8 +1,14 @@
 id: maltego
+summary: Open source intelligence and forensics application
+description: Maltego is an open source intelligence and forensics application. It will offer you timous
+  mining and gathering of information as well as the representation of this information in a easy to understand
+  format. This package replaces previous packages matlegoce and casefile.
 categories:
 - recon
 tags:
 - osint
+homepage: https://www.maltego.com
+size: 314216448
 install:
 - provider: apt
   package: maltego
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.11.3-0kali1

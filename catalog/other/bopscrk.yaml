@@ -1,8 +1,14 @@
 id: bopscrk
+summary: Generate smart and powerful wordlists
+description: 'Targeted-attack wordlist creator: introduce personal info related to target, combines every
+  word and transforms results into possible passwords. The lyricpass module allows one to search lyrics
+  related to artists and include them to the wordlists.'
 categories:
 - other
 tags:
 - wordlists
+homepage: https://github.com/r3nt0n/bopscrk/
+size: 103424
 install:
 - provider: apt
   package: bopscrk
@@ -11,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.4.7+lyricpass-0kali1

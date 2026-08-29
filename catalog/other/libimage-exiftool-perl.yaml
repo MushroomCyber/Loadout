@@ -1,6 +1,19 @@
 id: libimage-exiftool-perl
+summary: library and program to read and write meta information in multimedia files
+description: 'Image::ExifTool is a customizable set of Perl modules plus a full-featured command-line
+  application called exiftool for reading and writing meta information in a wide variety of files, including
+  the maker note information of many digital cameras by various manufacturers such as Canon, Casio, DJI,
+  FLIR, FujiFilm, GE, HP, JVC/Victor, Kodak, Leaf, Minolta/Konica-Minolta, Nikon, Nintendo, Olympus/Epson,
+  Panasonic/Leica, Pentax/Asahi, Phase One, Reconyx, Ricoh, Samsung, Sanyo, Sigma/Foveon and Sony. The
+  following modules/packages are recommended for specific features, e.g. decoding compressed and/or encrypted
+  information from the indicated file types, calculating digest values for some information types, etc.:
+  * Archive::Zip / libarchive-zip-perl: ZIP, DOCX, PPTX, XLSX, ODP, ODS, ODT, EIP, iWork * Unicode::LineBreak
+  / libunicode-linebreak-perl: for column-alignment of alternate language output * POSIX::strptime / libposix-strptime-perl:
+  for inverse date/time conversion * Time::Piece (in per'
 categories:
-- other
+- vuln-scan
+homepage: https://exiftool.org/
+size: 29885440
 install:
 - provider: apt
   package: libimage-exiftool-perl
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 13.55+dfsg-1

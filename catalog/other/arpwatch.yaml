@@ -1,6 +1,13 @@
 id: arpwatch
+summary: Ethernet/FDDI station activity monitor
+description: Arpwatch maintains a database of Ethernet MAC addresses seen on the network, with their associated
+  IP pairs.  Alerts the system administrator via e-mail if any change happens, such as new station/activity,
+  flip-flops, changed and re-used old addresses. If you want to maintain a list authorized MAC addresses
+  manually, take a look at the arpalert package which may fit your needs better.
 categories:
-- other
+- recon
+homepage: https://ee.lbl.gov/
+size: 156672
 install:
 - provider: apt
   package: arpwatch
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1a15-10

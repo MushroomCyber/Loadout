@@ -1,5 +1,11 @@
 id: dnsx
 summary: Fast DNS resolution and probing toolkit
+description: This package contains a fast and multi-purpose DNS toolkit allow to run multiple probes using
+  retryabledns library, that allows you to perform multiple DNS queries of your choice with a list of
+  user supplied resolvers, additionally supports DNS wildcard filtering like shuffledns (https://github.com/projectdiscovery/shuffledns).
+  Features * Simple and Handy utility to query DNS records * Supports A, AAAA, CNAME, PTR, NS, MX, TXT,
+  SOA * Supports DNS Status Code probing * Supports DNS Tracing * Handles wildcard subdomains in automated
+  way. * Stdin and stdout support to work with other tools.
 categories:
 - recon
 tags:
@@ -13,6 +19,7 @@ homepage: https://github.com/projectdiscovery/dnsx
 alternatives:
 - dnsrecon
 - massdns
+size: 31990784
 install:
 - provider: apt
   package: dnsx
@@ -26,3 +33,4 @@ install:
 - provider: github
   repo: projectdiscovery/dnsx
   checksums: '*checksums*.txt'
+version: 1.2.3-0kali1

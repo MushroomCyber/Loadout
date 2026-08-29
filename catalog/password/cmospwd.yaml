@@ -1,6 +1,12 @@
 id: cmospwd
+summary: decrypt BIOS passwords from CMOS
+description: CmosPwd is a cross-platform tool to decrypt password stored in CMOS used to access a computer's
+  BIOS setup. This application should work out of the box on most modern systems, but some more esoteric
+  BIOSes may not be supported or may require additional steps.
 categories:
 - password
+homepage: https://www.cgsecurity.org/wiki/CmosPwd
+size: 66560
 install:
 - provider: apt
   package: cmospwd
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 5.0+dfsg-3kali5

@@ -1,6 +1,12 @@
 id: sslh
+summary: Applicative protocol multiplexer
+description: sslh lets one accept HTTPS, SSH, OpenVPN, tinc and XMPP connections on the same port. This
+  makes it possible to connect to any of these servers on port 443 (e.g. from inside a corporate firewall,
+  which almost never block port 443) while still serving HTTPS on that port.
 categories:
-- other
+- recon
+homepage: http://www.rutschle.net/tech/sslh/README.html
+size: 525312
 install:
 - provider: apt
   package: sslh
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.1.4-1+b1

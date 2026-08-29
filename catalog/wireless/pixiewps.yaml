@@ -1,8 +1,13 @@
 id: pixiewps
+summary: Offline WPS bruteforce tool
+description: Pixiewps is a tool written in C used to bruteforce offline the WPS pin exploiting the low
+  or non-existing entropy of some APs (pixie dust attack). It is meant for educational purposes only.
 categories:
 - wireless
 tags:
 - wps
+homepage: https://github.com/wiire/pixiewps
+size: 120832
 install:
 - provider: apt
   package: pixiewps
@@ -11,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.4.2-5

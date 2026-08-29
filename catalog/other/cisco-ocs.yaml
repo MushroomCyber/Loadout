@@ -1,6 +1,10 @@
 id: cisco-ocs
+summary: Mass Cisco scanner
+description: A mass Cisco scanning tool.
 categories:
-- other
+- vuln-scan
+homepage: http://hacklab.altervista.org/
+size: 25600
 install:
 - provider: apt
   package: cisco-ocs
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.2-1kali4

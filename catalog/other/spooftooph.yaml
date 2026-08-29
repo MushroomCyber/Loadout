@@ -1,6 +1,13 @@
 id: spooftooph
+summary: Automates spoofing or cloning Bluetooth devices
+description: Spooftooph is designed to automate spoofing or cloning Bluetooth device Name, Class, and
+  Address. Cloning this information effectively allows Bluetooth device to hide in plain site. Bluetooth
+  scanning software will only list one of the devices if more than one device in range shares the same
+  device information when the devices are in Discoverable Mode (specificaly the same Address).
 categories:
-- other
+- wireless
+homepage: http://www.hackfromacave.com/projects/spooftooph.html
+size: 75776
 install:
 - provider: apt
   package: spooftooph
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.5.2-1kali4

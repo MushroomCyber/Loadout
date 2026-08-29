@@ -1,6 +1,11 @@
 id: redfang
+summary: Locates non-discoverable bluetooth devices
+description: fang is a small proof-of-concept application to find non discoveredable bluetooth devices.
+  This is done by brute forcing the last six (6) bytes of the bluetooth address of the device and doing
+  a read_remote_name().
 categories:
-- other
+- wireless
+size: 40960
 install:
 - provider: apt
   package: redfang
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 2.5-1kali5

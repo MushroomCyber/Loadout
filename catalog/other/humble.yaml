@@ -1,6 +1,10 @@
 id: humble
+summary: HTTP Headers Analyzer
+description: This package contains an  humble, and fast, security-oriented HTTP headers analyzer.
 categories:
 - other
+homepage: https://github.com/rfc-st/humble
+size: 462848
 install:
 - provider: apt
   package: humble
@@ -9,3 +13,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.61-0kali1

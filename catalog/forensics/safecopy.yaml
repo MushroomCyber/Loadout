@@ -1,6 +1,19 @@
 id: safecopy
+summary: data recovery tool for problematic or damaged media
+description: Safecopy tries to get as much data from SOURCE as possible, even resorting to device specific
+  low level operations if applicable. This is achieved by identifying problematic or damaged areas, skipping
+  over them and continuing reading afterwards. The corresponding area in the destination file is either
+  skipped (on initial creation that means padded with zeros) or deliberately filled with a recognizable
+  pattern to later find affected files on a corrupted device. The work is similar to ddrescue, generating
+  an image of the original media. This media can be floppy disks, harddisk partitions, CDs, DVDs, tape
+  devices, where other tools like dd would fail due to I/O errors. Safecopy uses an incremental algorithm
+  to identify the exact beginning and end of bad areas, allowing the user to trade minimum accesses to
+  bad areas for thorough data resurrection. Multiple passes over the same file are possible, to first
+  retrieve as much data from a device as possible with minimum harm, and then trying to
 categories:
 - forensics
+homepage: http://safecopy.sf.net
+size: 99328
 install:
 - provider: apt
   package: safecopy
@@ -9,3 +22,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.7-8

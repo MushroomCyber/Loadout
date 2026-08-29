@@ -1,6 +1,14 @@
 id: dbd
+summary: Netcat clone with encryption
+description: dbd is a Netcat-clone, designed to be portable and offer strong encryption. It runs on Unix-like
+  operating systems and on Microsoft Win32. dbd features AES-CBC-128 + HMAC-SHA1 encryption (by Christophe
+  Devine), program execution (-e option), choosing source port, continuous reconnection with delay, and
+  some other nice features. dbd supports TCP/IP communication only. Source code and binaries are distributed
+  under the GNU General Public License.
 categories:
-- other
+- post-exploitation
+homepage: https://github.com/gitdurandal/dbd
+size: 2982912
 install:
 - provider: apt
   package: dbd
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.50-1kali7

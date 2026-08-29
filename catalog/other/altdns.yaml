@@ -1,6 +1,15 @@
 id: altdns
+summary: Subdomain discovery through alterations and permutations
+description: This package contains a DNS recon tool that allows for the discovery of subdomains that conform
+  to patterns. Altdns takes in words that could be present in subdomains under a domain (such as test,
+  dev, staging) as well as takes in a list of subdomains that you know of. From these two lists that are
+  provided as input to altdns, the tool then generates a massive output of "altered" or "mutated" potential
+  subdomains that could be present. It saves this output so that it can then be used by your favourite
+  DNS bruteforcing tool.
 categories:
 - other
+homepage: https://github.com/infosec-au/altdns
+size: 47104
 install:
 - provider: apt
   package: altdns
@@ -9,3 +18,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.0.2+git20250109.6728272-1

@@ -1,9 +1,14 @@
 id: gophish
 summary: Phishing campaign framework
+description: This package contains an open-source phishing toolkit designed for businesses and penetration
+  testers. It provides the ability to quickly and easily setup and execute phishing engagements and security
+  awareness training.
 categories:
 - social
 tags:
 - phishing
+homepage: https://getgophish.com/
+size: 60251136
 install:
 - provider: apt
   package: gophish
@@ -12,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.12.1-0kali5

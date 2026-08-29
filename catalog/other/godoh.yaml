@@ -1,6 +1,12 @@
 id: godoh
+summary: DNS-over-HTTPS Command & Control Proof of Concept
+description: This package contains a proof of concept Command and Control framework, written in Golang,
+  that uses DNS-over-HTTPS as a transport medium. Currently supported providers include Google, Cloudflare
+  but also contains the ability to use traditional DNS.
 categories:
 - other
+homepage: https://github.com/sensepost/goDoH
+size: 7783424
 install:
 - provider: apt
   package: godoh
@@ -9,3 +15,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.6+git20200517-0kali3

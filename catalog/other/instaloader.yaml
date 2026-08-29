@@ -1,6 +1,14 @@
 id: instaloader
+summary: Instagram automatic photo downloader
+description: Instaloader downloads photos from Instagram, including public and private profiles, hashtags,
+  user stories, feeds and saved media. How as well as comments, geotags and captions for each post. It
+  automatically detects profile name changes and renames the target directory accordingly. It also allows
+  for refined customization of filters and where to store downloaded media be able to detect automatically
+  stop previously interrupted download interactions.
 categories:
 - other
+homepage: https://github.com/instaloader/instaloader
+size: 326656
 install:
 - provider: apt
   package: instaloader
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 4.15.1+ds-1

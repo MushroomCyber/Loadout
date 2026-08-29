@@ -1,6 +1,11 @@
 id: ext3grep
+summary: tool to help recover deleted files on ext3 filesystems
+description: ext3grep is a simple tool intended to aid anyone who accidentally deletes a file on an ext3
+  filesystem, only to find that they wanted it shortly thereafter. This package is useful in forensics
+  investigations.
 categories:
-- other
+- forensics
+size: 306176
 install:
 - provider: apt
   package: ext3grep
@@ -9,3 +14,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 0.10.2-6

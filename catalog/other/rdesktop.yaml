@@ -1,6 +1,13 @@
 id: rdesktop
+summary: RDP client for Windows NT/2000 Terminal Server and Windows Servers
+description: rdesktop is an open source client for Windows NT/2000 Terminal Server and Windows Server
+  2003/2008. Capable of natively speaking its Remote Desktop Protocol (RDP) in order to present the user's
+  Windows desktop. Unlike Citrix ICA, no server extensions are required. Rdesktop is in need of a new
+  upstream maintainter. Please see the home page for more details.
 categories:
-- other
+- recon
+homepage: https://www.rdesktop.org/
+size: 708608
 install:
 - provider: apt
   package: rdesktop
@@ -9,3 +16,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.9.0-3

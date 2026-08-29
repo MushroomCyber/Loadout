@@ -1,6 +1,14 @@
 id: sucrack
+summary: multithreaded su bruteforcer
+description: sucrack is a multithreaded Linux/UNIX tool for cracking local user accounts via wordlist
+  bruteforcing su. This tool comes in handy when you've gained access to a low-privilege user account
+  but are allowed to su to other users. Many su implementations require a pseudo terminal to be attached
+  in order to take the password from the user. This can't be easily achieved with a simple shell script.
+  This tool, written in C, is highly efficient and can attempt multiple logins at the same time.
 categories:
-- other
+- password
+homepage: https://labs.portcullis.co.uk/tools/sucrack/
+size: 50176
 install:
 - provider: apt
   package: sucrack
@@ -9,3 +17,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.2.3-8

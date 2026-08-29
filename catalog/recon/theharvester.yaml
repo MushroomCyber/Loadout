@@ -1,5 +1,7 @@
 id: theharvester
 summary: OSINT gathering of emails, hosts and employee names
+description: The package contains a tool for gathering subdomain names, e-mail addresses, virtual hosts,
+  open ports/ banners, and employee names from different public sources (search engines, pgp key servers).
 categories:
 - recon
 tags:
@@ -12,6 +14,7 @@ homepage: https://github.com/laramies/theHarvester
 alternatives:
 - spiderfoot
 - amass
+size: 2357248
 install:
 - provider: apt
   package: theharvester
@@ -22,3 +25,4 @@ install:
   - ubuntu
 - provider: pipx
   package: theHarvester
+version: 4.10.1-0kali2

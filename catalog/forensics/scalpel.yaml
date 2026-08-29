@@ -1,8 +1,16 @@
 id: scalpel
+summary: fast filesystem-independent file recovery
+description: scalpel is a fast file carver that reads a database of header and footer definitions and
+  extracts matching files from a set of image files or raw device files. scalpel is filesystem-independent
+  and will carve files from FAT16, FAT32, exFAT, NTFS, Ext2, Ext3, Ext4, JFS, XFS, ReiserFS, raw partitions,
+  etc. scalpel is a complete rewrite of the Foremost 0.69 file carver and is useful for both digital forensics
+  investigations and file recovery.
 categories:
 - forensics
 tags:
 - carving
+homepage: https://github.com/nolaforensix/scalpel-1.60
+size: 91136
 install:
 - provider: apt
   package: scalpel
@@ -11,3 +19,4 @@ install:
   - debian
   - parrot
   - ubuntu
+version: 1.60+git20240110.6960eb2-2
