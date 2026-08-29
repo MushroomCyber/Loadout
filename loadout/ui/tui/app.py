@@ -11,7 +11,8 @@ Three deliberate departures from the previous release's list screen:
 * **Batch, not one-at-a-time.** Space marks tools; one confirmation installs the
   set. Installing a loadout should be one transaction, not eighteen modals.
 
-The banner is three lines and only appears when the terminal is tall enough.
+The banner is a single status line rather than art: it spends its one row on
+the catalog size, install count and detected platform.
 """
 
 from __future__ import annotations
@@ -45,11 +46,32 @@ def textual_available() -> bool:
     return TEXTUAL_AVAILABLE
 
 
-WORDMARK = """
-┌──────────────────────┐
-│   [ LOADOUT ]        │
-└──────────────────────┘
-""".strip("\n")
+#: Abbreviations so the VIA column stays narrow enough to be scannable.
+_SHORT_PROVIDER = {"github": "gh", "cargo": "crate", "docker": "img"}
+
+
+def status_line(ctx: Any) -> str:
+    """One line of chrome: who we are, and the state of this machine.
+
+    Replaces a drawn box around whitespace that cost four of roughly forty
+    rows. Everything here is information the user would otherwise have to run a
+    command to learn.
+    """
+    try:
+        total = ctx.catalog.count()
+    except Exception:
+        total = 0
+    try:
+        installed = len(ctx.installed())
+    except Exception:
+        installed = 0
+    try:
+        from ...providers import detect_distro
+
+        where = detect_distro()
+    except Exception:
+        where = "unknown"
+    return f"[b]loadout[/b]  [dim]{total} tools · {installed} installed · {where}[/dim]"
 
 
 if TEXTUAL_AVAILABLE:
@@ -202,14 +224,7 @@ if TEXTUAL_AVAILABLE:
 
         CSS = """
         Screen { layers: base; }
-        #banner {
-            height: auto;
-            min-height: 4;
-            color: $warning;
-            text-style: bold;
-            padding: 0 1;
-            content-align: left middle;
-        }
+        #banner { height: 1; color: $accent; padding: 0 1; }
         #query  { border: none; border-bottom: solid $panel; height: 3; }
         #facets { width: 22; border-right: solid $panel; }
         #facets > ListView { height: 1fr; }
@@ -238,13 +253,21 @@ if TEXTUAL_AVAILABLE:
             self.ctx = ctx
             self._facet: tuple[str, str] | None = None
             self._rows: list[Any] = []
+            self._planner_cache: Any = None
             self.title = "loadout"
+
+        @property
+        def _planner(self) -> Any:
+            """Built once: provider detection shells out to every toolchain, so
+            rebuilding it per row would make the list unusable."""
+            if self._planner_cache is None:
+                self._planner_cache = self.ctx.planner()
+            return self._planner_cache
 
         # -- layout --------------------------------------------------------
 
         def compose(self) -> ComposeResult:
-            if self.size.height >= 30:
-                yield Static(WORDMARK, id="banner")
+            yield Static(status_line(self.ctx), id="banner")
             yield Input(placeholder="Type to filter…  (Esc clears)", id="query")
             with Horizontal():
                 with Vertical(id="facets"):
@@ -281,6 +304,29 @@ if TEXTUAL_AVAILABLE:
             self._rows = self.ctx.catalog.search(query, categories=categories, limit=500)
             self._render_rows()
 
+        def _providers_cell(self, tool: Any) -> str:
+            """Light the route that would actually run; dim the rest.
+
+            `VIA` used to be every route the catalog knows, comma-joined, which
+            told the user nothing about this machine. The planner already
+            computes the winner -- this just stops discarding it.
+            """
+            if not tool.install:
+                return "[dim]-[/dim]"
+            try:
+                chosen, _method = self._planner.choose_method(tool)
+            except Exception:
+                chosen = ""
+            if not chosen:
+                return "[red]unavailable here[/red]"
+            parts = []
+            for name in tool.providers:
+                short = _SHORT_PROVIDER.get(name, name)
+                parts.append(
+                    f"[green]{short}[/green]" if name == chosen else f"[dim]{short}[/dim]"
+                )
+            return " ".join(parts)
+
         def _render_rows(self) -> None:
             table = self.query_one("#table", DataTable)
             table.clear()
@@ -296,8 +342,8 @@ if TEXTUAL_AVAILABLE:
                 table.add_row(
                     mark,
                     name,
-                    tool.summary or "[dim]—[/dim]",
-                    ", ".join(tool.providers) or "-",
+                    tool.summary or "[dim]no description yet[/dim]",
+                    self._providers_cell(tool),
                     key=tool.id,
                 )
             self._update_hint()
@@ -309,8 +355,14 @@ if TEXTUAL_AVAILABLE:
             shown = len(self._rows)
             here = sum(1 for t in self._rows if t.id in installed)
             marked = f"  ·  [reverse] {len(self.marked)} marked [/reverse]" if self.marked else ""
+            query = self.query_one("#query", Input).value.strip()
+            try:
+                total = self.ctx.catalog.count()
+            except Exception:
+                total = shown
+            scope = f"{shown} of {total}" if query or self._facet else f"{shown} tools"
             self.query_one("#hint", Static).update(
-                f"[dim]{shown} shown · {here} installed{marked}[/dim]"
+                f"[dim]{scope} · {here} installed{marked}[/dim]"
             )
 
         def _selected_tool(self) -> Any:
