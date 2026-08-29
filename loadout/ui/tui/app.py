@@ -13,29 +13,40 @@ Three deliberate departures from the previous release's list screen:
 
 The banner is a single status line rather than art: it spends its one row on
 the catalog size, install count and detected platform.
+
+Every action is reachable by keyboard first -- the browser stays usable over a
+plain SSH session with no mouse. Buttons are a second way to reach the same
+`action_*` methods the keybindings call, never a separate code path: a click
+on "Install" does exactly what pressing `enter` does, because both call
+`action_act()`.
 """
 
 from __future__ import annotations
 
+import subprocess
+from functools import partial
 from typing import Any, ClassVar
 
 try:  # pragma: no cover - optional dependency
     from textual import on, work
     from textual.app import App, ComposeResult
     from textual.binding import Binding, BindingType
+    from textual.command import Hit, Hits
+    from textual.command import Provider as CommandProvider
     from textual.containers import Horizontal, Vertical, VerticalScroll
+    from textual.css.query import NoMatches
     from textual.reactive import reactive
     from textual.screen import ModalScreen
     from textual.widgets import (
+        Button,
         DataTable,
         Footer,
         Input,
         Label,
-        ListItem,
-        ListView,
         ProgressBar,
         Static,
     )
+    from textual.widgets._button import ButtonVariant
 
     TEXTUAL_AVAILABLE = True
 except Exception:  # pragma: no cover
@@ -46,7 +57,7 @@ def textual_available() -> bool:
     return TEXTUAL_AVAILABLE
 
 
-#: Abbreviations so the VIA column stays narrow enough to be scannable.
+#: Abbreviations so the VIA column and provider toggles stay narrow.
 _SHORT_PROVIDER = {"github": "gh", "cargo": "crate", "docker": "img"}
 
 
@@ -77,10 +88,19 @@ def status_line(ctx: Any) -> str:
 if TEXTUAL_AVAILABLE:
 
     class ToolDetail(VerticalScroll):
-        """The pane that justifies the app over `apt show`."""
+        """The pane that justifies the app over `apt show` -- and, with the
+        action row pinned directly under the tool name, the place a mouse user
+        actually acts from instead of needing the table focused. The row sits
+        above the facts, not below them: the pane scrolls, and buttons that
+        need scrolling to reach are buttons nobody finds."""
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self._tool: Any = None
 
         def update_tool(self, tool: Any, ctx: Any) -> None:
             self.remove_children()
+            self._tool = tool
             if tool is None:
                 self.mount(Static("[dim]No tool selected[/dim]"))
                 return
@@ -94,8 +114,7 @@ if TEXTUAL_AVAILABLE:
             )
             if installed and state.get("version"):
                 status += f" [dim]{state['version']}[/dim]"
-            lines.append(f"[b]{tool.id}[/b]  {status}")
-            lines.append("")
+            header = f"[b]{tool.id}[/b]  {status}"
             if tool.summary:
                 lines.append(tool.summary)
                 lines.append("")
@@ -124,14 +143,63 @@ if TEXTUAL_AVAILABLE:
                     mark = "[green]✓[/green]" if status_row and status_row.available else "[dim]-[/dim]"
                     lines.append(f"[dim]{'via':>10}[/dim]  {mark} {method.provider}")
 
-            if tool.alternatives:
-                lines.append("")
-                field("see also", ", ".join(tool.alternatives))
-
+            self.mount(Static(header))
+            self.mount(self._action_row(tool, ctx, installed))
             self.mount(Static("\n".join(lines)))
 
+        def _action_row(self, tool: Any, ctx: Any, installed: bool) -> Horizontal:
+            starred = tool.id in ctx.starred()
+            buttons: list[Button] = [
+                Button(
+                    "Remove" if installed else "Install",
+                    variant="error" if installed else "success",
+                    id="btn-act",
+                    compact=True,
+                ),
+                Button(
+                    "★ Unstar" if starred else "★ Star",
+                    id="btn-star",
+                    compact=True,
+                ),
+            ]
+            can_run = bool(tool.primary_binary) or any(
+                m.provider == "docker" for m in tool.install
+            )
+            if can_run:
+                buttons.append(Button("Run", variant="primary", id="btn-run", compact=True))
+            if tool.alternatives:
+                buttons.append(Button("Alternatives", id="btn-alt", compact=True))
+            return Horizontal(*buttons, classes="detail-actions")
+
+        @on(Button.Pressed, "#btn-act")
+        def _btn_act(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.app.action_act()  # type: ignore[attr-defined]
+
+        @on(Button.Pressed, "#btn-star")
+        def _btn_star(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.app.action_star()  # type: ignore[attr-defined]
+
+        @on(Button.Pressed, "#btn-run")
+        def _btn_run(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.app.action_run_tool()  # type: ignore[attr-defined]
+
+        @on(Button.Pressed, "#btn-alt")
+        def _btn_alt(self, event: Button.Pressed) -> None:
+            event.stop()
+            if self._tool and self._tool.alternatives:
+                self.app.notify(  # type: ignore[attr-defined]
+                    "Alternatives: " + ", ".join(self._tool.alternatives)
+                )
+
     class InstallScreen(ModalScreen[bool]):
-        """Runs a plan with real progress and a live log."""
+        """Runs a plan with real progress and a live log.
+
+        Closable and retryable by mouse: a failed install used to leave the
+        user staring at red text with only `esc` and no next step.
+        """
 
         BINDINGS: ClassVar[list[BindingType]] = [Binding("escape", "close", "Close")]
 
@@ -143,6 +211,8 @@ if TEXTUAL_AVAILABLE:
         }
         #title { text-style: bold; margin-bottom: 1; }
         #log { height: 1fr; border-top: solid $panel; margin-top: 1; }
+        #actions { height: auto; margin-top: 1; align: right middle; }
+        #actions Button { margin-left: 1; }
         """
 
         def __init__(self, ctx: Any, plan: Any, action: str) -> None:
@@ -161,6 +231,7 @@ if TEXTUAL_AVAILABLE:
                 yield ProgressBar(total=100, show_eta=False, id="bar")
                 yield Static("", id="status")
                 yield VerticalScroll(Static("", id="logtext"), id="log")
+                yield Horizontal(id="actions")
 
         def on_mount(self) -> None:
             self._execute()
@@ -168,6 +239,20 @@ if TEXTUAL_AVAILABLE:
         def action_close(self) -> None:
             if self._done:
                 self.dismiss(True)
+
+        @on(Button.Pressed, "#btn-close")
+        def _btn_close(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.action_close()
+
+        @on(Button.Pressed, "#btn-retry")
+        def _btn_retry(self, event: Button.Pressed) -> None:
+            event.stop()
+            self._done = False
+            self.query_one("#logtext", Static).update("")
+            self.query_one("#bar", ProgressBar).update(progress=0)
+            self.query_one("#actions", Horizontal).remove_children()
+            self._execute()
 
         @work(thread=True)
         def _execute(self) -> None:
@@ -193,8 +278,10 @@ if TEXTUAL_AVAILABLE:
                     self.app.call_from_thread(self._append_log, log_lines[-14:])
 
             executor = Executor(sink=sink, state=self.ctx.state)
+            failed = False
             try:
                 result = executor.run(self.plan)
+                failed = not result.ok
                 summary = (
                     f"[green]✓ {len(result.succeeded)} succeeded[/green]"
                     if result.ok
@@ -202,8 +289,9 @@ if TEXTUAL_AVAILABLE:
                     f"{len(result.succeeded)} ok"
                 )
             except Exception as exc:
+                failed = True
                 summary = f"[red]✗ {exc}[/red]"
-            self.app.call_from_thread(self._finish, summary)
+            self.app.call_from_thread(self._finish, summary, failed)
 
         def _set_progress(self, percent: float, message: str) -> None:
             self.query_one("#bar", ProgressBar).update(progress=percent)
@@ -212,24 +300,60 @@ if TEXTUAL_AVAILABLE:
         def _append_log(self, lines: list[str]) -> None:
             self.query_one("#logtext", Static).update("\n".join(lines))
 
-        def _finish(self, summary: str) -> None:
+        def _finish(self, summary: str, failed: bool) -> None:
             self._done = True
             self.query_one("#bar", ProgressBar).update(progress=100)
-            self.query_one("#status", Static).update(
-                f"{summary}\n[dim]Press Esc to close[/dim]"
-            )
+            self.query_one("#status", Static).update(summary)
+            actions = self.query_one("#actions", Horizontal)
+            if failed:
+                actions.mount(Button("Retry", variant="primary", id="btn-retry", compact=True))
+            actions.mount(Button("Close", id="btn-close", compact=True))
+
+    class LoadoutCommands(CommandProvider):
+        """Loadouts as fuzzy-searchable commands in Textual's built-in palette
+        (``ctrl+p``). Applying one calls the exact same `_run_for()` the
+        batch-apply button and `enter` both call -- three entry points, one
+        code path."""
+
+        async def search(self, query: str) -> Hits:
+            from ... import loadouts as loadouts_module
+
+            matcher = self.matcher(query)
+            app = self.app
+            for manifest in loadouts_module.listing():
+                label = f"Apply loadout: {manifest.name}"
+                # Score the slug too: it is what `loadout apply` takes on the
+                # command line, so it is what a user is likely to type here.
+                score = max(matcher.match(label), matcher.match(manifest.slug))
+                if score > 0:
+                    yield Hit(
+                        score,
+                        matcher.highlight(label),
+                        partial(app._run_for, list(manifest.tools)),  # type: ignore[attr-defined]
+                        help=f"{len(manifest.tools)} tool(s) — {manifest.description or manifest.slug}",
+                    )
 
     class LoadoutBrowser(App):
         """Filter-first tool browser."""
+
+        COMMANDS = App.COMMANDS | {LoadoutCommands}
 
         CSS = """
         Screen { layers: base; }
         #banner { height: 1; color: $accent; padding: 0 1; }
         #query  { border: none; border-bottom: solid $panel; height: 3; }
-        #facets { width: 22; border-right: solid $panel; }
-        #facets > ListView { height: 1fr; }
+        #providers { height: auto; padding: 0 1; border-bottom: solid $panel; }
+        #providers Button { margin-right: 1; }
+        .provider-toggle.-active { text-style: bold reverse; }
+        #facets { width: 26; border-right: solid $panel; }
+        #facetlist { height: 1fr; padding: 0 1; }
+        #facetlist Button { width: 100%; text-align: left; }
         #table  { height: 1fr; }
         #detail { height: 40%; border-top: solid $panel; padding: 0 1; }
+        .detail-actions { height: auto; margin-bottom: 1; }
+        .detail-actions Button { margin-right: 1; }
+        #batch-bar { height: 3; padding: 0 1; align: left middle; background: $panel; display: none; }
+        #batch-bar Button { margin-right: 1; }
         #hint   { height: 1; color: $text-muted; padding: 0 1; }
         DataTable > .datatable--cursor { background: $accent 30%; }
         """
@@ -241,12 +365,17 @@ if TEXTUAL_AVAILABLE:
             Binding("enter", "act", "Install/Remove"),
             Binding("ctrl+a", "apply_marked", "Apply marked"),
             Binding("ctrl+s", "star", "Star"),
+            Binding("ctrl+r", "run_tool", "Run"),
             Binding("f5", "refresh", "Refresh"),
             Binding("down", "cursor_down", "", show=False),
             Binding("up", "cursor_up", "", show=False),
         ]
 
-        marked: reactive[set[str]] = reactive(set)
+        # init=False: reactive() defaults to calling its watcher once at mount
+        # with the initial value, which raced the explicit _reload() call in
+        # on_mount() and populated the table twice (DuplicateKey on the second
+        # pass). Only explicit reassignment should trigger watch_marked.
+        marked: reactive[set[str]] = reactive(set, init=False)
 
         def __init__(self, ctx: Any) -> None:
             super().__init__()
@@ -254,6 +383,7 @@ if TEXTUAL_AVAILABLE:
             self._facet: tuple[str, str] | None = None
             self._rows: list[Any] = []
             self._planner_cache: Any = None
+            self._active_providers: set[str] = set()
             self.title = "loadout"
 
         @property
@@ -269,13 +399,17 @@ if TEXTUAL_AVAILABLE:
         def compose(self) -> ComposeResult:
             yield Static(status_line(self.ctx), id="banner")
             yield Input(placeholder="Type to filter…  (Esc clears)", id="query")
+            yield Horizontal(id="providers")
             with Horizontal():
                 with Vertical(id="facets"):
                     yield Label(" CATEGORIES", classes="facet-title")
-                    yield ListView(id="facetlist")
+                    yield VerticalScroll(id="facetlist")
                 with Vertical():
                     yield DataTable(id="table", cursor_type="row", zebra_stripes=False)
                     yield ToolDetail(id="detail")
+            with Horizontal(id="batch-bar"):
+                yield Button("Apply marked", variant="primary", id="btn-apply", compact=True)
+                yield Button("Clear", id="btn-clear", compact=True)
             yield Static("", id="hint")
             yield Footer()
 
@@ -286,22 +420,61 @@ if TEXTUAL_AVAILABLE:
             table.add_column("SUMMARY", key="summary")
             table.add_column("VIA", width=22, key="via")
 
-            facets = self.query_one("#facetlist", ListView)
-            facets.append(ListItem(Label("all"), id="facet-all"))
+            facets = self.query_one("#facetlist", VerticalScroll)
+            facets.mount(
+                Button("all", id="facet-all", variant="primary", classes="chip -active", compact=True)
+            )
+            installed = self.ctx.installed()
             for slug, count in self.ctx.catalog.facet_values("category")[:18]:
-                facets.append(
-                    ListItem(Label(f"{slug}  [dim]{count}[/dim]"), id=f"facet-{slug}")
+                variant = self._coverage_variant(slug, count, installed)
+                facets.mount(
+                    Button(
+                        f"{slug[:14]:<14}{count:>4}",
+                        id=f"facet-{slug}",
+                        variant=variant,
+                        classes="chip",
+                        compact=True,
+                    )
+                )
+
+            providers = self.query_one("#providers", Horizontal)
+            for name in sorted(self.ctx.provider_status):
+                status = self.ctx.provider_status[name]
+                if not status.available:
+                    continue
+                short = _SHORT_PROVIDER.get(name, name)
+                providers.mount(
+                    Button(short, id=f"prov-{name}", classes="provider-toggle", compact=True)
                 )
 
             self.query_one("#query", Input).focus()
             self._reload()
+
+        def _coverage_variant(self, slug: str, count: int, installed: set[str]) -> ButtonVariant:
+            """How much of a category is already installed, as a button colour.
+
+            Cheap even at ~800 tools: one indexed facet query per category,
+            done once at startup, not per frame.
+            """
+            if not count:
+                return "default"
+            here = sum(1 for t in self.ctx.catalog.search("", categories=[slug]) if t.id in installed)
+            coverage = here / count
+            if coverage >= 0.3:
+                return "success"
+            if coverage > 0:
+                return "warning"
+            return "default"
 
         # -- data ----------------------------------------------------------
 
         def _reload(self) -> None:
             query = self.query_one("#query", Input).value.strip()
             categories = [self._facet[1]] if self._facet and self._facet[0] == "category" else []
-            rows = self.ctx.catalog.search(query, categories=categories, limit=500)
+            providers = sorted(self._active_providers)
+            rows = self.ctx.catalog.search(
+                query, categories=categories, providers=providers, limit=500
+            )
             if not query:
                 # FTS relevance has nothing to rank on an empty query, so the
                 # store falls back to alphabetical -- which opens the browser
@@ -421,12 +594,39 @@ if TEXTUAL_AVAILABLE:
             if tool is not None:
                 self._show_detail(tool)
 
-        @on(ListView.Selected, "#facetlist")
-        def _on_facet(self, event: ListView.Selected) -> None:
-            item_id = event.item.id or ""
-            slug = item_id.removeprefix("facet-")
+        @on(Button.Pressed, "#facetlist Button")
+        def _on_facet_chip(self, event: Button.Pressed) -> None:
+            event.stop()
+            button = event.button
+            slug = (button.id or "").removeprefix("facet-")
             self._facet = None if slug == "all" else ("category", slug)
+            for chip in self.query("#facetlist Button"):
+                chip.remove_class("-active")
+            button.add_class("-active")
             self._reload()
+
+        @on(Button.Pressed, ".provider-toggle")
+        def _on_provider_toggle(self, event: Button.Pressed) -> None:
+            event.stop()
+            button = event.button
+            name = (button.id or "").removeprefix("prov-")
+            if name in self._active_providers:
+                self._active_providers.discard(name)
+                button.remove_class("-active")
+            else:
+                self._active_providers.add(name)
+                button.add_class("-active")
+            self._reload()
+
+        @on(Button.Pressed, "#btn-apply")
+        def _on_apply_button(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.action_apply_marked()
+
+        @on(Button.Pressed, "#btn-clear")
+        def _on_clear_button(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.marked = set()
 
         # -- actions -------------------------------------------------------
 
@@ -437,7 +637,6 @@ if TEXTUAL_AVAILABLE:
                 self._reload()
             elif self.marked:
                 self.marked = set()
-                self._render_rows()
             else:
                 self.exit()
 
@@ -453,8 +652,7 @@ if TEXTUAL_AVAILABLE:
                 return
             marked = set(self.marked)
             marked.symmetric_difference_update({tool.id})
-            self.marked = marked
-            self._render_rows()
+            self.marked = marked  # triggers watch_marked, which re-renders
 
         def action_star(self) -> None:
             tool = self._selected_tool()
@@ -479,6 +677,55 @@ if TEXTUAL_AVAILABLE:
                 self.notify("Nothing marked. Press space to mark tools.", severity="warning")
                 return
             self._run_for(sorted(self.marked))
+
+        def action_run_tool(self) -> None:
+            """Run the selected tool's binary directly, outside any provider
+            install/remove flow -- for a tool that is already on PATH."""
+            tool = self._selected_tool()
+            if tool is None:
+                return
+            binary = tool.primary_binary
+            if not binary:
+                self.notify(f"{tool.id} has no known binary in the catalog.", severity="warning")
+                return
+
+            import shutil as _shutil
+
+            if not _shutil.which(binary):
+                self.notify(f"{binary} is not installed.", severity="warning")
+                return
+
+            from ...policy import validate_argv
+
+            try:
+                argv = validate_argv([binary])
+            except Exception as exc:
+                self.notify(str(exc), severity="error")
+                return
+
+            with self.suspend():
+                print(f"\n$ {' '.join(argv)}\n")
+                subprocess.run(argv, check=False)  # noqa: S603
+                input("\nPress Enter to return to loadout...")
+            self.ctx.state.mark_used(tool.id)
+            self.ctx.state.record("run", tool.id)
+
+        # -- watchers --------------------------------------------------------
+
+        def watch_marked(self, marked: set[str]) -> None:
+            """Show or hide the batch bar and keep its label honest. Fires only
+            on assignment, not on the reactive's own default, so it is safe to
+            query a widget that exists only once the app has mounted."""
+            try:
+                bar = self.query_one("#batch-bar")
+                bar.styles.display = "block" if marked else "none"
+                if marked:
+                    self.query_one("#btn-apply", Button).label = f"Install {len(marked)} marked"
+                self._render_rows()
+            except NoMatches:
+                # Also fires while the app tears down, once the widgets this
+                # touches have already been removed from the DOM.
+                return
 
         def _run_for(self, tool_ids: list[str]) -> None:
             from ...planner import ACTION_INSTALL, ACTION_REMOVE
