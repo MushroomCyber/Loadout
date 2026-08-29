@@ -56,8 +56,6 @@ dev = [
 
 [project.scripts]
 loadout = "loadout.ui.cli:cli"
-# Deprecated alias, removed in 2.0. Prints a notice to stderr, then forwards.
-kalitools = "loadout.ui.cli:legacy_shim"
 
 [project.urls]
 Homepage = "https://github.com/MushroomCyber/Loadout"

@@ -1,4 +1,4 @@
-"""Loadout manifests, the XDG migration, and the CLI's contract."""
+"""Loadout manifests and the CLI's contract."""
 
 from __future__ import annotations
 
@@ -22,12 +22,11 @@ class TestManifests:
         assert reloaded.slug == "ad-ops"
         assert reloaded.tools == ("netexec", "impacket")
 
-    def test_legacy_packages_key_still_loads(self, tmp_path):
-        """kalitools profiles used `packages:`; they must keep working."""
-        path = tmp_path / "old.yaml"
-        path.write_text("slug: old\npackages: [nmap, ffuf]\n", encoding="utf-8")
+    def test_missing_tools_key_is_an_empty_manifest(self, tmp_path):
+        path = tmp_path / "empty.yaml"
+        path.write_text("slug: empty\n", encoding="utf-8")
         loaded = loadouts._load_file(path, "user")
-        assert loaded.tools == ("nmap", "ffuf")
+        assert loaded.tools == ()
 
     def test_duplicates_and_case_are_normalised(self):
         manifest = loadouts.Loadout(slug="x", tools=("NMAP", "nmap", " ffuf "))
@@ -64,71 +63,6 @@ class TestDiff:
         snapshot = loadouts.from_installed("snap", ["nmap", "ffuf"])
         result = loadouts.diff(snapshot, catalog=catalog, installed={"nmap", "ffuf"})
         assert result.in_sync
-
-
-class TestLegacyMigration:
-    def test_detects_kalitools_files(self, tmp_path, monkeypatch):
-        from loadout.paths import needs_migration
-
-        home = tmp_path / "home"
-        (home / ".kali_tools_settings.json").write_text('{"per_page": 40}', encoding="utf-8")
-        assert needs_migration() is True
-
-    def test_imports_without_deleting_anything(self, tmp_path):
-        from loadout.paths import migrate_legacy_state
-
-        home = tmp_path / "home"
-        settings = home / ".kali_tools_settings.json"
-        settings.write_text('{"per_page": 40}', encoding="utf-8")
-        (home / ".kali_tools_cache.json").write_text(
-            '{"nmap": true, "ffuf": false}', encoding="utf-8"
-        )
-        (home / ".kali_tools_local_repo.txt").write_text("/srv/mirror", encoding="utf-8")
-
-        report = migrate_legacy_state()
-        assert report.settings == {"per_page": 40}
-        assert report.installed == ["nmap"]
-        assert report.local_repo == "/srv/mirror"
-        assert settings.exists(), "migration must copy, never delete"
-
-    def test_runs_only_once(self, tmp_path):
-        from loadout.paths import migrate_legacy_state, needs_migration
-
-        (tmp_path / "home" / ".kali_tools_settings.json").write_text("{}", encoding="utf-8")
-        migrate_legacy_state()
-        assert needs_migration() is False
-        assert migrate_legacy_state().ran is False
-
-    def test_state_db_schema_v1_is_upgraded(self, tmp_path):
-        """A kalitools state.db keeps its stars and history."""
-        import sqlite3
-
-        from loadout.state import StateDB
-
-        path = tmp_path / "state.db"
-        conn = sqlite3.connect(path)
-        conn.executescript(
-            """
-            CREATE TABLE tool_state (
-                name TEXT PRIMARY KEY, installed INTEGER DEFAULT 0,
-                last_used TEXT, starred INTEGER DEFAULT 0, user_notes TEXT);
-            CREATE TABLE history (
-                id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT, action TEXT,
-                package TEXT, success INTEGER, detail TEXT);
-            INSERT INTO tool_state VALUES ('nmap', 1, '2026-01-01', 1, 'my note');
-            INSERT INTO history (ts, action, package, success, detail)
-                VALUES ('2026-01-01', 'install', 'nmap', 1, '');
-            """
-        )
-        conn.commit()
-        conn.close()
-
-        database = StateDB(path)
-        state = database.get("nmap")
-        assert state is not None
-        assert state["starred"] == 1
-        assert state["notes"] == "my note"
-        assert database.history()[0]["tool_id"] == "nmap"
 
 
 class TestStateSync:

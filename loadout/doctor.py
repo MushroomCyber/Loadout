@@ -278,19 +278,6 @@ def _check_network() -> CheckResult:
     )
 
 
-def _check_legacy_state() -> CheckResult:
-    from .paths import LEGACY_FILES, needs_migration
-
-    if not needs_migration():
-        return CheckResult("migration", "ok", "no legacy kalitools state pending")
-    found = [name for name in LEGACY_FILES.values() if (Path.home() / name).exists()]
-    return CheckResult(
-        "migration", "warn",
-        f"{len(found)} kalitools file(s) not yet imported",
-        "Run `loadout migrate` (it copies, never deletes).",
-    )
-
-
 CHECKS: list[Callable[[], CheckResult]] = [
     _check_python,
     _check_providers,
@@ -302,7 +289,6 @@ CHECKS: list[Callable[[], CheckResult]] = [
     _check_apt_sources,
     _check_disk_space,
     _check_network,
-    _check_legacy_state,
 ]
 
 

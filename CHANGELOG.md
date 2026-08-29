@@ -37,8 +37,6 @@ the machine actually has.
   `monitoring`, `malware`, `cloud` and `threat-intel` categories, plus the
   `dfir-responder`, `detection-engineer`, `cloud-auditor`, `ad-operator` and
   `recon-modern` loadouts.
-- Automatic import of kalitools state on first run; `loadout migrate` to run it
-  explicitly. See [docs/MIGRATION.md](docs/MIGRATION.md).
 - Headless tests for the interactive browser, driving the real app through
   Textual's own harness. Covers startup, filter-as-you-type, escape-clears,
   space-to-mark, the detail pane, and a check that every key binding resolves to
@@ -145,16 +143,16 @@ setup-python v7.0.0, clearing the Node 20 deprecation.
   mis-filing much of the rest.
 - `notify2`, `beautifulsoup4` and `rapidfuzz` dependencies.
 - `requirements.txt` and `run.sh` — `pip install -e '.[dev]'` covers both.
-
-### Deprecated
-
-- The `kalitools` command forwards to `loadout` with a notice on stderr. Removed
-  in 2.0.
-- `KALITOOLS_*` environment variables. Use `LOADOUT_*`.
+- Every `kalitools` compatibility path: the `kalitools` console script, the
+  `KALITOOLS_*` environment variable fallback, the on-disk migration from the
+  old `~/.kali_tools_*` layout, and the v1 SQLite schema upgrade. Loadout is a
+  full replacement, not an upgrade path — there is nothing to import from a
+  previous install.
 
 ---
 
 ## [0.3.0] — 2026-04
 
 Last release under the `kalitools` name. Rich CLI, Textual TUI, curated
-profiles, offline APT support, SQLite state, 33 tests.
+profiles, offline APT support, SQLite state, 33 tests. Superseded by Loadout,
+which does not read or migrate any state from this release.

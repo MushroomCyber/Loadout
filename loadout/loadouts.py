@@ -113,10 +113,7 @@ def _load_file(path: Path, source: str) -> Loadout | None:
         logger.warning("loadout %s: expected a mapping", path)
         return None
 
-    # Accept the old "packages:" key so kalitools profiles keep working.
-    tools = data.get("tools")
-    if tools is None:
-        tools = data.get("packages") or []
+    tools = data.get("tools") or []
     if not isinstance(tools, list):
         logger.warning("loadout %s: 'tools' must be a list", path)
         return None

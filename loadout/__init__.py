@@ -1,12 +1,12 @@
 """Loadout -- pick your kit, install it anywhere, prove what you used.
 
-Formerly `kalitools`. The rename came with the provider layer: a tool is
-now described once and installed by whichever backend the machine actually has
-(apt, brew, pipx, go, cargo, a verified GitHub release, a container).
+A tool is described once and installed by whichever backend the machine
+actually has (apt, brew, pipx, go, cargo, a verified GitHub release, a
+container).
 
-Nothing heavy is imported here. The previous release pulled the whole manager --
-and with it rich, requests and beautifulsoup4 -- into every ``import kalitools``,
-including ``--help``.
+Nothing heavy is imported here: importing this package must stay cheap even for
+``--help``, since the CLI, the catalog and every provider are pulled in lazily
+by the subcommand that actually needs them.
 """
 
 from __future__ import annotations
@@ -28,33 +28,9 @@ __all__ = [
 
 logger = logging.getLogger("loadout")
 
-#: Legacy variables still honoured, with a warning, for one major version.
-_LEGACY_ENV = {
-    "LOADOUT_OFFLINE": "KALITOOLS_OFFLINE",
-    "LOADOUT_NO_EMOJI": "KALITOOLS_NO_EMOJI",
-    "LOADOUT_THEME": "KALITOOLS_THEME",
-    "LOADOUT_LOG_FILE": "KALITOOLS_LOG_FILE",
-}
-
-_warned_legacy: set[str] = set()
-
-
 def env(name: str, default: str = "") -> str:
-    """Read a ``LOADOUT_*`` variable, falling back to its ``KALITOOLS_*`` twin."""
-    value = os.environ.get(name)
-    if value is not None:
-        return value
-    legacy_name = _LEGACY_ENV.get(name)
-    if legacy_name:
-        legacy_value = os.environ.get(legacy_name)
-        if legacy_value is not None:
-            if legacy_name not in _warned_legacy:
-                _warned_legacy.add(legacy_name)
-                logger.warning(
-                    "%s is deprecated; use %s instead", legacy_name, name
-                )
-            return legacy_value
-    return default
+    """Read a ``LOADOUT_*`` environment variable."""
+    return os.environ.get(name, default)
 
 
 def env_flag(name: str) -> bool:

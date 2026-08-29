@@ -3,15 +3,11 @@
 The catalog is a regenerable asset; everything user- or host-specific lives
 here so a catalog rebuild can never clobber it.
 
-Two changes from the previous release worth knowing about:
-
-* ``tool_state`` now records *which provider* installed a tool and *what
-  version*, which is what makes ``loadout report`` able to state exactly what
-  was used during an engagement.
-* :meth:`StateDB.prune_unknown` stages known ids in a temp table instead of
-  binding one SQL variable per id. The old version raised "too many SQL
-  variables" past ~32k packages -- swallowed by a blanket ``except``, so
-  orphaned rows accumulated silently forever.
+``tool_state`` records which *provider* installed a tool and *what version*,
+which is what makes ``loadout report`` able to state exactly what was used
+during an engagement. :meth:`StateDB.prune_unknown` stages known ids in a temp
+table rather than binding one SQL variable per id, so it stays correct past
+SQLite's per-statement variable limit on a large catalog.
 """
 
 from __future__ import annotations
@@ -92,56 +88,11 @@ class StateDB:
 
     def _init_schema(self) -> None:
         with self._tx() as conn:
-            # Migration must run *before* the schema script. The v1 tables use
-            # `name`/`package` where v2 uses `tool_id`, so a CREATE INDEX on
-            # tool_id against a surviving v1 table fails outright.
-            self._rename_legacy_tables(conn)
             conn.executescript(_SCHEMA)
-            self._copy_legacy_rows(conn)
             conn.execute(
                 "INSERT OR REPLACE INTO meta(key, value) VALUES('schema_version', ?)",
                 (str(SCHEMA_VERSION),),
             )
-
-    @staticmethod
-    def _table_columns(conn: sqlite3.Connection, table: str) -> set[str]:
-        return {row["name"] for row in conn.execute(f"PRAGMA table_info({table})")}
-
-    def _rename_legacy_tables(self, conn: sqlite3.Connection) -> None:
-        """Move any kalitools v1 tables aside so the v2 schema can be created."""
-        if "name" in self._table_columns(conn, "tool_state"):
-            logger.info("migrating tool_state from the kalitools schema")
-            conn.execute("DROP TABLE IF EXISTS tool_state_v1")
-            conn.execute("ALTER TABLE tool_state RENAME TO tool_state_v1")
-        if "package" in self._table_columns(conn, "history"):
-            conn.execute("DROP TABLE IF EXISTS history_v1")
-            conn.execute("ALTER TABLE history RENAME TO history_v1")
-        # An index left pointing at a renamed table would collide on re-create.
-        for index in ("ix_history_package", "ix_history_ts", "ix_history_tool"):
-            conn.execute(f"DROP INDEX IF EXISTS {index}")
-
-    def _copy_legacy_rows(self, conn: sqlite3.Connection) -> None:
-        """Carry stars, notes and history across. These cannot be regenerated."""
-        tables = {
-            row["name"]
-            for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        }
-        if "tool_state_v1" in tables:
-            conn.execute(
-                """INSERT OR IGNORE INTO tool_state
-                       (tool_id, installed, provider, version, last_used, starred, notes)
-                   SELECT name, COALESCE(installed, 0), 'apt', '',
-                          last_used, COALESCE(starred, 0), user_notes
-                   FROM tool_state_v1"""
-            )
-            conn.execute("DROP TABLE tool_state_v1")
-        if "history_v1" in tables:
-            conn.execute(
-                """INSERT INTO history (ts, action, tool_id, success, detail)
-                   SELECT ts, action, package, COALESCE(success, 1), detail
-                   FROM history_v1"""
-            )
-            conn.execute("DROP TABLE history_v1")
 
     # -- tool state --------------------------------------------------------
 

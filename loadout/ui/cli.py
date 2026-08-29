@@ -349,8 +349,6 @@ def build_parser() -> argparse.ArgumentParser:
 
     # -- environment -------------------------------------------------------
     sub.add_parser("doctor", help="Diagnose environment problems.")
-    p = sub.add_parser("migrate", help="Import state from a kalitools install.")
-    p.add_argument("--dry-run", action="store_true")
 
     return parser
 
@@ -1658,35 +1656,6 @@ def cmd_doctor(ctx: Context) -> int:
     return {"ok": 0, "warn": 0, "fail": 2}.get(worst, 1)
 
 
-def cmd_migrate(ctx: Context) -> int:
-    from ..paths import migrate_legacy_state, needs_migration
-
-    if not needs_migration():
-        if ctx.json_mode:
-            out.emit_json({"migrated": False, "reason": "nothing to migrate"})
-        else:
-            out.print_note("Nothing to migrate — no kalitools state found.")
-        return 0
-
-    report = migrate_legacy_state(dry_run=ctx.args.dry_run)
-    payload = {
-        "dry_run": ctx.args.dry_run,
-        "settings": bool(report.settings),
-        "local_repo": report.local_repo,
-        "overrides": len(report.overrides or {}),
-        "installed_from_cache": len(report.installed or []),
-        "state_db_copied": report.moved_state_db,
-    }
-    if ctx.json_mode:
-        out.emit_json(payload)
-        return 0
-    out.print_ok("Imported kalitools state:")
-    for key, value in payload.items():
-        out.get_console().print(f"   [dim]{key:>22}[/dim]  {value}")
-    out.print_note("Legacy files were left in place; nothing was deleted.")
-    return 0
-
-
 # ---------------------------------------------------------------------------
 # Dispatch
 # ---------------------------------------------------------------------------
@@ -1717,7 +1686,6 @@ _COMMANDS = {
     "holds": cmd_hold,
     "export": cmd_export,
     "doctor": cmd_doctor,
-    "migrate": cmd_migrate,
 }
 
 
@@ -1746,21 +1714,6 @@ def main(argv: list[str] | None = None) -> int:
         os.environ["LOADOUT_NO_EMOJI"] = "1"
 
     ctx = Context(args=args)
-
-    # Absorb kalitools state the first time the renamed binary runs.
-    try:
-        from ..paths import migrate_legacy_state, needs_migration
-
-        if needs_migration() and args.command != "migrate":
-            report = migrate_legacy_state()
-            if report.anything_found and not ctx.json_mode:
-                out.print_note(
-                    "Imported your kalitools settings and history. "
-                    "The old files were left untouched."
-                )
-    except Exception as exc:
-        # Migration is a convenience; never let it block the actual command.
-        logger.debug("legacy migration skipped: %s", exc)
 
     try:
         if args.command is None:
@@ -1815,17 +1768,3 @@ def cli() -> None:
         _silence_broken_pipe()
         code = 0
     raise SystemExit(code)
-
-
-def legacy_shim() -> None:
-    """``kalitools`` entry point, kept for one major version.
-
-    Prints a deprecation notice to stderr -- never stdout, so a script that
-    pipes JSON keeps working -- and then runs the real CLI.
-    """
-    print(
-        "kalitools is now `loadout`. This alias will be removed in 2.0.\n"
-        "Your settings and history were carried over automatically.",
-        file=sys.stderr,
-    )
-    raise SystemExit(main())

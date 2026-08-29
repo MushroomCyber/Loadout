@@ -6,7 +6,7 @@ Implements:
 * ``robots.txt`` awareness (cached per host).
 * Exponential backoff with jitter on 5xx / connection errors.
 * Per-request timeout and a global circuit breaker per host.
-* Honours ``KALITOOLS_OFFLINE=1`` — returns ``None`` without making a
+* Honours ``LOADOUT_OFFLINE=1`` — returns ``None`` without making a
   request so the rest of the CLI keeps working on air-gapped hosts.
 """
 
