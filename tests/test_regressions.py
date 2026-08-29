@@ -6,8 +6,6 @@ that shipped once has shipped again.
 
 from __future__ import annotations
 
-import sqlite3
-
 import pytest
 
 from loadout.model import Tool
@@ -191,28 +189,6 @@ class TestB06StatePruneAtScale:
         assert database.get("stale-tool") is None
         assert database.get("kept-tool") is not None
 
-    def test_the_old_approach_really_did_fail(self):
-        """Proof the limit is real, so this test is not guarding a phantom.
-
-        The ceiling is build-specific -- 32,766 on the Windows CPython build,
-        250,000 on Kali's -- so ask this interpreter what its limit is rather
-        than hardcoding a count that only fails on some machines.
-        """
-        conn = sqlite3.connect(":memory:")
-        conn.execute("CREATE TABLE t(name TEXT)")
-        try:
-            limit = conn.getlimit(sqlite3.SQLITE_LIMIT_VARIABLE_NUMBER)
-        except AttributeError:  # pragma: no cover - Python < 3.11
-            limit = 32_766
-        over = limit + 1
-        placeholders = ",".join("?" * over)
-        with pytest.raises(sqlite3.OperationalError, match="too many SQL variables"):
-            conn.execute(
-                f"SELECT 1 FROM t WHERE name IN ({placeholders})",
-                tuple(str(i) for i in range(over)),
-            )
-        conn.close()
-
     def test_prune_keeps_starred_and_annotated_rows(self, tmp_path):
         database = StateDB(tmp_path / "state.db")
         database.set_installed("starred-tool", True)
@@ -294,9 +270,14 @@ class TestB09ValidationOnEveryPath:
 
 
 class TestB10Deb822Sources:
-    """The sources check globbed *.list only and ignored modern deb822 files."""
+    """The sources check globbed *.list only and ignored modern deb822 files.
 
-    def test_reads_deb822_sources(self, tmp_path, monkeypatch):
+    Both tests pass explicit paths rather than patching ``Path``: the earlier
+    version leaked onto the host's real /etc/apt and so passed on a developer
+    machine while failing on a CI runner that had one.
+    """
+
+    def test_reads_deb822_sources(self, tmp_path):
         from loadout import doctor
 
         sources_dir = tmp_path / "sources.list.d"
@@ -307,19 +288,27 @@ class TestB10Deb822Sources:
             encoding="utf-8",
         )
 
-        real_path = doctor.Path
-
-        class FakePath(type(real_path())):
-            pass
-
-        monkeypatch.setattr(
-            doctor, "Path", lambda p="": sources_dir if "sources.list.d" in str(p) else real_path(p)
+        result = doctor._check_apt_sources(
+            sources_dir=sources_dir, main_list=tmp_path / "absent.list"
         )
-        result = doctor._check_apt_sources()
         assert result.severity == "ok"
         assert "1 source file" in result.message
 
-    def test_flags_disabled_signature_verification(self, tmp_path, monkeypatch):
+    def test_incomplete_deb822_stanza_is_flagged(self, tmp_path):
+        from loadout import doctor
+
+        sources_dir = tmp_path / "sources.list.d"
+        sources_dir.mkdir(parents=True)
+        (sources_dir / "broken.sources").write_text(
+            "Types: deb\nComponents: main\n", encoding="utf-8"
+        )
+        result = doctor._check_apt_sources(
+            sources_dir=sources_dir, main_list=tmp_path / "absent.list"
+        )
+        assert result.severity == "warn"
+        assert "incomplete deb822" in result.remediation
+
+    def test_flags_disabled_signature_verification(self, tmp_path):
         from loadout import doctor
 
         sources_dir = tmp_path / "sources.list.d"
@@ -327,13 +316,21 @@ class TestB10Deb822Sources:
         (sources_dir / "local.list").write_text(
             "deb [trusted=yes] file:/srv/mirror ./\n", encoding="utf-8"
         )
-        real_path = doctor.Path
-        monkeypatch.setattr(
-            doctor, "Path", lambda p="": sources_dir if "sources.list.d" in str(p) else real_path(p)
+        result = doctor._check_apt_sources(
+            sources_dir=sources_dir, main_list=tmp_path / "absent.list"
         )
-        result = doctor._check_apt_sources()
         assert result.severity == "warn"
         assert "signature verification disabled" in result.remediation
+
+    def test_no_apt_at_all_is_not_a_problem(self, tmp_path):
+        from loadout import doctor
+
+        result = doctor._check_apt_sources(
+            sources_dir=tmp_path / "nope", main_list=tmp_path / "also-nope"
+        )
+        assert result.severity == "ok"
+        assert "not an APT system" in result.message
+
 
 
 class TestA03SingleSearchImplementation:

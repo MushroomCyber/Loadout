@@ -107,6 +107,8 @@ jobs:
           python-version: "3.12"
       - run: pip install -e '.[dev]' pip-audit
       - name: Dependency audit
-        run: pip-audit --strict --desc
+        # --skip-editable: the local package is not on PyPI, and without this
+        # --strict treats "could not audit loadout itself" as a vulnerability.
+        run: pip-audit --strict --desc --skip-editable
       - name: Bandit rules via ruff
         run: ruff check --select S loadout

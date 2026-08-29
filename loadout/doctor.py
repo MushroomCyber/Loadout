@@ -146,21 +146,32 @@ def _check_dpkg_lock() -> CheckResult:
     return CheckResult("dpkg-lock", "ok", "dpkg lock is free")
 
 
-def _check_apt_sources() -> CheckResult:
+def _check_apt_sources(
+    sources_dir: Path | None = None,
+    main_list: Path | None = None,
+) -> CheckResult:
     """Understands both one-line and deb822 sources.
 
     Kali and Debian are moving to ``*.sources`` files with ``Types:``/``URIs:``
     stanzas. Globbing only ``*.list``, as the previous release did, quietly
     ignored the real configuration on a modern box and reported "clean".
+
+    The paths are parameters so tests can point at a fixture directory. They
+    used to be hardcoded, which meant a test could only fake them by patching
+    ``Path`` itself -- and then still picked up the host's real
+    ``/etc/apt/sources.list``, so the same test passed locally and failed on a
+    CI runner that happened to have one.
     """
-    sources_dir = Path("/etc/apt/sources.list.d")
-    if not sources_dir.exists() and not Path("/etc/apt/sources.list").exists():
+    sources_dir = sources_dir if sources_dir is not None else Path("/etc/apt/sources.list.d")
+    main_list = main_list if main_list is not None else Path("/etc/apt/sources.list")
+
+    if not sources_dir.exists() and not main_list.exists():
         return CheckResult("apt-sources", "ok", "not an APT system")
 
     suspicious: list[str] = []
     checked = 0
 
-    one_line = [Path("/etc/apt/sources.list")]
+    one_line = [main_list]
     if sources_dir.is_dir():
         one_line += sorted(sources_dir.glob("*.list"))
     for path in one_line:
