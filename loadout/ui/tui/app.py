@@ -45,10 +45,11 @@ def textual_available() -> bool:
     return TEXTUAL_AVAILABLE
 
 
-WORDMARK = r"""
- ██  ▄▀▀▄ ▄▀▀▄ ██▀▄ ▄▀▀▄ █  █ ▀█▀   pick your kit
- ██  █  █ █▄▄█ █  █ █  █ █  █  █    install it anywhere
- ▀▀▀ ▀▄▄▀ █  █ ▀▄▄▀ ▀▄▄▀ ▀▄▄█  ▀    prove what you used
+WORDMARK = """
+LOADOUT
+pick your kit
+install it anywhere
+prove what you used
 """.strip("\n")
 
 
@@ -202,7 +203,14 @@ if TEXTUAL_AVAILABLE:
 
         CSS = """
         Screen { layers: base; }
-        #banner { height: 4; color: $accent; padding: 0 1; }
+        #banner {
+            height: auto;
+            min-height: 4;
+            color: $warning;
+            text-style: bold;
+            padding: 0 1;
+            content-align: left middle;
+        }
         #query  { border: none; border-bottom: solid $panel; height: 3; }
         #facets { width: 22; border-right: solid $panel; }
         #facets > ListView { height: 1fr; }
