@@ -1,0 +1,11 @@
+id: sickle-tool
+categories:
+- other
+install:
+- provider: apt
+  package: sickle-tool
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

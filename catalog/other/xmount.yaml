@@ -1,0 +1,11 @@
+id: xmount
+categories:
+- other
+install:
+- provider: apt
+  package: xmount
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

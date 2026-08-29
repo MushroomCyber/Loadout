@@ -1,0 +1,11 @@
+id: command-not-found
+categories:
+- other
+install:
+- provider: apt
+  package: command-not-found
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

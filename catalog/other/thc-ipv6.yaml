@@ -1,0 +1,11 @@
+id: thc-ipv6
+categories:
+- other
+install:
+- provider: apt
+  package: thc-ipv6
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

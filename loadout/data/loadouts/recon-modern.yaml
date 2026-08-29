@@ -1,0 +1,16 @@
+slug: recon-modern
+name: Modern Recon
+description: The Go-toolchain recon pipeline, no apt required
+tags:
+- bug-bounty
+- recon
+tools:
+- amass
+- dnsx
+- ffuf
+- gowitness
+- httpx
+- katana
+- naabu
+- nuclei
+- subfinder

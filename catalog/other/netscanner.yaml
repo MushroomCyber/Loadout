@@ -1,0 +1,11 @@
+id: netscanner
+categories:
+- other
+install:
+- provider: apt
+  package: netscanner
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

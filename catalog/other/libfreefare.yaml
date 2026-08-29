@@ -1,0 +1,11 @@
+id: libfreefare
+categories:
+- other
+install:
+- provider: apt
+  package: libfreefare
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: goldeneye
+categories:
+- other
+install:
+- provider: apt
+  package: goldeneye
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

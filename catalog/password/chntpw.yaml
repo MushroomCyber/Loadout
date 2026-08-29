@@ -1,0 +1,11 @@
+id: chntpw
+categories:
+- password
+install:
+- provider: apt
+  package: chntpw
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

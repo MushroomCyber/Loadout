@@ -1,0 +1,11 @@
+id: traceroute
+categories:
+- other
+install:
+- provider: apt
+  package: traceroute
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: llm-tools-nmap
+categories:
+- other
+install:
+- provider: apt
+  package: llm-tools-nmap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

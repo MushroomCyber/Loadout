@@ -1,0 +1,11 @@
+id: fragrouter
+categories:
+- other
+install:
+- provider: apt
+  package: fragrouter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

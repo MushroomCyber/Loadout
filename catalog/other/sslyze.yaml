@@ -1,0 +1,11 @@
+id: sslyze
+categories:
+- other
+install:
+- provider: apt
+  package: sslyze
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

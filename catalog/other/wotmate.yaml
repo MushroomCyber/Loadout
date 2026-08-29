@@ -1,0 +1,11 @@
+id: wotmate
+categories:
+- other
+install:
+- provider: apt
+  package: wotmate
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

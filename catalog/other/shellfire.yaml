@@ -1,0 +1,11 @@
+id: shellfire
+categories:
+- other
+install:
+- provider: apt
+  package: shellfire
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

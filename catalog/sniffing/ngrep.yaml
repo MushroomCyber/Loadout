@@ -1,0 +1,11 @@
+id: ngrep
+categories:
+- sniffing
+install:
+- provider: apt
+  package: ngrep
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: freerdp3
+categories:
+- other
+install:
+- provider: apt
+  package: freerdp3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

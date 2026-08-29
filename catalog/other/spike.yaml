@@ -1,0 +1,11 @@
+id: spike
+categories:
+- other
+install:
+- provider: apt
+  package: spike
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

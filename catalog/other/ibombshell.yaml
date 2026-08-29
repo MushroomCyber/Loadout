@@ -1,0 +1,11 @@
+id: ibombshell
+categories:
+- other
+install:
+- provider: apt
+  package: ibombshell
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

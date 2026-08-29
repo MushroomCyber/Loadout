@@ -1,0 +1,11 @@
+id: pwnat
+categories:
+- other
+install:
+- provider: apt
+  package: pwnat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

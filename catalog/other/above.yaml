@@ -1,0 +1,11 @@
+id: above
+categories:
+- other
+install:
+- provider: apt
+  package: above
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

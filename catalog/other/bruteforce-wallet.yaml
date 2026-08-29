@@ -1,0 +1,11 @@
+id: bruteforce-wallet
+categories:
+- other
+install:
+- provider: apt
+  package: bruteforce-wallet
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

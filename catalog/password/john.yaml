@@ -1,0 +1,25 @@
+id: john
+summary: 'John the Ripper: offline password cracking, many formats'
+categories:
+- password
+tags:
+- cracking
+phases:
+- credential-access
+binaries:
+- john
+- unshadow
+- zip2john
+homepage: https://www.openwall.com/john/
+alternatives:
+- hashcat
+install:
+- provider: apt
+  package: john
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: john-jumbo

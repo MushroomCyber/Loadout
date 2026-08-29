@@ -1,0 +1,11 @@
+id: kustomize
+categories:
+- other
+install:
+- provider: apt
+  package: kustomize
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

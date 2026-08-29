@@ -1,0 +1,13 @@
+id: commix
+categories:
+- web
+tags:
+- injection
+install:
+- provider: apt
+  package: commix
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: cmseek
+categories:
+- other
+install:
+- provider: apt
+  package: cmseek
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

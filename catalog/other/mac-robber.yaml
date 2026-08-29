@@ -1,0 +1,11 @@
+id: mac-robber
+categories:
+- other
+install:
+- provider: apt
+  package: mac-robber
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

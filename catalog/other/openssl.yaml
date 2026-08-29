@@ -1,0 +1,11 @@
+id: openssl
+categories:
+- other
+install:
+- provider: apt
+  package: openssl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: distorm3
+categories:
+- other
+install:
+- provider: apt
+  package: distorm3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

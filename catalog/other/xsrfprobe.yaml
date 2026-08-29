@@ -1,0 +1,11 @@
+id: xsrfprobe
+categories:
+- other
+install:
+- provider: apt
+  package: xsrfprobe
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

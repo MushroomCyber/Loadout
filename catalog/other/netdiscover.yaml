@@ -1,0 +1,11 @@
+id: netdiscover
+categories:
+- other
+install:
+- provider: apt
+  package: netdiscover
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

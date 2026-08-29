@@ -1,0 +1,13 @@
+id: bopscrk
+categories:
+- other
+tags:
+- wordlists
+install:
+- provider: apt
+  package: bopscrk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

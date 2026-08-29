@@ -1,0 +1,11 @@
+id: wordlistraider
+categories:
+- other
+install:
+- provider: apt
+  package: wordlistraider
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

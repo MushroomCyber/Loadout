@@ -1,0 +1,11 @@
+id: hak5-wifi-coconut
+categories:
+- other
+install:
+- provider: apt
+  package: hak5-wifi-coconut
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

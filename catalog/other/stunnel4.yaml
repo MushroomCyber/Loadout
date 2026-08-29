@@ -1,0 +1,11 @@
+id: stunnel4
+categories:
+- other
+install:
+- provider: apt
+  package: stunnel4
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

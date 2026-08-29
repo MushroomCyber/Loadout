@@ -1,0 +1,13 @@
+id: scalpel
+categories:
+- forensics
+tags:
+- carving
+install:
+- provider: apt
+  package: scalpel
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

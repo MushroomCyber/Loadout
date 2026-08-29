@@ -1,0 +1,11 @@
+id: cntlm
+categories:
+- other
+install:
+- provider: apt
+  package: cntlm
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

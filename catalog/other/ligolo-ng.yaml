@@ -1,0 +1,11 @@
+id: ligolo-ng
+categories:
+- other
+install:
+- provider: apt
+  package: ligolo-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: azurehound
+categories:
+- other
+tags:
+- cloud-ad
+install:
+- provider: apt
+  package: azurehound
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

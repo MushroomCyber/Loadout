@@ -1,0 +1,11 @@
+id: mongo-tools
+categories:
+- other
+install:
+- provider: apt
+  package: mongo-tools
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

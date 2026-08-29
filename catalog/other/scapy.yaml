@@ -1,0 +1,11 @@
+id: scapy
+categories:
+- other
+install:
+- provider: apt
+  package: scapy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

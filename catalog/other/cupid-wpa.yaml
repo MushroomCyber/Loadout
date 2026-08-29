@@ -1,0 +1,11 @@
+id: cupid-wpa
+categories:
+- other
+install:
+- provider: apt
+  package: cupid-wpa
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

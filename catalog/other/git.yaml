@@ -1,0 +1,11 @@
+id: git
+categories:
+- other
+install:
+- provider: apt
+  package: git
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

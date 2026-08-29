@@ -1,0 +1,26 @@
+id: hydra
+summary: Parallelised online login brute-forcer for many protocols
+categories:
+- password
+tags:
+- online
+- bruteforce
+phases:
+- credential-access
+binaries:
+- hydra
+homepage: https://github.com/vanhauser-thc/thc-hydra
+alternatives:
+- medusa
+- ncrack
+- patator
+install:
+- provider: apt
+  package: hydra
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: hydra

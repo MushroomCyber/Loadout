@@ -1,0 +1,11 @@
+id: powercat
+categories:
+- other
+install:
+- provider: apt
+  package: powercat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

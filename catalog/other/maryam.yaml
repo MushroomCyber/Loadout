@@ -1,0 +1,11 @@
+id: maryam
+categories:
+- other
+install:
+- provider: apt
+  package: maryam
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

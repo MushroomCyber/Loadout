@@ -1,0 +1,11 @@
+id: urlcrazy
+categories:
+- other
+install:
+- provider: apt
+  package: urlcrazy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

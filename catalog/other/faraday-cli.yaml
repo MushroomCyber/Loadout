@@ -1,0 +1,11 @@
+id: faraday-cli
+categories:
+- other
+install:
+- provider: apt
+  package: faraday-cli
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

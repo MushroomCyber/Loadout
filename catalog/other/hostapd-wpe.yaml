@@ -1,0 +1,11 @@
+id: hostapd-wpe
+categories:
+- other
+install:
+- provider: apt
+  package: hostapd-wpe
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: zonedb
+categories:
+- other
+install:
+- provider: apt
+  package: zonedb
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

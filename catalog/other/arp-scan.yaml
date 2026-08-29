@@ -1,0 +1,11 @@
+id: arp-scan
+categories:
+- other
+install:
+- provider: apt
+  package: arp-scan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

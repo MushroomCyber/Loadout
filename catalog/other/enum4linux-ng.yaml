@@ -1,0 +1,11 @@
+id: enum4linux-ng
+categories:
+- other
+install:
+- provider: apt
+  package: enum4linux-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

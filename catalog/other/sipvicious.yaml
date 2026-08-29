@@ -1,0 +1,11 @@
+id: sipvicious
+categories:
+- other
+install:
+- provider: apt
+  package: sipvicious
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

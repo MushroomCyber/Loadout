@@ -1,0 +1,11 @@
+id: eapmd5pass
+categories:
+- other
+install:
+- provider: apt
+  package: eapmd5pass
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

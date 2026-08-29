@@ -1,0 +1,11 @@
+id: proxify
+categories:
+- other
+install:
+- provider: apt
+  package: proxify
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

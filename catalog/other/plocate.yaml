@@ -1,0 +1,11 @@
+id: plocate
+categories:
+- other
+install:
+- provider: apt
+  package: plocate
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

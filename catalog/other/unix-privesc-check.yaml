@@ -1,0 +1,11 @@
+id: unix-privesc-check
+categories:
+- other
+install:
+- provider: apt
+  package: unix-privesc-check
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

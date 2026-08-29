@@ -1,0 +1,21 @@
+id: katana
+summary: Crawling framework for mapping web application surface
+categories:
+- web
+tags:
+- crawler
+- projectdiscovery
+phases:
+- discovery
+binaries:
+- katana
+homepage: https://github.com/projectdiscovery/katana
+alternatives:
+- gospider
+- hakrawler
+install:
+- provider: go
+  module: github.com/projectdiscovery/katana/cmd/katana@latest
+- provider: github
+  repo: projectdiscovery/katana
+  checksums: '*checksums*.txt'

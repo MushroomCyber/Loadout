@@ -1,0 +1,11 @@
+id: dufflebag
+categories:
+- other
+install:
+- provider: apt
+  package: dufflebag
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

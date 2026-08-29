@@ -1,0 +1,13 @@
+id: ettercap
+categories:
+- sniffing
+tags:
+- mitm
+install:
+- provider: apt
+  package: ettercap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

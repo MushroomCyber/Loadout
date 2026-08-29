@@ -1,0 +1,11 @@
+id: lvm2
+categories:
+- other
+install:
+- provider: apt
+  package: lvm2
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

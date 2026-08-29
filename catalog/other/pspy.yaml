@@ -1,0 +1,11 @@
+id: pspy
+categories:
+- other
+install:
+- provider: apt
+  package: pspy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

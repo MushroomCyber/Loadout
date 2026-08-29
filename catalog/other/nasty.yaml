@@ -1,0 +1,11 @@
+id: nasty
+categories:
+- other
+install:
+- provider: apt
+  package: nasty
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

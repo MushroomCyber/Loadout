@@ -1,0 +1,13 @@
+id: wfuzz
+categories:
+- web
+tags:
+- fuzzing
+install:
+- provider: apt
+  package: wfuzz
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

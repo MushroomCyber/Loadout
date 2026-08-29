@@ -1,0 +1,11 @@
+id: firmware-mod-kit
+categories:
+- other
+install:
+- provider: apt
+  package: firmware-mod-kit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

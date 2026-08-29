@@ -1,0 +1,29 @@
+id: gowitness
+summary: Web screenshot utility for triaging large host lists
+categories:
+- web
+- recon
+tags:
+- screenshots
+- bug-bounty
+phases:
+- discovery
+binaries:
+- gowitness
+homepage: https://github.com/sensepost/gowitness
+alternatives:
+- aquatone
+- eyewitness
+install:
+- provider: apt
+  package: gowitness
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: go
+  module: github.com/sensepost/gowitness@latest
+- provider: github
+  repo: sensepost/gowitness
+  checksums: '*checksums*.txt'

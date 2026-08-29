@@ -1,0 +1,11 @@
+id: kali-tweaks
+categories:
+- other
+install:
+- provider: apt
+  package: kali-tweaks
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

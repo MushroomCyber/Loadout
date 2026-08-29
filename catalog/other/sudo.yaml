@@ -1,0 +1,11 @@
+id: sudo
+categories:
+- other
+install:
+- provider: apt
+  package: sudo
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

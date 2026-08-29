@@ -1,0 +1,11 @@
+id: nmapsi4
+categories:
+- other
+install:
+- provider: apt
+  package: nmapsi4
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

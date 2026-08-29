@@ -1,0 +1,13 @@
+id: guymager
+categories:
+- forensics
+tags:
+- imaging
+install:
+- provider: apt
+  package: guymager
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

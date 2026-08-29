@@ -1,0 +1,11 @@
+id: dump
+categories:
+- other
+install:
+- provider: apt
+  package: dump
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: python-faraday
+categories:
+- other
+install:
+- provider: apt
+  package: python-faraday
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: bloodhound-ce-python
+categories:
+- other
+tags:
+- ad-mapping
+install:
+- provider: apt
+  package: bloodhound-ce-python
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

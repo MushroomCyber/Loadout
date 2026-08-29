@@ -1,0 +1,11 @@
+id: lapsdumper
+categories:
+- other
+install:
+- provider: apt
+  package: lapsdumper
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

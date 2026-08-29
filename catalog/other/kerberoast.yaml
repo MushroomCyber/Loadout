@@ -1,0 +1,11 @@
+id: kerberoast
+categories:
+- other
+install:
+- provider: apt
+  package: kerberoast
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

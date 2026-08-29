@@ -1,0 +1,11 @@
+id: truecrack
+categories:
+- other
+install:
+- provider: apt
+  package: truecrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: sipp
+categories:
+- other
+install:
+- provider: apt
+  package: sipp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

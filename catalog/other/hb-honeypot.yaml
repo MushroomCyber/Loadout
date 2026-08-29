@@ -1,0 +1,11 @@
+id: hb-honeypot
+categories:
+- other
+install:
+- provider: apt
+  package: hb-honeypot
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

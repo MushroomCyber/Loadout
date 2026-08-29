@@ -1,0 +1,11 @@
+id: i2c-tools
+categories:
+- other
+install:
+- provider: apt
+  package: i2c-tools
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

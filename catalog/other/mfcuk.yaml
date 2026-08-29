@@ -1,0 +1,11 @@
+id: mfcuk
+categories:
+- other
+install:
+- provider: apt
+  package: mfcuk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

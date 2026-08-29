@@ -1,0 +1,27 @@
+id: spiderfoot
+summary: Automated OSINT collection and correlation platform
+categories:
+- recon
+- threat-intel
+tags:
+- osint
+- automation
+phases:
+- reconnaissance
+binaries:
+- spiderfoot
+- sf.py
+homepage: https://www.spiderfoot.net
+alternatives:
+- theharvester
+- maltego
+install:
+- provider: apt
+  package: spiderfoot
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: pipx
+  package: spiderfoot

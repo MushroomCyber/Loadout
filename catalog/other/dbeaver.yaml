@@ -1,0 +1,11 @@
+id: dbeaver
+categories:
+- other
+install:
+- provider: apt
+  package: dbeaver
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

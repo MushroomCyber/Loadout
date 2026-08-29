@@ -1,0 +1,11 @@
+id: ipv6toolkit
+categories:
+- other
+install:
+- provider: apt
+  package: ipv6toolkit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: ext3grep
+categories:
+- other
+install:
+- provider: apt
+  package: ext3grep
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

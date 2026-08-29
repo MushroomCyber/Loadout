@@ -1,0 +1,13 @@
+id: fierce
+categories:
+- recon
+tags:
+- dns
+install:
+- provider: apt
+  package: fierce
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

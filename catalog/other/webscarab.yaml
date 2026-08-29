@@ -1,0 +1,11 @@
+id: webscarab
+categories:
+- other
+install:
+- provider: apt
+  package: webscarab
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

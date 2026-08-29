@@ -1,0 +1,11 @@
+id: mc
+categories:
+- other
+install:
+- provider: apt
+  package: mc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

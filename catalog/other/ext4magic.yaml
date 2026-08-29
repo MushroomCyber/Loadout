@@ -1,0 +1,11 @@
+id: ext4magic
+categories:
+- other
+install:
+- provider: apt
+  package: ext4magic
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

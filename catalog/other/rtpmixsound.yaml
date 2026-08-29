@@ -1,0 +1,11 @@
+id: rtpmixsound
+categories:
+- other
+install:
+- provider: apt
+  package: rtpmixsound
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

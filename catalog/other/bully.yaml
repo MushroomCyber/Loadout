@@ -1,0 +1,11 @@
+id: bully
+categories:
+- other
+install:
+- provider: apt
+  package: bully
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

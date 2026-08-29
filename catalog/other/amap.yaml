@@ -1,0 +1,11 @@
+id: amap
+categories:
+- other
+install:
+- provider: apt
+  package: amap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,153 +1,147 @@
 # Changelog
 
-All notable changes to this project will be documented here.
+All notable changes to this project are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
+versioning follows [SemVer](https://semver.org/spec/v2.0.0.html).
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [1.0.0] — unreleased
 
-## [0.3.0] — 2026-04-16
+Kali Tools Manager becomes **Loadout**. The rename ships with the capability
+that justifies it: a tool is described once and installed by whichever backend
+the machine actually has.
 
 ### Added
 
-- **APT-first catalog builder** — new [kalitools/apt_catalog.py](kalitools/apt_catalog.py):
-  builds the tool catalog from `python3-apt` (preferred) or a
-  `apt-cache dumpavail` fallback. Categorization uses, in order,
-  `kali-tools-*` meta-package membership (`apt-cache depends`),
-  debtags (`security::*`, `use::*`, `network::*`, `protocol::*`), and
-  keyword hints.
-- **`kalitools catalog refresh` / `catalog info`** subcommands to
-  regenerate the catalog on demand.
-- **SQLite state database** at `~/.local/state/kalitools/state.db` via
-  [kalitools/state.py](kalitools/state.py) — stores `installed`,
-  `last_used`, `starred`, and an `install`/`uninstall`/`launch`
-  history. Survives catalog regeneration so the shipped JSON can be
-  kept state-free.
-- **Profiles system** — [kalitools/profiles.py](kalitools/profiles.py)
-  plus five bundled profiles under
-  [kalitools/data/profiles/](kalitools/data/profiles/):
-  `pentester-web`, `forensics-starter`, `osint-minimal`, `bug-bounty`,
-  `ctf-basics`. User profiles can be dropped into
-  `~/.config/kalitools/profiles/`. Access via
-  `kalitools profile {list,show,apply}`.
-- **Non-interactive CLI** — the historical interactive launcher is
-  still the default, but `kalitools` now also accepts subcommands:
-  `list`, `search`, `show`, `install`, `remove`, `update`, `upgrade`,
-  `catalog {refresh,info}`, `profile {list,show,apply}`,
-  `history [--clear]`, `export --format {json,script}`.
-  All major subcommands accept `--json` for machine-readable output.
-  Destructive commands honour `--yes` and `--dry-run`.
-- **Textual TUI** (optional) — [kalitools/tui/app.py](kalitools/tui/app.py).
-  Launch with `kalitools --tui` or the new `kalitools-tui` console
-  entry point. Requires the `[tui]` extra.
-- **Rich theme registry** — [kalitools/theme.py](kalitools/theme.py)
-  (`default`, `mono`, `solarized-dark`, `high-contrast`) plus
-  `--no-emoji` to strip emoji glyphs for minimal terminals.
-- **`ConfigManager.import_tools_list`** now actually installs. Callers
-  pass an `installer` callback (or omit it to just parse). Supports
-  `--yes` semantics for unattended use.
-- **Operation history** — `kalitools history [--package PKG]
-  [--limit N]`, plus `--clear`.
-- **Test suite** — [tests/](tests/): 33 tests covering atomic I/O,
-  catalog schema, security regexes, profile loader, APT
-  categorization, the sqlite state DB, config import/export, the
-  Rich theme registry, and CLI smoke tests.
-- **CI** — [.github/workflows/ci.yml](.github/workflows/ci.yml): matrix
-  across Python 3.10 / 3.11 / 3.12; runs `compileall`, `ruff`, and
-  `pytest`.
-- **Docs** — [docs/PROFILES.md](docs/PROFILES.md),
-  [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
-- **Offline APT routing** — when `KALITOOLS_OFFLINE=1` is set and a local
-  repository has been configured via `setup_local_repo`, `apt-get install`
-  and `apt-get update` are restricted to the local sources file so they work
-  on air-gapped hosts without stalling on unreachable remote mirrors.
-- **`robots.txt` compliance** — the `http_util.polite_get` helper now checks
-  `robots.txt` before every outbound request and skips disallowed URLs.
+- **Provider layer** — `apt`, `brew`, `pipx`, `go`, `cargo`, `gem`, `npm`,
+  `github` (verified release downloads) and `docker`. Loadout resolves a route
+  per tool, per machine, honouring catalog priority, distro restrictions and
+  `--prefer`.
+- **YAML catalog** — one file per tool under `catalog/`, validated in CI and
+  compiled to SQLite with an FTS5 index. Community-editable by pull request and
+  versioned independently of the app.
+- **`loadout sync`** — converge a machine to a `loadout.yaml` committed in the
+  engagement repo. `--prune` also removes what the manifest does not declare.
+- **`loadout report`** — signed inventory of the tools and versions used in a
+  time window, in text, Markdown or JSON, for pentest reports and DFIR
+  chain-of-custody.
+- **`loadout audit`** — flags installed tooling that is superseded, has no
+  recorded provenance, or installs from an unverified source.
+- **`loadout run`** — run a tool, falling back to its container image when it is
+  not installed.
+- **`loadout alt`** and **`loadout phase`** — alternatives, and browsing by
+  kill-chain stage.
+- **`loadout export`** now emits `docker`, `ansible` and `loadout` formats
+  alongside `json` and `script`.
+- **`--json` on every command**, accepted before *or* after the subcommand.
+- Blue- and purple-team coverage: `detection`, `incident-response`,
+  `monitoring`, `malware`, `cloud` and `threat-intel` categories, plus the
+  `dfir-responder`, `detection-engineer`, `cloud-auditor`, `ad-operator` and
+  `recon-modern` loadouts.
+- Automatic import of kalitools state on first run; `loadout migrate` to run it
+  explicitly. See [docs/MIGRATION.md](docs/MIGRATION.md).
 
 ### Changed
 
-- **Install / uninstall / launch** paths now record to the sqlite
-  state DB in addition to the legacy `~/.kali_tools_cache.json`.
-- Interactive help screen now reflects all key bindings (numeric jump,
-  `U` updates, `R` re-scan, `Y` utilities, `ESC` exit).
-- `pyproject.toml` ships profile JSON as package data and exposes
-  `kalitools-tui` as a second console entry point.
+- **The interactive browser is filter-first.** The cursor starts in the query
+  box and the list narrows as you type; `space` marks tools and `ctrl+a`
+  installs the set. Replaces paging through 31 screens of 25 rows.
+- **Four columns, not six** — `status · tool · summary · via`. Summary is the
+  column that matters and the old layout did not have one.
+- `manager.py` (2,443 lines) is dissolved into `catalog/`, `providers/`,
+  `planner`, `executor` and `policy`. Planning is pure and returns data, which
+  is what makes the install path testable without a Debian box.
+- One search implementation, in the catalog store. There were three, and they
+  ranked the same query differently.
+- Consecutive apt actions coalesce into a single transaction.
+- Six `~/.kali_tools_*` files collapse into the XDG layout.
+- Logging defaults to WARNING; a CLI that prints log lines during normal
+  operation is unusable in a pipeline.
+- Desktop notifications shell out to `notify-send` / `osascript`, dropping the
+  unmaintained `notify2` dependency (and with it `dbus-python`).
 
 ### Fixed
 
-- `kalitools` Homepage URL corrected (was a typo
-  `egrep-Kali-Tools-Manager`).
+- `list --installed` and `export` returned nothing on a fresh machine — silently,
+  with exit code 0 — because installed state came from a cache file that started
+  out empty. It is now queried live from the providers.
+- The catalog was written into the installed package directory, so `pipx
+  upgrade` discarded refreshes and read-only prefixes broke them. It now lives
+  in `$XDG_DATA_HOME`.
+- TUI installs hung when sudo credentials were not cached: the password prompt
+  was drawn over by the app. Credentials are now primed before the UI takes the
+  terminal, and `DEBIAN_FRONTEND=noninteractive` prevents debconf hangs.
+- `search tag:osint` could never match — `Tool` had no `tags` field and the
+  dict-shim turned the mistake into a silent `None`. The shim is gone and the
+  field is real.
+- `launch` and `--help` ran the package name rather than the binary, so
+  `metasploit-framework` produced "command not found" instead of `msfconsole`.
+  Binaries are now catalog data, resolved from `dpkg -L` during seeding.
+- `prune_unknown` exceeded SQLite's 32,766-variable limit on a full APT catalog,
+  and the failure was swallowed by a blanket `except`. It now stages ids in a
+  temp table.
+- Progress percentages were fabricated (`min(95, 5 + lines * 2)`, which pinned
+  every install at 95% after 45 lines). They now come from APT's status fd.
+- Package names were validated on install but not on removal, and `--` did not
+  separate options from names.
+- `doctor` ignored deb822 `*.sources` files, so it reported "clean" while not
+  reading the real configuration on a modern Debian or Kali host.
+- First run fired roughly 800 HTTP requests from a constructor. Nothing touches
+  the network at startup.
+- A malformed APT status line containing `nan` jumped the progress bar to 100%.
+- Archive extraction treated `/etc/passwd` as a relative path on Windows,
+  because `Path.is_absolute()` is False there without a drive letter.
 
-## [0.2.0] — 2026-04-16
+Found only by running against real Kali (see `tools/verify_linux.sh`):
 
-### Fixed
-
-- **Crash**: missing `datetime` import in `kalitools.manager` made
-  `create_backup()` raise `NameError` the first time it was called.
-- **Crash on Python 3.10 / 3.11**: an f-string with a backslash in its
-  expression prevented the module from even importing. Rewritten to use a
-  local variable.
-- **Broken sudo check**: `check_sudo_available()` ignored `sudo -n true`'s
-  exit status and always returned `True`. It now honours the return code
-  and logs whether credentials are cached.
-- **Deadlock risk**: `uninstall_tool()` read `stderr` after the full `stdout`
-  loop, which could block indefinitely on large error output. Output is now
-  merged into `stdout` with a bounded ring buffer.
-- **Dead stub**: `fetch_tools_from_web()` printed "success" without doing
-  anything. Replaced by a thin wrapper around `discover_from_kali_site`.
-- **Landmine**: an orphaned `parse_args()` in `kalitools.ui` referenced an
-  `argparse` module that was never imported. Removed.
-- **Unreachable**: `except subprocess.TimeoutExpired` branch in
-  `install_tool()` — no timeout was ever set. Removed.
-- **Non-atomic JSON writes**: every JSON state writer now routes through
-  `_atomic_write_json` (temp file + `os.replace`), so Ctrl-C mid-write no
-  longer corrupts `~/.kali_tools_cache.json`, overrides, meta hints, user
-  settings, or `tools_merged.json`.
+- `catalog update` aborted on the first package name containing `+`. 953 names
+  on Kali have one (`afl++`, `bonnie++`, `g++`), so the APT catalog build never
+  completed at all.
+- The APT status-fd options were appended to an argv already ending in
+  `-- <package>`, so apt read `-o` and `APT::Status-Fd=7` as packages and exited
+  100. Every real install failed; no unit test could see it.
+- A failed step reported only `apt-get exited 100`, forcing the user to re-run
+  the command by hand to learn why. The last lines of output are now included.
+- `--json` was not pure JSON: `catalog update` printed progress notes to stdout
+  ahead of the payload, so piping it into a parser failed.
+- `dpkg -L` lists paths alphabetically, which made coreutils' primary binary
+  `[`. The binary matching the package name is now promoted, stably.
+- `loadout report | head` printed "Exception ignored on flushing sys.stdout" --
+  the interpreter re-raises BrokenPipeError at shutdown, after every handler.
+- `report` listed all 385 installed base-system packages. It now defaults to
+  what was actually used in the window, with `--all-installed` for the rest.
+- Removing a tool printed "removeed".
+- `setuptools-scm` was in the build requires but unused, and its git
+  introspection failed on mounted volumes and in containers.
 
 ### Security
 
-- **`setup_local_repo`** no longer interpolates raw user input into
-  `/etc/apt/sources.list.d/local.list`. The path is validated (absolute,
-  printable, no control characters, must exist as a directory), staged via
-  `tempfile.mkstemp`, and `[trusted=yes]` is only emitted when the caller
-  passes `allow_unsigned=True` **and** the user confirms the signature
-  warning.
-- **`launch_tool`** no longer concatenates catalog-sourced command strings
-  into a shell template. The command is parsed with `shlex`, the leading
-  token is required to match `[A-Za-z0-9_./-]+`, and any command containing
-  shell metacharacters requires an explicit user confirmation before it is
-  run.
-- **User-Agent** now identifies the project and points at the GitHub repo
-  instead of `example.local`, so upstream operators can reach us.
-- **Privacy**: the shipped `kalitools/data/tools_merged.json` has been
-  scrubbed of per-user `installed` / `size` state.
-
-### Changed
-
-- **Python 3.10+** is now the supported floor (previously claimed 3.8+ but
-  did not parse on 3.10/3.11).
-- `pyproject.toml` now declares a `kalitools` console entry point,
-  packages the shipped JSON catalog via `[tool.setuptools.package-data]`,
-  and splits optional dependencies into `notifications`, `disk`, `tui`,
-  and `dev` extras.
-- `requirements.txt` is retired in favour of `pip install -e '.[...]'`.
-- Traceback dumps on fatal error are gated behind `--log-level DEBUG`;
-  otherwise a single-line error plus a hint is shown.
-- `tools_merged.json` gained a versioned schema wrapper
-  (`{schema: 2, generated_at, source, tools: [...]}`). The loader still
-  accepts the legacy bare-list shape.
+- `sudo` is constructed in exactly one function, `policy.elevate()`, enforced by
+  a test that scans the tree.
+- Downloaded artifacts are checksummed against the release's own checksum file.
+  **No published checksum is a refusal**, not a warning; `--allow-unverified` is
+  an explicit opt-in.
+- Archive extraction refuses absolute paths and `..` traversal, and uses the
+  `data` filter on Python 3.12+.
+- CI runs `ruff --select S`, `pip-audit`, and pins GitHub Actions to commit SHAs.
 
 ### Removed
 
-- The minimal `Console` shim in `kalitools/__init__.py` was cargo-cult —
-  the rest of the package hard-imports `rich.*` anyway. Rich is now a
-  declared runtime dependency.
-- Dead non-Linux branch in `resolve_ui_mode()`.
+- `kalitools_lib.scraping` and the kali.org scraper as a catalog source. APT
+  metadata and curated YAML replace it.
+- The keyword-substring categoriser, which put 655 of 764 tools in `other` while
+  mis-filing much of the rest.
+- `notify2`, `beautifulsoup4` and `rapidfuzz` dependencies.
+- `requirements.txt` and `run.sh` — `pip install -e '.[dev]'` covers both.
 
-### Added
+### Deprecated
 
-- `LICENSE` (MIT), `CONTRIBUTING.md`, `SECURITY.md`, this `CHANGELOG.md`.
-- `kalitools.manager._atomic_write_json` / `_atomic_write_text` helpers.
+- The `kalitools` command forwards to `loadout` with a notice on stderr. Removed
+  in 2.0.
+- `KALITOOLS_*` environment variables. Use `LOADOUT_*`.
 
-## [0.1.0]
+---
 
-Initial internal release.
+## [0.3.0] — 2026-04
+
+Last release under the Kali Tools Manager name. Rich CLI, Textual TUI, curated
+profiles, offline APT support, SQLite state, 33 tests.

@@ -1,0 +1,11 @@
+id: inspy
+categories:
+- other
+install:
+- provider: apt
+  package: inspy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

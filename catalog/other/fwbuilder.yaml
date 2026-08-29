@@ -1,0 +1,11 @@
+id: fwbuilder
+categories:
+- other
+install:
+- provider: apt
+  package: fwbuilder
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

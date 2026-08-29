@@ -1,0 +1,13 @@
+id: pixiewps
+categories:
+- wireless
+tags:
+- wps
+install:
+- provider: apt
+  package: pixiewps
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

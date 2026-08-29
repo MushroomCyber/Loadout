@@ -1,0 +1,11 @@
+id: metagoofil
+categories:
+- other
+install:
+- provider: apt
+  package: metagoofil
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

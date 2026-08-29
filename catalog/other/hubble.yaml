@@ -1,0 +1,11 @@
+id: hubble
+categories:
+- other
+install:
+- provider: apt
+  package: hubble
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

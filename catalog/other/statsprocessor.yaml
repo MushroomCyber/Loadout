@@ -1,0 +1,11 @@
+id: statsprocessor
+categories:
+- other
+install:
+- provider: apt
+  package: statsprocessor
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

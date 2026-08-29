@@ -1,0 +1,11 @@
+id: owl
+categories:
+- other
+install:
+- provider: apt
+  package: owl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

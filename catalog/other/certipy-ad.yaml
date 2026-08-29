@@ -1,0 +1,11 @@
+id: certipy-ad
+categories:
+- other
+install:
+- provider: apt
+  package: certipy-ad
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

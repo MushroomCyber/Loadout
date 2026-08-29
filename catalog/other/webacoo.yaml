@@ -1,0 +1,11 @@
+id: webacoo
+categories:
+- other
+install:
+- provider: apt
+  package: webacoo
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

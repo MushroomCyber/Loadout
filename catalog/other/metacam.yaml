@@ -1,0 +1,11 @@
+id: metacam
+categories:
+- other
+install:
+- provider: apt
+  package: metacam
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

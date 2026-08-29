@@ -1,0 +1,11 @@
+id: xclip
+categories:
+- other
+install:
+- provider: apt
+  package: xclip
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: edb-debugger
+categories:
+- reverse
+tags:
+- debugger
+install:
+- provider: apt
+  package: edb-debugger
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

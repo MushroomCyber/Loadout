@@ -1,0 +1,11 @@
+id: pasco
+categories:
+- other
+install:
+- provider: apt
+  package: pasco
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

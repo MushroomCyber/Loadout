@@ -1,0 +1,11 @@
+id: missidentify
+categories:
+- other
+install:
+- provider: apt
+  package: missidentify
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

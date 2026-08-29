@@ -1,0 +1,11 @@
+id: vlan
+categories:
+- other
+install:
+- provider: apt
+  package: vlan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: ligolo-mp
+categories:
+- other
+install:
+- provider: apt
+  package: ligolo-mp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: htshells
+categories:
+- other
+install:
+- provider: apt
+  package: htshells
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

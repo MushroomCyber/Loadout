@@ -1,0 +1,11 @@
+id: teamsploit
+categories:
+- other
+install:
+- provider: apt
+  package: teamsploit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

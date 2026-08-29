@@ -1,0 +1,27 @@
+id: ghidra
+summary: NSA's software reverse engineering suite with a decompiler
+categories:
+- reverse
+tags:
+- decompiler
+- gui
+phases:
+- analysis
+binaries:
+- ghidraRun
+homepage: https://ghidra-sre.org
+alternatives:
+- radare2
+- cutter
+- ida-free
+install:
+- provider: apt
+  package: ghidra
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: ghidra
+  cask: true

@@ -1,0 +1,11 @@
+id: cadaver
+categories:
+- web
+install:
+- provider: apt
+  package: cadaver
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: crack
+categories:
+- other
+install:
+- provider: apt
+  package: crack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

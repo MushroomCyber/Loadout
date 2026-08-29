@@ -1,0 +1,11 @@
+id: imhex
+categories:
+- other
+install:
+- provider: apt
+  package: imhex
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

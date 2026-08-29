@@ -1,0 +1,11 @@
+id: ophcrack-cli
+categories:
+- other
+install:
+- provider: apt
+  package: ophcrack-cli
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

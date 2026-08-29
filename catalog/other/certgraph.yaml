@@ -1,0 +1,11 @@
+id: certgraph
+categories:
+- other
+install:
+- provider: apt
+  package: certgraph
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

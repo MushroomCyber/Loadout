@@ -1,0 +1,11 @@
+id: expect
+categories:
+- other
+install:
+- provider: apt
+  package: expect
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

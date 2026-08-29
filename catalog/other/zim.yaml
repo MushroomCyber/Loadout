@@ -1,0 +1,11 @@
+id: zim
+categories:
+- other
+install:
+- provider: apt
+  package: zim
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,14 @@
+id: netsniff-ng
+summary: High-performance network toolkit
+categories:
+- sniffing
+tags:
+- capture
+install:
+- provider: apt
+  package: netsniff-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

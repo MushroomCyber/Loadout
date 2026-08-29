@@ -1,0 +1,14 @@
+id: odat
+summary: Oracle database attack tool
+categories:
+- database
+tags:
+- oracle
+install:
+- provider: apt
+  package: odat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

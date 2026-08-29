@@ -1,0 +1,14 @@
+id: crunch
+summary: Wordlist generator
+categories:
+- password
+tags:
+- wordlists
+install:
+- provider: apt
+  package: crunch
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

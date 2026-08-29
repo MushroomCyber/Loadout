@@ -1,0 +1,11 @@
+id: p0f
+categories:
+- other
+install:
+- provider: apt
+  package: p0f
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

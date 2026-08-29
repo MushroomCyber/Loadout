@@ -1,0 +1,11 @@
+id: rling
+categories:
+- other
+install:
+- provider: apt
+  package: rling
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

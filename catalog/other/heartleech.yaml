@@ -1,0 +1,11 @@
+id: heartleech
+categories:
+- other
+install:
+- provider: apt
+  package: heartleech
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

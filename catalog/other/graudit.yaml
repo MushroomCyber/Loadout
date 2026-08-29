@@ -1,0 +1,11 @@
+id: graudit
+categories:
+- other
+install:
+- provider: apt
+  package: graudit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

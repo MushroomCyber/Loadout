@@ -1,0 +1,22 @@
+id: kismet
+summary: Wireless network detector, sniffer and IDS
+categories:
+- wireless
+- monitoring
+tags:
+- wifi
+- ids
+phases:
+- discovery
+- collection
+binaries:
+- kismet
+homepage: https://www.kismetwireless.net
+install:
+- provider: apt
+  package: kismet
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

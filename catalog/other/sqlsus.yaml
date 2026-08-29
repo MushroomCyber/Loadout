@@ -1,0 +1,11 @@
+id: sqlsus
+categories:
+- other
+install:
+- provider: apt
+  package: sqlsus
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: iw
+categories:
+- other
+install:
+- provider: apt
+  package: iw
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

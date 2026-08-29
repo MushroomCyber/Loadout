@@ -1,0 +1,13 @@
+id: sqlninja
+categories:
+- database
+tags:
+- mssql
+install:
+- provider: apt
+  package: sqlninja
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

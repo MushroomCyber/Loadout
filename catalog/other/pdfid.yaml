@@ -1,0 +1,11 @@
+id: pdfid
+categories:
+- other
+install:
+- provider: apt
+  package: pdfid
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: reconspider
+categories:
+- other
+install:
+- provider: apt
+  package: reconspider
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

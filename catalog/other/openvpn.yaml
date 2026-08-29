@@ -1,0 +1,11 @@
+id: openvpn
+categories:
+- other
+install:
+- provider: apt
+  package: openvpn
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

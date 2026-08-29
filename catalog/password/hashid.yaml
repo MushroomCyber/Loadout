@@ -1,0 +1,14 @@
+id: hashid
+summary: Hash type identifier
+categories:
+- password
+tags:
+- identification
+install:
+- provider: apt
+  package: hashid
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: tightvnc
+categories:
+- other
+install:
+- provider: apt
+  package: tightvnc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

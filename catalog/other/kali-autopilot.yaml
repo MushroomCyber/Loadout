@@ -1,0 +1,11 @@
+id: kali-autopilot
+categories:
+- other
+install:
+- provider: apt
+  package: kali-autopilot
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

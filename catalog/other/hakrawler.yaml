@@ -1,0 +1,11 @@
+id: hakrawler
+categories:
+- other
+install:
+- provider: apt
+  package: hakrawler
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

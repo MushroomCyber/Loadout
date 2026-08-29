@@ -1,0 +1,11 @@
+id: oclgausscrack
+categories:
+- other
+install:
+- provider: apt
+  package: oclgausscrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

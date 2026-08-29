@@ -1,0 +1,11 @@
+id: villain
+categories:
+- other
+install:
+- provider: apt
+  package: villain
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

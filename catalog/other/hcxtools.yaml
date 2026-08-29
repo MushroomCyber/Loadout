@@ -1,0 +1,11 @@
+id: hcxtools
+categories:
+- other
+install:
+- provider: apt
+  package: hcxtools
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

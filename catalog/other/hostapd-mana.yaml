@@ -1,0 +1,11 @@
+id: hostapd-mana
+categories:
+- other
+install:
+- provider: apt
+  package: hostapd-mana
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

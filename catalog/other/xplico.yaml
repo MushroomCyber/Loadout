@@ -1,0 +1,11 @@
+id: xplico
+categories:
+- other
+install:
+- provider: apt
+  package: xplico
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

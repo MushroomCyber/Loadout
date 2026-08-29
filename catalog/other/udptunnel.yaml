@@ -1,0 +1,11 @@
+id: udptunnel
+categories:
+- other
+install:
+- provider: apt
+  package: udptunnel
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

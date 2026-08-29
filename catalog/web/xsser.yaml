@@ -1,0 +1,13 @@
+id: xsser
+categories:
+- web
+tags:
+- xss
+install:
+- provider: apt
+  package: xsser
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,14 @@
+id: enum4linux
+summary: Windows/Samba enumeration
+categories:
+- recon
+tags:
+- smb-ad
+install:
+- provider: apt
+  package: enum4linux
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,14 @@
+id: bulk-extractor
+summary: Digital forensics evidence tool
+categories:
+- forensics
+tags:
+- carving
+install:
+- provider: apt
+  package: bulk-extractor
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

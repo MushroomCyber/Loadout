@@ -1,0 +1,14 @@
+slug: ad-operator
+name: AD Operator
+description: Active Directory assessment and lateral movement
+tags:
+- red-team
+- windows
+tools:
+- bloodhound
+- evil-winrm
+- hashcat
+- impacket
+- john
+- netexec
+- responder

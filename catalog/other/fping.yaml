@@ -1,0 +1,11 @@
+id: fping
+categories:
+- other
+install:
+- provider: apt
+  package: fping
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

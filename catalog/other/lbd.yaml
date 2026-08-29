@@ -1,0 +1,11 @@
+id: lbd
+categories:
+- other
+install:
+- provider: apt
+  package: lbd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

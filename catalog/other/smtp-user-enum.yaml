@@ -1,0 +1,11 @@
+id: smtp-user-enum
+categories:
+- other
+install:
+- provider: apt
+  package: smtp-user-enum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: siege
+categories:
+- other
+install:
+- provider: apt
+  package: siege
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

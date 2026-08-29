@@ -1,0 +1,11 @@
+id: gdisk
+categories:
+- other
+install:
+- provider: apt
+  package: gdisk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

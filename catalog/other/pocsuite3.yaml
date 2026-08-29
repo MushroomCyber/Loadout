@@ -1,0 +1,11 @@
+id: pocsuite3
+categories:
+- other
+install:
+- provider: apt
+  package: pocsuite3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

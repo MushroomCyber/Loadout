@@ -1,0 +1,13 @@
+id: rainbowcrack
+categories:
+- password
+tags:
+- tables
+install:
+- provider: apt
+  package: rainbowcrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

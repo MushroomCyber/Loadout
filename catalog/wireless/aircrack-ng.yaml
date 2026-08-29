@@ -1,0 +1,30 @@
+id: aircrack-ng
+summary: 802.11 capture, injection and WPA handshake cracking
+categories:
+- wireless
+tags:
+- wifi
+- classic
+phases:
+- credential-access
+- collection
+binaries:
+- aircrack-ng
+- airodump-ng
+- aireplay-ng
+- airmon-ng
+homepage: https://www.aircrack-ng.org
+requires_root: true
+alternatives:
+- wifite
+- hcxdumptool
+install:
+- provider: apt
+  package: aircrack-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: aircrack-ng

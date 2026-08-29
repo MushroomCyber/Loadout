@@ -1,0 +1,11 @@
+id: msitools
+categories:
+- other
+install:
+- provider: apt
+  package: msitools
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

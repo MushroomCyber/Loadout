@@ -1,0 +1,11 @@
+id: peass-ng
+categories:
+- other
+install:
+- provider: apt
+  package: peass-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

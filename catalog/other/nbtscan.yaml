@@ -1,0 +1,11 @@
+id: nbtscan
+categories:
+- other
+install:
+- provider: apt
+  package: nbtscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: phpggc
+categories:
+- other
+install:
+- provider: apt
+  package: phpggc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

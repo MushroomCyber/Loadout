@@ -1,0 +1,11 @@
+id: python-pipx
+categories:
+- other
+install:
+- provider: apt
+  package: python-pipx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

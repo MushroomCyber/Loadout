@@ -1,0 +1,11 @@
+id: uhd-images
+categories:
+- other
+install:
+- provider: apt
+  package: uhd-images
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

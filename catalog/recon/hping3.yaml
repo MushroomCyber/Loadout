@@ -1,0 +1,11 @@
+id: hping3
+categories:
+- recon
+install:
+- provider: apt
+  package: hping3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: unicorn-magic
+categories:
+- other
+install:
+- provider: apt
+  package: unicorn-magic
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

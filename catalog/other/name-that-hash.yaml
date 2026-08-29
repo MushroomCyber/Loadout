@@ -1,0 +1,11 @@
+id: name-that-hash
+categories:
+- other
+install:
+- provider: apt
+  package: name-that-hash
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

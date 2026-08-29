@@ -1,0 +1,11 @@
+id: redeye
+categories:
+- other
+install:
+- provider: apt
+  package: redeye
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

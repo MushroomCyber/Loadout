@@ -1,0 +1,11 @@
+id: gss-ntlmssp
+categories:
+- other
+install:
+- provider: apt
+  package: gss-ntlmssp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

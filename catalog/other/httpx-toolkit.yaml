@@ -1,0 +1,11 @@
+id: httpx-toolkit
+categories:
+- other
+install:
+- provider: apt
+  package: httpx-toolkit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

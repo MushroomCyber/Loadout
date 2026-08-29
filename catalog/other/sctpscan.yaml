@@ -1,0 +1,11 @@
+id: sctpscan
+categories:
+- other
+install:
+- provider: apt
+  package: sctpscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

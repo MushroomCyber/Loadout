@@ -1,0 +1,11 @@
+id: pompem
+categories:
+- other
+install:
+- provider: apt
+  package: pompem
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

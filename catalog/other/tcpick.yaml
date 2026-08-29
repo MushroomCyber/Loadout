@@ -1,0 +1,11 @@
+id: tcpick
+categories:
+- other
+install:
+- provider: apt
+  package: tcpick
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

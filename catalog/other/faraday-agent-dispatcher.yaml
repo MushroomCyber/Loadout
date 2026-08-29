@@ -1,0 +1,11 @@
+id: faraday-agent-dispatcher
+categories:
+- other
+install:
+- provider: apt
+  package: faraday-agent-dispatcher
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

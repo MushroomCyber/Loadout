@@ -1,0 +1,11 @@
+id: finalrecon
+categories:
+- other
+install:
+- provider: apt
+  package: finalrecon
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

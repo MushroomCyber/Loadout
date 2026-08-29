@@ -1,0 +1,11 @@
+id: wifi-honey
+categories:
+- other
+install:
+- provider: apt
+  package: wifi-honey
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

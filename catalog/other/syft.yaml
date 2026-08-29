@@ -1,0 +1,11 @@
+id: syft
+categories:
+- other
+install:
+- provider: apt
+  package: syft
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: vpnc
+categories:
+- other
+install:
+- provider: apt
+  package: vpnc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: exe2hexbat
+categories:
+- other
+install:
+- provider: apt
+  package: exe2hexbat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

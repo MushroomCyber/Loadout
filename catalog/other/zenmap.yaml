@@ -1,0 +1,11 @@
+id: zenmap
+categories:
+- other
+install:
+- provider: apt
+  package: zenmap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

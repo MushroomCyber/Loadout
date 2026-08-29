@@ -1,0 +1,11 @@
+id: poshc2
+categories:
+- other
+install:
+- provider: apt
+  package: poshc2
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

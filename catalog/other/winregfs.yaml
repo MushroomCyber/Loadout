@@ -1,0 +1,11 @@
+id: winregfs
+categories:
+- other
+install:
+- provider: apt
+  package: winregfs
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

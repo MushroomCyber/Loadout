@@ -1,0 +1,11 @@
+id: hurl
+categories:
+- other
+install:
+- provider: apt
+  package: hurl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

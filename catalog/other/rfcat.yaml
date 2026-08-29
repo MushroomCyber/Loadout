@@ -1,0 +1,11 @@
+id: rfcat
+categories:
+- other
+install:
+- provider: apt
+  package: rfcat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

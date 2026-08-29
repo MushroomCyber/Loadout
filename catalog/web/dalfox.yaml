@@ -1,0 +1,22 @@
+id: dalfox
+summary: XSS scanner and parameter analysis tool
+categories:
+- web
+tags:
+- xss
+- bug-bounty
+phases:
+- discovery
+binaries:
+- dalfox
+homepage: https://github.com/hahwul/dalfox
+alternatives:
+- xsser
+install:
+- provider: brew
+  formula: dalfox
+- provider: go
+  module: github.com/hahwul/dalfox/v2@latest
+- provider: github
+  repo: hahwul/dalfox
+  checksums: '*checksums*.txt'

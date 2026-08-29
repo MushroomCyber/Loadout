@@ -1,0 +1,11 @@
+id: pipal
+categories:
+- other
+install:
+- provider: apt
+  package: pipal
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

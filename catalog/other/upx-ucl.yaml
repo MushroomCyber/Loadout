@@ -1,0 +1,11 @@
+id: upx-ucl
+categories:
+- other
+install:
+- provider: apt
+  package: upx-ucl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: rebind
+categories:
+- other
+install:
+- provider: apt
+  package: rebind
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

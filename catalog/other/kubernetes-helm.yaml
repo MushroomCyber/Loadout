@@ -1,0 +1,11 @@
+id: kubernetes-helm
+categories:
+- other
+install:
+- provider: apt
+  package: kubernetes-helm
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

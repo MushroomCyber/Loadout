@@ -1,0 +1,11 @@
+id: whois
+categories:
+- other
+install:
+- provider: apt
+  package: whois
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

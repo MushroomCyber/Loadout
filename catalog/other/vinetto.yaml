@@ -1,0 +1,11 @@
+id: vinetto
+categories:
+- other
+install:
+- provider: apt
+  package: vinetto
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

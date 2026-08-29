@@ -1,0 +1,11 @@
+id: joomscan
+categories:
+- other
+install:
+- provider: apt
+  package: joomscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

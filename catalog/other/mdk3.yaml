@@ -1,0 +1,11 @@
+id: mdk3
+categories:
+- other
+install:
+- provider: apt
+  package: mdk3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

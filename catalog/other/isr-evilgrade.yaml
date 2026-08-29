@@ -1,0 +1,11 @@
+id: isr-evilgrade
+categories:
+- other
+install:
+- provider: apt
+  package: isr-evilgrade
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

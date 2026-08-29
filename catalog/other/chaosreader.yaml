@@ -1,0 +1,11 @@
+id: chaosreader
+categories:
+- other
+install:
+- provider: apt
+  package: chaosreader
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

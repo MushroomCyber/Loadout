@@ -1,0 +1,11 @@
+id: gemini-cli
+categories:
+- other
+install:
+- provider: apt
+  package: gemini-cli
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

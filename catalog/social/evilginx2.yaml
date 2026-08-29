@@ -1,0 +1,13 @@
+id: evilginx2
+categories:
+- social
+tags:
+- phishing
+install:
+- provider: apt
+  package: evilginx2
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

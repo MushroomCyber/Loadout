@@ -1,0 +1,11 @@
+id: sippts
+categories:
+- other
+install:
+- provider: apt
+  package: sippts
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

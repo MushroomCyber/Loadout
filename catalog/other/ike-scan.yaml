@@ -1,0 +1,11 @@
+id: ike-scan
+categories:
+- other
+install:
+- provider: apt
+  package: ike-scan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: safecopy
+categories:
+- forensics
+install:
+- provider: apt
+  package: safecopy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

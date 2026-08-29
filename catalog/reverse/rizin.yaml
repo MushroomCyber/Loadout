@@ -1,0 +1,13 @@
+id: rizin
+categories:
+- reverse
+tags:
+- disassembler
+install:
+- provider: apt
+  package: rizin
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

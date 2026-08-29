@@ -1,0 +1,11 @@
+id: cmospwd
+categories:
+- password
+install:
+- provider: apt
+  package: cmospwd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

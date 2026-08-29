@@ -1,0 +1,13 @@
+id: dc3dd
+categories:
+- forensics
+tags:
+- imaging
+install:
+- provider: apt
+  package: dc3dd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

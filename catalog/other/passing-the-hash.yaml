@@ -1,0 +1,11 @@
+id: passing-the-hash
+categories:
+- other
+install:
+- provider: apt
+  package: passing-the-hash
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

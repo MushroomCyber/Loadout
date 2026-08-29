@@ -1,0 +1,11 @@
+id: goshs
+categories:
+- other
+install:
+- provider: apt
+  package: goshs
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,1774 @@
+"""Command-line interface.
+
+Design rules that differ from the previous release:
+
+* Installed state is **queried live** from the providers, never read from a
+  stale JSON cache. ``list --installed`` on a fresh machine used to print
+  nothing at all, silently, with exit code 0.
+* Every command accepts ``--json`` and returns a documented shape.
+* Nothing touches the network during startup. Catalog refresh is an explicit
+  command, not a side effect of constructing an object.
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import shlex
+import subprocess
+import sys
+from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Any
+
+from .. import __version__, configure_console, configure_logging, logger
+from ..errors import LoadoutError
+from . import output as out
+
+# ---------------------------------------------------------------------------
+# Shared context
+# ---------------------------------------------------------------------------
+
+
+class _Sub(argparse.ArgumentParser):
+    """Subparser that inherits the global flags, so they work in either position."""
+
+    shared: argparse.ArgumentParser | None = None
+
+    def __init__(self, *args, **kwargs) -> None:
+        parents = list(kwargs.pop("parents", []))
+        if _Sub.shared is not None and _Sub.shared not in parents:
+            parents.append(_Sub.shared)
+        kwargs["parents"] = parents
+        kwargs.setdefault("conflict_handler", "resolve")
+        super().__init__(*args, **kwargs)
+
+
+@dataclass
+class Context:
+    args: argparse.Namespace
+    _catalog: Any = None
+    _state: Any = None
+    _installed: set[str] | None = None
+    _statuses: dict[str, Any] | None = None
+
+    @property
+    def json_mode(self) -> bool:
+        return bool(getattr(self.args, "as_json", False))
+
+    @property
+    def catalog(self):
+        if self._catalog is None:
+            from ..catalog import open_catalog
+
+            explicit = getattr(self.args, "catalog", None)
+            self._catalog = open_catalog(Path(explicit) if explicit else None)
+        return self._catalog
+
+    @property
+    def state(self):
+        if self._state is None:
+            from ..state import get_state_db
+
+            self._state = get_state_db()
+        return self._state
+
+    @property
+    def provider_status(self) -> dict[str, Any]:
+        if self._statuses is None:
+            from ..providers import available_providers
+
+            self._statuses = available_providers()
+        return self._statuses
+
+    def installed(self, *, refresh: bool = True) -> set[str]:
+        """What is actually on this machine, right now.
+
+        Asks each available provider for its full inventory in one call, maps
+        those back to catalog ids, and reconciles the state DB. This is the fix
+        for install-state being read from a cache file that started out empty.
+        """
+        if self._installed is not None:
+            return self._installed
+        if not refresh:
+            self._installed = self.state.installed_ids()
+            return self._installed
+
+        from ..providers import get_provider
+
+        inventories: dict[str, set[str]] = {}
+        for name, status in self.provider_status.items():
+            if not status.available:
+                continue
+            try:
+                inventories[name] = get_provider(name).list_installed()
+            except Exception:
+                inventories[name] = set()
+
+        found: set[str] = set()
+        provider_of: dict[str, str] = {}
+        for tool in self.catalog.iter_all():
+            for method in tool.install:
+                inventory = inventories.get(method.provider)
+                if not inventory:
+                    continue
+                keys = [
+                    str(method.spec.get(key, ""))
+                    for key in ("package", "formula", "crate", "gem", "image")
+                ]
+                if any(key and key in inventory for key in keys):
+                    found.add(tool.id)
+                    provider_of.setdefault(tool.id, method.provider)
+                    break
+            else:
+                # Fall back to "is the binary on PATH", which catches manual
+                # installs the package managers do not know about.
+                if tool.binaries and any(
+                    binary in inventories.get("go", set())
+                    or binary in inventories.get("github", set())
+                    for binary in tool.binaries
+                ):
+                    found.add(tool.id)
+
+        try:
+            for tool_id in found:
+                self.state.set_installed(tool_id, True, provider=provider_of.get(tool_id, ""))
+            for tool_id in self.state.installed_ids() - found:
+                self.state.set_installed(tool_id, False)
+        except Exception as exc:
+            logger.debug("state reconciliation failed: %s", exc)
+
+        self._installed = found
+        self._raw_inventories = inventories
+        return found
+
+    def starred(self) -> set[str]:
+        return set(self.state.starred_ids())
+
+    def planner(self):
+        from ..planner import Planner
+
+        inventories = getattr(self, "_raw_inventories", None)
+        if inventories is None:
+            self.installed()
+            inventories = getattr(self, "_raw_inventories", {})
+        return Planner(
+            self.catalog,
+            statuses=self.provider_status,
+            preferred=getattr(self.args, "prefer", None) or [],
+            installed=inventories,
+        )
+
+
+# ---------------------------------------------------------------------------
+# Parser
+# ---------------------------------------------------------------------------
+
+
+def _global_flags() -> argparse.ArgumentParser:
+    """Flags accepted both before and after the subcommand.
+
+    `loadout show nmap --json` is what people actually type; requiring
+    `loadout --json show nmap` is a papercut with no upside.
+    """
+    shared = argparse.ArgumentParser(add_help=False)
+    # SUPPRESS is load-bearing: without it the subparser writes its own default
+    # into the namespace and silently overwrites the value the main parser
+    # already read from `loadout --json show nmap`.
+    shared.add_argument("--json", action="store_true", dest="as_json",
+                        default=argparse.SUPPRESS,
+                        help="Emit machine-readable JSON.")
+    shared.add_argument("--no-emoji", action="store_true",
+                        default=argparse.SUPPRESS,
+                        help="Use ASCII glyphs instead of symbols.")
+    return shared
+
+
+def build_parser() -> argparse.ArgumentParser:
+    shared = _global_flags()
+    parser = argparse.ArgumentParser(
+        prog="loadout",
+        description="Pick your kit, install it anywhere, prove what you used.",
+        epilog="Run `loadout` with no arguments for the interactive browser.",
+    )
+    parser.add_argument("--version", action="version", version=f"loadout {__version__}")
+    parser.add_argument("--json", action="store_true", dest="as_json",
+                        help="Emit machine-readable JSON.")
+    parser.add_argument("--catalog", help="Use a specific catalog database.")
+    parser.add_argument("--offline", action="store_true", help="Make no network calls.")
+    parser.add_argument("--log-level", default="WARNING",
+                        help="DEBUG, INFO, WARNING, ERROR (default: WARNING).")
+    parser.add_argument("--log-file", help="Append log records to this file.")
+    parser.add_argument("--theme", default=os.environ.get("LOADOUT_THEME", "default"),
+                        choices=["default", "mono", "solarized-dark", "high-contrast"])
+    parser.add_argument("--no-emoji", action="store_true",
+                        help="Use ASCII glyphs instead of symbols.")
+    parser.add_argument("--prefer", action="append", metavar="PROVIDER",
+                        help="Prefer this provider when several can install a tool "
+                             "(repeatable, first wins).")
+
+    sub = parser.add_subparsers(dest="command", metavar="COMMAND", parser_class=_Sub)
+    _Sub.shared = shared
+
+    # -- browsing ----------------------------------------------------------
+    p = sub.add_parser("list", help="List tools.")
+    p.add_argument("--category", action="append", default=[])
+    p.add_argument("--phase", action="append", default=[])
+    p.add_argument("--tag", action="append", default=[])
+    p.add_argument("--provider", action="append", default=[])
+    p.add_argument("--installed", action="store_true")
+    p.add_argument("--available", action="store_true")
+    p.add_argument("--starred", action="store_true")
+    p.add_argument("--limit", type=int, default=0)
+
+    p = sub.add_parser("search", help="Search the catalog.")
+    p.add_argument("query", nargs="+")
+    p.add_argument("--category", action="append", default=[])
+    p.add_argument("--phase", action="append", default=[])
+    p.add_argument("--tag", action="append", default=[])
+    p.add_argument("--limit", type=int, default=40)
+
+    p = sub.add_parser("show", help="Everything known about one tool.")
+    p.add_argument("tool")
+
+    p = sub.add_parser("alt", help="Alternatives to a tool, and why.")
+    p.add_argument("tool")
+
+    p = sub.add_parser("phase", help="Browse tools by engagement phase.")
+    p.add_argument("name", nargs="?")
+
+    sub.add_parser("categories", help="List catalog categories with counts.")
+    sub.add_parser("providers", help="Show which installers are usable here.")
+
+    # -- changing the machine ---------------------------------------------
+    for verb, helptext in (("install", "Install tools."), ("remove", "Uninstall tools.")):
+        p = sub.add_parser(verb, help=helptext)
+        p.add_argument("tools", nargs="+")
+        p.add_argument("--yes", "-y", action="store_true", help="Skip confirmation.")
+        p.add_argument("--dry-run", action="store_true", help="Show the plan and stop.")
+        p.add_argument("--provider", help="Force a specific provider.")
+        if verb == "install":
+            p.add_argument("--allow-unverified", action="store_true",
+                           help="Permit downloads with no publishable checksum.")
+            p.add_argument("--reinstall", action="store_true",
+                           help="Act even if the tool is already installed.")
+
+    p = sub.add_parser("run", help="Run a tool, in a container if it is not installed.")
+    p.add_argument("tool")
+    p.add_argument("args", nargs=argparse.REMAINDER)
+
+    sub.add_parser("update", help="Refresh package lists and report upgrades.")
+    p = sub.add_parser("upgrade", help="Upgrade installed packages.")
+    p.add_argument("--yes", "-y", action="store_true")
+    p.add_argument("--dry-run", action="store_true")
+
+    # -- catalog -----------------------------------------------------------
+    p = sub.add_parser("catalog", help="Build, refresh and inspect the catalog.")
+    csub = p.add_subparsers(dest="catalog_command", required=True)
+    csub.add_parser("info", help="Catalog metadata.")
+    q = csub.add_parser("build", help="Compile the YAML source tree.")
+    q.add_argument("--source", type=Path, default=Path("catalog"))
+    q.add_argument("--output", type=Path)
+    q.add_argument("--strict", action="store_true", default=True)
+    q.add_argument("--no-strict", dest="strict", action="store_false")
+    q = csub.add_parser("validate", help="Check the source tree without building.")
+    q.add_argument("--source", type=Path, default=Path("catalog"))
+    q = csub.add_parser("update", help="Enrich the catalog from local APT metadata.")
+    q.add_argument("--all-packages", action="store_true",
+                   help="Include every APT package, not just security tooling.")
+
+    # -- loadouts ----------------------------------------------------------
+    p = sub.add_parser("loadout", help="Manage named tool sets.")
+    lsub = p.add_subparsers(dest="loadout_command", required=True)
+    lsub.add_parser("list", help="Available loadouts.")
+    q = lsub.add_parser("show", help="What a loadout contains.")
+    q.add_argument("slug")
+    q = lsub.add_parser("apply", help="Install everything in a loadout.")
+    q.add_argument("slug")
+    q.add_argument("--yes", "-y", action="store_true")
+    q.add_argument("--dry-run", action="store_true")
+    q.add_argument("--allow-unverified", action="store_true")
+    q = lsub.add_parser("save", help="Snapshot this machine as a loadout.")
+    q.add_argument("slug")
+    q.add_argument("--output", type=Path)
+    q = lsub.add_parser("diff", help="Compare a loadout against this machine.")
+    q.add_argument("slug", nargs="?")
+
+    p = sub.add_parser("sync", help="Converge this machine to a loadout manifest.")
+    p.add_argument("slug", nargs="?", help="Defaults to ./loadout.yaml")
+    p.add_argument("--yes", "-y", action="store_true")
+    p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--allow-unverified", action="store_true")
+    p.add_argument("--prune", action="store_true",
+                   help="Also remove installed tools the manifest does not list.")
+
+    # -- state -------------------------------------------------------------
+    p = sub.add_parser("history", help="What this tool has done.")
+    p.add_argument("--tool")
+    p.add_argument("--limit", type=int, default=50)
+    p.add_argument("--clear", action="store_true")
+
+    p = sub.add_parser("report", help="Signed inventory of tools used in a window.")
+    p.add_argument("--since", help="ISO date, or Nd / Nh (e.g. 30d).")
+    p.add_argument("--until")
+    p.add_argument("--all-installed", action="store_true",
+                   help="Include every installed tool, not only those used.")
+    p.add_argument("--format", choices=["text", "json", "markdown"], default="text")
+    p.add_argument("--output", type=Path)
+
+    p = sub.add_parser("audit", help="Flag unmaintained, deprecated or risky tooling.")
+    p.add_argument("--limit", type=int, default=0)
+
+    for verb in ("star", "unstar"):
+        p = sub.add_parser(verb, help=f"{verb.capitalize()} a tool.")
+        p.add_argument("tool")
+
+    for verb in ("hold", "unhold"):
+        p = sub.add_parser(verb, help=f"{verb} a package version (apt).")
+        p.add_argument("tool")
+    sub.add_parser("holds", help="List held packages.")
+
+    # -- export ------------------------------------------------------------
+    p = sub.add_parser("export", help="Export the installed set.")
+    p.add_argument("--format", choices=["json", "script", "docker", "ansible", "loadout"],
+                   default="json")
+    p.add_argument("--output", "-o", type=Path)
+
+    # -- environment -------------------------------------------------------
+    sub.add_parser("doctor", help="Diagnose environment problems.")
+    p = sub.add_parser("migrate", help="Import state from a kalitools install.")
+    p.add_argument("--dry-run", action="store_true")
+
+    return parser
+
+
+# ---------------------------------------------------------------------------
+# Browsing
+# ---------------------------------------------------------------------------
+
+
+def cmd_list(ctx: Context) -> int:
+    args = ctx.args
+    tools = ctx.catalog.search(
+        "",
+        categories=args.category,
+        tags=args.tag,
+        phases=args.phase,
+        providers=args.provider,
+    )
+    installed = ctx.installed()
+    starred = ctx.starred()
+
+    if args.installed:
+        tools = [t for t in tools if t.id in installed]
+    if args.available:
+        tools = [t for t in tools if t.id not in installed]
+    if args.starred:
+        tools = [t for t in tools if t.id in starred]
+    if args.limit > 0:
+        tools = tools[: args.limit]
+
+    if ctx.json_mode:
+        out.emit_json(
+            [
+                {**t.to_dict(), "installed": t.id in installed, "starred": t.id in starred}
+                for t in tools
+            ]
+        )
+        return 0
+
+    out.render_tool_table(tools, installed=installed, starred=starred)
+    out.print_note(f"{len(tools)} tool(s), {len(installed & {t.id for t in tools})} installed")
+    return 0
+
+
+def cmd_search(ctx: Context) -> int:
+    args = ctx.args
+    query = " ".join(args.query)
+    tools = ctx.catalog.search(
+        query,
+        categories=args.category,
+        tags=args.tag,
+        phases=args.phase,
+        limit=args.limit,
+    )
+    installed = ctx.installed()
+
+    if ctx.json_mode:
+        out.emit_json([{**t.to_dict(), "installed": t.id in installed} for t in tools])
+        return 0
+
+    if not tools:
+        out.print_note(f"No match for {query!r}.")
+        return 1
+    out.render_tool_table(tools, installed=installed, starred=ctx.starred())
+    out.print_note(f"{len(tools)} match(es) for {query!r}")
+    return 0
+
+
+def cmd_show(ctx: Context) -> int:
+    from ..errors import ToolNotFound
+
+    tool = ctx.catalog.get(ctx.args.tool)
+    if tool is None:
+        raise ToolNotFound(ctx.args.tool, suggestions=ctx.catalog.suggest(ctx.args.tool))
+
+    installed = ctx.installed()
+    state = ctx.state.get(tool.id) or {}
+    state["installed"] = tool.id in installed
+
+    if ctx.json_mode:
+        out.emit_json(
+            {
+                **tool.to_dict(),
+                "installed": state["installed"],
+                "installed_version": state.get("version", ""),
+                "installed_via": state.get("provider", ""),
+                "starred": bool(state.get("starred")),
+                "providers_available": {
+                    name: status.available for name, status in ctx.provider_status.items()
+                },
+            }
+        )
+        return 0
+
+    out.render_detail(tool, status=state, provider_status=ctx.provider_status)
+    return 0
+
+
+def cmd_alt(ctx: Context) -> int:
+    from ..errors import ToolNotFound
+
+    tool = ctx.catalog.get(ctx.args.tool)
+    if tool is None:
+        raise ToolNotFound(ctx.args.tool, suggestions=ctx.catalog.suggest(ctx.args.tool))
+
+    alternatives = list(tool.alternatives)
+    inferred = False
+
+    if not alternatives and tool.category != "other":
+        # Fall back to catalog neighbours, ranked by how much metadata they
+        # share. Deliberately skipped for uncategorised entries: "everything
+        # else in `other`" is 600 alphabetical rows, not an answer.
+        siblings = [
+            t
+            for t in ctx.catalog.search("", categories=list(tool.categories))
+            if t.id != tool.id and t.summary
+        ]
+
+        def overlap(other) -> tuple[int, int, str]:
+            shared_tags = len(set(tool.tags) & set(other.tags))
+            shared_phases = len(set(tool.phases) & set(other.phases))
+            return (-shared_tags, -shared_phases, other.id)
+
+        siblings.sort(key=overlap)
+        alternatives = [t.id for t in siblings[:8]]
+        inferred = True
+
+    resolved = ctx.catalog.get_many(alternatives)
+    installed = ctx.installed()
+
+    if ctx.json_mode:
+        out.emit_json(
+            {
+                "tool": tool.id,
+                "deprecated_by": tool.deprecated_by,
+                "inferred": inferred,
+                "alternatives": [
+                    {**t.to_dict(), "installed": t.id in installed} for t in resolved
+                ],
+                "unresolved": [a for a in alternatives if a not in {t.id for t in resolved}],
+            }
+        )
+        return 0
+
+    if tool.deprecated_by:
+        out.print_warn(f"{tool.id} is superseded by {tool.deprecated_by}")
+
+    if not resolved:
+        out.print_note(
+            f"No alternatives recorded for {tool.id}."
+            + (
+                "  This entry has not been curated yet — "
+                f"`loadout search {tool.id}` may help, and catalog "
+                "contributions are welcome."
+                if tool.category == "other"
+                else ""
+            )
+        )
+        return 0
+
+    label = "Similar tools to" if inferred else "Alternatives to"
+    out.print_note(f"{label} {tool.id}:")
+    out.render_tool_table(resolved, installed=installed, starred=ctx.starred())
+    return 0
+
+
+def cmd_phase(ctx: Context) -> int:
+    from ..catalog.schema import PHASES, phase_label
+
+    if not ctx.args.name:
+        counts = dict(ctx.catalog.facet_values("phase"))
+        rows = [
+            {"phase": slug, "tools": counts.get(slug, 0), "description": description}
+            for slug, description in PHASES.items()
+            if counts.get(slug, 0) or True
+        ]
+        if ctx.json_mode:
+            out.emit_json(rows)
+            return 0
+        out.render_table(rows, ["phase", "tools", "description"], title="Engagement phases")
+        return 0
+
+    name = ctx.args.name.strip().lower()
+    tools = ctx.catalog.search("", phases=[name])
+    installed = ctx.installed()
+    if ctx.json_mode:
+        out.emit_json([{**t.to_dict(), "installed": t.id in installed} for t in tools])
+        return 0
+    if not tools:
+        out.print_note(f"No tools tagged for phase {name!r}.")
+        return 1
+    out.print_note(f"{phase_label(name)} — {len(tools)} tool(s)")
+    out.render_tool_table(tools, installed=installed, starred=ctx.starred())
+    return 0
+
+
+def cmd_categories(ctx: Context) -> int:
+    from ..catalog.schema import category_label
+
+    values = ctx.catalog.facet_values("category")
+    rows = [
+        {"category": slug, "tools": count, "description": category_label(slug)}
+        for slug, count in values
+    ]
+    if ctx.json_mode:
+        out.emit_json(rows)
+        return 0
+    out.render_table(rows, ["category", "tools", "description"], title="Categories")
+    return 0
+
+
+def cmd_providers(ctx: Context) -> int:
+    from ..providers import all_providers, detect_distro
+
+    rows = []
+    for name, provider in sorted(all_providers().items()):
+        status = ctx.provider_status.get(name)
+        rows.append(
+            {
+                "provider": name,
+                "available": "yes" if status and status.available else "no",
+                "version": (status.version if status else "")[:40],
+                "detail": (status.detail if status else "") or provider.label,
+            }
+        )
+    if ctx.json_mode:
+        out.emit_json({"distro": detect_distro(), "providers": rows})
+        return 0
+    out.print_note(f"Detected platform: {detect_distro()}")
+    out.render_table(rows, ["provider", "available", "version", "detail"])
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Changing the machine
+# ---------------------------------------------------------------------------
+
+
+def _run_plan(ctx: Context, plan, *, action: str) -> int:
+    from ..executor import (
+        EVENT_ACTION_DONE,
+        EVENT_OUTPUT,
+        EVENT_PROGRESS,
+        EVENT_WARN,
+        Executor,
+        past_tense,
+    )
+    from ..policy import detect_privilege, refresh_credentials
+
+    args = ctx.args
+    dry_run = getattr(args, "dry_run", False)
+
+    if not plan.actions:
+        if ctx.json_mode:
+            out.emit_json({"ok": True, "results": [], "skipped": plan.to_dict()["skipped"]})
+        else:
+            for skipped in plan.skipped:
+                out.print_note(f"{skipped.tool_id}: {skipped.reason}")
+            out.print_note("Nothing to do.")
+        return 0
+
+    if ctx.json_mode and dry_run:
+        out.emit_json(plan.to_dict())
+        return 0
+
+    verbose = dry_run or args.log_level.upper() == "DEBUG"
+    if not ctx.json_mode:
+        out.print_note(f"Plan ({action}):")
+        out.render_plan(plan, verbose=verbose)
+
+    if dry_run:
+        out.print_note("Dry run — nothing was changed.")
+        return 0
+
+    if not out.confirm(
+        f"{action.capitalize()} {len(plan.actions)} tool(s)?",
+        assume_yes=getattr(args, "yes", False),
+        default=action == "install",
+    ):
+        out.print_note("Aborted.")
+        return 130
+
+    # Prime sudo while the terminal is still ours, before any progress display
+    # takes it over. This is what stops a privileged install looking like a hang.
+    privilege = detect_privilege()
+    if plan.needs_root and not privilege.is_root and not refresh_credentials(privilege):
+        out.print_error(
+            "Could not obtain sudo credentials.",
+            "Check you are in the sudoers file, or re-run as root.",
+        )
+        return 8
+
+    console = out.get_console()
+    progress_state: dict[str, Any] = {"task": None, "progress": None}
+
+    def sink(event) -> None:
+        if ctx.json_mode:
+            return
+        if event.kind == EVENT_PROGRESS and event.percent is not None:
+            bar = progress_state.get("progress")
+            task = progress_state.get("task")
+            if bar is not None and task is not None:
+                bar.update(task, completed=event.percent, description=event.message[:48])
+        elif event.kind == EVENT_WARN:
+            out.print_warn(event.message)
+        elif event.kind == EVENT_OUTPUT and args.log_level.upper() == "DEBUG":
+            console.print(f"    [dim]{event.message}[/dim]", highlight=False)
+        elif event.kind == EVENT_ACTION_DONE:
+            if event.success:
+                out.print_ok(event.message)
+            else:
+                out.print_error(f"{event.tool_id}: {event.message}")
+
+    executor = Executor(
+        sink=sink,
+        dry_run=False,
+        allow_unverified=getattr(args, "allow_unverified", False),
+        privilege=privilege,
+        state=ctx.state,
+    )
+
+    if ctx.json_mode:
+        result = executor.run(plan)
+        out.emit_json(result.to_dict())
+        return 0 if result.ok else 1
+
+    from rich.progress import (
+        BarColumn,
+        Progress,
+        SpinnerColumn,
+        TextColumn,
+        TimeElapsedColumn,
+    )
+
+    with Progress(
+        SpinnerColumn(style="cyan"),
+        TextColumn("[cyan]{task.description}"),
+        BarColumn(bar_width=28, complete_style="cyan", finished_style="green"),
+        TextColumn("[dim]{task.percentage:>5.1f}%"),
+        TimeElapsedColumn(),
+        console=console,
+        transient=True,
+    ) as bar:
+        progress_state["progress"] = bar
+        progress_state["task"] = bar.add_task("preparing", total=100)
+        result = executor.run(plan)
+
+    ok = len(result.succeeded)
+    failed = len(result.failures)
+    if failed:
+        out.print_error(f"{ok} succeeded, {failed} failed")
+        return 1
+    out.print_ok(f"{ok} tool(s) {past_tense(action)}")
+    return 0
+
+
+def cmd_install(ctx: Context) -> int:
+    from ..planner import ACTION_INSTALL
+
+    planner = ctx.planner()
+    plan = planner.plan(
+        ctx.args.tools,
+        action=ACTION_INSTALL,
+        skip_installed=not getattr(ctx.args, "reinstall", False),
+        provider_override=ctx.args.provider or "",
+    )
+    return _run_plan(ctx, plan, action="install")
+
+
+def cmd_remove(ctx: Context) -> int:
+    from ..planner import ACTION_REMOVE
+
+    planner = ctx.planner()
+    plan = planner.plan(
+        ctx.args.tools, action=ACTION_REMOVE, provider_override=ctx.args.provider or ""
+    )
+    return _run_plan(ctx, plan, action="remove")
+
+
+def cmd_run(ctx: Context) -> int:
+    """Run an installed tool, or fall back to its container image."""
+    from ..errors import ToolNotFound
+    from ..policy import validate_argv
+
+    tool = ctx.catalog.get(ctx.args.tool)
+    if tool is None:
+        raise ToolNotFound(ctx.args.tool, suggestions=ctx.catalog.suggest(ctx.args.tool))
+
+    extra = [a for a in ctx.args.args if a != "--"]
+    binary = tool.primary_binary
+
+    import shutil as _shutil
+
+    if binary and _shutil.which(binary):
+        argv = validate_argv([binary, *extra])
+        ctx.state.mark_used(tool.id)
+        ctx.state.record("run", tool.id, detail=" ".join(extra)[:200])
+        return subprocess.run(argv, check=False).returncode  # noqa: S603
+
+    container = next((m for m in tool.install if m.provider == "docker"), None)
+    if container is None:
+        if not binary:
+            out.print_error(
+                f"{tool.id} has no known binary in the catalog.",
+                "Add a `binaries:` field to its catalog entry.",
+            )
+        else:
+            out.print_error(
+                f"{binary} is not installed and {tool.id} has no container image.",
+                f"Install it first: loadout install {tool.id}",
+            )
+        return 4
+
+    from ..providers import get_provider
+
+    provider = get_provider("docker")
+    if not ctx.provider_status.get("docker", None) or not ctx.provider_status["docker"].available:
+        out.print_error("No container engine available.", "Install docker or podman.")
+        return 5
+
+    steps = provider.plan_run(tool, container, extra)  # type: ignore[attr-defined]
+    argv = validate_argv(steps[0].argv)
+    out.print_note(f"running {tool.id} in a container ({container.spec.get('image')})")
+    ctx.state.record("run", tool.id, detail="container")
+    return subprocess.run(argv, check=False).returncode  # noqa: S603
+
+
+def cmd_update(ctx: Context) -> int:
+    from ..providers import get_provider
+
+    status = ctx.provider_status.get("apt")
+    if not status or not status.available:
+        out.print_error("apt is not available on this machine.")
+        return 5
+
+    apt = get_provider("apt")
+    plan_steps = apt.plan_update()  # type: ignore[attr-defined]
+
+    from ..policy import detect_privilege, elevate, refresh_credentials, subprocess_env
+
+    privilege = detect_privilege()
+    if not privilege.is_root and not refresh_credentials(privilege):
+        out.print_error("Could not obtain sudo credentials.")
+        return 8
+
+    for step in plan_steps:
+        argv = elevate(step.argv, privilege=privilege) if step.elevate else step.argv
+        result = subprocess.run(argv, env=subprocess_env(), check=False)  # noqa: S603
+        if result.returncode != 0:
+            out.print_error(f"apt-get update exited {result.returncode}")
+            return result.returncode
+
+    upgradable = apt.upgradable()  # type: ignore[attr-defined]
+    known = {t.id for t in ctx.catalog.iter_all()}
+    relevant = {name: version for name, version in upgradable.items() if name in known}
+
+    if ctx.json_mode:
+        out.emit_json({"upgradable": upgradable, "catalog_tools": relevant})
+        return 0
+
+    if not upgradable:
+        out.print_ok("Everything is up to date.")
+        return 0
+    out.print_note(f"{len(upgradable)} package(s) upgradable, {len(relevant)} in the catalog:")
+    out.render_table(
+        [{"tool": k, "version": v} for k, v in sorted(relevant.items())], ["tool", "version"]
+    )
+    return 0
+
+
+def cmd_upgrade(ctx: Context) -> int:
+    from ..policy import detect_privilege, elevate, refresh_credentials, subprocess_env
+    from ..providers import get_provider
+
+    status = ctx.provider_status.get("apt")
+    if not status or not status.available:
+        out.print_error("apt is not available on this machine.")
+        return 5
+
+    steps = get_provider("apt").plan_upgrade()  # type: ignore[attr-defined]
+    if ctx.args.dry_run:
+        for step in steps:
+            out.print_note(f"$ {step.render()}")
+        return 0
+    if not out.confirm("Upgrade all packages?", assume_yes=ctx.args.yes, default=False):
+        return 130
+
+    privilege = detect_privilege()
+    if not privilege.is_root and not refresh_credentials(privilege):
+        out.print_error("Could not obtain sudo credentials.")
+        return 8
+
+    for step in steps:
+        argv = elevate(step.argv, privilege=privilege) if step.elevate else step.argv
+        result = subprocess.run(argv, env=subprocess_env(), check=False)  # noqa: S603
+        if result.returncode != 0:
+            return result.returncode
+    out.print_ok("Upgrade complete.")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Catalog
+# ---------------------------------------------------------------------------
+
+
+def cmd_catalog(ctx: Context) -> int:
+    args = ctx.args
+    command = args.catalog_command
+
+    if command == "info":
+        info = ctx.catalog.info()
+        payload = {
+            "path": str(ctx.catalog.path),
+            "schema": info.schema,
+            "generated_at": info.generated_at,
+            "source": info.source,
+            "revision": info.revision,
+            "tools": info.tool_count,
+            "categories": dict(ctx.catalog.facet_values("category")),
+            "providers": dict(ctx.catalog.facet_values("provider")),
+        }
+        if ctx.json_mode:
+            out.emit_json(payload)
+            return 0
+        for key in ("path", "schema", "generated_at", "source", "revision", "tools"):
+            out.get_console().print(f"[dim]{key:>13}[/dim]  {payload[key]}")
+        out.get_console().print(
+            f"[dim]{'categories':>13}[/dim]  "
+            + ", ".join(f"{k}={v}" for k, v in list(payload["categories"].items())[:8])
+        )
+        return 0
+
+    if command in ("build", "validate"):
+        from ..catalog import compile_tree, load_source_tree
+
+        source = args.source
+        if not source.is_dir():
+            out.print_error(
+                f"No catalog source at {source}",
+                "Run this from a checkout of the catalog repository, "
+                "or pass --source.",
+            )
+            return 3
+
+        if command == "validate":
+            report = load_source_tree(source, strict=True)
+        else:
+            destination = args.output or Path("loadout/data/catalog.db")
+            report = compile_tree(source, destination, strict=args.strict)
+
+        payload = {
+            "files": report.files_read,
+            "tools": len(report.tools),
+            "errors": report.errors,
+            "warnings": report.warnings,
+        }
+        if ctx.json_mode:
+            out.emit_json(payload)
+            return 1 if report.errors else 0
+
+        for warning in report.warnings[:20]:
+            out.print_warn(warning)
+        if len(report.warnings) > 20:
+            out.print_note(f"... and {len(report.warnings) - 20} more warning(s)")
+        for error in report.errors:
+            out.print_error(error)
+        if report.errors:
+            out.print_error(f"{len(report.errors)} error(s) — catalog not written")
+            return 1
+        out.print_ok(f"{len(report.tools)} tool(s) from {report.files_read} file(s)")
+        return 0
+
+    # update: enrich from local APT metadata
+    from ..catalog import build_catalog
+    from ..catalog.seed_apt import build_tools, enrich
+    from ..paths import catalog_db
+
+    if ctx.provider_status.get("apt") is None or not ctx.provider_status["apt"].available:
+        out.print_error(
+            "apt is not available, so there is no local metadata to read.",
+            "On a non-Debian host, use `loadout catalog build` against the "
+            "YAML source tree instead.",
+        )
+        return 5
+
+    if not ctx.json_mode:
+        out.print_note("Reading APT metadata...")
+    existing = list(ctx.catalog.iter_all())
+    enriched = enrich(existing)
+    discovered = build_tools(only_security=not args.all_packages)
+
+    by_id = {tool.id: tool for tool in enriched}
+    added = 0
+    for tool in discovered:
+        if tool.id not in by_id:
+            by_id[tool.id] = tool
+            added += 1
+
+    destination = catalog_db()
+    count = build_catalog(
+        destination,
+        sorted(by_id.values(), key=lambda t: t.id),
+        source="apt+yaml",
+    )
+
+    try:
+        pruned = ctx.state.prune_unknown(by_id.keys())
+    except Exception as exc:
+        pruned = 0
+        if not ctx.json_mode:
+            out.print_warn(f"state prune failed: {exc}")
+
+    improved = sum(
+        1
+        for tool in enriched
+        if tool.summary and not next(t for t in existing if t.id == tool.id).summary
+    )
+    payload = {
+        "path": str(destination),
+        "tools": count,
+        "added": added,
+        "descriptions_filled": improved,
+        "state_rows_pruned": pruned,
+    }
+    if ctx.json_mode:
+        out.emit_json(payload)
+        return 0
+    out.print_ok(f"Catalog rebuilt: {count} tools ({added} new) -> {destination}")
+    if improved:
+        out.print_note(f"Filled in {improved} missing description(s) from APT.")
+    if pruned:
+        out.print_note(f"Pruned {pruned} orphaned state row(s).")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Loadouts
+# ---------------------------------------------------------------------------
+
+
+def cmd_loadout(ctx: Context) -> int:
+    from .. import loadouts
+
+    args = ctx.args
+    command = args.loadout_command
+
+    if command == "list":
+        items = loadouts.listing()
+        rows = [
+            {
+                "slug": item.slug,
+                "name": item.name,
+                "tools": len(item.tools),
+                "source": item.source,
+                "tags": ", ".join(item.tags),
+            }
+            for item in items
+        ]
+        if ctx.json_mode:
+            out.emit_json(rows)
+            return 0
+        out.render_table(rows, ["slug", "name", "tools", "source", "tags"])
+        return 0
+
+    if command == "save":
+        installed = sorted(ctx.installed())
+        if not installed:
+            out.print_warn("Nothing is installed, so there is nothing to capture.")
+            return 1
+        manifest = loadouts.from_installed(args.slug, installed)
+        destination = args.output or (loadouts.user_dir() / f"{args.slug}.yaml")
+        manifest.write(destination)
+        if ctx.json_mode:
+            out.emit_json({"slug": manifest.slug, "tools": len(manifest.tools),
+                           "path": str(destination)})
+            return 0
+        out.print_ok(f"Saved {len(manifest.tools)} tool(s) to {destination}")
+        out.print_note(f"Reproduce it elsewhere with: loadout sync {manifest.slug}")
+        return 0
+
+    target = loadouts.get(args.slug) if getattr(args, "slug", None) else None
+    if target is None:
+        out.print_error(
+            f"No loadout named {getattr(args, 'slug', '')!r}.",
+            "See `loadout loadout list`.",
+        )
+        return 4
+
+    if command == "show":
+        resolved = ctx.catalog.get_many(list(target.tools))
+        installed_here = ctx.installed()
+        if ctx.json_mode:
+            out.emit_json(
+                {
+                    **target.to_dict(),
+                    "resolved": [
+                        {**t.to_dict(), "installed": t.id in installed_here}
+                        for t in resolved
+                    ],
+                    "unknown": sorted(set(target.tools) - {t.id for t in resolved}),
+                }
+            )
+            return 0
+        out.get_console().print(f"[bold]{target.slug}[/bold] — {target.name}")
+        if target.description:
+            out.print_note(target.description)
+        out.render_tool_table(resolved, installed=installed_here, starred=ctx.starred())
+        unknown = sorted(set(target.tools) - {t.id for t in resolved})
+        if unknown:
+            out.print_warn(f"not in catalog: {', '.join(unknown)}")
+        return 0
+
+    if command == "diff":
+        result = loadouts.diff(target, catalog=ctx.catalog, installed=ctx.installed())
+        if ctx.json_mode:
+            out.emit_json({"slug": target.slug, **result.to_dict()})
+            return 0
+        _print_diff(target, result)
+        return 0 if result.in_sync else 1
+
+    # apply
+    from ..planner import ACTION_INSTALL
+
+    planner = ctx.planner()
+    plan = planner.plan(list(target.tools), action=ACTION_INSTALL)
+    return _run_plan(ctx, plan, action="install")
+
+
+def _print_diff(target, result) -> None:
+    console = out.get_console()
+    console.print(f"[bold]{target.slug}[/bold] — {len(target.tools)} tool(s) declared")
+    if result.present:
+        out.print_ok(f"{len(result.present)} already installed")
+    for tool_id in result.missing:
+        console.print(f"  [yellow]+ {tool_id}[/yellow] [dim]missing[/dim]")
+    for tool_id in result.unknown:
+        console.print(f"  [red]? {tool_id}[/red] [dim]not in catalog[/dim]")
+    if result.in_sync:
+        out.print_ok("Machine is in sync with this loadout.")
+
+
+def cmd_sync(ctx: Context) -> int:
+    """Converge the machine to a manifest. The flagship workflow."""
+    from .. import loadouts
+    from ..planner import ACTION_INSTALL, ACTION_REMOVE
+
+    args = ctx.args
+    target = None
+    if args.slug:
+        target = loadouts.get(args.slug)
+        if target is None:
+            out.print_error(f"No loadout named {args.slug!r}.", "See `loadout loadout list`.")
+            return 4
+    else:
+        target = loadouts.project_manifest()
+        if target is None:
+            out.print_error(
+                f"No {loadouts.PROJECT_MANIFEST} in this directory.",
+                "Create one with `loadout loadout save <slug> --output loadout.yaml`, "
+                "or name a loadout: `loadout sync <slug>`.",
+            )
+            return 4
+
+    installed = ctx.installed()
+    result = loadouts.diff(target, catalog=ctx.catalog, installed=installed)
+
+    if not ctx.json_mode:
+        _print_diff(target, result)
+
+    planner = ctx.planner()
+    plan = planner.plan(result.missing, action=ACTION_INSTALL)
+
+    if args.prune and result.extra:
+        removal = planner.plan(result.extra, action=ACTION_REMOVE)
+        plan.actions.extend(removal.actions)
+        plan.skipped.extend(removal.skipped)
+
+    if not plan.actions:
+        if ctx.json_mode:
+            out.emit_json({"slug": target.slug, "in_sync": True, **result.to_dict()})
+        else:
+            out.print_ok("Nothing to do — already in sync.")
+        return 0
+
+    return _run_plan(ctx, plan, action="install")
+
+
+# ---------------------------------------------------------------------------
+# State, reporting, audit
+# ---------------------------------------------------------------------------
+
+
+def cmd_history(ctx: Context) -> int:
+    args = ctx.args
+    if args.clear:
+        removed = ctx.state.clear_history()
+        if ctx.json_mode:
+            out.emit_json({"cleared": removed})
+        else:
+            out.print_ok(f"Cleared {removed} history row(s).")
+        return 0
+
+    rows = ctx.state.history(tool_id=args.tool, limit=args.limit)
+    if ctx.json_mode:
+        out.emit_json(rows)
+        return 0
+    if not rows:
+        out.print_note("No history yet.")
+        return 0
+    out.render_table(
+        [
+            {
+                "when": row["ts"].replace("T", " ").replace("+00:00", "Z"),
+                "action": row["action"],
+                "tool": row["tool_id"],
+                "ok": out.glyph("ok") if row["success"] else out.glyph("fail"),
+                "detail": (row.get("detail") or "")[:52],
+            }
+            for row in rows
+        ],
+        ["when", "action", "tool", "ok", "detail"],
+    )
+    return 0
+
+
+def _parse_since(value: str | None) -> str | None:
+    if not value:
+        return None
+    text = value.strip().lower()
+    if text.endswith(("d", "h")):
+        try:
+            amount = int(text[:-1])
+        except ValueError:
+            return value
+        delta = timedelta(days=amount) if text.endswith("d") else timedelta(hours=amount)
+        return (datetime.now(timezone.utc) - delta).isoformat(timespec="seconds")
+    return value
+
+
+def cmd_report(ctx: Context) -> int:
+    """Tool inventory for an engagement window.
+
+    Pentest reports and DFIR chain-of-custody both need "which tools, which
+    versions, when". This reads it straight out of the history the executor
+    already records, so it is evidence rather than recollection.
+    """
+    import hashlib
+    import json as _json
+    import platform
+
+    args = ctx.args
+    since = _parse_since(args.since)
+    rows = ctx.state.history(since=since, until=args.until, limit=0)
+    used = [r for r in rows if r["action"] in ("install", "run", "launch")]
+
+    state = ctx.state.all_state()
+    tools: list[dict[str, Any]] = []
+
+    # Default to what was actually touched in the window. Listing every
+    # installed package buries the four tools that matter under 380 rows of
+    # base system, which is the opposite of what a report is for.
+    subjects = {r["tool_id"] for r in used}
+    if getattr(args, "all_installed", False):
+        subjects |= ctx.installed()
+
+    for tool_id in sorted(subjects):
+        entry = state.get(tool_id, {})
+        catalog_entry = ctx.catalog.get(tool_id)
+        events = [r for r in used if r["tool_id"] == tool_id]
+        tools.append(
+            {
+                "tool": tool_id,
+                "summary": catalog_entry.summary if catalog_entry else "",
+                "version": entry.get("version", ""),
+                "provider": entry.get("provider", ""),
+                "installed": bool(entry.get("installed")),
+                "first_seen": events[-1]["ts"] if events else "",
+                "last_used": entry.get("last_used") or (events[0]["ts"] if events else ""),
+                "invocations": len(events),
+            }
+        )
+
+    payload: dict[str, Any] = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "window": {"since": since or "all time", "until": args.until or "now"},
+        "host": {
+            "hostname": platform.node(),
+            "platform": platform.platform(),
+            "loadout_version": __version__,
+            "catalog": ctx.catalog.info().generated_at,
+        },
+        "tools": tools,
+    }
+    digest = hashlib.sha256(
+        _json.dumps(payload, sort_keys=True, default=str).encode("utf-8")
+    ).hexdigest()
+    payload["scope"] = "all installed" if getattr(args, "all_installed", False) else "used in window"
+    payload["integrity"] = {"algorithm": "sha256", "digest": digest}
+
+    if args.format == "json" or ctx.json_mode:
+        text = _json.dumps(payload, indent=2, default=str)
+    elif args.format == "markdown":
+        lines = [
+            f"# Tool inventory — {payload['host']['hostname']}",
+            "",
+            f"Generated {payload['generated_at']} · window: {payload['window']['since']}"
+            f" → {payload['window']['until']} · scope: {payload['scope']}",
+            "",
+            "| Tool | Version | Via | Last used | Runs |",
+            "| --- | --- | --- | --- | --- |",
+        ]
+        for tool in tools:
+            lines.append(
+                f"| {tool['tool']} | {tool['version'] or '—'} | {tool['provider'] or '—'} "
+                f"| {tool['last_used'] or '—'} | {tool['invocations']} |"
+            )
+        lines += ["", f"`sha256:{digest}`"]
+        text = "\n".join(lines)
+    else:
+        lines = [
+            f"Tool inventory — {payload['host']['hostname']}",
+            f"Generated {payload['generated_at']}",
+            f"Window: {payload['window']['since']} -> {payload['window']['until']}",
+            f"Scope:  {payload['scope']}",
+            "",
+        ]
+        if not tools:
+            lines.append("  (no tool activity recorded in this window)")
+        for tool in tools:
+            lines.append(
+                f"  {tool['tool']:<28} {tool['version'][:18]:<20} "
+                f"{tool['provider']:<8} runs={tool['invocations']}"
+            )
+        lines += ["", f"sha256:{digest}"]
+        text = "\n".join(lines)
+
+    if args.output:
+        args.output.write_text(text, encoding="utf-8")
+        out.print_ok(f"Wrote {args.output} ({len(tools)} tool(s))")
+    else:
+        print(text)
+    return 0
+
+
+def cmd_audit(ctx: Context) -> int:
+    """Flag installed tooling that is deprecated, superseded or unknown."""
+    installed = ctx.installed()
+    findings: list[dict[str, Any]] = []
+
+    for tool_id in sorted(installed):
+        tool = ctx.catalog.get(tool_id)
+        if tool is None:
+            findings.append(
+                {
+                    "tool": tool_id,
+                    "severity": "info",
+                    "issue": "installed but no longer in the catalog",
+                    "action": "may have been renamed or dropped upstream",
+                }
+            )
+            continue
+        if tool.deprecated_by:
+            findings.append(
+                {
+                    "tool": tool_id,
+                    "severity": "warn",
+                    "issue": f"superseded by {tool.deprecated_by}",
+                    "action": f"loadout install {tool.deprecated_by}",
+                }
+            )
+        state = ctx.state.get(tool_id) or {}
+        if not state.get("version"):
+            findings.append(
+                {
+                    "tool": tool_id,
+                    "severity": "info",
+                    "issue": "no recorded version",
+                    "action": "reinstall through loadout to capture provenance",
+                }
+            )
+        for method in tool.install:
+            if method.provider == "github" and not method.spec.get("checksums"):
+                findings.append(
+                    {
+                        "tool": tool_id,
+                        "severity": "warn",
+                        "issue": "GitHub install method publishes no checksum",
+                        "action": "add a checksums: field to the catalog entry",
+                    }
+                )
+
+    if ctx.args.limit > 0:
+        findings = findings[: ctx.args.limit]
+
+    if ctx.json_mode:
+        out.emit_json({"installed": len(installed), "findings": findings})
+        return 0
+    if not findings:
+        out.print_ok(f"No issues across {len(installed)} installed tool(s).")
+        return 0
+    out.render_table(findings, ["severity", "tool", "issue", "action"])
+    out.print_note(f"{len(findings)} finding(s) across {len(installed)} installed tool(s)")
+    return 0
+
+
+def cmd_star(ctx: Context) -> int:
+    starred = ctx.args.command == "star"
+    ctx.state.set_starred(ctx.args.tool, starred)
+    if ctx.json_mode:
+        out.emit_json({"tool": ctx.args.tool, "starred": starred})
+        return 0
+    out.print_ok(f"{'Starred' if starred else 'Unstarred'} {ctx.args.tool}")
+    return 0
+
+
+def cmd_hold(ctx: Context) -> int:
+    from ..policy import detect_privilege, elevate, refresh_credentials, subprocess_env
+    from ..providers import get_provider
+
+    status = ctx.provider_status.get("apt")
+    if not status or not status.available:
+        out.print_error("Holds are an APT feature and apt is not available here.")
+        return 5
+
+    apt = get_provider("apt")
+    if ctx.args.command == "holds":
+        held = sorted(apt.held())  # type: ignore[attr-defined]
+        if ctx.json_mode:
+            out.emit_json(held)
+            return 0
+        if not held:
+            out.print_note("No packages held.")
+            return 0
+        for name in held:
+            out.get_console().print(f"  {out.glyph('held')} {name}")
+        return 0
+
+    hold = ctx.args.command == "hold"
+    steps = apt.plan_hold(ctx.args.tool, hold=hold)  # type: ignore[attr-defined]
+    privilege = detect_privilege()
+    if not privilege.is_root and not refresh_credentials(privilege):
+        out.print_error("Could not obtain sudo credentials.")
+        return 8
+    for step in steps:
+        argv = elevate(step.argv, privilege=privilege) if step.elevate else step.argv
+        result = subprocess.run(argv, env=subprocess_env(), check=False)  # noqa: S603
+        if result.returncode != 0:
+            out.print_error(f"apt-mark exited {result.returncode}")
+            return result.returncode
+    ctx.state.record("hold" if hold else "unhold", ctx.args.tool)
+    out.print_ok(f"{ctx.args.tool} {'held' if hold else 'unheld'}")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Export
+# ---------------------------------------------------------------------------
+
+
+def cmd_export(ctx: Context) -> int:
+    args = ctx.args
+    installed = sorted(ctx.installed())
+    tools = ctx.catalog.get_many(installed)
+    state = ctx.state.all_state()
+
+    if args.format == "json":
+        import json as _json
+
+        text = _json.dumps(
+            {
+                "exported_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "count": len(tools),
+                "tools": [
+                    {
+                        **tool.to_dict(),
+                        "installed_version": state.get(tool.id, {}).get("version", ""),
+                        "installed_via": state.get(tool.id, {}).get("provider", ""),
+                    }
+                    for tool in tools
+                ],
+            },
+            indent=2,
+        )
+    elif args.format == "loadout":
+        from .. import loadouts
+
+        text = _yaml_dump(loadouts.from_installed("exported", installed).to_dict())
+    elif args.format == "script":
+        text = _render_script(tools)
+    elif args.format == "docker":
+        text = _render_dockerfile(tools)
+    else:
+        text = _render_ansible(tools)
+
+    if args.output:
+        args.output.write_text(text, encoding="utf-8")
+        if args.format == "script":
+            # An exported install script is meant to be run, so it is
+            # deliberately executable.
+            args.output.chmod(0o755)
+        out.print_ok(f"Wrote {args.output}")
+    else:
+        print(text)
+    return 0
+
+
+def _yaml_dump(payload: dict[str, Any]) -> str:
+    import yaml
+
+    payload.pop("source", None)
+    return yaml.safe_dump(payload, sort_keys=False, allow_unicode=True, width=100)
+
+
+def _by_provider(tools: list[Any]) -> dict[str, list[str]]:
+    grouped: dict[str, list[str]] = {}
+    for tool in tools:
+        if not tool.install:
+            continue
+        method = tool.install[0]
+        key = str(
+            method.spec.get("package")
+            or method.spec.get("formula")
+            or method.spec.get("module")
+            or method.spec.get("crate")
+            or method.spec.get("gem")
+            or tool.id
+        )
+        grouped.setdefault(method.provider, []).append(key)
+    return grouped
+
+
+def _render_script(tools: list[Any]) -> str:
+    grouped = _by_provider(tools)
+    lines = [
+        "#!/usr/bin/env bash",
+        "# Generated by `loadout export --format script`",
+        "set -euo pipefail",
+        "export DEBIAN_FRONTEND=noninteractive",
+        "",
+    ]
+    if "apt" in grouped:
+        lines += [
+            "sudo apt-get update -y",
+            "sudo apt-get install -y -- \\",
+            *[f"  {name} \\" for name in sorted(grouped['apt'])[:-1]],
+            f"  {sorted(grouped['apt'])[-1]}",
+            "",
+        ]
+    for provider, command in (
+        ("brew", "brew install"),
+        ("pipx", "pipx install"),
+        ("go", "go install"),
+        ("cargo", "cargo install --locked"),
+        ("gem", "gem install"),
+    ):
+        for name in sorted(grouped.get(provider, [])):
+            lines.append(f"{command} {shlex.quote(name)}")
+    return "\n".join(lines) + "\n"
+
+
+def _render_dockerfile(tools: list[Any]) -> str:
+    grouped = _by_provider(tools)
+    lines = [
+        "# Generated by `loadout export --format docker`",
+        "FROM kalilinux/kali-rolling",
+        "ENV DEBIAN_FRONTEND=noninteractive",
+        "",
+    ]
+    if "apt" in grouped:
+        packages = " \\\n      ".join(sorted(grouped["apt"]))
+        lines += [
+            "RUN apt-get update \\",
+            f" && apt-get install -y --no-install-recommends \\\n      {packages} \\",
+            " && rm -rf /var/lib/apt/lists/*",
+            "",
+        ]
+    if "pipx" in grouped:
+        lines += [
+            "RUN apt-get update && apt-get install -y pipx && rm -rf /var/lib/apt/lists/*",
+            *[f"RUN pipx install {name}" for name in sorted(grouped["pipx"])],
+            "",
+        ]
+    if "go" in grouped:
+        lines += [
+            "ENV GOBIN=/usr/local/bin",
+            *[f"RUN go install {name}" for name in sorted(grouped["go"])],
+            "",
+        ]
+    lines.append('CMD ["/bin/bash"]')
+    return "\n".join(lines) + "\n"
+
+
+def _render_ansible(tools: list[Any]) -> str:
+    grouped = _by_provider(tools)
+    lines = [
+        "# Generated by `loadout export --format ansible`",
+        "- name: Provision security tooling",
+        "  hosts: all",
+        "  become: true",
+        "  tasks:",
+    ]
+    if "apt" in grouped:
+        lines += [
+            "    - name: Install APT packages",
+            "      ansible.builtin.apt:",
+            "        name:",
+            *[f"          - {name}" for name in sorted(grouped["apt"])],
+            "        state: present",
+            "        update_cache: true",
+        ]
+    for provider, module in (("pipx", "community.general.pipx"), ("gem", "community.general.gem")):
+        for name in sorted(grouped.get(provider, [])):
+            lines += [
+                f"    - name: Install {name} ({provider})",
+                f"      {module}:",
+                f"        name: {name}",
+                "        state: present",
+            ]
+    return "\n".join(lines) + "\n"
+
+
+# ---------------------------------------------------------------------------
+# Environment
+# ---------------------------------------------------------------------------
+
+
+def cmd_doctor(ctx: Context) -> int:
+    from .. import doctor
+
+    results = doctor.run_all()
+    if ctx.json_mode:
+        out.emit_json(
+            [
+                {
+                    "check": r.name,
+                    "severity": r.severity,
+                    "message": r.message,
+                    "remediation": r.remediation,
+                }
+                for r in results
+            ]
+        )
+    else:
+        badge = {
+            "ok": f"[green]{out.glyph('ok')}[/green]",
+            "warn": f"[yellow]{out.glyph('warn')}[/yellow]",
+            "fail": f"[red]{out.glyph('fail')}[/red]",
+        }
+        for result in results:
+            out.get_console().print(
+                f"{badge.get(result.severity, '?')} [bold]{result.name}[/bold] — {result.message}",
+                highlight=False,
+            )
+            if result.remediation and result.severity != "ok":
+                out.get_console().print(
+                    f"   [dim]{out.glyph('arrow')} {result.remediation}[/dim]", highlight=False
+                )
+    worst = doctor.worst_severity(results)
+    return {"ok": 0, "warn": 0, "fail": 2}.get(worst, 1)
+
+
+def cmd_migrate(ctx: Context) -> int:
+    from ..paths import migrate_legacy_state, needs_migration
+
+    if not needs_migration():
+        if ctx.json_mode:
+            out.emit_json({"migrated": False, "reason": "nothing to migrate"})
+        else:
+            out.print_note("Nothing to migrate — no kalitools state found.")
+        return 0
+
+    report = migrate_legacy_state(dry_run=ctx.args.dry_run)
+    payload = {
+        "dry_run": ctx.args.dry_run,
+        "settings": bool(report.settings),
+        "local_repo": report.local_repo,
+        "overrides": len(report.overrides or {}),
+        "installed_from_cache": len(report.installed or []),
+        "state_db_copied": report.moved_state_db,
+    }
+    if ctx.json_mode:
+        out.emit_json(payload)
+        return 0
+    out.print_ok("Imported kalitools state:")
+    for key, value in payload.items():
+        out.get_console().print(f"   [dim]{key:>22}[/dim]  {value}")
+    out.print_note("Legacy files were left in place; nothing was deleted.")
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Dispatch
+# ---------------------------------------------------------------------------
+
+_COMMANDS = {
+    "list": cmd_list,
+    "search": cmd_search,
+    "show": cmd_show,
+    "alt": cmd_alt,
+    "phase": cmd_phase,
+    "categories": cmd_categories,
+    "providers": cmd_providers,
+    "install": cmd_install,
+    "remove": cmd_remove,
+    "run": cmd_run,
+    "update": cmd_update,
+    "upgrade": cmd_upgrade,
+    "catalog": cmd_catalog,
+    "loadout": cmd_loadout,
+    "sync": cmd_sync,
+    "history": cmd_history,
+    "report": cmd_report,
+    "audit": cmd_audit,
+    "star": cmd_star,
+    "unstar": cmd_star,
+    "hold": cmd_hold,
+    "unhold": cmd_hold,
+    "holds": cmd_hold,
+    "export": cmd_export,
+    "doctor": cmd_doctor,
+    "migrate": cmd_migrate,
+}
+
+
+def _launch_browser(ctx: Context) -> int:
+    from .tui.app import run_tui, textual_available
+
+    if not textual_available():
+        out.print_warn(
+            "Textual is not installed, so the interactive browser is unavailable."
+        )
+        out.print_note("Install it with: pipx inject loadout textual")
+        out.print_note("Meanwhile, try: loadout list  |  loadout search <term>")
+        return 1
+    return run_tui(ctx)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    configure_logging(args.log_level, log_file=args.log_file)
+    configure_console(theme=args.theme, no_emoji=args.no_emoji)
+    if args.offline:
+        os.environ["LOADOUT_OFFLINE"] = "1"
+    if args.no_emoji:
+        os.environ["LOADOUT_NO_EMOJI"] = "1"
+
+    ctx = Context(args=args)
+
+    # Absorb kalitools state the first time the renamed binary runs.
+    try:
+        from ..paths import migrate_legacy_state, needs_migration
+
+        if needs_migration() and args.command != "migrate":
+            report = migrate_legacy_state()
+            if report.anything_found and not ctx.json_mode:
+                out.print_note(
+                    "Imported your kalitools settings and history. "
+                    "The old files were left untouched."
+                )
+    except Exception as exc:
+        # Migration is a convenience; never let it block the actual command.
+        logger.debug("legacy migration skipped: %s", exc)
+
+    try:
+        if args.command is None:
+            return _launch_browser(ctx)
+        handler = _COMMANDS.get(args.command)
+        if handler is None:
+            parser.print_help()
+            return 2
+        return handler(ctx) or 0
+    except LoadoutError as exc:
+        if ctx.json_mode:
+            out.emit_json({"error": exc.message, "remediation": exc.remediation})
+        else:
+            out.print_error(exc.message, exc.remediation)
+        return exc.exit_code
+    except KeyboardInterrupt:
+        out.print_note("\nInterrupted.")
+        return 130
+    except BrokenPipeError:
+        # `loadout list | head` closes the pipe under us.
+        _silence_broken_pipe()
+        return 0
+    except Exception as exc:
+        if args.log_level.upper() == "DEBUG":
+            raise
+        out.print_error(
+            f"Unexpected error: {exc}",
+            "Re-run with --log-level DEBUG for the full traceback.",
+        )
+        return 1
+
+
+def _silence_broken_pipe() -> None:
+    """Point stdout at devnull so interpreter shutdown cannot re-raise.
+
+    Catching BrokenPipeError inside main() is not enough: CPython flushes
+    sys.stdout again during shutdown, after every handler has returned, and
+    prints "Exception ignored on flushing sys.stdout" straight to stderr.
+    """
+    try:
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, sys.stdout.fileno())
+    except (OSError, ValueError):
+        pass
+
+
+def cli() -> None:
+    """Console-script entry point."""
+    try:
+        code = main()
+    except BrokenPipeError:
+        _silence_broken_pipe()
+        code = 0
+    raise SystemExit(code)
+
+
+def legacy_shim() -> None:
+    """``kalitools`` entry point, kept for one major version.
+
+    Prints a deprecation notice to stderr -- never stdout, so a script that
+    pipes JSON keeps working -- and then runs the real CLI.
+    """
+    print(
+        "kalitools is now `loadout`. This alias will be removed in 2.0.\n"
+        "Your settings and history were carried over automatically.",
+        file=sys.stderr,
+    )
+    raise SystemExit(main())

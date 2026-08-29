@@ -1,0 +1,11 @@
+id: dumpzilla
+categories:
+- other
+install:
+- provider: apt
+  package: dumpzilla
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

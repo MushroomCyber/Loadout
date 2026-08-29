@@ -1,0 +1,11 @@
+id: zsh-autosuggestions
+categories:
+- other
+install:
+- provider: apt
+  package: zsh-autosuggestions
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

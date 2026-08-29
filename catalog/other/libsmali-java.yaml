@@ -1,0 +1,11 @@
+id: libsmali-java
+categories:
+- other
+install:
+- provider: apt
+  package: libsmali-java
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

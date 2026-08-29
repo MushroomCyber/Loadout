@@ -1,0 +1,11 @@
+id: screen
+categories:
+- other
+install:
+- provider: apt
+  package: screen
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

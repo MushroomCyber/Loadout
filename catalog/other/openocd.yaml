@@ -1,0 +1,11 @@
+id: openocd
+categories:
+- other
+install:
+- provider: apt
+  package: openocd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

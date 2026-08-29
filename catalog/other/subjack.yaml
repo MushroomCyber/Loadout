@@ -1,0 +1,11 @@
+id: subjack
+categories:
+- other
+install:
+- provider: apt
+  package: subjack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

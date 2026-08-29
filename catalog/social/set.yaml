@@ -1,0 +1,13 @@
+id: set
+categories:
+- social
+tags:
+- framework
+install:
+- provider: apt
+  package: set
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

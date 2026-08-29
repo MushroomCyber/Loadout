@@ -1,0 +1,29 @@
+id: chainsaw
+summary: Fast Windows event log hunting with Sigma rule support
+categories:
+- detection
+- incident-response
+tags:
+- windows
+- evtx
+- sigma
+- blue-team
+phases:
+- analysis
+binaries:
+- chainsaw
+homepage: https://github.com/WithSecureLabs/chainsaw
+alternatives:
+- hayabusa
+- zircolite
+install:
+- provider: apt
+  package: chainsaw
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: github
+  repo: WithSecureLabs/chainsaw
+  checksums: '*checksums*.txt'

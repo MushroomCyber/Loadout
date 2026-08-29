@@ -1,0 +1,11 @@
+id: golang-github-binject-go-donut
+categories:
+- other
+install:
+- provider: apt
+  package: golang-github-binject-go-donut
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

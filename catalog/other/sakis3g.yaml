@@ -1,0 +1,11 @@
+id: sakis3g
+categories:
+- other
+install:
+- provider: apt
+  package: sakis3g
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

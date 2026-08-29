@@ -1,0 +1,11 @@
+id: recordmydesktop
+categories:
+- other
+install:
+- provider: apt
+  package: recordmydesktop
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

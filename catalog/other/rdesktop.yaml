@@ -1,0 +1,11 @@
+id: rdesktop
+categories:
+- other
+install:
+- provider: apt
+  package: rdesktop
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

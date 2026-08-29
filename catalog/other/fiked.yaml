@@ -1,0 +1,11 @@
+id: fiked
+categories:
+- other
+install:
+- provider: apt
+  package: fiked
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

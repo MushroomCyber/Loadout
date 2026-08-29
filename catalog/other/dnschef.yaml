@@ -1,0 +1,11 @@
+id: dnschef
+categories:
+- other
+install:
+- provider: apt
+  package: dnschef
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

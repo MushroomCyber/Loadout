@@ -1,0 +1,11 @@
+id: python-ldapdomaindump
+categories:
+- other
+install:
+- provider: apt
+  package: python-ldapdomaindump
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

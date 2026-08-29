@@ -1,0 +1,11 @@
+id: sqldict
+categories:
+- other
+install:
+- provider: apt
+  package: sqldict
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

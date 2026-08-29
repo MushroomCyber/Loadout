@@ -1,0 +1,11 @@
+id: sslsniff
+categories:
+- other
+install:
+- provider: apt
+  package: sslsniff
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: ismtp
+categories:
+- other
+install:
+- provider: apt
+  package: ismtp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

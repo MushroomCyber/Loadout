@@ -1,0 +1,11 @@
+id: mcp-kali-server
+categories:
+- other
+install:
+- provider: apt
+  package: mcp-kali-server
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

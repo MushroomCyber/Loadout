@@ -1,0 +1,13 @@
+id: patator
+categories:
+- password
+tags:
+- online
+install:
+- provider: apt
+  package: patator
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

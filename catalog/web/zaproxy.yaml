@@ -1,0 +1,29 @@
+id: zaproxy
+summary: Full-featured web application scanner and intercepting proxy
+categories:
+- web
+tags:
+- proxy
+- owasp
+- gui
+phases:
+- discovery
+binaries:
+- zaproxy
+- zap.sh
+homepage: https://www.zaproxy.org
+alternatives:
+- burpsuite
+- mitmproxy
+- caido
+install:
+- provider: apt
+  package: zaproxy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: zap
+  cask: true

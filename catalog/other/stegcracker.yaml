@@ -1,0 +1,11 @@
+id: stegcracker
+categories:
+- other
+install:
+- provider: apt
+  package: stegcracker
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

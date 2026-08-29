@@ -1,0 +1,11 @@
+id: windows-binaries
+categories:
+- other
+install:
+- provider: apt
+  package: windows-binaries
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

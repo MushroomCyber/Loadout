@@ -1,0 +1,11 @@
+id: spraykatz
+categories:
+- other
+install:
+- provider: apt
+  package: spraykatz
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

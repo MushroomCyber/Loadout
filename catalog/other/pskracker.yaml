@@ -1,0 +1,11 @@
+id: pskracker
+categories:
+- other
+install:
+- provider: apt
+  package: pskracker
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

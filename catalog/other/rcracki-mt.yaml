@@ -1,0 +1,11 @@
+id: rcracki-mt
+categories:
+- other
+install:
+- provider: apt
+  package: rcracki-mt
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: uhd
+categories:
+- other
+install:
+- provider: apt
+  package: uhd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

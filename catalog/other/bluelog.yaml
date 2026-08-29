@@ -1,0 +1,13 @@
+id: bluelog
+categories:
+- other
+tags:
+- bluetooth
+install:
+- provider: apt
+  package: bluelog
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

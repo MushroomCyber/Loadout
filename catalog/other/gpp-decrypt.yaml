@@ -1,0 +1,11 @@
+id: gpp-decrypt
+categories:
+- other
+install:
+- provider: apt
+  package: gpp-decrypt
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

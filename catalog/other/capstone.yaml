@@ -1,0 +1,11 @@
+id: capstone
+categories:
+- other
+install:
+- provider: apt
+  package: capstone
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

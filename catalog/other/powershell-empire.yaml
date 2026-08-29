@@ -1,0 +1,11 @@
+id: powershell-empire
+categories:
+- other
+install:
+- provider: apt
+  package: powershell-empire
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

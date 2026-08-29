@@ -1,0 +1,11 @@
+id: sprayingtoolkit
+categories:
+- other
+install:
+- provider: apt
+  package: sprayingtoolkit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: sendemail
+categories:
+- other
+install:
+- provider: apt
+  package: sendemail
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

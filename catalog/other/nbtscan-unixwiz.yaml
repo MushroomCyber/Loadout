@@ -1,0 +1,11 @@
+id: nbtscan-unixwiz
+categories:
+- other
+install:
+- provider: apt
+  package: nbtscan-unixwiz
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

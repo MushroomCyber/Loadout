@@ -1,0 +1,11 @@
+id: forensics-colorize
+categories:
+- other
+install:
+- provider: apt
+  package: forensics-colorize
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

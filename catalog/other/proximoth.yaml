@@ -1,0 +1,11 @@
+id: proximoth
+categories:
+- other
+install:
+- provider: apt
+  package: proximoth
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

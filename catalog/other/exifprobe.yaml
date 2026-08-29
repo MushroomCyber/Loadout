@@ -1,0 +1,11 @@
+id: exifprobe
+categories:
+- other
+install:
+- provider: apt
+  package: exifprobe
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

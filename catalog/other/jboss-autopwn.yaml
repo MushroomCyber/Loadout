@@ -1,0 +1,11 @@
+id: jboss-autopwn
+categories:
+- other
+install:
+- provider: apt
+  package: jboss-autopwn
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

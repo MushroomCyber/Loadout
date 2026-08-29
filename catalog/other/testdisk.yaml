@@ -1,0 +1,11 @@
+id: testdisk
+categories:
+- other
+install:
+- provider: apt
+  package: testdisk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: waybackpy
+categories:
+- other
+install:
+- provider: apt
+  package: waybackpy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

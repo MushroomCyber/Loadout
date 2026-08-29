@@ -1,0 +1,25 @@
+id: hashcat
+summary: GPU-accelerated offline password recovery
+categories:
+- password
+tags:
+- cracking
+- gpu
+phases:
+- credential-access
+binaries:
+- hashcat
+homepage: https://hashcat.net/hashcat/
+verify: hashcat --version
+alternatives:
+- john
+install:
+- provider: apt
+  package: hashcat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: hashcat

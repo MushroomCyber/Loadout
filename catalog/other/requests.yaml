@@ -1,0 +1,11 @@
+id: requests
+categories:
+- other
+install:
+- provider: apt
+  package: requests
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: clamav
+categories:
+- other
+install:
+- provider: apt
+  package: clamav
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

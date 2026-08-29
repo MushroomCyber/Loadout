@@ -1,0 +1,26 @@
+id: suricata
+summary: High-performance IDS, IPS and network security monitor
+categories:
+- monitoring
+- detection
+tags:
+- ids
+- blue-team
+phases:
+- collection
+binaries:
+- suricata
+homepage: https://suricata.io
+alternatives:
+- zeek
+- snort
+install:
+- provider: apt
+  package: suricata
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: suricata

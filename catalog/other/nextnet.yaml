@@ -1,0 +1,11 @@
+id: nextnet
+categories:
+- other
+install:
+- provider: apt
+  package: nextnet
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

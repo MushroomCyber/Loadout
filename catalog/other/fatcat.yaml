@@ -1,0 +1,11 @@
+id: fatcat
+categories:
+- other
+install:
+- provider: apt
+  package: fatcat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

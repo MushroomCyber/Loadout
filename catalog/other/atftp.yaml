@@ -1,0 +1,13 @@
+id: atftp
+categories:
+- other
+tags:
+- file-transfer
+install:
+- provider: apt
+  package: atftp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

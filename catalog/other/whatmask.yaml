@@ -1,0 +1,11 @@
+id: whatmask
+categories:
+- other
+install:
+- provider: apt
+  package: whatmask
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

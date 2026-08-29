@@ -1,0 +1,11 @@
+id: nasm
+categories:
+- other
+install:
+- provider: apt
+  package: nasm
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

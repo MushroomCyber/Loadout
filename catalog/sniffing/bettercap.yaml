@@ -1,0 +1,26 @@
+id: bettercap
+summary: Network attack and monitoring framework
+categories:
+- sniffing
+- wireless
+tags:
+- mitm
+phases:
+- collection
+- credential-access
+binaries:
+- bettercap
+homepage: https://www.bettercap.org
+requires_root: true
+alternatives:
+- ettercap
+install:
+- provider: apt
+  package: bettercap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: bettercap

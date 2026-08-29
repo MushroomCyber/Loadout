@@ -1,0 +1,11 @@
+id: curlftpfs
+categories:
+- other
+install:
+- provider: apt
+  package: curlftpfs
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

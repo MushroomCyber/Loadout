@@ -1,0 +1,11 @@
+id: obsidian
+categories:
+- other
+install:
+- provider: apt
+  package: obsidian
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

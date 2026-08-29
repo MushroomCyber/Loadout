@@ -1,0 +1,11 @@
+id: thc-pptp-bruter
+categories:
+- other
+install:
+- provider: apt
+  package: thc-pptp-bruter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

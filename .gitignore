@@ -1,35 +1,35 @@
-# Python artifacts
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-
-# Packaging / distribution
+*.egg-info/
 build/
 dist/
-*.egg-info/
 .eggs/
-*.spec
 
-# Virtual environments
-.env
-.venv
-env/
+# Environments
+.venv/
 venv/
+env/
 ENV/
+.env
 
 # Tooling caches
-pip-wheel-metadata/
 .pytest_cache/
-.cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
 coverage.xml
 htmlcov/
-*.cover
-*.log
 
-# Debug output
-debug_scraper.txt
+# The compiled catalog IS committed: it is small, and without it a clone-and-
+# install has no data at all. CI proves it matches catalog/ on every push, so it
+# cannot silently drift. Rebuild with `loadout catalog build`.
+*.db.building
 
-# OS/editor noise
+# Local test scratch
+.testhome/
+
+# OS / editor
 .DS_Store
 Thumbs.db
 *.swp

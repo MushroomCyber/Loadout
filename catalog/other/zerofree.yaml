@@ -1,0 +1,11 @@
+id: zerofree
+categories:
+- other
+install:
+- provider: apt
+  package: zerofree
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

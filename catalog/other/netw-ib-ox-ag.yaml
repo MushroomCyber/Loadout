@@ -1,0 +1,11 @@
+id: netw-ib-ox-ag
+categories:
+- other
+install:
+- provider: apt
+  package: netw-ib-ox-ag
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

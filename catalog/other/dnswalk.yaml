@@ -1,0 +1,11 @@
+id: dnswalk
+categories:
+- other
+install:
+- provider: apt
+  package: dnswalk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

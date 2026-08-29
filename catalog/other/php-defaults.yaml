@@ -1,0 +1,11 @@
+id: php-defaults
+categories:
+- other
+install:
+- provider: apt
+  package: php-defaults
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

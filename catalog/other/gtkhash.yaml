@@ -1,0 +1,11 @@
+id: gtkhash
+categories:
+- other
+install:
+- provider: apt
+  package: gtkhash
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

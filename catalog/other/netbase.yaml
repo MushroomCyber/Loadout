@@ -1,0 +1,11 @@
+id: netbase
+categories:
+- other
+install:
+- provider: apt
+  package: netbase
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

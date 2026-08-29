@@ -1,0 +1,11 @@
+id: eaphammer
+categories:
+- other
+install:
+- provider: apt
+  package: eaphammer
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

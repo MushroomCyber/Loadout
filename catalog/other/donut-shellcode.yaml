@@ -1,0 +1,11 @@
+id: donut-shellcode
+categories:
+- other
+install:
+- provider: apt
+  package: donut-shellcode
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

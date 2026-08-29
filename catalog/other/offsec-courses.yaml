@@ -1,0 +1,11 @@
+id: offsec-courses
+categories:
+- other
+install:
+- provider: apt
+  package: offsec-courses
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

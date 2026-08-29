@@ -1,0 +1,11 @@
+id: creddump7
+categories:
+- other
+install:
+- provider: apt
+  package: creddump7
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

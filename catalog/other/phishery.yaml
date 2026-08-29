@@ -1,0 +1,11 @@
+id: phishery
+categories:
+- other
+install:
+- provider: apt
+  package: phishery
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: sslsplit
+categories:
+- other
+install:
+- provider: apt
+  package: sslsplit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: ddrescue
+categories:
+- forensics
+tags:
+- recovery
+install:
+- provider: apt
+  package: ddrescue
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

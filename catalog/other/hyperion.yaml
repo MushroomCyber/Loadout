@@ -1,0 +1,11 @@
+id: hyperion
+categories:
+- other
+install:
+- provider: apt
+  package: hyperion
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: onesixtyone
+categories:
+- other
+install:
+- provider: apt
+  package: onesixtyone
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

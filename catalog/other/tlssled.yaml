@@ -1,0 +1,11 @@
+id: tlssled
+categories:
+- other
+install:
+- provider: apt
+  package: tlssled
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

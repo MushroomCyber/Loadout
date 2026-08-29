@@ -1,0 +1,13 @@
+id: extundelete
+categories:
+- forensics
+tags:
+- recovery
+install:
+- provider: apt
+  package: extundelete
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

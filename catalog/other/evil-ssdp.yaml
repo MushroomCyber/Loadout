@@ -1,0 +1,11 @@
+id: evil-ssdp
+categories:
+- other
+install:
+- provider: apt
+  package: evil-ssdp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

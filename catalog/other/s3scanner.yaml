@@ -1,0 +1,11 @@
+id: s3scanner
+categories:
+- other
+install:
+- provider: apt
+  package: s3scanner
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

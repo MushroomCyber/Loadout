@@ -1,0 +1,11 @@
+id: websploit
+categories:
+- other
+install:
+- provider: apt
+  package: websploit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

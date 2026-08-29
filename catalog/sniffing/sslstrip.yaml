@@ -1,0 +1,16 @@
+id: sslstrip
+categories:
+- sniffing
+tags:
+- ssl-strip
+install:
+- provider: apt
+  package: sslstrip
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+deprecated_by: bettercap
+alternatives:
+- bettercap

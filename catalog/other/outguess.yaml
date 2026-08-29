@@ -1,0 +1,11 @@
+id: outguess
+categories:
+- other
+install:
+- provider: apt
+  package: outguess
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

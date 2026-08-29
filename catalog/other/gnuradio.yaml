@@ -1,0 +1,11 @@
+id: gnuradio
+categories:
+- other
+install:
+- provider: apt
+  package: gnuradio
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

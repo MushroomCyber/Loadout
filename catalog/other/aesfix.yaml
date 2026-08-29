@@ -1,0 +1,11 @@
+id: aesfix
+categories:
+- other
+install:
+- provider: apt
+  package: aesfix
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

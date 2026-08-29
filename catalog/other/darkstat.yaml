@@ -1,0 +1,11 @@
+id: darkstat
+categories:
+- other
+install:
+- provider: apt
+  package: darkstat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

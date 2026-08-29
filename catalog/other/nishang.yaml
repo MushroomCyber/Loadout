@@ -1,0 +1,11 @@
+id: nishang
+categories:
+- other
+install:
+- provider: apt
+  package: nishang
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

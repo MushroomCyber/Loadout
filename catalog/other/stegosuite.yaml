@@ -1,0 +1,11 @@
+id: stegosuite
+categories:
+- other
+install:
+- provider: apt
+  package: stegosuite
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

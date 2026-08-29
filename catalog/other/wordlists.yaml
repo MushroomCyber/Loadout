@@ -1,0 +1,11 @@
+id: wordlists
+categories:
+- other
+install:
+- provider: apt
+  package: wordlists
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: krbrelayx
+categories:
+- other
+install:
+- provider: apt
+  package: krbrelayx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

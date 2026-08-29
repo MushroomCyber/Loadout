@@ -1,0 +1,11 @@
+id: hackrf
+categories:
+- other
+install:
+- provider: apt
+  package: hackrf
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

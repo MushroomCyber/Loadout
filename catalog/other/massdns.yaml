@@ -1,0 +1,11 @@
+id: massdns
+categories:
+- other
+install:
+- provider: apt
+  package: massdns
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

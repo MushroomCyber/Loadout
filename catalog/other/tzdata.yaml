@@ -1,0 +1,11 @@
+id: tzdata
+categories:
+- other
+install:
+- provider: apt
+  package: tzdata
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: twofi
+categories:
+- other
+install:
+- provider: apt
+  package: twofi
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

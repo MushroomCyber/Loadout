@@ -1,0 +1,11 @@
+id: fcrackzip
+categories:
+- other
+install:
+- provider: apt
+  package: fcrackzip
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

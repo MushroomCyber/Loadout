@@ -1,0 +1,13 @@
+id: beef-xss
+categories:
+- social
+tags:
+- browser
+install:
+- provider: apt
+  package: beef-xss
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: rake
+categories:
+- other
+install:
+- provider: apt
+  package: rake
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

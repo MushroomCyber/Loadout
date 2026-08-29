@@ -1,0 +1,11 @@
+id: macchanger
+categories:
+- other
+install:
+- provider: apt
+  package: macchanger
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

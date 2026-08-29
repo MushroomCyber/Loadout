@@ -1,0 +1,11 @@
+id: bruteshark
+categories:
+- other
+install:
+- provider: apt
+  package: bruteshark
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: knocker
+categories:
+- other
+install:
+- provider: apt
+  package: knocker
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

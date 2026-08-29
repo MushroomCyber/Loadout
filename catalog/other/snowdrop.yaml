@@ -1,0 +1,11 @@
+id: snowdrop
+categories:
+- other
+install:
+- provider: apt
+  package: snowdrop
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

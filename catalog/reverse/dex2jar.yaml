@@ -1,0 +1,13 @@
+id: dex2jar
+categories:
+- reverse
+tags:
+- android
+install:
+- provider: apt
+  package: dex2jar
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

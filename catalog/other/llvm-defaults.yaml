@@ -1,0 +1,11 @@
+id: llvm-defaults
+categories:
+- other
+install:
+- provider: apt
+  package: llvm-defaults
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

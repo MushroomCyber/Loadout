@@ -1,0 +1,11 @@
+id: joplin
+categories:
+- other
+install:
+- provider: apt
+  package: joplin
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

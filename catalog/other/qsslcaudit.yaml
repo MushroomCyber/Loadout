@@ -1,0 +1,11 @@
+id: qsslcaudit
+categories:
+- other
+install:
+- provider: apt
+  package: qsslcaudit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: forensic-artifacts
+categories:
+- other
+install:
+- provider: apt
+  package: forensic-artifacts
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: ferret-sidejack
+categories:
+- other
+install:
+- provider: apt
+  package: ferret-sidejack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

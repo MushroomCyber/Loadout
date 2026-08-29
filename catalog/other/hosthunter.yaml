@@ -1,0 +1,11 @@
+id: hosthunter
+categories:
+- other
+install:
+- provider: apt
+  package: hosthunter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

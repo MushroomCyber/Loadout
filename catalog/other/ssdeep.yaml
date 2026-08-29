@@ -1,0 +1,11 @@
+id: ssdeep
+categories:
+- other
+install:
+- provider: apt
+  package: ssdeep
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,29 @@
+id: amass
+summary: In-depth attack surface mapping and subdomain enumeration
+categories:
+- recon
+tags:
+- subdomains
+- osint
+- owasp
+phases:
+- reconnaissance
+binaries:
+- amass
+homepage: https://owasp.org/www-project-amass/
+alternatives:
+- subfinder
+- assetfinder
+install:
+- provider: apt
+  package: amass
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: amass
+- provider: github
+  repo: owasp-amass/amass
+  checksums: '*checksums*.txt'

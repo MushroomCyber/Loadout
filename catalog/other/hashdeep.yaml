@@ -1,0 +1,11 @@
+id: hashdeep
+categories:
+- other
+install:
+- provider: apt
+  package: hashdeep
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

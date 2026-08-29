@@ -1,0 +1,11 @@
+id: inspectrum
+categories:
+- other
+install:
+- provider: apt
+  package: inspectrum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

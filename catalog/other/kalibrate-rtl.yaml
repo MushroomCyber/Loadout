@@ -1,0 +1,11 @@
+id: kalibrate-rtl
+categories:
+- other
+install:
+- provider: apt
+  package: kalibrate-rtl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

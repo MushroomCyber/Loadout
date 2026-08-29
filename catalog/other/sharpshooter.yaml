@@ -1,0 +1,11 @@
+id: sharpshooter
+categories:
+- other
+install:
+- provider: apt
+  package: sharpshooter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

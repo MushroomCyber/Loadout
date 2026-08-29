@@ -1,0 +1,11 @@
+id: ubertooth
+categories:
+- other
+install:
+- provider: apt
+  package: ubertooth
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

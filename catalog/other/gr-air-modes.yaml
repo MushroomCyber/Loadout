@@ -1,0 +1,11 @@
+id: gr-air-modes
+categories:
+- other
+install:
+- provider: apt
+  package: gr-air-modes
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

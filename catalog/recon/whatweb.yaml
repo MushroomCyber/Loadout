@@ -1,0 +1,11 @@
+id: whatweb
+categories:
+- recon
+install:
+- provider: apt
+  package: whatweb
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

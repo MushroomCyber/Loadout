@@ -1,0 +1,11 @@
+id: termineter
+categories:
+- other
+install:
+- provider: apt
+  package: termineter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

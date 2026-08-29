@@ -1,0 +1,11 @@
+id: wafw00f
+categories:
+- recon
+install:
+- provider: apt
+  package: wafw00f
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

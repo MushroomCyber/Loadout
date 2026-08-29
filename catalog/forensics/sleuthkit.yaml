@@ -1,0 +1,27 @@
+id: sleuthkit
+summary: Filesystem and disk image forensic analysis toolkit
+categories:
+- forensics
+tags:
+- disk
+- classic
+phases:
+- analysis
+binaries:
+- fls
+- mmls
+- icat
+- tsk_recover
+homepage: https://www.sleuthkit.org
+alternatives:
+- autopsy
+install:
+- provider: apt
+  package: sleuthkit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: sleuthkit

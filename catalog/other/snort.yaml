@@ -1,0 +1,11 @@
+id: snort
+categories:
+- other
+install:
+- provider: apt
+  package: snort
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

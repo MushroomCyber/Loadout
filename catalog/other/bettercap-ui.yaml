@@ -1,0 +1,11 @@
+id: bettercap-ui
+categories:
+- other
+install:
+- provider: apt
+  package: bettercap-ui
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

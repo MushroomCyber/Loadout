@@ -1,0 +1,19 @@
+slug: osint-minimal
+name: OSINT Minimal
+description: 'Lightweight OSINT collection bundle: subdomains, DNS, harvesting.'
+tags:
+- osint
+- recon
+tools:
+- amass
+- assetfinder
+- dnsenum
+- dnsrecon
+- fierce
+- findomain
+- maltego
+- recon-ng
+- spiderfoot
+- subfinder
+- sublist3r
+- theharvester

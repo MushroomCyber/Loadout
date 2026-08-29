@@ -1,0 +1,13 @@
+id: bing-ip2hosts
+categories:
+- other
+tags:
+- recon
+install:
+- provider: apt
+  package: bing-ip2hosts
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

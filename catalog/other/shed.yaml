@@ -1,0 +1,11 @@
+id: shed
+categories:
+- other
+install:
+- provider: apt
+  package: shed
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

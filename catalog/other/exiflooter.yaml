@@ -1,0 +1,11 @@
+id: exiflooter
+categories:
+- other
+install:
+- provider: apt
+  package: exiflooter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: proxmark3
+categories:
+- other
+install:
+- provider: apt
+  package: proxmark3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

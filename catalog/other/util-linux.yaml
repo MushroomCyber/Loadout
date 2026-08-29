@@ -1,0 +1,11 @@
+id: util-linux
+categories:
+- other
+install:
+- provider: apt
+  package: util-linux
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

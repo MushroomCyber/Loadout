@@ -1,0 +1,11 @@
+id: dscan
+categories:
+- other
+install:
+- provider: apt
+  package: dscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

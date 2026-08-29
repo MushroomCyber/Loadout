@@ -1,0 +1,11 @@
+id: sqlitebrowser
+categories:
+- other
+install:
+- provider: apt
+  package: sqlitebrowser
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

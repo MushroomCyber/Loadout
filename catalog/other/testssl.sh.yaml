@@ -1,0 +1,11 @@
+id: testssl.sh
+categories:
+- other
+install:
+- provider: apt
+  package: testssl.sh
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

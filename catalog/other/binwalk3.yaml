@@ -1,0 +1,11 @@
+id: binwalk3
+categories:
+- other
+install:
+- provider: apt
+  package: binwalk3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

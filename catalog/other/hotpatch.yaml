@@ -1,0 +1,11 @@
+id: hotpatch
+categories:
+- other
+install:
+- provider: apt
+  package: hotpatch
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

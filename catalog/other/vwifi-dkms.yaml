@@ -1,0 +1,11 @@
+id: vwifi-dkms
+categories:
+- other
+install:
+- provider: apt
+  package: vwifi-dkms
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

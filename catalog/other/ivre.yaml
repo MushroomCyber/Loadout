@@ -1,0 +1,11 @@
+id: ivre
+categories:
+- other
+install:
+- provider: apt
+  package: ivre
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: berate-ap
+categories:
+- other
+tags:
+- wireless
+install:
+- provider: apt
+  package: berate-ap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

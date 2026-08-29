@@ -1,0 +1,23 @@
+id: binwalk
+summary: Firmware image analysis and extraction
+categories:
+- reverse
+- forensics
+tags:
+- firmware
+- carving
+phases:
+- analysis
+binaries:
+- binwalk
+homepage: https://github.com/ReFirmLabs/binwalk
+install:
+- provider: apt
+  package: binwalk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: binwalk

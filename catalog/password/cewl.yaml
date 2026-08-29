@@ -1,0 +1,21 @@
+id: cewl
+summary: Custom wordlist generator that spiders a target site
+categories:
+- password
+tags:
+- wordlists
+phases:
+- credential-access
+binaries:
+- cewl
+homepage: https://github.com/digininja/CeWL
+alternatives:
+- crunch
+install:
+- provider: apt
+  package: cewl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

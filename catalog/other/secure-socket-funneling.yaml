@@ -1,0 +1,11 @@
+id: secure-socket-funneling
+categories:
+- other
+install:
+- provider: apt
+  package: secure-socket-funneling
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

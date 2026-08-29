@@ -1,0 +1,11 @@
+id: inetsim
+categories:
+- other
+install:
+- provider: apt
+  package: inetsim
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

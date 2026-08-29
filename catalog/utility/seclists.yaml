@@ -1,0 +1,20 @@
+id: seclists
+summary: The collection of wordlists everything else expects
+categories:
+- utility
+tags:
+- wordlists
+- data
+phases:
+- discovery
+homepage: https://github.com/danielmiessler/SecLists
+install:
+- provider: apt
+  package: seclists
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: seclists

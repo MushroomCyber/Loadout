@@ -1,0 +1,11 @@
+id: ldeep
+categories:
+- other
+install:
+- provider: apt
+  package: ldeep
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

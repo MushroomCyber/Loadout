@@ -1,0 +1,11 @@
+id: zsh-syntax-highlighting
+categories:
+- other
+install:
+- provider: apt
+  package: zsh-syntax-highlighting
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

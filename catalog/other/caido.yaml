@@ -1,0 +1,11 @@
+id: caido
+categories:
+- other
+install:
+- provider: apt
+  package: caido
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

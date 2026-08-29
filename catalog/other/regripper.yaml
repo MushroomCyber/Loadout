@@ -1,0 +1,11 @@
+id: regripper
+categories:
+- other
+install:
+- provider: apt
+  package: regripper
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

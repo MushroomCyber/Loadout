@@ -1,0 +1,11 @@
+id: blue-hydra
+categories:
+- other
+install:
+- provider: apt
+  package: blue-hydra
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: proxychains-ng
+categories:
+- other
+install:
+- provider: apt
+  package: proxychains-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

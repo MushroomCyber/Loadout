@@ -1,0 +1,11 @@
+id: doona
+categories:
+- other
+install:
+- provider: apt
+  package: doona
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: gr-osmosdr
+categories:
+- other
+install:
+- provider: apt
+  package: gr-osmosdr
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

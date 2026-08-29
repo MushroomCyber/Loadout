@@ -1,0 +1,11 @@
+id: ncurses-hexedit
+categories:
+- other
+install:
+- provider: apt
+  package: ncurses-hexedit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

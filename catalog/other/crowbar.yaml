@@ -1,0 +1,11 @@
+id: crowbar
+categories:
+- other
+install:
+- provider: apt
+  package: crowbar
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

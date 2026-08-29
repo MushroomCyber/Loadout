@@ -1,0 +1,11 @@
+id: asleap
+categories:
+- wireless
+install:
+- provider: apt
+  package: asleap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

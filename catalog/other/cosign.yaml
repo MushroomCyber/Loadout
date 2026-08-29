@@ -1,0 +1,11 @@
+id: cosign
+categories:
+- other
+install:
+- provider: apt
+  package: cosign
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

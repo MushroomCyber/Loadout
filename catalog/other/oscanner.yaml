@@ -1,0 +1,11 @@
+id: oscanner
+categories:
+- other
+install:
+- provider: apt
+  package: oscanner
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

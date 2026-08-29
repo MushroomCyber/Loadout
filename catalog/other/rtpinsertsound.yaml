@@ -1,0 +1,11 @@
+id: rtpinsertsound
+categories:
+- other
+install:
+- provider: apt
+  package: rtpinsertsound
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

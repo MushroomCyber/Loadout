@@ -1,0 +1,11 @@
+id: gospider
+categories:
+- other
+install:
+- provider: apt
+  package: gospider
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

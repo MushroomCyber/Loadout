@@ -1,0 +1,25 @@
+id: scoutsuite
+summary: Multi-cloud security auditing and reporting
+categories:
+- cloud
+tags:
+- aws
+- azure
+- gcp
+phases:
+- discovery
+binaries:
+- scout
+homepage: https://github.com/nccgroup/ScoutSuite
+alternatives:
+- prowler
+install:
+- provider: apt
+  package: scoutsuite
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: pipx
+  package: scoutsuite

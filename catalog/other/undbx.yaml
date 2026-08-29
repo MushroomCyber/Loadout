@@ -1,0 +1,11 @@
+id: undbx
+categories:
+- other
+install:
+- provider: apt
+  package: undbx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

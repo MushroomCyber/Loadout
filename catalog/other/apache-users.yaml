@@ -1,0 +1,11 @@
+id: apache-users
+categories:
+- other
+install:
+- provider: apt
+  package: apache-users
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: raven
+categories:
+- other
+install:
+- provider: apt
+  package: raven
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

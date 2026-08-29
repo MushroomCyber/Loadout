@@ -1,0 +1,11 @@
+id: covenant-kbx
+categories:
+- other
+install:
+- provider: apt
+  package: covenant-kbx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

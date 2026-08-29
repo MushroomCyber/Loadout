@@ -1,0 +1,11 @@
+id: jsp-file-browser
+categories:
+- other
+install:
+- provider: apt
+  package: jsp-file-browser
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

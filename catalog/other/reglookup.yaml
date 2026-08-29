@@ -1,0 +1,11 @@
+id: reglookup
+categories:
+- other
+install:
+- provider: apt
+  package: reglookup
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

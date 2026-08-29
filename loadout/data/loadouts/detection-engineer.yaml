@@ -1,0 +1,14 @@
+slug: detection-engineer
+name: Detection Engineer
+description: Build and validate detections against real traffic
+tags:
+- blue-team
+- detection
+tools:
+- chainsaw
+- sigma-cli
+- suricata
+- tcpdump
+- wireshark
+- yara
+- zeek

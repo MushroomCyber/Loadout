@@ -1,0 +1,11 @@
+id: sucrack
+categories:
+- other
+install:
+- provider: apt
+  package: sucrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

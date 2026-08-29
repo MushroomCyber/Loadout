@@ -1,0 +1,11 @@
+id: gparted
+categories:
+- other
+install:
+- provider: apt
+  package: gparted
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

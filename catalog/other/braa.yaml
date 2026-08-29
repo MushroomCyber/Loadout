@@ -1,0 +1,11 @@
+id: braa
+categories:
+- other
+install:
+- provider: apt
+  package: braa
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

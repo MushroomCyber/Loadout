@@ -1,0 +1,11 @@
+id: goofile
+categories:
+- other
+install:
+- provider: apt
+  package: goofile
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,34 @@
+id: ffuf
+summary: Fast web fuzzer for content and parameter discovery
+categories:
+- web
+- fuzzing
+tags:
+- fuzzing
+- bug-bounty
+phases:
+- discovery
+binaries:
+- ffuf
+homepage: https://github.com/ffuf/ffuf
+license: Apache-2.0
+verify: ffuf -V
+alternatives:
+- feroxbuster
+- gobuster
+- dirsearch
+install:
+- provider: apt
+  package: ffuf
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: ffuf
+- provider: go
+  module: github.com/ffuf/ffuf/v2@latest
+- provider: github
+  repo: ffuf/ffuf
+  checksums: '*checksums*.txt'

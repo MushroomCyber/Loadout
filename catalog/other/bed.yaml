@@ -1,0 +1,13 @@
+id: bed
+categories:
+- other
+tags:
+- fuzzing
+install:
+- provider: apt
+  package: bed
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

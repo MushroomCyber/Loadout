@@ -1,0 +1,11 @@
+id: gsocket
+categories:
+- other
+install:
+- provider: apt
+  package: gsocket
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

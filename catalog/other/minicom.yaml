@@ -1,0 +1,11 @@
+id: minicom
+categories:
+- other
+install:
+- provider: apt
+  package: minicom
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

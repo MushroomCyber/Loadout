@@ -1,0 +1,11 @@
+id: stegsnow
+categories:
+- other
+install:
+- provider: apt
+  package: stegsnow
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

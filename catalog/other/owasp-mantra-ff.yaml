@@ -1,0 +1,11 @@
+id: owasp-mantra-ff
+categories:
+- other
+install:
+- provider: apt
+  package: owasp-mantra-ff
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

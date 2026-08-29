@@ -1,0 +1,11 @@
+id: sfuzz
+categories:
+- other
+install:
+- provider: apt
+  package: sfuzz
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: ophcrack
+categories:
+- password
+tags:
+- windows
+install:
+- provider: apt
+  package: ophcrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

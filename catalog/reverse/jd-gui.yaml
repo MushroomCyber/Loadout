@@ -1,0 +1,13 @@
+id: jd-gui
+categories:
+- reverse
+tags:
+- java
+install:
+- provider: apt
+  package: jd-gui
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

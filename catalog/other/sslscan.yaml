@@ -1,0 +1,11 @@
+id: sslscan
+categories:
+- other
+install:
+- provider: apt
+  package: sslscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

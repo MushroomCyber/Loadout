@@ -1,0 +1,11 @@
+id: glibc
+categories:
+- other
+install:
+- provider: apt
+  package: glibc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: rfdump
+categories:
+- other
+install:
+- provider: apt
+  package: rfdump
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

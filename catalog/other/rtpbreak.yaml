@@ -1,0 +1,11 @@
+id: rtpbreak
+categories:
+- other
+install:
+- provider: apt
+  package: rtpbreak
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

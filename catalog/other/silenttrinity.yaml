@@ -1,0 +1,11 @@
+id: silenttrinity
+categories:
+- other
+install:
+- provider: apt
+  package: silenttrinity
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

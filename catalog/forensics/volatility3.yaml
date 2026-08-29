@@ -1,0 +1,23 @@
+id: volatility3
+summary: Memory forensics framework for RAM images
+categories:
+- forensics
+- malware
+tags:
+- memory
+phases:
+- analysis
+binaries:
+- vol
+- volatility3
+homepage: https://github.com/volatilityfoundation/volatility3
+install:
+- provider: apt
+  package: volatility3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: pipx
+  package: volatility3

@@ -1,0 +1,11 @@
+id: tnscmd10g
+categories:
+- other
+install:
+- provider: apt
+  package: tnscmd10g
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

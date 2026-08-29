@@ -1,0 +1,24 @@
+id: responder
+summary: LLMNR, NBT-NS and MDNS poisoner for credential capture
+categories:
+- sniffing
+- post-exploitation
+tags:
+- windows
+- mitm
+phases:
+- credential-access
+binaries:
+- responder
+homepage: https://github.com/lgandx/Responder
+requires_root: true
+alternatives:
+- pretender
+install:
+- provider: apt
+  package: responder
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

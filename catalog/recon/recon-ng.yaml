@@ -1,0 +1,13 @@
+id: recon-ng
+categories:
+- recon
+tags:
+- framework
+install:
+- provider: apt
+  package: recon-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

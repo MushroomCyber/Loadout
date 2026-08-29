@@ -1,0 +1,11 @@
+id: horst
+categories:
+- other
+install:
+- provider: apt
+  package: horst
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

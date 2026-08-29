@@ -1,0 +1,11 @@
+id: spectools
+categories:
+- other
+install:
+- provider: apt
+  package: spectools
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

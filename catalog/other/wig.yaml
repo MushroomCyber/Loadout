@@ -1,0 +1,11 @@
+id: wig
+categories:
+- other
+install:
+- provider: apt
+  package: wig
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: rubeus
+categories:
+- other
+install:
+- provider: apt
+  package: rubeus
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

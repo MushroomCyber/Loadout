@@ -1,0 +1,14 @@
+id: reaver
+summary: WPS brute-force attack tool
+categories:
+- wireless
+tags:
+- wps
+install:
+- provider: apt
+  package: reaver
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

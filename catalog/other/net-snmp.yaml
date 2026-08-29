@@ -1,0 +1,11 @@
+id: net-snmp
+categories:
+- other
+install:
+- provider: apt
+  package: net-snmp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: afflib
+categories:
+- other
+install:
+- provider: apt
+  package: afflib
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

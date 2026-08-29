@@ -1,0 +1,11 @@
+id: spire
+categories:
+- other
+install:
+- provider: apt
+  package: spire
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

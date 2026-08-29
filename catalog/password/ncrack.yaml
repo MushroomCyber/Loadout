@@ -1,0 +1,13 @@
+id: ncrack
+categories:
+- password
+tags:
+- online
+install:
+- provider: apt
+  package: ncrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

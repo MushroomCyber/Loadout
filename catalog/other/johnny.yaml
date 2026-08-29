@@ -1,0 +1,11 @@
+id: johnny
+categories:
+- other
+install:
+- provider: apt
+  package: johnny
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

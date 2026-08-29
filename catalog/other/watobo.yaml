@@ -1,0 +1,11 @@
+id: watobo
+categories:
+- other
+install:
+- provider: apt
+  package: watobo
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

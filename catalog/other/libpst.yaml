@@ -1,0 +1,11 @@
+id: libpst
+categories:
+- other
+install:
+- provider: apt
+  package: libpst
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

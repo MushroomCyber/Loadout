@@ -1,0 +1,11 @@
+id: eyewitness
+categories:
+- other
+install:
+- provider: apt
+  package: eyewitness
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

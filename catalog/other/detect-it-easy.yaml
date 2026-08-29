@@ -1,0 +1,11 @@
+id: detect-it-easy
+categories:
+- other
+install:
+- provider: apt
+  package: detect-it-easy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,21 @@
+id: hayabusa
+summary: Windows event log timeline generator and threat hunter
+categories:
+- detection
+- incident-response
+tags:
+- windows
+- evtx
+- sigma
+- blue-team
+phases:
+- analysis
+binaries:
+- hayabusa
+homepage: https://github.com/Yamato-Security/hayabusa
+alternatives:
+- chainsaw
+install:
+- provider: github
+  repo: Yamato-Security/hayabusa
+  checksums: '*checksums*.txt'

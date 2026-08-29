@@ -1,0 +1,13 @@
+id: dmitry
+categories:
+- recon
+tags:
+- osint
+install:
+- provider: apt
+  package: dmitry
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

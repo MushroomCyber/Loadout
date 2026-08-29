@@ -1,0 +1,11 @@
+id: h8mail
+categories:
+- other
+install:
+- provider: apt
+  package: h8mail
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

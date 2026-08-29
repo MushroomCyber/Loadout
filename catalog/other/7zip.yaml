@@ -1,0 +1,12 @@
+id: 7zip
+summary: File archiver with high compression
+categories:
+- other
+install:
+- provider: apt
+  package: 7zip
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

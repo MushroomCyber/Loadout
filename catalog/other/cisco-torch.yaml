@@ -1,0 +1,11 @@
+id: cisco-torch
+categories:
+- other
+install:
+- provider: apt
+  package: cisco-torch
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

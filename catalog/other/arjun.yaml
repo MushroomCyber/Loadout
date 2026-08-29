@@ -1,0 +1,11 @@
+id: arjun
+categories:
+- other
+install:
+- provider: apt
+  package: arjun
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

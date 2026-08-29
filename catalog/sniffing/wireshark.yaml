@@ -1,0 +1,28 @@
+id: wireshark
+summary: Deep protocol analysis of captured network traffic
+categories:
+- sniffing
+tags:
+- pcap
+- gui
+- classic
+phases:
+- collection
+- analysis
+binaries:
+- wireshark
+- tshark
+homepage: https://www.wireshark.org
+alternatives:
+- tcpdump
+- termshark
+install:
+- provider: apt
+  package: wireshark
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: wireshark

@@ -1,0 +1,11 @@
+id: pack2
+categories:
+- other
+install:
+- provider: apt
+  package: pack2
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

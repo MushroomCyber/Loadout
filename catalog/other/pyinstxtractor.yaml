@@ -1,0 +1,11 @@
+id: pyinstxtractor
+categories:
+- other
+install:
+- provider: apt
+  package: pyinstxtractor
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

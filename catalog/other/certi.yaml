@@ -1,0 +1,11 @@
+id: certi
+categories:
+- other
+install:
+- provider: apt
+  package: certi
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

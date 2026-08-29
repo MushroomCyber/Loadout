@@ -1,0 +1,11 @@
+id: scrounge-ntfs
+categories:
+- other
+install:
+- provider: apt
+  package: scrounge-ntfs
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

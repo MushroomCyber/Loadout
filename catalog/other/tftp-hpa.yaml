@@ -1,0 +1,11 @@
+id: tftp-hpa
+categories:
+- other
+install:
+- provider: apt
+  package: tftp-hpa
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

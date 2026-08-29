@@ -1,0 +1,11 @@
+id: netsed
+categories:
+- other
+install:
+- provider: apt
+  package: netsed
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

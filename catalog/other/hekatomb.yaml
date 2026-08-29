@@ -1,0 +1,11 @@
+id: hekatomb
+categories:
+- other
+install:
+- provider: apt
+  package: hekatomb
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

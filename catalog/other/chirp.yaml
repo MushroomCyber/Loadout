@@ -1,0 +1,11 @@
+id: chirp
+categories:
+- other
+install:
+- provider: apt
+  package: chirp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

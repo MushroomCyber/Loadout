@@ -1,0 +1,11 @@
+id: hivex
+categories:
+- other
+install:
+- provider: apt
+  package: hivex
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

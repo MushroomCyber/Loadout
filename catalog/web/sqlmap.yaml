@@ -1,0 +1,29 @@
+id: sqlmap
+summary: Automated SQL injection detection and exploitation
+categories:
+- web
+- database
+tags:
+- sqli
+- classic
+phases:
+- initial-access
+- credential-access
+binaries:
+- sqlmap
+homepage: https://sqlmap.org
+alternatives:
+- ghauri
+- jsql-injection
+install:
+- provider: apt
+  package: sqlmap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: sqlmap
+- provider: pipx
+  package: sqlmap

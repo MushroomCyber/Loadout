@@ -1,0 +1,11 @@
+id: redsnarf
+categories:
+- other
+install:
+- provider: apt
+  package: redsnarf
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

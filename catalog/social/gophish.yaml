@@ -1,0 +1,14 @@
+id: gophish
+summary: Phishing campaign framework
+categories:
+- social
+tags:
+- phishing
+install:
+- provider: apt
+  package: gophish
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

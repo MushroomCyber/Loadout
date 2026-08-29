@@ -1,0 +1,11 @@
+id: dns2tcp
+categories:
+- other
+install:
+- provider: apt
+  package: dns2tcp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: miredo
+categories:
+- other
+install:
+- provider: apt
+  package: miredo
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: kali-meta
+categories:
+- other
+install:
+- provider: apt
+  package: kali-meta
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

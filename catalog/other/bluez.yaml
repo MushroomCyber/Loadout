@@ -1,0 +1,13 @@
+id: bluez
+categories:
+- other
+tags:
+- bluetooth
+install:
+- provider: apt
+  package: bluez
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

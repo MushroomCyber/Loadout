@@ -1,0 +1,11 @@
+id: robotstxt
+categories:
+- other
+install:
+- provider: apt
+  package: robotstxt
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

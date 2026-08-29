@@ -1,0 +1,11 @@
+id: unblob
+categories:
+- other
+install:
+- provider: apt
+  package: unblob
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

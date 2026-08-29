@@ -1,0 +1,11 @@
+id: dnstwist
+categories:
+- other
+install:
+- provider: apt
+  package: dnstwist
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

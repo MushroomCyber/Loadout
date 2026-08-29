@@ -1,0 +1,31 @@
+id: feroxbuster
+summary: Recursive content discovery written in Rust
+categories:
+- web
+tags:
+- fuzzing
+- bug-bounty
+phases:
+- discovery
+binaries:
+- feroxbuster
+homepage: https://github.com/epi052/feroxbuster
+alternatives:
+- ffuf
+- gobuster
+- dirsearch
+install:
+- provider: apt
+  package: feroxbuster
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: feroxbuster
+- provider: cargo
+  crate: feroxbuster
+- provider: github
+  repo: epi052/feroxbuster
+  checksums: '*checksums*.txt'

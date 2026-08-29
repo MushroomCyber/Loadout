@@ -1,0 +1,11 @@
+id: rifiuti2
+categories:
+- other
+install:
+- provider: apt
+  package: rifiuti2
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

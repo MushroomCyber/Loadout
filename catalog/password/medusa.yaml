@@ -1,0 +1,14 @@
+id: medusa
+summary: Fast parallel password cracker
+categories:
+- password
+tags:
+- online
+install:
+- provider: apt
+  package: medusa
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

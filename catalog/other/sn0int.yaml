@@ -1,0 +1,11 @@
+id: sn0int
+categories:
+- other
+install:
+- provider: apt
+  package: sn0int
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

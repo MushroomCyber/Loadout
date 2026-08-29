@@ -1,0 +1,11 @@
+id: multimon-ng
+categories:
+- other
+install:
+- provider: apt
+  package: multimon-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

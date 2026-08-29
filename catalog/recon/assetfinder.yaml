@@ -1,0 +1,13 @@
+id: assetfinder
+categories:
+- recon
+tags:
+- subdomains
+install:
+- provider: apt
+  package: assetfinder
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

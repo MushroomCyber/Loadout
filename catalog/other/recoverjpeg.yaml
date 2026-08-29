@@ -1,0 +1,11 @@
+id: recoverjpeg
+categories:
+- other
+install:
+- provider: apt
+  package: recoverjpeg
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

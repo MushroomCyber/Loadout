@@ -1,0 +1,11 @@
+id: nipper-ng
+categories:
+- other
+install:
+- provider: apt
+  package: nipper-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

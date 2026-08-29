@@ -1,0 +1,11 @@
+id: plaso
+categories:
+- other
+install:
+- provider: apt
+  package: plaso
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

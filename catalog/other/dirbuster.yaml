@@ -1,0 +1,14 @@
+id: dirbuster
+categories:
+- other
+install:
+- provider: apt
+  package: dirbuster
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+deprecated_by: feroxbuster
+alternatives:
+- feroxbuster

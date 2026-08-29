@@ -1,0 +1,13 @@
+id: bluesnarfer
+categories:
+- other
+tags:
+- bluetooth
+install:
+- provider: apt
+  package: bluesnarfer
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

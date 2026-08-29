@@ -1,0 +1,11 @@
+id: sparrow-wifi
+categories:
+- other
+install:
+- provider: apt
+  package: sparrow-wifi
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

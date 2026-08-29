@@ -1,0 +1,14 @@
+id: unicornscan
+categories:
+- recon
+install:
+- provider: apt
+  package: unicornscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+deprecated_by: masscan
+alternatives:
+- masscan

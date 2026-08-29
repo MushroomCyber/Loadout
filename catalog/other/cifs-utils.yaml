@@ -1,0 +1,11 @@
+id: cifs-utils
+categories:
+- other
+install:
+- provider: apt
+  package: cifs-utils
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

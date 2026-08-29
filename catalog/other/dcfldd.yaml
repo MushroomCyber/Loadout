@@ -1,0 +1,11 @@
+id: dcfldd
+categories:
+- other
+install:
+- provider: apt
+  package: dcfldd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

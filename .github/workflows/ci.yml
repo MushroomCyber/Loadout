@@ -4,28 +4,109 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e '.[dev]'
+      - name: Ruff
+        run: ruff check loadout tests tools
+      - name: mypy
+        run: mypy loadout
+
+  test:
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        include:
+          # The provider layer is the reason this is cross-platform, so prove it.
+          - os: macos-latest
+            python-version: "3.12"
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package + dev extras
+          cache: pip
+      - run: pip install -e '.[dev,tui]'
+      - name: Tests
+        run: pytest --cov=loadout --cov-report=term --cov-fail-under=55
+      - name: CLI smoke
         run: |
-          python -m pip install --upgrade pip
-          pip install -e '.[dev]'
-      - name: Compile all modules
-        run: python -m compileall kalitools kalitools_lib
-      - name: Lint with ruff
-        run: ruff check kalitools kalitools_lib
-      - name: Run pytest
-        run: pytest -q
+          loadout --version
+          loadout doctor --json || true
+          loadout catalog info --json
+
+  catalog:
+    name: Catalog is valid
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e '.[dev]'
+      - name: Validate every catalog entry
+        run: python -m loadout catalog validate --source catalog
+      - name: Compile the catalog
+        run: python -m loadout catalog build --source catalog --output /tmp/catalog.db
+
+      - name: Committed catalog matches the source tree
+        # The .db is committed so `pip install .` works from a clone. Prove it
+        # was rebuilt after the YAML changed, rather than trusting the author.
+        run: |
+          python - <<'PY'
+          import sys
+          from loadout.catalog.store import CatalogStore
+          from loadout.catalog.compile import load_source_tree
+          from pathlib import Path
+
+          source = {t.id: t.to_dict() for t in load_source_tree(Path("catalog")).tools}
+          with CatalogStore(Path("loadout/data/catalog.db")) as store:
+              built = {t.id: t.to_dict() for t in store.iter_all()}
+          if source != built:
+              missing = sorted(set(source) - set(built))
+              extra = sorted(set(built) - set(source))
+              changed = [k for k in set(source) & set(built) if source[k] != built[k]]
+              print(f"::error::committed catalog is stale. "
+                    f"missing={missing[:5]} extra={extra[:5]} changed={changed[:5]}")
+              print("Run: loadout catalog build --source catalog")
+              sys.exit(1)
+          print(f"catalog in sync ({len(source)} tools)")
+          PY
+      - name: No personal state committed
+        # CONTRIBUTING asks for this; enforce it rather than trusting a checklist.
+        run: |
+          if grep -rlE '"?installed"?:\s*true' catalog/ ; then
+            echo "::error::installed state committed to the catalog"; exit 1
+          fi
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.12"
+      - run: pip install -e '.[dev]' pip-audit
+      - name: Dependency audit
+        run: pip-audit --strict --desc
+      - name: Bandit rules via ruff
+        run: ruff check --select S loadout

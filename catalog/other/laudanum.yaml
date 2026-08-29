@@ -1,0 +1,11 @@
+id: laudanum
+categories:
+- other
+install:
+- provider: apt
+  package: laudanum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

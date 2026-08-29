@@ -1,0 +1,11 @@
+id: mdbtools
+categories:
+- other
+install:
+- provider: apt
+  package: mdbtools
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

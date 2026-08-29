@@ -1,0 +1,11 @@
+id: thc-ssl-dos
+categories:
+- other
+install:
+- provider: apt
+  package: thc-ssl-dos
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

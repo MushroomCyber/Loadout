@@ -1,0 +1,14 @@
+id: gdb
+summary: GNU debugger for programs
+categories:
+- reverse
+tags:
+- debugger
+install:
+- provider: apt
+  package: gdb
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

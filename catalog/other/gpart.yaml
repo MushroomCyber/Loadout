@@ -1,0 +1,11 @@
+id: gpart
+categories:
+- other
+install:
+- provider: apt
+  package: gpart
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

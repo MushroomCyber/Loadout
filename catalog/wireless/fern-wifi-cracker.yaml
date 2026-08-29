@@ -1,0 +1,13 @@
+id: fern-wifi-cracker
+categories:
+- wireless
+tags:
+- automation
+install:
+- provider: apt
+  package: fern-wifi-cracker
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: davtest
+categories:
+- web
+install:
+- provider: apt
+  package: davtest
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

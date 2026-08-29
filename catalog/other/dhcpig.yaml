@@ -1,0 +1,11 @@
+id: dhcpig
+categories:
+- other
+install:
+- provider: apt
+  package: dhcpig
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

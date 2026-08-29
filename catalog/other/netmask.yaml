@@ -1,0 +1,11 @@
+id: netmask
+categories:
+- other
+install:
+- provider: apt
+  package: netmask
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

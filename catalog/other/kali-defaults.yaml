@@ -1,0 +1,11 @@
+id: kali-defaults
+categories:
+- other
+install:
+- provider: apt
+  package: kali-defaults
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

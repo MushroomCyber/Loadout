@@ -1,0 +1,23 @@
+id: wifite
+summary: Automated wireless auditing wrapper around the aircrack suite
+categories:
+- wireless
+tags:
+- wifi
+- automation
+phases:
+- credential-access
+binaries:
+- wifite
+homepage: https://github.com/kimocoder/wifite2
+requires_root: true
+alternatives:
+- aircrack-ng
+install:
+- provider: apt
+  package: wifite
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

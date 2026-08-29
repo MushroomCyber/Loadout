@@ -1,0 +1,11 @@
+id: dnstracer
+categories:
+- other
+install:
+- provider: apt
+  package: dnstracer
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

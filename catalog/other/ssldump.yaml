@@ -1,0 +1,11 @@
+id: ssldump
+categories:
+- other
+install:
+- provider: apt
+  package: ssldump
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: protos-sip
+categories:
+- other
+install:
+- provider: apt
+  package: protos-sip
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

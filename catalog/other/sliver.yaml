@@ -1,0 +1,11 @@
+id: sliver
+categories:
+- other
+install:
+- provider: apt
+  package: sliver
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

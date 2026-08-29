@@ -1,0 +1,11 @@
+id: dfwinreg
+categories:
+- other
+install:
+- provider: apt
+  package: dfwinreg
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

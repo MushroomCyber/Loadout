@@ -1,0 +1,14 @@
+id: dsniff
+summary: Network auditing & testing suite
+categories:
+- sniffing
+tags:
+- mitm
+install:
+- provider: apt
+  package: dsniff
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

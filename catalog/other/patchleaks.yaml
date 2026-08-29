@@ -1,0 +1,11 @@
+id: patchleaks
+categories:
+- other
+install:
+- provider: apt
+  package: patchleaks
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

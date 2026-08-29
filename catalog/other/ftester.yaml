@@ -1,0 +1,11 @@
+id: ftester
+categories:
+- other
+install:
+- provider: apt
+  package: ftester
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: blueranger
+categories:
+- other
+tags:
+- bluetooth
+install:
+- provider: apt
+  package: blueranger
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

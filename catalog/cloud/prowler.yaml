@@ -1,0 +1,21 @@
+id: prowler
+summary: Cloud security posture assessment for AWS, Azure and GCP
+categories:
+- cloud
+tags:
+- aws
+- azure
+- gcp
+- compliance
+phases:
+- discovery
+binaries:
+- prowler
+homepage: https://prowler.com
+alternatives:
+- scoutsuite
+install:
+- provider: pipx
+  package: prowler
+- provider: brew
+  formula: prowler

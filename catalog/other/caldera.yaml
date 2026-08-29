@@ -1,0 +1,11 @@
+id: caldera
+categories:
+- other
+install:
+- provider: apt
+  package: caldera
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

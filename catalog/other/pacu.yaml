@@ -1,0 +1,11 @@
+id: pacu
+categories:
+- other
+install:
+- provider: apt
+  package: pacu
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

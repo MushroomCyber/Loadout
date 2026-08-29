@@ -1,0 +1,11 @@
+id: wig-ng
+categories:
+- other
+install:
+- provider: apt
+  package: wig-ng
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

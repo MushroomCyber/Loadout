@@ -1,0 +1,14 @@
+id: dirsearch
+summary: Web path scanner
+categories:
+- web
+tags:
+- discovery
+install:
+- provider: apt
+  package: dirsearch
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

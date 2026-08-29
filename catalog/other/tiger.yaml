@@ -1,0 +1,11 @@
+id: tiger
+categories:
+- other
+install:
+- provider: apt
+  package: tiger
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

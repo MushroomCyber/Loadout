@@ -1,0 +1,24 @@
+id: burpsuite
+summary: Intercepting proxy and web testing suite (community edition)
+categories:
+- web
+tags:
+- proxy
+- gui
+phases:
+- discovery
+binaries:
+- burpsuite
+homepage: https://portswigger.net/burp
+alternatives:
+- zaproxy
+- caido
+- mitmproxy
+install:
+- provider: apt
+  package: burpsuite
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

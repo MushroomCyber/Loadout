@@ -1,0 +1,11 @@
+id: voiphopper
+categories:
+- other
+install:
+- provider: apt
+  package: voiphopper
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

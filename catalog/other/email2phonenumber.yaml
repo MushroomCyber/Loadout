@@ -1,0 +1,11 @@
+id: email2phonenumber
+categories:
+- other
+install:
+- provider: apt
+  package: email2phonenumber
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

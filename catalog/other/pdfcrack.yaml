@@ -1,0 +1,11 @@
+id: pdfcrack
+categories:
+- other
+install:
+- provider: apt
+  package: pdfcrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

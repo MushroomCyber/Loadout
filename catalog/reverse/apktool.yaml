@@ -1,0 +1,24 @@
+id: apktool
+summary: Decode and rebuild Android APK resources
+categories:
+- reverse
+- mobile
+tags:
+- android
+phases:
+- analysis
+binaries:
+- apktool
+homepage: https://apktool.org
+alternatives:
+- jadx
+install:
+- provider: apt
+  package: apktool
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: apktool

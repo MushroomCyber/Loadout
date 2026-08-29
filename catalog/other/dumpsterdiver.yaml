@@ -1,0 +1,11 @@
+id: dumpsterdiver
+categories:
+- other
+install:
+- provider: apt
+  package: dumpsterdiver
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

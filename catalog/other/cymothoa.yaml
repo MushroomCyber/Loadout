@@ -1,0 +1,11 @@
+id: cymothoa
+categories:
+- other
+install:
+- provider: apt
+  package: cymothoa
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

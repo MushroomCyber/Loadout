@@ -1,0 +1,11 @@
+id: siparmyknife
+categories:
+- other
+install:
+- provider: apt
+  package: siparmyknife
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

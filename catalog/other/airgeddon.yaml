@@ -1,0 +1,11 @@
+id: airgeddon
+categories:
+- other
+install:
+- provider: apt
+  package: airgeddon
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

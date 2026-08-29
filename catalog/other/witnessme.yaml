@@ -1,0 +1,11 @@
+id: witnessme
+categories:
+- other
+install:
+- provider: apt
+  package: witnessme
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: firewalk
+categories:
+- other
+install:
+- provider: apt
+  package: firewalk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

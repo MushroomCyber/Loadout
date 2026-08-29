@@ -1,0 +1,11 @@
+id: javasnoop
+categories:
+- other
+install:
+- provider: apt
+  package: javasnoop
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

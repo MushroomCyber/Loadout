@@ -1,0 +1,16 @@
+id: dirb
+categories:
+- web
+tags:
+- discovery
+install:
+- provider: apt
+  package: dirb
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+deprecated_by: feroxbuster
+alternatives:
+- feroxbuster

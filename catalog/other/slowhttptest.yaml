@@ -1,0 +1,11 @@
+id: slowhttptest
+categories:
+- other
+install:
+- provider: apt
+  package: slowhttptest
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

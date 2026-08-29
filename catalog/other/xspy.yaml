@@ -1,0 +1,11 @@
+id: xspy
+categories:
+- other
+install:
+- provider: apt
+  package: xspy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: tftpd32
+categories:
+- other
+install:
+- provider: apt
+  package: tftpd32
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

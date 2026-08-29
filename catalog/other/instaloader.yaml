@@ -1,0 +1,11 @@
+id: instaloader
+categories:
+- other
+install:
+- provider: apt
+  package: instaloader
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

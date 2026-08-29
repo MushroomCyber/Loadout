@@ -1,0 +1,11 @@
+id: apple-bleee
+categories:
+- other
+install:
+- provider: apt
+  package: apple-bleee
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

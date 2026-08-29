@@ -1,0 +1,11 @@
+id: what-is-python
+categories:
+- other
+install:
+- provider: apt
+  package: what-is-python
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

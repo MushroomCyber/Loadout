@@ -1,0 +1,26 @@
+id: gobuster
+summary: Directory, DNS and vhost brute-forcer
+categories:
+- web
+tags:
+- fuzzing
+phases:
+- discovery
+binaries:
+- gobuster
+homepage: https://github.com/OJ/gobuster
+alternatives:
+- ffuf
+- feroxbuster
+install:
+- provider: apt
+  package: gobuster
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: gobuster
+- provider: go
+  module: github.com/OJ/gobuster/v3@latest

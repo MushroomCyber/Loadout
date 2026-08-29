@@ -1,0 +1,11 @@
+id: terraform
+categories:
+- other
+install:
+- provider: apt
+  package: terraform
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

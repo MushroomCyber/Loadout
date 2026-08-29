@@ -1,0 +1,11 @@
+id: dotdotpwn
+categories:
+- other
+install:
+- provider: apt
+  package: dotdotpwn
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

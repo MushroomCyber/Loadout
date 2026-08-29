@@ -1,0 +1,11 @@
+id: defectdojo
+categories:
+- other
+install:
+- provider: apt
+  package: defectdojo
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

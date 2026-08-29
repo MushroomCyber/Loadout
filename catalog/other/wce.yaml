@@ -1,0 +1,11 @@
+id: wce
+categories:
+- other
+install:
+- provider: apt
+  package: wce
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

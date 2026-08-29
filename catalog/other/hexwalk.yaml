@@ -1,0 +1,11 @@
+id: hexwalk
+categories:
+- other
+install:
+- provider: apt
+  package: hexwalk
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

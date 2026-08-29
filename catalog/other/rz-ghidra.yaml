@@ -1,0 +1,11 @@
+id: rz-ghidra
+categories:
+- other
+install:
+- provider: apt
+  package: rz-ghidra
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

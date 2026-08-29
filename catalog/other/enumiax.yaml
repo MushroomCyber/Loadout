@@ -1,0 +1,11 @@
+id: enumiax
+categories:
+- other
+install:
+- provider: apt
+  package: enumiax
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

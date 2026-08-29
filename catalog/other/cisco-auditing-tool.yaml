@@ -1,0 +1,11 @@
+id: cisco-auditing-tool
+categories:
+- other
+install:
+- provider: apt
+  package: cisco-auditing-tool
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

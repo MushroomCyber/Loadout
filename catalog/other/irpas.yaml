@@ -1,0 +1,11 @@
+id: irpas
+categories:
+- other
+install:
+- provider: apt
+  package: irpas
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

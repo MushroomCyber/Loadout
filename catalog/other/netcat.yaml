@@ -1,0 +1,11 @@
+id: netcat
+categories:
+- other
+install:
+- provider: apt
+  package: netcat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

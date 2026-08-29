@@ -1,0 +1,11 @@
+id: wgetpaste
+categories:
+- other
+install:
+- provider: apt
+  package: wgetpaste
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

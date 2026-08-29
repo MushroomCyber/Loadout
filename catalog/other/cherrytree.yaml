@@ -1,0 +1,11 @@
+id: cherrytree
+categories:
+- other
+install:
+- provider: apt
+  package: cherrytree
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

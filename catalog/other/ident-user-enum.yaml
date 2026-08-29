@@ -1,0 +1,11 @@
+id: ident-user-enum
+categories:
+- other
+install:
+- provider: apt
+  package: ident-user-enum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

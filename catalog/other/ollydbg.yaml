@@ -1,0 +1,11 @@
+id: ollydbg
+categories:
+- other
+install:
+- provider: apt
+  package: ollydbg
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

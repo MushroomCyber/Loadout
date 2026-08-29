@@ -1,0 +1,11 @@
+id: dwarf2json
+categories:
+- other
+install:
+- provider: apt
+  package: dwarf2json
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

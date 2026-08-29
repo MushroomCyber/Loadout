@@ -1,0 +1,11 @@
+id: iaxflood
+categories:
+- other
+install:
+- provider: apt
+  package: iaxflood
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

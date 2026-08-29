@@ -1,0 +1,11 @@
+id: arping
+categories:
+- other
+install:
+- provider: apt
+  package: arping
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

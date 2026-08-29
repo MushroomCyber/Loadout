@@ -1,0 +1,11 @@
+id: samba
+categories:
+- other
+install:
+- provider: apt
+  package: samba
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

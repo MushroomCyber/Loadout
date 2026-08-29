@@ -1,0 +1,11 @@
+id: exiv2
+categories:
+- other
+install:
+- provider: apt
+  package: exiv2
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

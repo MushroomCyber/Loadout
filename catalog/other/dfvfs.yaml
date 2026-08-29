@@ -1,0 +1,11 @@
+id: dfvfs
+categories:
+- other
+install:
+- provider: apt
+  package: dfvfs
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

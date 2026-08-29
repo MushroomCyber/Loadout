@@ -1,0 +1,11 @@
+id: socat
+categories:
+- other
+install:
+- provider: apt
+  package: socat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

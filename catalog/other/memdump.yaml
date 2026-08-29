@@ -1,0 +1,11 @@
+id: memdump
+categories:
+- other
+install:
+- provider: apt
+  package: memdump
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

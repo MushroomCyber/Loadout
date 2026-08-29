@@ -1,0 +1,11 @@
+id: wifipumpkin3
+categories:
+- other
+install:
+- provider: apt
+  package: wifipumpkin3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

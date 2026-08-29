@@ -1,0 +1,11 @@
+id: cloud-enum
+categories:
+- other
+install:
+- provider: apt
+  package: cloud-enum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

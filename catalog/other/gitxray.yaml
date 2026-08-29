@@ -1,0 +1,11 @@
+id: gitxray
+categories:
+- other
+install:
+- provider: apt
+  package: gitxray
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

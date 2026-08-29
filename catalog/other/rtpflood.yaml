@@ -1,0 +1,11 @@
+id: rtpflood
+categories:
+- other
+install:
+- provider: apt
+  package: rtpflood
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

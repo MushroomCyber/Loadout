@@ -1,0 +1,13 @@
+id: axel
+categories:
+- other
+tags:
+- download
+install:
+- provider: apt
+  package: axel
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

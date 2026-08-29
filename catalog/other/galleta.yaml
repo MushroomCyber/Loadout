@@ -1,0 +1,11 @@
+id: galleta
+categories:
+- other
+install:
+- provider: apt
+  package: galleta
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

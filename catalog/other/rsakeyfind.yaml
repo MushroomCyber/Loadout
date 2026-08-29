@@ -1,0 +1,11 @@
+id: rsakeyfind
+categories:
+- other
+install:
+- provider: apt
+  package: rsakeyfind
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

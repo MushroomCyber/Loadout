@@ -1,0 +1,11 @@
+id: humble
+categories:
+- other
+install:
+- provider: apt
+  package: humble
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

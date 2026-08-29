@@ -1,0 +1,11 @@
+id: intrace
+categories:
+- other
+install:
+- provider: apt
+  package: intrace
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

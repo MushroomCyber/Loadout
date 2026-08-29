@@ -1,0 +1,11 @@
+id: freeradius
+categories:
+- other
+install:
+- provider: apt
+  package: freeradius
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

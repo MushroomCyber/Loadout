@@ -1,0 +1,11 @@
+id: chisel
+categories:
+- other
+install:
+- provider: apt
+  package: chisel
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

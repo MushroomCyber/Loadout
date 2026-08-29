@@ -1,0 +1,11 @@
+id: unhide
+categories:
+- other
+install:
+- provider: apt
+  package: unhide
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: copy-router-config
+categories:
+- other
+install:
+- provider: apt
+  package: copy-router-config
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

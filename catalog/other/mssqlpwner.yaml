@@ -1,0 +1,11 @@
+id: mssqlpwner
+categories:
+- other
+install:
+- provider: apt
+  package: mssqlpwner
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

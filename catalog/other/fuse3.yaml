@@ -1,0 +1,11 @@
+id: fuse3
+categories:
+- other
+install:
+- provider: apt
+  package: fuse3
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

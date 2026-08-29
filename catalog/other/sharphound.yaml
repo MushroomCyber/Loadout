@@ -1,0 +1,11 @@
+id: sharphound
+categories:
+- other
+install:
+- provider: apt
+  package: sharphound
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

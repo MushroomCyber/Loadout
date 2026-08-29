@@ -1,0 +1,14 @@
+id: foremost
+summary: File recovery forensics tool
+categories:
+- forensics
+tags:
+- carving
+install:
+- provider: apt
+  package: foremost
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

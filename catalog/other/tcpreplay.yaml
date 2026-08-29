@@ -1,0 +1,11 @@
+id: tcpreplay
+categories:
+- other
+install:
+- provider: apt
+  package: tcpreplay
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

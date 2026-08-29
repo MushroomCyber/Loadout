@@ -1,0 +1,11 @@
+id: rephrase
+categories:
+- other
+install:
+- provider: apt
+  package: rephrase
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

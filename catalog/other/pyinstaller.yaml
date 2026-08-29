@@ -1,0 +1,11 @@
+id: pyinstaller
+categories:
+- other
+install:
+- provider: apt
+  package: pyinstaller
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

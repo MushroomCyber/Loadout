@@ -1,0 +1,11 @@
+id: mysql-defaults
+categories:
+- other
+install:
+- provider: apt
+  package: mysql-defaults
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

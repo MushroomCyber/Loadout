@@ -1,0 +1,28 @@
+id: naabu
+summary: Fast SYN/CONNECT port scanner built for pipelines
+categories:
+- recon
+tags:
+- port-scan
+- projectdiscovery
+phases:
+- discovery
+binaries:
+- naabu
+homepage: https://github.com/projectdiscovery/naabu
+alternatives:
+- masscan
+- nmap
+install:
+- provider: apt
+  package: naabu
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: go
+  module: github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
+- provider: github
+  repo: projectdiscovery/naabu
+  checksums: '*checksums*.txt'

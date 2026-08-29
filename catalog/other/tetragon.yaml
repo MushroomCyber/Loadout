@@ -1,0 +1,11 @@
+id: tetragon
+categories:
+- other
+install:
+- provider: apt
+  package: tetragon
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

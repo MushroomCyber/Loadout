@@ -1,0 +1,11 @@
+id: hexinject
+categories:
+- other
+install:
+- provider: apt
+  package: hexinject
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

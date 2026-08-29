@@ -1,0 +1,11 @@
+id: changeme
+categories:
+- other
+install:
+- provider: apt
+  package: changeme
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

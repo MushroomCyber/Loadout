@@ -1,0 +1,11 @@
+id: phpsploit
+categories:
+- other
+install:
+- provider: apt
+  package: phpsploit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

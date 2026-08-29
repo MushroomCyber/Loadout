@@ -1,0 +1,11 @@
+id: libewf
+categories:
+- other
+install:
+- provider: apt
+  package: libewf
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

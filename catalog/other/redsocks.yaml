@@ -1,0 +1,11 @@
+id: redsocks
+categories:
+- other
+install:
+- provider: apt
+  package: redsocks
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: wmi
+categories:
+- other
+install:
+- provider: apt
+  package: wmi
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

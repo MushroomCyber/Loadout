@@ -1,0 +1,11 @@
+id: sentrypeer
+categories:
+- other
+install:
+- provider: apt
+  package: sentrypeer
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

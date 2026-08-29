@@ -1,0 +1,11 @@
+id: webshells
+categories:
+- other
+install:
+- provider: apt
+  package: webshells
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

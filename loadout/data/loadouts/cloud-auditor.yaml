@@ -1,0 +1,12 @@
+slug: cloud-auditor
+name: Cloud Auditor
+description: Posture assessment for cloud and container estates
+tags:
+- cloud
+- audit
+tools:
+- httpx
+- nuclei
+- prowler
+- scoutsuite
+- trivy

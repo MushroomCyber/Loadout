@@ -1,0 +1,11 @@
+id: ccrypt
+categories:
+- other
+install:
+- provider: apt
+  package: ccrypt
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

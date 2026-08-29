@@ -1,0 +1,11 @@
+id: rev-proxy-grapher
+categories:
+- other
+install:
+- provider: apt
+  package: rev-proxy-grapher
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

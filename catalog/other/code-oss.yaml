@@ -1,0 +1,11 @@
+id: code-oss
+categories:
+- other
+install:
+- provider: apt
+  package: code-oss
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: havoc
+categories:
+- other
+install:
+- provider: apt
+  package: havoc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

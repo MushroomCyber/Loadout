@@ -1,0 +1,22 @@
+id: autopsy
+summary: Graphical front-end for disk forensics and timeline analysis
+categories:
+- forensics
+tags:
+- disk
+- gui
+phases:
+- analysis
+binaries:
+- autopsy
+homepage: https://www.autopsy.com
+alternatives:
+- sleuthkit
+install:
+- provider: apt
+  package: autopsy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

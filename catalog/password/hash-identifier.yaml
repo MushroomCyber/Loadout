@@ -1,0 +1,13 @@
+id: hash-identifier
+categories:
+- password
+tags:
+- identification
+install:
+- provider: apt
+  package: hash-identifier
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

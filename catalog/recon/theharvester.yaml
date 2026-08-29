@@ -1,0 +1,24 @@
+id: theharvester
+summary: OSINT gathering of emails, hosts and employee names
+categories:
+- recon
+tags:
+- osint
+phases:
+- reconnaissance
+binaries:
+- theHarvester
+homepage: https://github.com/laramies/theHarvester
+alternatives:
+- spiderfoot
+- amass
+install:
+- provider: apt
+  package: theharvester
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: pipx
+  package: theHarvester

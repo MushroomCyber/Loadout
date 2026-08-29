@@ -1,0 +1,11 @@
+id: polenum
+categories:
+- other
+install:
+- provider: apt
+  package: polenum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

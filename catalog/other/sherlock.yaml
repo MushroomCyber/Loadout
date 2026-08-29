@@ -1,0 +1,11 @@
+id: sherlock
+categories:
+- other
+install:
+- provider: apt
+  package: sherlock
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

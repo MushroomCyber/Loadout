@@ -1,0 +1,11 @@
+id: smbmap
+categories:
+- other
+install:
+- provider: apt
+  package: smbmap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

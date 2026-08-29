@@ -1,0 +1,11 @@
+id: merlin
+categories:
+- other
+install:
+- provider: apt
+  package: merlin
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

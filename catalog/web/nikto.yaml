@@ -1,0 +1,25 @@
+id: nikto
+summary: Web server misconfiguration and known-issue scanner
+categories:
+- web
+- vuln-scan
+tags:
+- classic
+phases:
+- discovery
+binaries:
+- nikto
+homepage: https://github.com/sullo/nikto
+alternatives:
+- nuclei
+- zaproxy
+install:
+- provider: apt
+  package: nikto
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: nikto

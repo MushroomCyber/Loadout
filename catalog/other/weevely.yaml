@@ -1,0 +1,11 @@
+id: weevely
+categories:
+- other
+install:
+- provider: apt
+  package: weevely
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

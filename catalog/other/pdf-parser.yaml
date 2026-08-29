@@ -1,0 +1,11 @@
+id: pdf-parser
+categories:
+- other
+install:
+- provider: apt
+  package: pdf-parser
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

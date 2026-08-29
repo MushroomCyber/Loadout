@@ -1,0 +1,11 @@
+id: mfoc
+categories:
+- other
+install:
+- provider: apt
+  package: mfoc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

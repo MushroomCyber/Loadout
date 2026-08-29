@@ -1,0 +1,11 @@
+id: vim
+categories:
+- other
+install:
+- provider: apt
+  package: vim
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

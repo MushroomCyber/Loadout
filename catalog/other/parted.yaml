@@ -1,0 +1,11 @@
+id: parted
+categories:
+- other
+install:
+- provider: apt
+  package: parted
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

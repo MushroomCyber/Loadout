@@ -1,0 +1,11 @@
+id: sshuttle
+categories:
+- other
+install:
+- provider: apt
+  package: sshuttle
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

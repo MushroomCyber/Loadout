@@ -1,0 +1,11 @@
+id: bloodhound.py
+categories:
+- other
+install:
+- provider: apt
+  package: bloodhound.py
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

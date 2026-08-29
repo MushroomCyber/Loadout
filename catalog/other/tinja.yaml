@@ -1,0 +1,11 @@
+id: tinja
+categories:
+- other
+install:
+- provider: apt
+  package: tinja
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

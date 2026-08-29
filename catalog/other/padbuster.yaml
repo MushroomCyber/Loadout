@@ -1,0 +1,11 @@
+id: padbuster
+categories:
+- other
+install:
+- provider: apt
+  package: padbuster
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

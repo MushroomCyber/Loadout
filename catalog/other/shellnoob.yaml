@@ -1,0 +1,11 @@
+id: shellnoob
+categories:
+- other
+install:
+- provider: apt
+  package: shellnoob
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

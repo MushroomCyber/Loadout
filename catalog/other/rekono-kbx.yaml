@@ -1,0 +1,11 @@
+id: rekono-kbx
+categories:
+- other
+install:
+- provider: apt
+  package: rekono-kbx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

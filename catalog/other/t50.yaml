@@ -1,0 +1,11 @@
+id: t50
+categories:
+- other
+install:
+- provider: apt
+  package: t50
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

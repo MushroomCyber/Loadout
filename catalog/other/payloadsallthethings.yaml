@@ -1,0 +1,11 @@
+id: payloadsallthethings
+categories:
+- other
+install:
+- provider: apt
+  package: payloadsallthethings
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: httrack
+categories:
+- other
+install:
+- provider: apt
+  package: httrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: gqrx-sdr
+categories:
+- other
+install:
+- provider: apt
+  package: gqrx-sdr
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

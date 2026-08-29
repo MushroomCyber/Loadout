@@ -1,0 +1,11 @@
+id: unhide.rb
+categories:
+- other
+install:
+- provider: apt
+  package: unhide.rb
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

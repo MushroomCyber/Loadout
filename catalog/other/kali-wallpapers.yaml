@@ -1,0 +1,11 @@
+id: kali-wallpapers
+categories:
+- other
+install:
+- provider: apt
+  package: kali-wallpapers
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

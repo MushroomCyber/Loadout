@@ -1,0 +1,13 @@
+id: skipfish
+categories:
+- web
+tags:
+- scanner
+install:
+- provider: apt
+  package: skipfish
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

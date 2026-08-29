@@ -1,0 +1,11 @@
+id: sbd
+categories:
+- other
+install:
+- provider: apt
+  package: sbd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

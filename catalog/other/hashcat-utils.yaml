@@ -1,0 +1,11 @@
+id: hashcat-utils
+categories:
+- other
+install:
+- provider: apt
+  package: hashcat-utils
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

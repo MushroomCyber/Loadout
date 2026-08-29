@@ -1,0 +1,11 @@
+id: google-nexus-tools
+categories:
+- other
+install:
+- provider: apt
+  package: google-nexus-tools
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

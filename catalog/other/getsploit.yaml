@@ -1,0 +1,11 @@
+id: getsploit
+categories:
+- other
+install:
+- provider: apt
+  package: getsploit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

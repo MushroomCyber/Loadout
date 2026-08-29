@@ -1,0 +1,11 @@
+id: dnsgen
+categories:
+- other
+install:
+- provider: apt
+  package: dnsgen
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

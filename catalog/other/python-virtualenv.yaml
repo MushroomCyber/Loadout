@@ -1,0 +1,11 @@
+id: python-virtualenv
+categories:
+- other
+install:
+- provider: apt
+  package: python-virtualenv
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

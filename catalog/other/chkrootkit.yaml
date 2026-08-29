@@ -1,0 +1,11 @@
+id: chkrootkit
+categories:
+- other
+install:
+- provider: apt
+  package: chkrootkit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

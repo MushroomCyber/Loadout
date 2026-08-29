@@ -1,0 +1,11 @@
+id: cisco-ocs
+categories:
+- other
+install:
+- provider: apt
+  package: cisco-ocs
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

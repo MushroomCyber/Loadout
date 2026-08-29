@@ -1,60 +1,87 @@
 # Security Policy
 
-## Supported Versions
+## Reporting a vulnerability
 
-Only the latest `main` branch is supported at this stage of the project.
+**Please do not open a public issue.** Use a
+[private security advisory](https://github.com/MushroomCyber/Kali-Tools-Manager/security/advisories/new).
 
-## Reporting a Vulnerability
+Include what the issue is, how to reproduce it, and your read on the impact.
+Expect an acknowledgement within 7 days.
 
-**Please do not report security vulnerabilities through public GitHub
-issues.**
+## Threat model
 
-Instead, open a private security advisory on the
-[GitHub Security tab](https://github.com/MushroomCyber/Kali-Tools-Manager/security/advisories/new),
-or email the maintainer listed in `pyproject.toml`.
+Loadout is privileged software with a supply chain. Three things make it worth
+attacking:
 
-Please include:
+1. **It runs `sudo`.** Anything that smuggles an argument into a package-manager
+   invocation is a root-level bug.
+2. **It downloads and executes third-party binaries.** The `github` provider
+   fetches release archives, unpacks them and puts an executable on your PATH.
+3. **It reads catalog data.** The bundled catalog, a downloaded one, and a
+   user's own `loadout.yaml` must all be treated as untrusted input.
 
-- A description of the vulnerability and its impact.
-- Steps to reproduce (ideally a minimal proof-of-concept).
-- Your assessment of severity and any suggested mitigation.
+## Controls
 
-You can expect an initial acknowledgement within 7 days.
+### Privilege
 
-## Threat Model
+- `sudo` is constructed in exactly one function, `policy.elevate()`.
+  `tests/test_policy.py::test_sudo_appears_in_exactly_one_module` scans the tree
+  and fails the build if that stops being true.
+- Every package name is validated against `^[a-z0-9][a-z0-9+.\-]*$` before it
+  reaches an argv, on install *and* removal.
+- `--` always separates options from package names, so a name beginning with `-`
+  cannot be read as a flag.
+- No `shell=True` anywhere. Every argv is a list, and control characters in any
+  token are rejected.
+- Subprocesses run with `stdin=DEVNULL` and `DEBIAN_FRONTEND=noninteractive`, so
+  a prompt becomes a clean failure instead of an invisible hang.
 
-`kalitools` is a privileged tool:
+### Downloads
 
-1. It runs `sudo apt-get install / remove / update` on the user's behalf,
-   which means any issue that lets an attacker smuggle arguments into those
-   calls is a root-level bug.
-2. It reads catalog metadata from multiple sources (the shipped JSON, the
-   user's local overrides, and optionally live scraping of kali.org). Any
-   one of those sources must be assumed possibly-hostile.
-3. It can launch tool commands in a new terminal, which means executing
-   attacker-controlled strings in an interactive shell.
+- Release artifacts are checksummed against the release's own checksum file.
+- **A missing checksum is a failure, not a warning.** Installing without one
+  requires `--allow-unverified`, passed explicitly by the user.
+- Archive extraction refuses absolute paths and `..` traversal, and uses tar's
+  `data` filter on Python 3.12+.
+- The GitHub API is reached over HTTPS only; non-HTTP(S) schemes are refused.
+- `loadout audit` reports installed tools whose catalog entry offers no
+  verifiable install route.
 
-### Mitigations already in place
+### Data
 
-- All `apt-get` invocations use list-form `subprocess.Popen` — no
-  `shell=True` anywhere.
-- Package names are validated against `^[a-z0-9][a-z0-9+.\-]*$` before being
-  passed to `apt-get`.
-- `setup_local_repo` rejects paths containing control characters, stages
-  the sources-list file via `tempfile.mkstemp`, and only emits
-  `[trusted=yes]` after an explicit user confirmation.
-- `launch_tool` parses catalog commands with `shlex`, requires the leading
-  token to match a strict allowlist regex, and prompts for confirmation on
-  commands containing shell metacharacters.
-- All JSON state writes go through an atomic temp-file + `os.replace`
-  helper, so a crash cannot corrupt the cache, override, or catalog files.
+- Catalog entries are validated against a schema before use; unknown providers,
+  categories and phases are rejected.
+- SQL is fully parameterised. The only interpolation is placeholder counts.
+- Writes are atomic — a crash cannot leave a half-written catalog or state file.
 
-### Known residual risks
+### Project supply chain
 
-- The user must still trust kali.org's TLS chain when live scraping.
-- The user must still trust the contents of their Kali APT sources — this
-  tool does not add signature verification, only proxies `apt-get`.
-- Scraping now honours `robots.txt` via the `http_util.polite_get` helper
-  (introduced in 0.3.0), but the user must still trust remote page content.
+- CI pins GitHub Actions to commit SHAs.
+- `pip-audit --strict` runs on every push.
+- `ruff --select S` (the bandit ruleset) runs on the package.
+- Runtime dependencies are three (`rich`, `requests`, `PyYAML`), none needing a
+  compiler.
 
-Thanks for helping keep the community safe.
+## Residual risks
+
+These are real and not currently mitigated. Know them before you rely on this:
+
+- **Signature verification is not implemented.** Checksums prove the artifact
+  matches what the release published; they do not prove who published it.
+  Signature verification (cosign / minisign / GPG) is planned.
+- **You trust your APT sources.** Loadout proxies `apt-get`; it does not add
+  verification on top of it.
+- **You trust the catalog you are running.** A malicious catalog entry cannot
+  inject shell metacharacters, but it can point a tool id at the wrong package
+  or repository. Review catalog changes as you would code.
+- **`--allow-unverified` does what it says.** It exists because some upstreams
+  publish no checksums; using it is a decision, not a default.
+- **`loadout run` executes container images** named by the catalog.
+
+## Scope
+
+In scope: privilege escalation, argument injection, path traversal, verification
+bypass, catalog-driven code execution, state corruption.
+
+Out of scope: vulnerabilities in the tools loadout installs (report those
+upstream), and the inherent risk of running security tooling as root.

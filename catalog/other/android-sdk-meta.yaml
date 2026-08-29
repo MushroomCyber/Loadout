@@ -1,0 +1,11 @@
+id: android-sdk-meta
+categories:
+- other
+install:
+- provider: apt
+  package: android-sdk-meta
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

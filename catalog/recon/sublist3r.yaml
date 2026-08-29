@@ -1,0 +1,17 @@
+id: sublist3r
+summary: Subdomain enumeration tool
+categories:
+- recon
+tags:
+- subdomains
+install:
+- provider: apt
+  package: sublist3r
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+deprecated_by: subfinder
+alternatives:
+- subfinder

@@ -1,0 +1,11 @@
+id: mitm6
+categories:
+- other
+install:
+- provider: apt
+  package: mitm6
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

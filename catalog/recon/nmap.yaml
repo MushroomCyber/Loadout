@@ -1,0 +1,31 @@
+id: nmap
+summary: Network discovery and service/version fingerprinting
+categories:
+- recon
+tags:
+- port-scan
+- classic
+phases:
+- discovery
+- reconnaissance
+binaries:
+- nmap
+- ncat
+- nping
+homepage: https://nmap.org
+license: NPSL
+verify: nmap --version
+alternatives:
+- masscan
+- naabu
+- rustscan
+install:
+- provider: apt
+  package: nmap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: nmap

@@ -1,0 +1,22 @@
+slug: ctf-basics
+name: CTF Basics
+description: 'A solid starting toolkit for jeopardy-style CTFs: reversing, forensics, crypto, web.'
+tags:
+- ctf
+- general
+tools:
+- apktool
+- binwalk
+- burpsuite
+- exiftool
+- gdb
+- gef
+- ghidra
+- hashcat
+- john
+- nmap
+- pwntools
+- radare2
+- steghide
+- stegsolve
+- wireshark

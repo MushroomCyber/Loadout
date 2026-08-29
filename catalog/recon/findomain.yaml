@@ -1,0 +1,13 @@
+id: findomain
+categories:
+- recon
+tags:
+- subdomains
+install:
+- provider: apt
+  package: findomain
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

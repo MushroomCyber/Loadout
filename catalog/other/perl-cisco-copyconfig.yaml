@@ -1,0 +1,11 @@
+id: perl-cisco-copyconfig
+categories:
+- other
+install:
+- provider: apt
+  package: perl-cisco-copyconfig
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: cabextract
+categories:
+- other
+install:
+- provider: apt
+  package: cabextract
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

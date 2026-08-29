@@ -1,0 +1,11 @@
+id: ligolo-ng-common-binaries
+categories:
+- other
+install:
+- provider: apt
+  package: ligolo-ng-common-binaries
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

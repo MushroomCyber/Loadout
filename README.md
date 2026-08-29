@@ -1,240 +1,284 @@
-<h1 align="center">Kali Tools Manager</h1>
+<h1 align="center">Loadout</h1>
 
 <p align="center">
-  <b>Browse, install, and manage 700+ Kali Linux tools from a single terminal command.</b><br>
-  Rich interactive CLI · Full-screen Textual TUI · Curated profiles · Offline support
+  <b>Pick your kit, install it anywhere, prove what you used.</b><br>
+  A security tool manager that isn't tied to one distro or one package manager.
 </p>
 
 <p align="center">
   <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
-  <img alt="Platform: Kali Linux" src="https://img.shields.io/badge/platform-Kali%20Linux-557C94?style=flat-square&logo=kalilinux&logoColor=white">
-</p>
-
-<p align="center">
-  <img src="docs/kali-tools.PNG" alt="Kali Tools Manager" width="800">
+  <img alt="Platforms" src="https://img.shields.io/badge/linux%20%C2%B7%20macos%20%C2%B7%20wsl-supported-informational?style=flat-square">
 </p>
 
 ---
 
-## Features
-
-- **700+ tools** cataloged from APT metadata and kali.org
-- **Interactive Rich CLI** with keyboard navigation, search, and category browsing
-- **Full-screen Textual TUI** with category sidebar, tool table, detail panel, and in-app install modal
-- **Cyber progress bar** — animated Knight Rider-style scanner during installs
-- **Curated profiles** — one-command setup for pentesting, forensics, OSINT, bug bounty, and CTF
-- **Install / uninstall** with sudo elevation, dependency display, disk-space checks, and desktop notifications
-- **Export / import** your installed toolset as JSON or an idempotent bash script
-- **Offline mode** — route APT through a local mirror on air-gapped hosts
-- **History tracking** — every install, remove, and launch is recorded in a local SQLite database
-- **Star favourites** — bookmark the tools you use most
-
----
-
-## Requirements
-
-| Requirement | Details |
-|---|---|
-| **OS** | Kali Linux or any Debian-based security distribution |
-| **Python** | 3.10 or newer |
-| **Package manager** | `apt-get` (comes with Kali/Debian) |
-
----
-
-## Quick Start
+The tools worth having no longer ship from one place. `nuclei`, `subfinder` and
+`httpx` come from the Go toolchain; `impacket` and `prowler` from pipx;
+`hayabusa` and `velociraptor` from GitHub releases; plenty more from apt or
+Homebrew. Loadout describes each tool **once** and installs it with whichever
+backend your machine actually has.
 
 ```bash
-# 1. Clone the repo
+loadout install nuclei          # apt on Kali, brew on macOS, go anywhere else
+loadout sync                    # converge this box to the team's loadout.yaml
+loadout report --since 30d      # signed inventory of what you used, for the report
+```
+
+> **Previously Kali Tools Manager.** Your settings, stars and history are
+> imported automatically on first run, and the `kalitools` command keeps working
+> until 2.0. See [MIGRATION.md](docs/MIGRATION.md).
+
+---
+
+## Why this instead of `apt install`
+
+|  | `apt` | Loadout |
+|---|---|---|
+| Works on Kali, Ubuntu, Arch, macOS, WSL | partly | yes |
+| Installs Go / Rust / pipx / release-binary tools | no | yes |
+| Verifies downloaded binaries against published checksums | n/a | yes, by default |
+| "Which tools exist for lateral movement?" | no | `loadout phase lateral-movement` |
+| "What should I use instead of dirbuster?" | no | `loadout alt dirbuster` |
+| Reproduce this exact toolset on another box | no | `loadout sync` |
+| Prove which tool versions an engagement used | no | `loadout report` |
+
+---
+
+## Install
+
+```bash
+pipx install loadout
+```
+
+Optional interactive browser:
+
+```bash
+pipx inject loadout textual
+```
+
+Or from a checkout:
+
+```bash
 git clone https://github.com/MushroomCyber/Kali-Tools-Manager.git
 cd Kali-Tools-Manager
-
-# 2. Run (auto-creates venv and installs deps)
-chmod +x run.sh
-./run.sh            # interactive Rich CLI
-./run.sh --tui      # full-screen Textual TUI
+pip install -e '.[dev,tui]'
 ```
 
-`run.sh` handles virtual environment creation and dependency installation automatically.
+Check the machine is ready:
+
+```bash
+loadout doctor
+```
 
 ---
 
-## Installation
+## Everyday use
 
-### Option A: pipx (recommended)
-
-```bash
-pipx install '.[notifications,disk,tui,fuzzy]'
-```
-
-### Option B: pip + venv
+### Find things
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pip install .
+loadout                          # interactive browser, filter as you type
+loadout search fuzz              # full-text search across names and summaries
+loadout show ffuf                # everything known, including how to install it here
+loadout list --category web      # browse a category
+loadout phase lateral-movement   # browse by engagement phase
+loadout alt dirbuster            # what people use instead
+loadout providers                # which installers work on this machine
 ```
 
-### Optional extras
+### Install things
 
-| Extra | What it adds |
+```bash
+loadout install ffuf nuclei subfinder
+loadout install nuclei --dry-run          # show the plan, change nothing
+loadout install nuclei --provider go      # force a backend
+loadout install nuclei --prefer brew      # nudge the resolver
+loadout remove nikto --yes
+loadout run gowitness scan file -f hosts  # run it, in a container if not installed
+```
+
+Loadout picks a provider per tool, per machine. `--dry-run` prints exactly what
+would run before anything happens:
+
+```
+Plan (install):
+  nuclei via go
+      $ go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+  ffuf via apt
+      $ apt-get install -y -o Dpkg::Options::=--force-confold -- ffuf
+```
+
+### Loadouts
+
+A loadout is the kit for a job. Bundled ones cover common roles; you can write
+your own or capture what you already have.
+
+```bash
+loadout loadout list
+loadout loadout show ad-operator
+loadout loadout apply dfir-responder
+loadout loadout save my-kit               # snapshot this machine
+```
+
+Commit a `loadout.yaml` to the engagement repo and everyone gets the same box:
+
+```yaml
+slug: acme-webapp-2026
+name: ACME web app test
+tools: [ffuf, nuclei, sqlmap, burpsuite, httpx, katana]
+```
+
+```bash
+loadout sync                    # install what's missing
+loadout sync --prune            # and remove what isn't declared
+loadout loadout diff acme-webapp-2026
+```
+
+| Loadout | For |
 |---|---|
-| `notifications` | Desktop toast alerts on install/uninstall |
-| `disk` | Free-disk-space check before installs |
-| `tui` | Full-screen Textual TUI (`--tui`) |
-| `fuzzy` | Fuzzy search matching |
+| `pentester-web` | Web application testing |
+| `recon-modern` | The Go-toolchain recon pipeline, no apt needed |
+| `ad-operator` | Active Directory assessment and lateral movement |
+| `bug-bounty` | Public programme recon and web |
+| `dfir-responder` | Host and log forensics |
+| `detection-engineer` | Building and validating detections |
+| `cloud-auditor` | Cloud and container posture |
+| `forensics-starter`, `osint-minimal`, `ctf-basics` | Starter kits |
 
----
+### Prove what you used
 
-## Usage
-
-### Launch
+Pentest reports and DFIR chain-of-custody both need "which tools, which
+versions, when". Loadout records that as it works, so the report is evidence
+rather than recollection.
 
 ```bash
-kalitools                    # interactive Rich CLI (default)
-kalitools --tui              # full-screen Textual TUI
-./run.sh                     # auto-setup launcher
+loadout report --since 30d --format markdown -o tooling.md
+loadout audit                   # unmaintained, superseded or unverified tooling
+loadout history --tool nuclei
 ```
 
-### Browse & Search
+### Take it elsewhere
 
 ```bash
-kalitools list                          # list all tools
-kalitools list --installed              # only installed tools
-kalitools list --category web           # filter by category
-kalitools search nmap                   # search by name
-kalitools show hydra                    # detailed tool info
+loadout export --format script   > install.sh
+loadout export --format docker   > Dockerfile
+loadout export --format ansible  > playbook.yml
+loadout export --format loadout  > loadout.yaml
 ```
 
-### Install & Remove
+### Everything speaks JSON
 
 ```bash
-kalitools install nmap                  # install with progress bar
-kalitools install nmap sqlmap burpsuite # install multiple at once
-kalitools remove hydra --yes            # uninstall without confirmation
-kalitools install nmap --dry-run        # preview without changes
-```
-
-### Profiles
-
-Apply a curated bundle of tools with a single command:
-
-```bash
-kalitools profile list                  # see available profiles
-kalitools profile show pentester-web    # preview what's included
-kalitools profile apply bug-bounty      # install everything in the profile
-```
-
-| Profile | Audience | Packages |
-|---|---|---|
-| `pentester-web` | Web application testing | ~18 |
-| `forensics-starter` | DFIR starter toolkit | ~15 |
-| `osint-minimal` | Lightweight OSINT collection | ~12 |
-| `bug-bounty` | Public bug-bounty recon & web | ~17 |
-| `ctf-basics` | Jeopardy-style CTF starter | ~15 |
-
-Create your own by dropping a JSON file in `~/.config/kalitools/profiles/`.
-
-### Updates & Upgrades
-
-```bash
-kalitools update                        # apt-get update + list upgradable
-kalitools upgrade                       # apt-get upgrade -y
-kalitools catalog refresh               # rebuild the tool catalog
-```
-
-### History & Favourites
-
-```bash
-kalitools history                       # recent operations
-kalitools history --package nmap        # filter by package
-kalitools star nmap                     # bookmark a tool
-kalitools list --starred                # list your favourites
-```
-
-### Export & Import
-
-```bash
-kalitools export --format json > tools.json       # save installed set
-kalitools export --format script > install.sh     # idempotent bash script
-```
-
-### Version Pinning
-
-```bash
-kalitools hold nmap                     # pin current version (apt-mark hold)
-kalitools unhold nmap                   # release pin
-kalitools holds                         # list held packages
-```
-
-### System Diagnostics
-
-```bash
-kalitools doctor                        # check for common issues
+loadout list --installed --json | jq -r '.[].id'
+loadout install nuclei --dry-run --json | jq '.actions[].steps'
+loadout doctor --json | jq '.[] | select(.severity != "ok")'
 ```
 
 ---
 
-## TUI Keyboard Shortcuts
+## Interactive browser
+
+`loadout` with no arguments. The cursor starts in the filter box and the list
+narrows as you type.
 
 | Key | Action |
 |---|---|
-| `/` | Focus search box |
-| `i` | Install or remove the selected tool |
-| `r` | Refresh the tool table |
-| `q` | Quit |
-| `↑` / `↓` | Navigate tools |
-| `Enter` / `Esc` | Close install modal |
+| *type* | Filter immediately |
+| `↑` `↓` | Move |
+| `space` | Mark a tool |
+| `ctrl+a` | Install everything marked |
+| `enter` | Install / remove the highlighted tool |
+| `ctrl+s` | Star |
+| `esc` | Clear filter, then clear marks, then quit |
 
 ---
 
-## Offline Mode
+## The catalog
 
-For air-gapped or restricted environments:
+The catalog is **data, not code**: one YAML file per tool under
+[`catalog/`](catalog/), reviewed by pull request and compiled into a SQLite
+database with a full-text index.
 
-1. Configure a local APT mirror via the Utilities menu or point `~/.kali_tools_local_repo.txt` at your mirror path.
+```yaml
+# catalog/web/ffuf.yaml
+id: ffuf
+summary: Fast web fuzzer for content and parameter discovery
+categories: [web, fuzzing]
+tags: [fuzzing, bug-bounty]
+phases: [discovery]
+binaries: [ffuf]
+homepage: https://github.com/ffuf/ffuf
+license: Apache-2.0
+verify: ffuf -V
+alternatives: [feroxbuster, gobuster, dirsearch]
+install:
+  - {provider: apt,    package: ffuf, distros: [kali, debian, parrot, ubuntu]}
+  - {provider: brew,   formula: ffuf}
+  - {provider: go,     module: github.com/ffuf/ffuf/v2@latest}
+  - {provider: github, repo: ffuf/ffuf, checksums: "*checksums*.txt"}
+```
 
-2. Set the environment variable:
-   ```bash
-   export KALITOOLS_OFFLINE=1
-   ```
+```bash
+loadout catalog validate        # check the source tree
+loadout catalog build           # compile it
+loadout catalog update          # enrich from local APT metadata
+loadout catalog info
+```
 
-3. All installs and updates route exclusively through the local repository.
+Adding a tool is one file and a pull request. See
+[docs/CATALOG.md](docs/CATALOG.md).
+
+**Supported providers:** `apt` · `brew` · `pipx` · `go` · `cargo` · `gem` ·
+`npm` · `github` (verified release downloads) · `docker`
 
 ---
 
 ## Configuration
 
-| Path | Purpose |
+| Path | Holds |
 |---|---|
-| `~/.config/kalitools/profiles/*.json` | Your custom profiles |
-| `~/.local/state/kalitools/state.db` | Install state, history, stars (SQLite) |
-| `~/.kali_tools_local_repo.txt` | Offline mirror path |
-| `~/.kali_tools_overrides.json` | Category overrides |
+| `$XDG_CONFIG_HOME/loadout/loadouts/*.yaml` | Your loadouts |
+| `$XDG_STATE_HOME/loadout/state.db` | Installs, history, stars, provenance |
+| `$XDG_DATA_HOME/loadout/catalog.db` | The compiled catalog |
+| `./loadout.yaml` | Project manifest for `loadout sync` |
 
-| Environment Variable | Purpose |
+| Variable | Effect |
 |---|---|
-| `KALITOOLS_OFFLINE` | Skip network requests, use local repo |
-| `KALITOOLS_NO_EMOJI` | Strip emoji glyphs for minimal terminals |
-
-See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for full details.
+| `LOADOUT_OFFLINE=1` | Make no network calls |
+| `LOADOUT_NO_EMOJI=1` | ASCII glyphs (auto-detected too) |
+| `LOADOUT_THEME` | `default`, `mono`, `solarized-dark`, `high-contrast` |
+| `LOADOUT_BIN_DIR` | Where release binaries land (default `~/.local/bin`) |
+| `GITHUB_TOKEN` | Raises the GitHub API rate limit |
+| `NO_COLOR` / `FORCE_COLOR` | Respected |
 
 ---
 
-## Man Page
+## Security
 
-A full man page is included:
+Loadout runs `sudo` and downloads binaries, so it holds itself to the bar that
+implies:
 
-```bash
-man -l man/kalitools.1
-```
+- `sudo` is constructed in exactly one function, `policy.elevate()` — enforced by a test.
+- Every package name is validated before it reaches an argv, and `--` always separates options from names.
+- Downloaded artifacts are checksummed against the release's own checksum file. **No checksum means refusal**, not a warning; `--allow-unverified` is an explicit opt-in.
+- Archive extraction refuses absolute paths and `..` traversal.
+- No `shell=True` anywhere.
+
+See [SECURITY.md](SECURITY.md) for the threat model and how to report an issue.
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Adding a tool to the catalog is the easiest useful contribution — one YAML
+file. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+```bash
+pip install -e '.[dev,tui]'
+pytest
+ruff check .
+```
 
 ---
 

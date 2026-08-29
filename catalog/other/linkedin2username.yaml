@@ -1,0 +1,11 @@
+id: linkedin2username
+categories:
+- other
+install:
+- provider: apt
+  package: linkedin2username
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: flashrom
+categories:
+- other
+install:
+- provider: apt
+  package: flashrom
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

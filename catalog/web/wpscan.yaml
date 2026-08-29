@@ -1,0 +1,24 @@
+id: wpscan
+summary: WordPress vulnerability and enumeration scanner
+categories:
+- web
+- vuln-scan
+tags:
+- cms
+phases:
+- discovery
+binaries:
+- wpscan
+homepage: https://wpscan.com
+alternatives:
+- nuclei
+install:
+- provider: apt
+  package: wpscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: gem
+  gem: wpscan

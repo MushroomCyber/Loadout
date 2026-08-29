@@ -1,0 +1,11 @@
+id: multimac
+categories:
+- other
+install:
+- provider: apt
+  package: multimac
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

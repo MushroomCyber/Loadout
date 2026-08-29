@@ -1,0 +1,11 @@
+id: unar
+categories:
+- other
+install:
+- provider: apt
+  package: unar
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

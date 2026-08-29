@@ -1,0 +1,11 @@
+id: dploot
+categories:
+- other
+install:
+- provider: apt
+  package: dploot
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

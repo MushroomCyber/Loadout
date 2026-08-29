@@ -1,0 +1,31 @@
+id: subfinder
+summary: Passive subdomain discovery across dozens of sources
+categories:
+- recon
+tags:
+- subdomains
+- projectdiscovery
+phases:
+- reconnaissance
+binaries:
+- subfinder
+homepage: https://github.com/projectdiscovery/subfinder
+alternatives:
+- amass
+- assetfinder
+- findomain
+install:
+- provider: apt
+  package: subfinder
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: subfinder
+- provider: go
+  module: github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+- provider: github
+  repo: projectdiscovery/subfinder
+  checksums: '*checksums*.txt'

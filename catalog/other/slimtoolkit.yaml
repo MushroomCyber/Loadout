@@ -1,0 +1,11 @@
+id: slimtoolkit
+categories:
+- other
+install:
+- provider: apt
+  package: slimtoolkit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

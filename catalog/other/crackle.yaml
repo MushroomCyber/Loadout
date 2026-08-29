@@ -1,0 +1,11 @@
+id: crackle
+categories:
+- other
+install:
+- provider: apt
+  package: crackle
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

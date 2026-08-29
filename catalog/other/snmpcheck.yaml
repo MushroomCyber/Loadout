@@ -1,0 +1,11 @@
+id: snmpcheck
+categories:
+- other
+install:
+- provider: apt
+  package: snmpcheck
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

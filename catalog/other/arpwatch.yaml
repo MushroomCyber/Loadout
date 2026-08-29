@@ -1,0 +1,11 @@
+id: arpwatch
+categories:
+- other
+install:
+- provider: apt
+  package: arpwatch
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

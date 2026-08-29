@@ -1,0 +1,11 @@
+id: ruby-pedump
+categories:
+- other
+install:
+- provider: apt
+  package: ruby-pedump
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

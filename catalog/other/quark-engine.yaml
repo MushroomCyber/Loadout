@@ -1,0 +1,11 @@
+id: quark-engine
+categories:
+- other
+install:
+- provider: apt
+  package: quark-engine
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

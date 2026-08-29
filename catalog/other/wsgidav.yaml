@@ -1,0 +1,11 @@
+id: wsgidav
+categories:
+- other
+install:
+- provider: apt
+  package: wsgidav
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

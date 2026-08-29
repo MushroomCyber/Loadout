@@ -1,0 +1,11 @@
+id: cisco7crack
+categories:
+- other
+install:
+- provider: apt
+  package: cisco7crack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

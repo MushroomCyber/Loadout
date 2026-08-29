@@ -1,0 +1,11 @@
+id: vopono
+categories:
+- other
+install:
+- provider: apt
+  package: vopono
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

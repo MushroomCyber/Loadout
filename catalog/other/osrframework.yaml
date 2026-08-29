@@ -1,0 +1,11 @@
+id: osrframework
+categories:
+- other
+install:
+- provider: apt
+  package: osrframework
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

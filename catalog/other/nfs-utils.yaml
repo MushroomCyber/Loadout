@@ -1,0 +1,11 @@
+id: nfs-utils
+categories:
+- other
+install:
+- provider: apt
+  package: nfs-utils
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

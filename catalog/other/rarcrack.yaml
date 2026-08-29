@@ -1,0 +1,11 @@
+id: rarcrack
+categories:
+- other
+install:
+- provider: apt
+  package: rarcrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

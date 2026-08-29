@@ -1,0 +1,11 @@
+id: sploitscan
+categories:
+- other
+install:
+- provider: apt
+  package: sploitscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

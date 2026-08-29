@@ -1,0 +1,11 @@
+id: opentaxii
+categories:
+- other
+install:
+- provider: apt
+  package: opentaxii
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

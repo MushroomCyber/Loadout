@@ -1,0 +1,11 @@
+id: readpe
+categories:
+- other
+install:
+- provider: apt
+  package: readpe
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

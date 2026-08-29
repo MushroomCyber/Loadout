@@ -1,0 +1,30 @@
+id: mitmproxy
+summary: Interactive TLS-capable intercepting proxy
+categories:
+- sniffing
+- web
+tags:
+- mitm
+- proxy
+phases:
+- collection
+binaries:
+- mitmproxy
+- mitmdump
+- mitmweb
+homepage: https://mitmproxy.org
+alternatives:
+- burpsuite
+- zaproxy
+install:
+- provider: apt
+  package: mitmproxy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: mitmproxy
+- provider: pipx
+  package: mitmproxy

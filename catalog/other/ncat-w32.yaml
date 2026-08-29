@@ -1,0 +1,11 @@
+id: ncat-w32
+categories:
+- other
+install:
+- provider: apt
+  package: ncat-w32
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

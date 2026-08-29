@@ -1,0 +1,11 @@
+id: cowpatty
+categories:
+- wireless
+install:
+- provider: apt
+  package: cowpatty
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: libfindrtp
+categories:
+- other
+install:
+- provider: apt
+  package: libfindrtp
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

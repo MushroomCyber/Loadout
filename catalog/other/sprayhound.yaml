@@ -1,0 +1,11 @@
+id: sprayhound
+categories:
+- other
+install:
+- provider: apt
+  package: sprayhound
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

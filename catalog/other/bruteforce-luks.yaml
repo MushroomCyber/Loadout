@@ -1,0 +1,11 @@
+id: bruteforce-luks
+categories:
+- other
+install:
+- provider: apt
+  package: bruteforce-luks
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: ptunnel
+categories:
+- other
+install:
+- provider: apt
+  package: ptunnel
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

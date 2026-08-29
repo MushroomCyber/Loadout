@@ -1,0 +1,11 @@
+id: python-pip
+categories:
+- other
+install:
+- provider: apt
+  package: python-pip
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

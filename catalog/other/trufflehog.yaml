@@ -1,0 +1,11 @@
+id: trufflehog
+categories:
+- other
+install:
+- provider: apt
+  package: trufflehog
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

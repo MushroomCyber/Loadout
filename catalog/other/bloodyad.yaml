@@ -1,0 +1,11 @@
+id: bloodyad
+categories:
+- other
+install:
+- provider: apt
+  package: bloodyad
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: maltego-teeth
+categories:
+- other
+install:
+- provider: apt
+  package: maltego-teeth
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

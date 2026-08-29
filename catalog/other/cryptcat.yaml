@@ -1,0 +1,11 @@
+id: cryptcat
+categories:
+- other
+install:
+- provider: apt
+  package: cryptcat
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

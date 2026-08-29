@@ -1,0 +1,11 @@
+id: wapiti
+categories:
+- other
+install:
+- provider: apt
+  package: wapiti
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

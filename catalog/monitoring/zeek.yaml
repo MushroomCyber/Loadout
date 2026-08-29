@@ -1,0 +1,26 @@
+id: zeek
+summary: Network security monitor producing rich protocol logs
+categories:
+- monitoring
+- detection
+tags:
+- nsm
+- blue-team
+phases:
+- collection
+binaries:
+- zeek
+- zeek-cut
+homepage: https://zeek.org
+alternatives:
+- suricata
+install:
+- provider: apt
+  package: zeek
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: zeek

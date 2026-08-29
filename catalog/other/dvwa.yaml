@@ -1,0 +1,11 @@
+id: dvwa
+categories:
+- other
+install:
+- provider: apt
+  package: dvwa
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: jadx
+categories:
+- reverse
+tags:
+- android
+install:
+- provider: apt
+  package: jadx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

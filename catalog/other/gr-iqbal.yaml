@@ -1,0 +1,11 @@
+id: gr-iqbal
+categories:
+- other
+install:
+- provider: apt
+  package: gr-iqbal
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

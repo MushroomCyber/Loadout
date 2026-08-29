@@ -1,0 +1,11 @@
+id: yersinia
+categories:
+- other
+install:
+- provider: apt
+  package: yersinia
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

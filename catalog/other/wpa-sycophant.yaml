@@ -1,0 +1,11 @@
+id: wpa-sycophant
+categories:
+- other
+install:
+- provider: apt
+  package: wpa-sycophant
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

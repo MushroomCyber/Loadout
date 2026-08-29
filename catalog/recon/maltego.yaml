@@ -1,0 +1,13 @@
+id: maltego
+categories:
+- recon
+tags:
+- osint
+install:
+- provider: apt
+  package: maltego
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

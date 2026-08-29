@@ -1,0 +1,11 @@
+id: merlin-agent
+categories:
+- other
+install:
+- provider: apt
+  package: merlin-agent
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

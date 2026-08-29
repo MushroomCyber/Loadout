@@ -1,0 +1,11 @@
+id: juice-shop
+categories:
+- other
+install:
+- provider: apt
+  package: juice-shop
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

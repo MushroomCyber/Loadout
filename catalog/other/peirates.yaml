@@ -1,0 +1,11 @@
+id: peirates
+categories:
+- other
+install:
+- provider: apt
+  package: peirates
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,28 @@
+id: dnsx
+summary: Fast DNS resolution and probing toolkit
+categories:
+- recon
+tags:
+- dns
+- projectdiscovery
+phases:
+- reconnaissance
+binaries:
+- dnsx
+homepage: https://github.com/projectdiscovery/dnsx
+alternatives:
+- dnsrecon
+- massdns
+install:
+- provider: apt
+  package: dnsx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: go
+  module: github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+- provider: github
+  repo: projectdiscovery/dnsx
+  checksums: '*checksums*.txt'

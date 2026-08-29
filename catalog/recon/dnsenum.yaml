@@ -1,0 +1,13 @@
+id: dnsenum
+categories:
+- recon
+tags:
+- dns
+install:
+- provider: apt
+  package: dnsenum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: cutecom
+categories:
+- other
+install:
+- provider: apt
+  package: cutecom
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

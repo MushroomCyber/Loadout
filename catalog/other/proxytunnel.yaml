@@ -1,0 +1,11 @@
+id: proxytunnel
+categories:
+- other
+install:
+- provider: apt
+  package: proxytunnel
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

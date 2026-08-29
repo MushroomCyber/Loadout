@@ -1,0 +1,11 @@
+id: portspoof
+categories:
+- other
+install:
+- provider: apt
+  package: portspoof
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

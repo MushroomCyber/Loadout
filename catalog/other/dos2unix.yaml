@@ -1,0 +1,11 @@
+id: dos2unix
+categories:
+- other
+install:
+- provider: apt
+  package: dos2unix
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

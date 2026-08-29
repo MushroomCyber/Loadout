@@ -1,0 +1,11 @@
+id: mxcheck
+categories:
+- other
+install:
+- provider: apt
+  package: mxcheck
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

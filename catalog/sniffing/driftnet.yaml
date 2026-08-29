@@ -1,0 +1,11 @@
+id: driftnet
+categories:
+- sniffing
+install:
+- provider: apt
+  package: driftnet
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

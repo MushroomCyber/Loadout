@@ -1,0 +1,11 @@
+id: magicrescue
+categories:
+- other
+install:
+- provider: apt
+  package: magicrescue
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: mfterm
+categories:
+- other
+install:
+- provider: apt
+  package: mfterm
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

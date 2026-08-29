@@ -1,0 +1,11 @@
+id: calico
+categories:
+- other
+install:
+- provider: apt
+  package: calico
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

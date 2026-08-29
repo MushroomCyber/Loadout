@@ -1,0 +1,11 @@
+id: cutycapt
+categories:
+- other
+install:
+- provider: apt
+  package: cutycapt
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

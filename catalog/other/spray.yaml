@@ -1,0 +1,11 @@
+id: spray
+categories:
+- other
+install:
+- provider: apt
+  package: spray
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

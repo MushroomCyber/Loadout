@@ -1,0 +1,13 @@
+id: autorecon
+categories:
+- recon
+tags:
+- automation
+install:
+- provider: apt
+  package: autorecon
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

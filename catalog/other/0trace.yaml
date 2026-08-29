@@ -1,0 +1,11 @@
+id: 0trace
+categories:
+- other
+install:
+- provider: apt
+  package: 0trace
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

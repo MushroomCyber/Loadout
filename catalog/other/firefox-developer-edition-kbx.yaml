@@ -1,0 +1,11 @@
+id: firefox-developer-edition-kbx
+categories:
+- other
+install:
+- provider: apt
+  package: firefox-developer-edition-kbx
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

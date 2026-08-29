@@ -1,0 +1,11 @@
+id: qemu
+categories:
+- other
+install:
+- provider: apt
+  package: qemu
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

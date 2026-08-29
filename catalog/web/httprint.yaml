@@ -1,0 +1,13 @@
+id: httprint
+categories:
+- web
+tags:
+- fingerprint
+install:
+- provider: apt
+  package: httprint
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

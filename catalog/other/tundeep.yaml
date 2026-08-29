@@ -1,0 +1,11 @@
+id: tundeep
+categories:
+- other
+install:
+- provider: apt
+  package: tundeep
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

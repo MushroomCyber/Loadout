@@ -1,0 +1,11 @@
+id: paros
+categories:
+- other
+install:
+- provider: apt
+  package: paros
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

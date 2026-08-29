@@ -1,0 +1,11 @@
+id: eksctl
+categories:
+- other
+install:
+- provider: apt
+  package: eksctl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

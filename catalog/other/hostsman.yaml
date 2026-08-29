@@ -1,0 +1,11 @@
+id: hostsman
+categories:
+- other
+install:
+- provider: apt
+  package: hostsman
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

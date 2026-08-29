@@ -1,0 +1,29 @@
+id: httpx
+summary: Fast multi-purpose HTTP prober and fingerprinter
+categories:
+- web
+- recon
+tags:
+- projectdiscovery
+- bug-bounty
+phases:
+- discovery
+binaries:
+- httpx
+homepage: https://github.com/projectdiscovery/httpx
+alternatives:
+- httprobe
+- whatweb
+install:
+- provider: apt
+  package: httpx-toolkit
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: go
+  module: github.com/projectdiscovery/httpx/cmd/httpx@latest
+- provider: github
+  repo: projectdiscovery/httpx
+  checksums: '*checksums*.txt'

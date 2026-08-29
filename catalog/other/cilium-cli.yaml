@@ -1,0 +1,11 @@
+id: cilium-cli
+categories:
+- other
+install:
+- provider: apt
+  package: cilium-cli
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

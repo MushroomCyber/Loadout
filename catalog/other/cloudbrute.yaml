@@ -1,0 +1,11 @@
+id: cloudbrute
+categories:
+- other
+install:
+- provider: apt
+  package: cloudbrute
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

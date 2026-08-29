@@ -1,0 +1,11 @@
+id: swaks
+categories:
+- other
+install:
+- provider: apt
+  package: swaks
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

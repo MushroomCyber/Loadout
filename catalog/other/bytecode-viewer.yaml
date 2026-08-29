@@ -1,0 +1,11 @@
+id: bytecode-viewer
+categories:
+- other
+install:
+- provider: apt
+  package: bytecode-viewer
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

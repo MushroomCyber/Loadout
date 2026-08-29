@@ -1,0 +1,11 @@
+id: chromium
+categories:
+- other
+install:
+- provider: apt
+  package: chromium
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

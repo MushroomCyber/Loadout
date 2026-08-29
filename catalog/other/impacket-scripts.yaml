@@ -1,0 +1,11 @@
+id: impacket-scripts
+categories:
+- other
+install:
+- provider: apt
+  package: impacket-scripts
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

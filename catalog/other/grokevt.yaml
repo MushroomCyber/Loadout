@@ -1,0 +1,11 @@
+id: grokevt
+categories:
+- other
+install:
+- provider: apt
+  package: grokevt
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

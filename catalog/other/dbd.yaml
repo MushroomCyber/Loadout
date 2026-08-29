@@ -1,0 +1,11 @@
+id: dbd
+categories:
+- other
+install:
+- provider: apt
+  package: dbd
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

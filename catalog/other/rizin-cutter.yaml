@@ -1,0 +1,11 @@
+id: rizin-cutter
+categories:
+- other
+install:
+- provider: apt
+  package: rizin-cutter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

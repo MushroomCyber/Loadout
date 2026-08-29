@@ -1,0 +1,11 @@
+id: rkhunter
+categories:
+- other
+install:
+- provider: apt
+  package: rkhunter
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

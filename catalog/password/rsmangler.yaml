@@ -1,0 +1,13 @@
+id: rsmangler
+categories:
+- password
+tags:
+- wordlists
+install:
+- provider: apt
+  package: rsmangler
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

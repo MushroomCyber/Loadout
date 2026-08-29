@@ -1,0 +1,11 @@
+id: aeskeyfind
+categories:
+- other
+install:
+- provider: apt
+  package: aeskeyfind
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

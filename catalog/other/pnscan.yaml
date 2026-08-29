@@ -1,0 +1,11 @@
+id: pnscan
+categories:
+- other
+install:
+- provider: apt
+  package: pnscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

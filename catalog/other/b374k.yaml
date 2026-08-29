@@ -1,0 +1,13 @@
+id: b374k
+categories:
+- other
+tags:
+- web-shell
+install:
+- provider: apt
+  package: b374k
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

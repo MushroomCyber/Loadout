@@ -1,0 +1,11 @@
+id: python-defaults
+categories:
+- other
+install:
+- provider: apt
+  package: python-defaults
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

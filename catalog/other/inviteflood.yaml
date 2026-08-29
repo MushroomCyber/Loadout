@@ -1,0 +1,11 @@
+id: inviteflood
+categories:
+- other
+install:
+- provider: apt
+  package: inviteflood
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: tmux
+categories:
+- other
+install:
+- provider: apt
+  package: tmux
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

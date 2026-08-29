@@ -1,0 +1,11 @@
+id: gvm
+categories:
+- other
+install:
+- provider: apt
+  package: gvm
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: wifiphisher
+categories:
+- other
+install:
+- provider: apt
+  package: wifiphisher
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

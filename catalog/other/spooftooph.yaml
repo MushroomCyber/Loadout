@@ -1,0 +1,11 @@
+id: spooftooph
+categories:
+- other
+install:
+- provider: apt
+  package: spooftooph
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

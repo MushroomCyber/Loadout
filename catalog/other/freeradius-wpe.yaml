@@ -1,0 +1,11 @@
+id: freeradius-wpe
+categories:
+- other
+install:
+- provider: apt
+  package: freeradius-wpe
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

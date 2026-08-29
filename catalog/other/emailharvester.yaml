@@ -1,0 +1,11 @@
+id: emailharvester
+categories:
+- other
+install:
+- provider: apt
+  package: emailharvester
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

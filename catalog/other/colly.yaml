@@ -1,0 +1,11 @@
+id: colly
+categories:
+- other
+install:
+- provider: apt
+  package: colly
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

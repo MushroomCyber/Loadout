@@ -1,0 +1,11 @@
+id: lynis
+categories:
+- other
+install:
+- provider: apt
+  package: lynis
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

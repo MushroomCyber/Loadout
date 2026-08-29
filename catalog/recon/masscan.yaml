@@ -1,0 +1,26 @@
+id: masscan
+summary: Internet-scale TCP port scanner
+categories:
+- recon
+tags:
+- port-scan
+phases:
+- discovery
+binaries:
+- masscan
+homepage: https://github.com/robertdavidgraham/masscan
+requires_root: true
+verify: masscan --version
+alternatives:
+- nmap
+- naabu
+install:
+- provider: apt
+  package: masscan
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: masscan

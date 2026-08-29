@@ -1,0 +1,11 @@
+id: openssh-ssh1
+categories:
+- other
+install:
+- provider: apt
+  package: openssh-ssh1
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

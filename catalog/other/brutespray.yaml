@@ -1,0 +1,11 @@
+id: brutespray
+categories:
+- other
+install:
+- provider: apt
+  package: brutespray
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: crlfuzz
+categories:
+- other
+install:
+- provider: apt
+  package: crlfuzz
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

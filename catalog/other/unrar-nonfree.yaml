@@ -1,0 +1,11 @@
+id: unrar-nonfree
+categories:
+- other
+install:
+- provider: apt
+  package: unrar-nonfree
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

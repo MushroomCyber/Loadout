@@ -1,0 +1,11 @@
+id: recoverdm
+categories:
+- other
+install:
+- provider: apt
+  package: recoverdm
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

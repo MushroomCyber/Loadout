@@ -1,0 +1,11 @@
+id: steghide
+categories:
+- other
+install:
+- provider: apt
+  package: steghide
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

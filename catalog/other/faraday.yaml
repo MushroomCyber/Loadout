@@ -1,0 +1,11 @@
+id: faraday
+categories:
+- other
+install:
+- provider: apt
+  package: faraday
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

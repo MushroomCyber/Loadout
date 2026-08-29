@@ -1,0 +1,11 @@
+id: routerkeygenpc
+categories:
+- other
+install:
+- provider: apt
+  package: routerkeygenpc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

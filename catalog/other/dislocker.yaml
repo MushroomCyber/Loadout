@@ -1,0 +1,11 @@
+id: dislocker
+categories:
+- other
+install:
+- provider: apt
+  package: dislocker
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

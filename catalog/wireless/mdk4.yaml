@@ -1,0 +1,14 @@
+id: mdk4
+summary: WiFi testing & DoS tool
+categories:
+- wireless
+tags:
+- dos-attacks
+install:
+- provider: apt
+  package: mdk4
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

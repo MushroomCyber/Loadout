@@ -1,0 +1,11 @@
+id: sipsak
+categories:
+- other
+install:
+- provider: apt
+  package: sipsak
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

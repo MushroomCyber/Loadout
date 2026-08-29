@@ -1,0 +1,11 @@
+id: koadic
+categories:
+- other
+install:
+- provider: apt
+  package: koadic
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,16 @@
+slug: dfir-responder
+name: DFIR Responder
+description: Host and log forensics for incident response
+tags:
+- dfir
+- blue-team
+tools:
+- autopsy
+- binwalk
+- chainsaw
+- hayabusa
+- sigma-cli
+- sleuthkit
+- velociraptor
+- volatility3
+- yara

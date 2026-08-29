@@ -1,0 +1,11 @@
+id: sara
+categories:
+- other
+install:
+- provider: apt
+  package: sara
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

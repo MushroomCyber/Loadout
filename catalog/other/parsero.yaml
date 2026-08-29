@@ -1,0 +1,11 @@
+id: parsero
+categories:
+- other
+install:
+- provider: apt
+  package: parsero
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

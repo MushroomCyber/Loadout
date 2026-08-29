@@ -1,0 +1,11 @@
+id: snmpenum
+categories:
+- other
+install:
+- provider: apt
+  package: snmpenum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: bind9
+categories:
+- other
+tags:
+- dns-server
+install:
+- provider: apt
+  package: bind9
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

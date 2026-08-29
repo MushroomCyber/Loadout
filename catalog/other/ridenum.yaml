@@ -1,0 +1,11 @@
+id: ridenum
+categories:
+- other
+install:
+- provider: apt
+  package: ridenum
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

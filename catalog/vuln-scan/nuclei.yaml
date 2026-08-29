@@ -1,0 +1,33 @@
+id: nuclei
+summary: Template-driven vulnerability scanner for known issues
+categories:
+- vuln-scan
+- web
+tags:
+- projectdiscovery
+- bug-bounty
+- templates
+phases:
+- discovery
+binaries:
+- nuclei
+homepage: https://github.com/projectdiscovery/nuclei
+verify: nuclei -version
+alternatives:
+- nikto
+- zaproxy
+install:
+- provider: apt
+  package: nuclei
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: nuclei
+- provider: go
+  module: github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+- provider: github
+  repo: projectdiscovery/nuclei
+  checksums: '*checksums*.txt'

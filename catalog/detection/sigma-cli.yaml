@@ -1,0 +1,16 @@
+id: sigma-cli
+summary: Convert Sigma detection rules to your SIEM's query language
+categories:
+- detection
+tags:
+- detection-engineering
+- blue-team
+phases:
+- analysis
+- reporting
+binaries:
+- sigma
+homepage: https://github.com/SigmaHQ/sigma-cli
+install:
+- provider: pipx
+  package: sigma-cli

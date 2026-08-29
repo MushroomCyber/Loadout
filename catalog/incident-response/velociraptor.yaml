@@ -1,0 +1,21 @@
+id: velociraptor
+summary: Endpoint visibility and digital forensics at scale
+categories:
+- incident-response
+- detection
+tags:
+- edr
+- dfir
+- blue-team
+phases:
+- collection
+- analysis
+binaries:
+- velociraptor
+homepage: https://docs.velociraptor.app
+alternatives:
+- osquery
+install:
+- provider: github
+  repo: Velocidex/velociraptor
+  checksums: '*checksums*.txt'

@@ -1,0 +1,11 @@
+id: libimage-exiftool-perl
+categories:
+- other
+install:
+- provider: apt
+  package: libimage-exiftool-perl
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

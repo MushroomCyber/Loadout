@@ -1,0 +1,11 @@
+id: dnsmap
+categories:
+- other
+install:
+- provider: apt
+  package: dnsmap
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: multiforcer
+categories:
+- other
+install:
+- provider: apt
+  package: multiforcer
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

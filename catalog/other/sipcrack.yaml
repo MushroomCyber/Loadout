@@ -1,0 +1,11 @@
+id: sipcrack
+categories:
+- other
+install:
+- provider: apt
+  package: sipcrack
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

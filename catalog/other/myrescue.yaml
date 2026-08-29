@@ -1,0 +1,11 @@
+id: myrescue
+categories:
+- other
+install:
+- provider: apt
+  package: myrescue
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

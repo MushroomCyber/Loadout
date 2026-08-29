@@ -1,0 +1,30 @@
+id: trivy
+summary: Vulnerability and misconfiguration scanner for images and IaC
+categories:
+- cloud
+- vuln-scan
+tags:
+- containers
+- sca
+- blue-team
+phases:
+- discovery
+binaries:
+- trivy
+homepage: https://trivy.dev
+alternatives:
+- grype
+- syft
+install:
+- provider: apt
+  package: trivy
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
+- provider: brew
+  formula: trivy
+- provider: github
+  repo: aquasecurity/trivy
+  checksums: '*checksums*.txt'

@@ -1,0 +1,11 @@
+id: ropper
+categories:
+- other
+install:
+- provider: apt
+  package: ropper
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,13 @@
+id: dnsrecon
+categories:
+- recon
+tags:
+- dns
+install:
+- provider: apt
+  package: dnsrecon
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

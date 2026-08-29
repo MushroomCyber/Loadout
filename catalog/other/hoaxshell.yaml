@@ -1,0 +1,11 @@
+id: hoaxshell
+categories:
+- other
+install:
+- provider: apt
+  package: hoaxshell
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

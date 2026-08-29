@@ -1,0 +1,11 @@
+id: libnfc
+categories:
+- other
+install:
+- provider: apt
+  package: libnfc
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

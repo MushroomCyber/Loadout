@@ -1,0 +1,11 @@
+id: btscanner
+categories:
+- other
+install:
+- provider: apt
+  package: btscanner
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu

@@ -1,0 +1,11 @@
+id: legion
+categories:
+- other
+install:
+- provider: apt
+  package: legion
+  distros:
+  - kali
+  - debian
+  - parrot
+  - ubuntu
