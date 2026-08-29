@@ -6,14 +6,23 @@ and ``--json`` output without duplicated logic.
 
 Real progress comes from APT's own status file descriptor rather than counting
 output lines, so a large install no longer sits at "95%" for several minutes.
+It is pointed at fd 1 (the process's own stdout) rather than a separate pipe
+passed via ``pass_fds`` -- a real install as a non-root sudo user hit
+``E: Write error - write (9: Bad file descriptor)`` on every status write with
+the pipe approach, which apt then treated as fatal and exited non-zero even
+though dpkg had already finished (confirmed by cross-checking ``dpkg -l``,
+which showed the package correctly installed). fd 1 sidesteps the whole class
+of problem: it is guaranteed open and inherited by exec(), no ``pass_fds``
+book-keeping or extra thread required, regardless of what sudo, PAM or an
+LSM policy on a given box do to file descriptors above 2. APT interleaves its
+normal human-readable output with the machine-readable ``pmstatus:`` lines on
+the same stream; the parser below already ignores anything that is not one.
 """
 
 from __future__ import annotations
 
 import logging
-import os
 import subprocess
-import threading
 import time
 from collections import deque
 from collections.abc import Callable
@@ -306,13 +315,13 @@ class Executor:
 
     def _spawn(self, argv: list[str], step: CommandStep, context: ExecContext) -> int:
         env = subprocess_env(step.env)
-        status_reader: threading.Thread | None = None
-        read_fd = write_fd = -1
         use_status_fd = (argv and "apt-get" in argv[0]) or "apt-get" in argv[:2]
 
-        if use_status_fd and hasattr(os, "pipe") and os.name == "posix":
-            read_fd, write_fd = os.pipe()
-            argv = _insert_options(argv, apt_status_fd_args(write_fd))
+        if use_status_fd:
+            # fd 1 is our own stdout -- already piped below, always open, and
+            # inherited by exec() with no pass_fds bookkeeping. See the module
+            # docstring for why this replaced a separate pipe.
+            argv = _insert_options(argv, apt_status_fd_args(1))
 
         try:
             process = subprocess.Popen(  # noqa: S603 - argv validated by policy
@@ -323,24 +332,13 @@ class Executor:
                 text=True,
                 bufsize=1,
                 env=env,
-                pass_fds=(write_fd,) if write_fd != -1 else (),
             )
         except FileNotFoundError as exc:
-            if write_fd != -1:
-                os.close(write_fd)
-                os.close(read_fd)
             raise LoadoutError(
                 f"{argv[0]}: command not found",
                 remediation="The provider reported itself available but its "
                 "executable has since disappeared from PATH.",
             ) from exc
-
-        if write_fd != -1:
-            os.close(write_fd)
-            status_reader = threading.Thread(
-                target=self._pump_status, args=(read_fd, context), daemon=True
-            )
-            status_reader.start()
 
         # Not an assert: `python -O` strips those, and this sits in the
         # privileged execution path. Popen(stdout=PIPE) always yields a stream,
@@ -351,27 +349,17 @@ class Executor:
             raise LoadoutError(f"{argv[0]}: could not capture output")
         for line in stdout:
             text = line.rstrip("\n")
-            if text:
+            if not text:
+                continue
+            parsed = AptProvider.parse_status_line(text) if use_status_fd else None
+            if parsed is not None:
+                percent, message = parsed
+                context.progress(message, percent)
+            else:
+                self._recent_output.append(text)
                 context.output(text)
         process.wait()
-
-        if status_reader is not None:
-            status_reader.join(timeout=2)
         return process.returncode
-
-    @staticmethod
-    def _pump_status(read_fd: int, context: ExecContext) -> None:
-        """Translate APT's status-fd records into progress events."""
-        try:
-            with os.fdopen(read_fd, "r", encoding="utf-8", errors="replace") as handle:
-                for line in handle:
-                    parsed = AptProvider.parse_status_line(line)
-                    if parsed is None:
-                        continue
-                    percent, message = parsed
-                    context.progress(message, percent)
-        except OSError:
-            pass
 
 
 def _insert_options(argv: list[str], options: list[str]) -> list[str]:

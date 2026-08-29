@@ -443,3 +443,82 @@ class TestVerbConjugation:
 
         assert past_tense("install") == "installed"
         assert past_tense("remove") == "removed"
+
+
+class TestB13StatusFdSurvivesSudo:
+    """Live-run finding: a real install as a non-root sudo user produced
+    "E: Write error - write (9: Bad file descriptor)" on every status write,
+    which apt then treated as fatal -- exiting non-zero even though dpkg had
+    already finished (confirmed by cross-checking real dpkg state, which
+    showed the package correctly installed). Sending Status-Fd through an
+    anonymous pipe via pass_fds depended on that fd surviving an extra
+    fork+exec through sudo; whether it does turned out to depend on things
+    (sudo build, PAM, the calling thread/terminal state) this project has no
+    control over. Fixed by pointing Status-Fd at fd 1 -- the process's own
+    stdout, guaranteed open and inherited by exec() with no pass_fds
+    bookkeeping at all."""
+
+    def test_status_fd_targets_stdout_not_a_pipe(self):
+        """No os.pipe(), no pass_fds, no extra thread: grep the source for the
+        pattern that broke, so a regression shows up as a failing assertion
+        instead of requiring another live incident to notice."""
+        import inspect
+
+        from loadout.executor import Executor
+
+        source = inspect.getsource(Executor._spawn)
+        assert "pass_fds=" not in source
+        assert "os.pipe()" not in source
+        assert "apt_status_fd_args(1)" in source
+
+    def test_no_background_thread_is_spawned_to_read_status(self):
+        import inspect
+
+        from loadout.executor import Executor
+
+        source = inspect.getsource(Executor._spawn)
+        assert "threading.Thread" not in source
+
+    def test_status_lines_and_plain_output_share_one_stream(self, catalog, all_available, monkeypatch):
+        """A Popen returning interleaved pmstatus: and human-readable lines on
+        the same stdout must route each to the right event type."""
+        import subprocess as sp
+
+        from loadout.executor import EVENT_OUTPUT, EVENT_PROGRESS, Executor
+        from loadout.planner import Planner
+
+        class FakeProcess:
+            returncode = 0
+            stdout = iter(
+                [
+                    "Reading package lists...\n",
+                    "pmstatus:nmap:20.0000:Unpacking nmap (amd64)\n",
+                    "Unpacking nmap (7.94-1) ...\n",
+                    "pmstatus:nmap:80.0000:Installed nmap (amd64)\n",
+                ]
+            )
+
+            def wait(self):
+                return None
+
+        monkeypatch.setattr(sp, "Popen", lambda *a, **k: FakeProcess())
+
+        events = []
+        plan = Planner(catalog, distro="kali", statuses=all_available).plan(
+            ["nmap"], provider_override="apt"
+        )
+        Executor(dry_run=False, sink=events.append).run(plan)
+
+        # The step emits an initial 0% "preparing" progress event before the
+        # process even starts; only the ones parsed from real output matter here.
+        progress = [
+            e for e in events
+            if e.kind == EVENT_PROGRESS and e.percent is not None and e.message != "apt-get install nmap"
+        ]
+        output = [e for e in events if e.kind == EVENT_OUTPUT]
+        assert [p.percent for p in progress] == [20.0, 80.0]
+        assert any("Reading package lists" in o.message for o in output)
+        assert any("Unpacking nmap (7.94-1)" in o.message for o in output)
+        # A pmstatus: line is machine format, not something a human needs to
+        # see twice -- it must not also show up as a plain output line.
+        assert not any("pmstatus:" in o.message for o in output)
