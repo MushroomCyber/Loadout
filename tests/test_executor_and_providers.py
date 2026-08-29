@@ -160,6 +160,135 @@ class TestGithubAssetSelection:
             )
 
 
+class TestGithubSignature:
+    """Signatures are resolved while planning, so a broken catalog entry fails
+    before anything is downloaded rather than halfway through."""
+
+    def _assets(self, *names):
+        return [ReleaseAsset(name=n, url=f"https://x/{n}", size=1) for n in names]
+
+    def test_a_malformed_signature_block_fails_the_plan(self):
+        from loadout.errors import VerificationError
+
+        with pytest.raises(VerificationError, match="missing 'asset'"):
+            GithubReleaseProvider().plan_install(
+                Tool(id="x"),
+                method(
+                    "github",
+                    repo="owner/x",
+                    signature={"type": "gpg", "public_key": "k"},
+                ),
+            )
+
+    def test_no_signature_block_still_plans(self):
+        steps = GithubReleaseProvider().plan_install(
+            Tool(id="x"), method("github", repo="owner/x")
+        )
+        assert steps
+
+    def test_dry_run_says_what_will_be_checked(self):
+        steps = GithubReleaseProvider().plan_install(
+            Tool(id="x"),
+            method(
+                "github",
+                repo="owner/x",
+                checksums="*SHA256SUMS",
+                signature={
+                    "type": "gpg",
+                    "asset": "*SHA256SUMS.asc",
+                    "public_key": "-----BEGIN PGP PUBLIC KEY BLOCK-----",
+                    "key_fingerprint": "A" * 40,
+                    "signs": "checksums",
+                },
+            ),
+        )
+        detail = steps[0].detail
+        assert "gpg over the checksum file" in detail
+        assert "A" * 40 in detail
+
+    def test_dry_run_is_explicit_when_nothing_is_signed(self):
+        steps = GithubReleaseProvider().plan_install(
+            Tool(id="x"), method("github", repo="owner/x", checksums="*SHA256SUMS")
+        )
+        assert "signature: <none published>" in steps[0].detail
+
+    def test_a_missing_signature_asset_names_what_was_available(self, tmp_path):
+        from loadout.errors import VerificationError
+        from loadout.signature import parse_spec
+
+        spec = parse_spec(
+            {"type": "gpg", "asset": "*.minisig", "public_key": "k"}
+        )
+        with pytest.raises(VerificationError, match="not in the release assets"):
+            GithubReleaseProvider()._verify_signature(
+                assets=self._assets("tool.tar.gz", "SHA256SUMS"),
+                spec=spec,
+                archive=tmp_path / "tool.tar.gz",
+                checksum_text="",
+                checksums_name="",
+                workdir=tmp_path,
+            )
+
+    def test_signing_the_checksums_requires_a_checksums_entry(self, tmp_path):
+        """`signs: checksums` with nothing to sign is a catalog mistake that
+        would otherwise verify a file that was never downloaded."""
+        from loadout.errors import VerificationError
+        from loadout.signature import parse_spec
+
+        spec = parse_spec(
+            {
+                "type": "gpg",
+                "asset": "*.asc",
+                "public_key": "k",
+                "signs": "checksums",
+            }
+        )
+        with pytest.raises(VerificationError, match="publishes no 'checksums'"):
+            GithubReleaseProvider()._verify_signature(
+                assets=self._assets("SHA256SUMS.asc"),
+                spec=spec,
+                archive=tmp_path / "tool.tar.gz",
+                checksum_text="",
+                checksums_name="",
+                workdir=tmp_path,
+            )
+
+    def test_the_checksum_file_is_signed_byte_for_byte(self, tmp_path, monkeypatch):
+        """Re-encoding or normalising newlines before verifying would break an
+        otherwise good signature and look exactly like tampering."""
+        from loadout.signature import parse_spec
+
+        text = "abc123  tool.tar.gz\r\ndef456  other.tar.gz\n"
+        seen = {}
+
+        def fake_download(url, destination):
+            destination.write_bytes(b"signature")
+
+        def fake_verify(payload, signature, spec):
+            seen["payload"] = payload.read_bytes()
+
+        monkeypatch.setattr(GithubReleaseProvider, "_download", staticmethod(fake_download))
+        monkeypatch.setattr("loadout.providers.github.verify_signature", fake_verify)
+
+        spec = parse_spec(
+            {
+                "type": "gpg",
+                "asset": "*.asc",
+                "public_key": "k",
+                "signs": "checksums",
+            }
+        )
+        GithubReleaseProvider()._verify_signature(
+            assets=self._assets("SHA256SUMS.asc"),
+            spec=spec,
+            archive=tmp_path / "tool.tar.gz",
+            checksum_text=text,
+            checksums_name="*SHA256SUMS",
+            workdir=tmp_path,
+        )
+        assert seen["payload"] == text.encode("utf-8")
+
+
 class TestArchiveSafety:
     """Extraction must refuse traversal entries -- this runs on downloaded code."""
 

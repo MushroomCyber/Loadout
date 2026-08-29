@@ -83,7 +83,7 @@ matter; use `priority` (lower wins, default 50) when you want to steer, and
 | `cargo` | `crate` | |
 | `gem` | `gem` | |
 | `npm` | `package` | |
-| `github` | `repo` | `asset`, `checksums`, `tag` |
+| `github` | `repo` | `asset`, `checksums`, `signature`, `tag` |
 | `docker` | `image` | `network`, `volumes` |
 
 ### GitHub releases and checksums
@@ -96,6 +96,59 @@ a warning-level event.
 
 If upstream publishes no checksums at all, prefer another provider, or say so in
 the pull request so it can be discussed.
+
+### Signatures
+
+A checksum proves the download was not corrupted. It does not prove who made
+it: the checksum file sits beside the artifact, served by the same account, so
+whoever can replace one can replace both. Where upstream signs its releases,
+add a `signature:` block and the key becomes the trust anchor.
+
+```yaml
+install:
+  - provider: github
+    repo: owner/tool
+    checksums: "*SHA256SUMS"
+    signature:
+      type: gpg                    # gpg | minisign | cosign
+      asset: "*SHA256SUMS.asc"     # glob matching the signature in the assets
+      signs: checksums             # checksums (default: artifact)
+      key_fingerprint: "ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234"
+      public_key: |
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+        ...
+        -----END PGP PUBLIC KEY BLOCK-----
+```
+
+| Key | Meaning |
+|---|---|
+| `type` | `gpg`, `minisign` or `cosign`. The matching binary must be installed, or the install refuses. |
+| `asset` | Glob matching the detached signature among the release assets. |
+| `signs` | `artifact` (default) or `checksums`. Most projects sign `SHA256SUMS` and let it cover the artifacts. |
+| `public_key` | The trust anchor, inline. Required for `gpg` and `minisign`; for `cosign` either this or a pinned identity. |
+| `key_fingerprint` | Optional for `gpg`: 40 hex characters, asserted against the key that actually made the signature. |
+| `certificate_identity`, `certificate_oidc_issuer` | Keyless `cosign` only, and both required — keyless with no pinned identity accepts a signature from anyone. |
+
+Three rules are worth knowing before you write one:
+
+- **The key goes in the catalog, not on a keyserver.** Pinning only a
+  fingerprint would mean fetching the key at install time, which moves the
+  trust anchor off this reviewed file and onto whatever the network returns.
+  `gpg` and `minisign` entries therefore require `public_key`.
+- **A declared signature cannot be waived.** `--allow-unverified` covers "this
+  project publishes nothing to check against". A signature the catalog claims
+  and the artifact fails is an active signal, and refuses regardless of flags.
+- **Verification never touches the user's keyring.** Each check runs against a
+  throwaway `GNUPGHOME` holding only your pinned key, so a catalog entry can
+  neither read nor write anyone's trust store.
+
+Get the fingerprint and armoured key from upstream's documented release key —
+not from whatever a keyserver search returns first:
+
+```bash
+gpg --show-keys upstream-release-key.asc      # confirm the fingerprint
+gpg --armor --export <fingerprint>            # the block to paste in
+```
 
 ## Categories
 

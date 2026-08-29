@@ -372,6 +372,7 @@ implies:
 - `sudo` is constructed in exactly one function, `policy.elevate()` — enforced by a test.
 - Every package name is validated before it reaches an argv, and `--` always separates options from names.
 - Downloaded artifacts are checksummed against the release's own checksum file. **No checksum means refusal**, not a warning; `--allow-unverified` is an explicit opt-in.
+- Where upstream signs its releases, the catalog pins the key and the signature is checked with `gpg`, `minisign` or `cosign`. The signing key must be the pinned one — a valid signature by some *other* key is a failure, which is the check a bare `gpg --verify` exit code does not make. Verification runs against a throwaway keyring, so a catalog entry can never read or write your own. **A declared signature cannot be waived by `--allow-unverified`**; that flag is for projects that publish nothing to check against, not for checks that fail.
 - Archive extraction refuses absolute paths and `..` traversal.
 - No `shell=True` anywhere.
 

@@ -188,6 +188,14 @@ def _validate_method_spec(provider: str, method: dict[str, Any], label: str) -> 
         return [
             f"{label}: provider {provider!r} requires {', '.join(missing)}"
         ]
+
+    # A signature block is checked at catalog-validate time so a typo fails
+    # review rather than an install on someone else's machine -- by which
+    # point the artifact is already downloaded.
+    if "signature" in spec:
+        from ..signature import validate_spec as validate_signature
+
+        return [f"{label}: {error}" for error in validate_signature(spec["signature"])]
     return []
 
 

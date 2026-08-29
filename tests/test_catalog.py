@@ -207,3 +207,57 @@ class TestShippedCatalogSource:
         assert len(multi) >= 30, "curated core should offer several install routes"
         described = [t for t in report.tools if t.summary]
         assert len(described) >= 50
+
+
+class TestSignatureValidation:
+    """A signature block is checked when the catalog is validated, so a typo
+    fails review rather than an install on someone else's machine -- by which
+    point the artifact has already been downloaded."""
+
+    def _entry(self, signature):
+        return {
+            "id": "signed-tool",
+            "summary": "A tool that publishes signatures",
+            "install": [
+                {
+                    "provider": "github",
+                    "repo": "owner/signed-tool",
+                    "checksums": "*SHA256SUMS",
+                    "signature": signature,
+                }
+            ],
+        }
+
+    def _errors(self, signature):
+        from loadout.catalog.schema import validate_entry
+
+        return validate_entry(self._entry(signature), origin="test.yaml").errors
+
+    def test_a_good_block_validates(self):
+        assert self._errors(
+            {
+                "type": "gpg",
+                "asset": "*SHA256SUMS.asc",
+                "public_key": "-----BEGIN PGP PUBLIC KEY BLOCK-----",
+                "signs": "checksums",
+            }
+        ) == []
+
+    def test_a_typo_in_the_type_is_caught_at_review_time(self):
+        errors = " ".join(self._errors({"type": "pgp", "asset": "*.asc"}))
+        assert "unknown type" in errors
+
+    def test_a_gpg_block_with_no_key_is_caught_at_review_time(self):
+        errors = " ".join(self._errors({"type": "gpg", "asset": "*.asc"}))
+        assert "requires 'public_key'" in errors
+
+    def test_a_signature_that_is_not_a_mapping_is_caught(self):
+        errors = " ".join(self._errors("gpg"))
+        assert "must be a mapping" in errors
+
+    def test_entries_without_signatures_are_unaffected(self):
+        from loadout.catalog.schema import validate_entry
+
+        entry = self._entry(None)
+        entry["install"][0].pop("signature")
+        assert validate_entry(entry, origin="test.yaml").errors == []

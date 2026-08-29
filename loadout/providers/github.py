@@ -5,6 +5,13 @@ those is the highest-risk thing this program does, so verification is not
 optional: the artifact is checksummed against the release's own checksum file,
 and an entry with no publishable checksum fails unless the user explicitly
 passes ``--allow-unverified``.
+
+A checksum alone only proves the download was not corrupted. The checksum file
+is served by the same account as the artifact, so anyone able to replace one
+can replace both. Where a project also publishes a signature, the catalog pins
+its key and :mod:`loadout.signature` checks it -- and unlike a missing
+checksum, a *declared* signature that fails cannot be waived with
+``--allow-unverified``.
 """
 
 from __future__ import annotations
@@ -25,6 +32,7 @@ from typing import TYPE_CHECKING, Any
 from ..errors import ProviderError, VerificationError
 from ..model import InstallMethod, Tool
 from ..policy import parse_checksum_file, verify_digest
+from ..signature import SIGNS_CHECKSUMS, SignatureSpec, parse_spec, verify_signature
 from .base import CommandStep, Provider, ProviderStatus, PythonStep, Step
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -33,6 +41,15 @@ if TYPE_CHECKING:  # pragma: no cover
 logger = logging.getLogger("loadout.providers.github")
 
 API_ROOT = "https://api.github.com"
+
+
+def _describe_signature(spec: SignatureSpec | None) -> str:
+    """What --dry-run shows about verification, in one line."""
+    if spec is None:
+        return "<none published>"
+    where = "the checksum file" if spec.signs == SIGNS_CHECKSUMS else "the artifact"
+    pin = spec.key_fingerprint or "pinned key"
+    return f"{spec.type} over {where}, {pin}"
 
 
 def user_bin_dir() -> Path:
@@ -73,6 +90,9 @@ class GithubReleaseProvider(Provider):
             raise ProviderError(f"github repo must be 'owner/name', got {repo!r}")
         pattern = str(method.spec.get("asset") or "")
         checksums = str(method.spec.get("checksums") or "")
+        # Parsed here so a malformed signature block fails the plan rather
+        # than surfacing halfway through a download.
+        signature = parse_spec(method.spec.get("signature"))
         binary = tool.primary_binary or repo.split("/")[1]
         target = user_bin_dir() / binary
 
@@ -82,6 +102,7 @@ class GithubReleaseProvider(Provider):
                 repo=repo,
                 pattern=pattern,
                 checksums_name=checksums,
+                signature=signature,
                 binary=binary,
                 target=target,
                 tag=str(method.spec.get("tag") or ""),
@@ -95,6 +116,7 @@ class GithubReleaseProvider(Provider):
                     f"GET {API_ROOT}/repos/{repo}/releases/latest\n"
                     f"  match asset: {pattern or '<auto: platform match>'}\n"
                     f"  verify: {checksums or '<none published -- will refuse>'}\n"
+                    f"  signature: {_describe_signature(signature)}\n"
                     f"  install: {target}"
                 ),
             )
@@ -135,6 +157,7 @@ class GithubReleaseProvider(Provider):
         binary: str,
         target: Path,
         tag: str = "",
+        signature: SignatureSpec | None = None,
     ) -> None:
         release = self._fetch_release(repo, tag)
         assets = [
@@ -156,15 +179,32 @@ class GithubReleaseProvider(Provider):
                 f"{repo}: no asset matched {pattern or 'this platform'}. Available: {names}"
             )
 
+        checksum_text = ""
         expected = ""
         if checksums_name:
-            expected = self._fetch_checksum(assets, checksums_name, asset.name)
+            checksum_text = self._fetch_checksum_file(assets, checksums_name)
+            expected = parse_checksum_file(checksum_text, asset.name)
+            if not expected:
+                raise VerificationError(
+                    f"{checksums_name} has no entry for {asset.name}"
+                )
 
         with tempfile.TemporaryDirectory(prefix="loadout-gh-") as tmpdir:
             tmp = Path(tmpdir)
             archive = tmp / asset.name
             ctx.progress(f"downloading {asset.name}", 10.0)
             self._download(asset.url, archive)
+
+            if signature is not None:
+                ctx.progress(f"checking {signature.type} signature", 40.0)
+                self._verify_signature(
+                    assets=assets,
+                    spec=signature,
+                    archive=archive,
+                    checksum_text=checksum_text,
+                    checksums_name=checksums_name,
+                    workdir=tmp,
+                )
 
             ctx.progress(f"verifying {asset.name}", 55.0)
             verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
@@ -236,9 +276,12 @@ class GithubReleaseProvider(Provider):
         return None
 
     @staticmethod
-    def _fetch_checksum(
-        assets: list[ReleaseAsset], checksums_name: str, asset_name: str
-    ) -> str:
+    def _fetch_checksum_file(assets: list[ReleaseAsset], checksums_name: str) -> str:
+        """The whole checksum file, not just one digest.
+
+        A signature over ``SHA256SUMS`` covers the bytes of that file, so the
+        caller needs the text itself and not only the line it cares about.
+        """
         from ..http_util import polite_get
 
         match = next(
@@ -252,10 +295,52 @@ class GithubReleaseProvider(Provider):
         response = polite_get(match.url)
         if response is None or response.status_code != 200:
             raise VerificationError(f"could not download {match.name}")
-        digest = parse_checksum_file(response.text, asset_name)
-        if not digest:
-            raise VerificationError(f"{match.name} has no entry for {asset_name}")
-        return digest
+        return response.text
+
+    def _verify_signature(
+        self,
+        *,
+        assets: list[ReleaseAsset],
+        spec: SignatureSpec,
+        archive: Path,
+        checksum_text: str,
+        checksums_name: str,
+        workdir: Path,
+    ) -> None:
+        """Check the detached signature over whichever file it was made about.
+
+        Signing the checksum file and letting the checksums cover the artifacts
+        is the more common release practice, so both are supported and the
+        catalog says which.
+        """
+        signature_asset = next(
+            (a for a in assets if fnmatch.fnmatch(a.name, spec.asset)),
+            None,
+        )
+        if signature_asset is None:
+            names = ", ".join(a.name for a in assets[:6])
+            raise VerificationError(
+                f"signature file {spec.asset!r} is not in the release assets. "
+                f"Available: {names}"
+            )
+
+        if spec.signs == SIGNS_CHECKSUMS:
+            if not checksums_name:
+                raise VerificationError(
+                    "the catalog says the signature covers the checksum file, "
+                    "but this entry publishes no 'checksums'"
+                )
+            payload = workdir / "signed-checksums.txt"
+            # Write the exact bytes that were downloaded: re-encoding or
+            # normalising newlines here would break an otherwise good
+            # signature and look like tampering.
+            payload.write_bytes(checksum_text.encode("utf-8"))
+        else:
+            payload = archive
+
+        signature_path = workdir / signature_asset.name
+        self._download(signature_asset.url, signature_path)
+        verify_signature(payload, signature_path, spec)
 
     @staticmethod
     def _download(url: str, destination: Path) -> None:

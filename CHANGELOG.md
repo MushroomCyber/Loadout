@@ -41,6 +41,17 @@ the machine actually has.
   Textual's own harness. Covers startup, filter-as-you-type, escape-clears,
   space-to-mark, the detail pane, and a check that every key binding resolves to
   a method that exists -- previously a broken binding surfaced only on keypress.
+- **Signature verification for downloaded release artifacts.** Where upstream
+  signs, a catalog entry pins the key and `gpg`, `minisign` or `cosign` checks
+  it. A checksum only proves the download was not corrupted -- the checksum
+  file is served by the same account as the artifact, so whoever can replace
+  one can replace both. Three properties are enforced and tested against real
+  keys: the signature must be by the *pinned* key (a bare `gpg --verify` exit
+  code is 0 for a good signature by any key it knows); verification runs in a
+  throwaway `GNUPGHOME` so a catalog entry can neither read nor write the
+  user's trust store; and a declared signature that fails is not waivable by
+  `--allow-unverified`, which exists for projects that publish nothing to
+  check against.
 - Issue templates (including an "add a tool" form for the catalog) and a pull
   request checklist.
 - **Mouse control throughout the browser.** An action row in the detail pane
@@ -73,9 +84,8 @@ the machine actually has.
 - Six `~/.kali_tools_*` files collapse into the XDG layout.
 - Logging defaults to WARNING; a CLI that prints log lines during normal
   operation is unusable in a pipeline.
-- Desktop notifications shell out to `notify-send` / `osascript`, dropping the
-  unmaintained `notify2` dependency (and with it `dbus-python`). *(The module
-  is not yet wired to a caller — see [TODO.md](TODO.md).)*
+- Desktop notifications are gone, along with the unmaintained `notify2`
+  dependency (and with it `dbus-python`) they were built on.
 - **Category chips carry installed-over-total** (`wireless 14/48`) instead of a
   bare count, and use two colours rather than three. The amber "some but not
   many installed" state was unreadable: amber means *something is wrong*
