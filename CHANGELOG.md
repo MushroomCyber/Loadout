@@ -39,6 +39,12 @@ the machine actually has.
   `recon-modern` loadouts.
 - Automatic import of kalitools state on first run; `loadout migrate` to run it
   explicitly. See [docs/MIGRATION.md](docs/MIGRATION.md).
+- Headless tests for the interactive browser, driving the real app through
+  Textual's own harness. Covers startup, filter-as-you-type, escape-clears,
+  space-to-mark, the detail pane, and a check that every key binding resolves to
+  a method that exists -- previously a broken binding surfaced only on keypress.
+- Issue templates (including an "add a tool" form for the catalog) and a pull
+  request checklist.
 
 ### Changed
 
@@ -123,6 +129,13 @@ Found only by running against real Kali (see `tools/verify_linux.sh`):
 - Archive extraction refuses absolute paths and `..` traversal, and uses the
   `data` filter on Python 3.12+.
 - CI runs `ruff --select S`, `pip-audit`, and pins GitHub Actions to commit SHAs.
+
+### Dependencies
+
+Floors raised to the versions the suite is verified against: rich 15.0.0,
+requests 2.34.2, textual 8.2.8, setuptools 84.0.0, pytest 9.1.1, pytest-cov
+7.1.0, ruff 0.16.4, mypy 2.3.1. GitHub Actions pinned to checkout v7.0.1 and
+setup-python v7.0.0, clearing the Node 20 deprecation.
 
 ### Removed
 
