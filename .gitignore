@@ -8,6 +8,7 @@ dist/
 
 # Environments
 .venv/
+.venv-*/
 venv/
 env/
 ENV/
@@ -28,6 +29,7 @@ htmlcov/
 
 # Local test scratch
 .testhome/
+.t/
 
 # OS / editor
 .DS_Store
