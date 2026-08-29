@@ -301,8 +301,28 @@ if TEXTUAL_AVAILABLE:
         def _reload(self) -> None:
             query = self.query_one("#query", Input).value.strip()
             categories = [self._facet[1]] if self._facet and self._facet[0] == "category" else []
-            self._rows = self.ctx.catalog.search(query, categories=categories, limit=500)
+            rows = self.ctx.catalog.search(query, categories=categories, limit=500)
+            if not query:
+                # FTS relevance has nothing to rank on an empty query, so the
+                # store falls back to alphabetical -- which opens the browser
+                # on "0trace, 7zip, above...". Put what the user is more
+                # likely to want looking at first instead.
+                rows = self._prioritised(rows)
+            self._rows = rows
             self._render_rows()
+
+        def _prioritised(self, rows: list[Any]) -> list[Any]:
+            starred = self.ctx.starred()
+            installed = self.ctx.installed()
+
+            def rank(tool: Any) -> tuple[int, str]:
+                if tool.id in starred:
+                    return (0, tool.id)
+                if tool.id in installed:
+                    return (1, tool.id)
+                return (2, tool.id)
+
+            return sorted(rows, key=rank)
 
         def _providers_cell(self, tool: Any) -> str:
             """Light the route that would actually run; dim the rest.
