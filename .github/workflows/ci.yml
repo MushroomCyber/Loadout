@@ -105,10 +105,15 @@ jobs:
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
         with:
           python-version: "3.12"
+      # Build tooling first: an outdated setuptools carries its own CVEs and
+      # would fail the audit for a reason unrelated to our dependencies.
+      - run: python -m pip install --upgrade pip setuptools wheel
       - run: pip install -e '.[dev]' pip-audit
       - name: Dependency audit
-        # --skip-editable: the local package is not on PyPI, and without this
-        # --strict treats "could not audit loadout itself" as a vulnerability.
-        run: pip-audit --strict --desc --skip-editable
+        # --skip-editable: the local package is not on PyPI, so it cannot be
+        # audited. --strict is deliberately NOT set, because it makes that
+        # intentional skip fatal. pip-audit still exits non-zero when it finds
+        # an actual vulnerability, which is the check we care about.
+        run: pip-audit --desc --skip-editable
       - name: Bandit rules via ruff
         run: ruff check --select S loadout
