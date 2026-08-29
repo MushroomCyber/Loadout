@@ -1,8 +1,8 @@
-# Moving from Kali Tools Manager
+# Legacy command compatibility
 
-Loadout is what Kali Tools Manager became when it stopped assuming `apt`. The
-rename came with a provider layer, so a tool is described once and installed by
-whichever backend your machine has.
+Loadout keeps compatibility with legacy `kalitools` commands while you move to the
+new provider-based tool model. A tool is described once and installed by whichever
+backend your machine has.
 
 Nothing is deleted during migration. If you roll back, the old release still works.
 

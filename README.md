@@ -25,9 +25,9 @@ loadout sync                    # converge this box to the team's loadout.yaml
 loadout report --since 30d      # signed inventory of what you used, for the report
 ```
 
-> **Previously Kali Tools Manager.** Your settings, stars and history are
-> imported automatically on first run, and the `kalitools` command keeps working
-> until 2.0. See [MIGRATION.md](docs/MIGRATION.md).
+> Your settings, stars and history are imported automatically on first run.
+> Legacy `kalitools` commands continue to work until 2.0. See
+> [MIGRATION.md](docs/MIGRATION.md).
 
 ---
 
