@@ -701,3 +701,74 @@ async def test_a_failing_call_from_thread_stops_further_posts():
     screen._post(print, "one")
     screen._post(print, "two")
     assert len(attempts) == 1
+
+
+# ---------------------------------------------------------------------------
+# Handing the terminal to sudo
+# ---------------------------------------------------------------------------
+
+
+def test_the_handover_says_what_is_about_to_happen(capsys):
+    """The old version printed one line over whatever the shell had been
+    showing. A user who has just pressed Install should see which tools, that
+    root is needed, and that nothing has changed yet."""
+    from types import SimpleNamespace
+
+    from loadout.planner import ACTION_INSTALL
+    from loadout.ui.tui.app import _print_sudo_handover
+
+    plan = SimpleNamespace(
+        actions=[
+            SimpleNamespace(tool=SimpleNamespace(id="wireshark")),
+            SimpleNamespace(tool=SimpleNamespace(id="tcpdump")),
+        ]
+    )
+    _print_sudo_handover(plan, ACTION_INSTALL)
+    out = capsys.readouterr().out
+    assert "install 2 tools" in out
+    assert "wireshark" in out and "tcpdump" in out
+    assert "Nothing has been changed yet" in out
+    assert "Ctrl+C cancels" in out
+    # And that the password is not loadout's to see -- the reason this is a
+    # terminal handover rather than a text box in the app.
+    assert "never passes through loadout" in out
+
+
+def test_the_handover_uses_the_right_verb_for_a_removal(capsys):
+    from types import SimpleNamespace
+
+    from loadout.planner import ACTION_REMOVE
+    from loadout.ui.tui.app import _print_sudo_handover
+
+    plan = SimpleNamespace(actions=[SimpleNamespace(tool=SimpleNamespace(id="nmap"))])
+    _print_sudo_handover(plan, ACTION_REMOVE)
+    out = capsys.readouterr().out
+    assert "remove 1 tool:" in out
+    assert "tools" not in out.split("remove 1 tool:")[0][-20:]
+
+
+def test_a_long_list_is_truncated_rather_than_filling_the_screen(capsys):
+    from types import SimpleNamespace
+
+    from loadout.planner import ACTION_INSTALL
+    from loadout.ui.tui.app import _print_sudo_handover
+
+    plan = SimpleNamespace(
+        actions=[SimpleNamespace(tool=SimpleNamespace(id=f"tool{n}")) for n in range(20)]
+    )
+    _print_sudo_handover(plan, ACTION_INSTALL)
+    out = capsys.readouterr().out
+    assert "install 20 tools" in out
+    assert "and 14 more" in out
+    assert "tool19" not in out
+
+
+def test_the_screen_is_cleared_so_the_prompt_does_not_land_on_old_output(capsys):
+    from types import SimpleNamespace
+
+    from loadout.planner import ACTION_INSTALL
+    from loadout.ui.tui.app import CLEAR_SCREEN, _print_sudo_handover
+
+    plan = SimpleNamespace(actions=[SimpleNamespace(tool=SimpleNamespace(id="nmap"))])
+    _print_sudo_handover(plan, ACTION_INSTALL)
+    assert capsys.readouterr().out.startswith(CLEAR_SCREEN)

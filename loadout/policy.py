@@ -102,27 +102,49 @@ def validate_argv(argv: Sequence[str]) -> list[str]:
     return out
 
 
-def refresh_credentials(privilege: Privilege | None = None, *, timeout: int = 120) -> bool:
+#: sudo's own prompt, with loadout named in it. `%p` is the account whose
+#: password is wanted -- sudo expands it, we never interpolate a username
+#: ourselves. Without this the user sees a bare `[sudo] password for ...` with
+#: nothing connecting it to the button they just pressed.
+SUDO_PROMPT = "[loadout] password for %p: "
+
+
+def refresh_credentials(
+    privilege: Privilege | None = None,
+    *,
+    timeout: int = 120,
+    prompt: str = SUDO_PROMPT,
+) -> bool:
     """Prime the sudo timestamp *before* any UI takes over the terminal.
 
     The previous release ran ``sudo apt-get`` with stdout piped from inside a
     full-screen TUI, so the password prompt was drawn over and the install
     looked like a hang. Callers must invoke this while the terminal is still
     theirs, and treat ``False`` as "do not proceed".
+
+    The password is read by sudo from ``/dev/tty`` and never passes through
+    this process. That is deliberate, and it is why callers have to hand the
+    terminal back rather than collecting it in a text box.
     """
     privilege = privilege or detect_privilege()
     if privilege.is_root:
         return True
     if not privilege.sudo_path:
         return False
+    argv = [privilege.sudo_path, "-v"]
+    if prompt:
+        argv[1:1] = ["-p", prompt]
     try:
         result = subprocess.run(  # noqa: S603 - fixed argv, no shell
-            [privilege.sudo_path, "-v"],
+            argv,
             timeout=timeout,
             check=False,
         )
     except subprocess.TimeoutExpired:
         logger.warning("sudo -v timed out after %ss", timeout)
+        return False
+    except KeyboardInterrupt:
+        # Ctrl+C at the password prompt is a cancellation, not a crash.
         return False
     except OSError as exc:
         logger.warning("sudo -v failed: %s", exc)

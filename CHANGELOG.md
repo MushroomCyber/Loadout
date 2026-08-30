@@ -127,6 +127,20 @@ the machine actually has.
 
 ### Fixed
 
+- **The sudo handover from the browser was abrupt and unexplained.** The UI
+  vanished, one bare line landed on top of whatever the shell had been showing,
+  and then `[sudo] password for you:` with nothing connecting it to the button
+  just pressed. It now clears the screen, names the tools it is about to change,
+  says that root is needed and that nothing has been changed yet, and offers
+  Ctrl+C — which is now treated as a cancellation rather than a traceback.
+  sudo's own prompt reads `[loadout] password for %p:`, with `%p` expanded by
+  sudo rather than a username guessed here.
+
+  The password still goes to sudo and not through loadout: sudo reads it
+  straight from `/dev/tty`. That is why this is a terminal handover rather than
+  a password box inside the app, and a test now fails if `refresh_credentials`
+  ever grows an `input()`, a stdin pipe or a `getpass` call.
+
 - **Three pipx routes pointed at packages that were not what the entry meant.**
   Found by auditing every pipx route in the catalog against the live PyPI index
   rather than by a report: `netexec` has no package on PyPI at all (404);

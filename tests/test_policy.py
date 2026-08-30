@@ -316,3 +316,76 @@ def test_deliberate_env_is_the_noninteractive_set_plus_the_steps_own():
     assert env["GIT_TERMINAL_PROMPT"] == "0"
     # Not the inherited environment -- only what loadout sets on purpose.
     assert "PATH" not in env
+
+
+# ---------------------------------------------------------------------------
+# The sudo handover
+# ---------------------------------------------------------------------------
+
+
+def test_sudo_is_asked_with_loadouts_own_prompt(monkeypatch):
+    """A bare `[sudo] password for anthony:` appearing after the UI vanishes
+    has nothing connecting it to the button the user just pressed."""
+    import subprocess
+
+    from loadout.policy import SUDO_PROMPT, Privilege, refresh_credentials
+
+    seen: list = []
+    monkeypatch.setattr(
+        subprocess, "run", lambda argv, **k: seen.append(argv) or type("R", (), {"returncode": 0})()
+    )
+    assert refresh_credentials(Privilege(is_root=False, sudo_path="/usr/bin/sudo"))
+    argv = seen[0]
+    assert argv[0] == "/usr/bin/sudo"
+    assert "-p" in argv
+    assert argv[argv.index("-p") + 1] == SUDO_PROMPT
+    assert "-v" in argv
+
+
+def test_the_prompt_never_interpolates_a_username_itself():
+    """`%p` is expanded by sudo, which knows whose password it is about to ask
+    for. Building the string here would mean guessing, and guessing wrong on
+    any `sudo -u` or targetpw configuration."""
+    from loadout.policy import SUDO_PROMPT
+
+    assert "%p" in SUDO_PROMPT
+    assert "loadout" in SUDO_PROMPT
+
+
+def test_a_caller_can_suppress_the_custom_prompt(monkeypatch):
+    import subprocess
+
+    from loadout.policy import Privilege, refresh_credentials
+
+    seen: list = []
+    monkeypatch.setattr(
+        subprocess, "run", lambda argv, **k: seen.append(argv) or type("R", (), {"returncode": 0})()
+    )
+    refresh_credentials(Privilege(is_root=False, sudo_path="/usr/bin/sudo"), prompt="")
+    assert seen[0] == ["/usr/bin/sudo", "-v"]
+
+
+def test_ctrl_c_at_the_password_prompt_is_a_cancellation(monkeypatch):
+    """Not a traceback over the terminal the user is trying to get back."""
+    import subprocess
+
+    from loadout.policy import Privilege, refresh_credentials
+
+    def interrupt(*_a, **_k):
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(subprocess, "run", interrupt)
+    assert refresh_credentials(Privilege(is_root=False, sudo_path="/usr/bin/sudo")) is False
+
+
+def test_the_password_is_never_read_by_loadout():
+    """The whole reason the UI steps aside. If this ever grows an input() or a
+    stdin pipe, the security posture has changed and it should be deliberate."""
+    import inspect
+
+    from loadout import policy
+
+    source = inspect.getsource(policy.refresh_credentials)
+    assert "input(" not in source
+    assert "stdin" not in source
+    assert "getpass" not in source

@@ -419,6 +419,42 @@ if TEXTUAL_AVAILABLE:
                         help=f"{len(manifest.tools)} tool(s) — {manifest.description or manifest.slug}",
                     )
 
+    #: Home the cursor, clear the screen, clear the scrollback. The handover
+    #: should start on a blank terminal rather than on top of whatever the
+    #: shell had been showing.
+    CLEAR_SCREEN = "\033[H\033[2J\033[3J"
+
+    def _print_sudo_handover(plan: Any, action: str) -> None:
+        """Explain the handover before sudo takes the terminal.
+
+        Printed while the UI is suspended, so this is plain stdout rather than
+        a Textual widget -- there is no app to render into at this point.
+        """
+        import sys
+
+        from ...planner import ACTION_REMOVE
+        from ..output import glyph
+
+        names = [action_item.tool.id for action_item in plan.actions]
+        shown = ", ".join(names[:6])
+        if len(names) > 6:
+            shown += f" and {len(names) - 6} more"
+        verb = "remove" if action == ACTION_REMOVE else "install"
+        count = f"{len(names)} tool" + ("s" if len(names) != 1 else "")
+
+        write = sys.stdout.write
+        write(CLEAR_SCREEN)
+        write("\n  loadout\n")
+        write("  " + "-" * 58 + "\n\n")
+        write(f"  About to {verb} {count}:\n")
+        write(f"    {glyph('bullet')} {shown}\n\n")
+        write("  This needs root, so the terminal is yours for a moment while\n")
+        write("  sudo asks for your password. sudo reads it straight from the\n")
+        write("  terminal -- it never passes through loadout.\n\n")
+        write("  Nothing has been changed yet. Ctrl+C cancels.\n\n")
+        sys.stdout.flush()
+
+
     class LoadoutBrowser(App):
         """Filter-first tool browser."""
 
@@ -932,13 +968,28 @@ if TEXTUAL_AVAILABLE:
             )
 
         def _elevate_then_run(self, plan: Any, action: str) -> None:
+            """Hand the terminal back so sudo can read from /dev/tty.
+
+            The password never passes through loadout -- sudo opens the
+            terminal itself. That is why this cannot be a text box in the app,
+            and why the handover is worth explaining rather than just doing.
+            """
             from ...policy import refresh_credentials
 
             with self.suspend():
-                print("\nloadout needs sudo to change installed packages.")
+                _print_sudo_handover(plan, action)
                 granted = refresh_credentials()
+                if granted:
+                    # Leave the terminal as we found it. Without this the
+                    # explanation and the prompt stay underneath the restored
+                    # UI and reappear the next time anything suspends.
+                    print(CLEAR_SCREEN, end="", flush=True)
             if not granted:
-                self.notify("sudo authentication failed", severity="error")
+                self.notify(
+                    "sudo authentication failed or was cancelled -- nothing was changed.",
+                    severity="warning",
+                    timeout=8,
+                )
                 return
             self.push_screen(
                 InstallScreen(self.ctx, plan, action), callback=lambda _: self._after_run()

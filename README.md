@@ -443,6 +443,11 @@ implies:
 - Where upstream signs its releases, the catalog pins the key and the signature is checked with `gpg`, `minisign` or `cosign`. The signing key must be the pinned one — a valid signature by some *other* key is a failure, which is the check a bare `gpg --verify` exit code does not make. Verification runs against a throwaway keyring, so a catalog entry can never read or write your own. **A declared signature cannot be waived by `--allow-unverified`**; that flag is for projects that publish nothing to check against, not for checks that fail.
 - Archive extraction refuses absolute paths and `..` traversal.
 - No `shell=True` anywhere.
+- **Your sudo password never passes through loadout.** The browser hands the
+  terminal back so `sudo` can read it from `/dev/tty` itself, which is why
+  there is no password box in the app — a nicer-looking one would mean the
+  password transiting this process. A test fails if the credential path ever
+  grows an `input()`, a stdin pipe or a `getpass` call.
 
 See [SECURITY.md](SECURITY.md) for the threat model and how to report an issue.
 
