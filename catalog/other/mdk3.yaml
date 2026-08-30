@@ -5,7 +5,11 @@ description: 'MDK is a proof-of-concept tool to exploit common IEEE 802.11 (Wi-F
   * Probe networks to check if they can hear you. * Intelligent Authentication-DoS to freeze APs (with
   success checks). * FakeAP - Beacon Flooding with channel hopping (can crash NetStumbler and some buggy
   drivers) * Disconnect everything (aka AMOK-MODE) with Deauthentication and Disassociation packets. *
-  WPA TKIP Denial-of-Service. * WDS Confusion - Shuts down large scale multi-AP installations.'
+  WPA TKIP Denial-of-Service. * WDS Confusion - Shuts down large scale multi-AP installations.
+
+
+  No longer maintained: Archived by aircrack-ng in 2018 and superseded by mdk4, which is the same tool
+  rewritten and still maintained.'
 categories:
 - wireless
 homepage: https://github.com/aircrack-ng/mdk3
@@ -19,3 +23,4 @@ install:
   - parrot
   - ubuntu
 version: 6.0-9
+deprecated_by: mdk4

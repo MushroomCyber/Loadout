@@ -194,13 +194,26 @@ def test_every_entry_with_a_pipx_route_records_its_binaries():
             assert entry.get("binaries"), f"{entry['id']} has a pipx route but no binaries"
 
 
-def test_superseded_tools_point_at_a_maintained_replacement():
-    """`loadout audit` reads deprecated_by to tell someone what to move to."""
+def test_superseded_tools_never_point_at_an_unmaintained_replacement():
+    """`loadout audit` reads deprecated_by to tell someone what to move to, so
+    naming a dead project there reads as a recommendation to use it.
+
+    rebuff and vigil-llm both pointed at llm-guard until Protect AI archived
+    that too. Rather than invent a successor, they now say plainly that this
+    catalog has no packaged replacement to offer.
+    """
     by_id = {e["id"]: e for e in entries()}
-    for tool_id in ("rebuff", "vigil-llm"):
-        replacement = by_id[tool_id].get("deprecated_by")
-        assert replacement, f"{tool_id} is unmaintained but names no replacement"
-        assert replacement in by_id, f"{tool_id} points at unknown {replacement!r}"
+    unmaintained = {"rebuff", "vigil-llm", "llm-guard", "pyrit"}
+    for tool_id, entry in by_id.items():
+        replacement = entry.get("deprecated_by")
+        if not replacement:
+            continue
+        assert replacement in by_id or replacement, f"{tool_id} points at unknown {replacement!r}"
+        assert replacement not in unmaintained, (
+            f"{tool_id} points at {replacement!r}, which is itself unmaintained"
+        )
+    for tool_id in ("rebuff", "vigil-llm", "llm-guard"):
+        assert "No longer maintained" in by_id[tool_id]["description"], tool_id
 
 
 def test_modelscan_declares_the_python_pin_that_makes_it_fail_on_kali():

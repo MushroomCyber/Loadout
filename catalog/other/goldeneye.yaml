@@ -1,9 +1,13 @@
 id: goldeneye
 summary: HTTP DoS test tool
-description: GoldenEye is a HTTP DoS Test Tool. This tool can be used to test if a site is susceptible
+description: 'GoldenEye is a HTTP DoS Test Tool. This tool can be used to test if a site is susceptible
   to Deny of Service (DoS) attacks. Is possible to open several parallel connections against a URL to
-  check if the web server can be compromised. The program tests the security in networks and uses 'HTTP
-  Keep Alive + NoCache' as attack vector. This package is useful for pentesters.
+  check if the web server can be compromised. The program tests the security in networks and uses ''HTTP
+  Keep Alive + NoCache'' as attack vector. This package is useful for pentesters.
+
+
+  No longer maintained: Archived upstream in 2023. A single-purpose HTTP DoS proof of concept, kept for
+  reference rather than recommended.'
 categories:
 - other
 homepage: https://github.com/jseidl/GoldenEye

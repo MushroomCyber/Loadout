@@ -1,6 +1,11 @@
 id: stegcracker
 summary: steganography brute-force tool
-description: StegCracker is steganography brute-force utility to uncover hidden data inside files.
+description: 'StegCracker is steganography brute-force utility to uncover hidden data inside files.
+
+
+  No longer maintained: Archived by its author, who recommends stegseek instead -- roughly two orders
+  of magnitude faster on the same steghide-embedded files. stegseek is not packaged in Kali; get it from
+  the GitHub releases.'
 categories:
 - other
 homepage: https://github.com/Paradoxis/StegCracker

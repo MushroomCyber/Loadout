@@ -424,6 +424,28 @@ if TEXTUAL_AVAILABLE:
     #: shell had been showing.
     CLEAR_SCREEN = "\033[H\033[2J\033[3J"
 
+    #: The art is 60 columns and its block glyphs need a UTF-8 terminal.
+    #: Narrower than this, or on a console that cannot encode them, the word
+    #: is the banner -- a half-drawn one is worse than none.
+    HANDOVER_MIN_WIDTH = 64
+
+    def _handover_banner() -> list[str]:
+        """The art the app opens with, or the plain word when it will not fit.
+
+        Reusing the app's own banner is the point: a terminal the user has
+        just been dropped into should still look like loadout, and not like
+        some other program asking for their password.
+        """
+        import shutil
+
+        from ..output import ascii_mode
+
+        columns = shutil.get_terminal_size(fallback=(80, 24)).columns
+        if ascii_mode() or columns < HANDOVER_MIN_WIDTH:
+            return ["  loadout", "  " + "-" * 58]
+        return [f"  {row}" for row in BANNER_ART]
+
+
     def _print_sudo_handover(plan: Any, action: str) -> None:
         """Explain the handover before sudo takes the terminal.
 
@@ -444,8 +466,10 @@ if TEXTUAL_AVAILABLE:
 
         write = sys.stdout.write
         write(CLEAR_SCREEN)
-        write("\n  loadout\n")
-        write("  " + "-" * 58 + "\n\n")
+        write("\n")
+        for line in _handover_banner():
+            write(line + "\n")
+        write("\n")
         write(f"  About to {verb} {count}:\n")
         write(f"    {glyph('bullet')} {shown}\n\n")
         write("  This needs root, so the terminal is yours for a moment while\n")

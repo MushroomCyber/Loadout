@@ -4,8 +4,10 @@ description: 'Vigil scans prompts against YARA rules, a vector database of known
   classifiers and canary tokens, and ships as a Python library plus a REST API server.
 
 
-  Not published to PyPI and unchanged since January 2024, so there is no packaged install: clone the repository
-  and follow its README. Prefer llm-guard for anything load-bearing.'
+  No longer maintained: Never published to PyPI and unchanged since January 2024. Protect AI archived
+  llm-guard too, so this catalog no longer names a packaged replacement -- the maintained options in this
+  space are NVIDIA''s NeMo-Guardrails and guardrails-ai, both libraries you add to a project with pip
+  rather than tools you install.'
 categories:
 - ai-security
 - detection
@@ -18,8 +20,6 @@ phases:
 homepage: https://github.com/deadbits/vigil-llm
 repo: deadbits/vigil-llm
 license: Apache-2.0
-deprecated_by: llm-guard
 alternatives:
-- llm-guard
 - rebuff
 install: []

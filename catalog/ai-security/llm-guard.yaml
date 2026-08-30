@@ -6,7 +6,15 @@ description: 'The blue-team side: a library of scanners that sit in front of and
 
 
   This is a library, not a command-line tool: it declares no console script, so `pipx` refuses it. Add
-  it to a project instead — `pip install llm-guard` inside that project''s virtualenv.'
+  it to a project instead — `pip install llm-guard` inside that project''s virtualenv.
+
+
+  No longer maintained: Protect AI archived llm-guard in July 2026 and it is no longer maintained. The
+  maintained options for LLM input/output guarding are NVIDIA''s NeMo-Guardrails and guardrails-ai, neither
+  of which is packaged for Kali; add them to a project with pip.
+
+
+  This is a library, not a command-line tool: it declares no console script, so `pipx` refuses it.'
 categories:
 - ai-security
 - detection

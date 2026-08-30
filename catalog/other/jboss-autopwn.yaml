@@ -3,7 +3,11 @@ summary: JBoss script for obtaining remote shell access
 description: 'This JBoss script deploys a JSP shell on the target JBoss AS server. Once deployed, the
   script uses its upload and command execution capability to provide an interactive session. Features
   include: - Multiplatform support - tested on Windows, Linux and Mac targets - Support for bind and reverse
-  bind shells - Meterpreter shells and VNC support for Windows targets'
+  bind shells - Meterpreter shells and VNC support for Windows targets
+
+
+  No longer maintained: Archived by SpiderLabs in 2020. Metasploit carries maintained JBoss modules covering
+  the same attacks.'
 categories:
 - web
 homepage: https://github.com/SpiderLabs/jboss-autopwn
@@ -17,3 +21,4 @@ install:
   - parrot
   - ubuntu
 version: 0.1-1kali2
+deprecated_by: metasploit-framework

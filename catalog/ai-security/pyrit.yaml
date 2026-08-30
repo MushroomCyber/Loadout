@@ -6,7 +6,15 @@ description: 'PyRIT automates red-teaming of generative AI: it drives multi-turn
 
 
   Not to be confused with the old `pyrit` WPA-PSK cracking tool, which is unrelated, Python 2, and no
-  longer packaged by Debian or Kali.'
+  longer packaged by Debian or Kali.
+
+
+  No longer maintained: Microsoft archived PyRIT in March 2026. garak is maintained and covers the same
+  probing of a model for jailbreaks, injection and leakage.
+
+
+  Not to be confused with the old pyrit WPA-PSK cracking tool, which is unrelated, Python 2, and no longer
+  packaged by Debian or Kali.'
 categories:
 - ai-security
 tags:
@@ -28,3 +36,4 @@ binaries:
 - pyrit_shell
 - pyrit_backend
 verify: pyrit_scan --help
+deprecated_by: garak

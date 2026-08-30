@@ -1,9 +1,13 @@
 id: maryam
 summary: OWASP Maryam is a modular/optional open source framework bas
-description: This package contains the OWASP Maryam, a modular/optional open source framework based on
+description: 'This package contains the OWASP Maryam, a modular/optional open source framework based on
   OSINT and data gathering. Maryam is written in Python programming language and it’s designed to provide
   a powerful environment to harvest data from open sources and search engines and collect data quickly
   and thoroughly.
+
+
+  No longer maintained: Archived upstream in 2024. theHarvester and spiderfoot cover the same OSINT collection
+  and are maintained.'
 categories:
 - other
 homepage: https://github.com/saeeddhqan/Maryam
@@ -17,3 +21,4 @@ install:
   - parrot
   - ubuntu
 version: 2.5.3-0kali2
+deprecated_by: theharvester

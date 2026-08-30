@@ -1,9 +1,13 @@
 id: webscarab
 summary: Web application review tool
-description: WebScarab is designed to be a tool for anyone who needs to expose the workings of an HTTP(S)
+description: 'WebScarab is designed to be a tool for anyone who needs to expose the workings of an HTTP(S)
   based application, whether to allow the developer to debug otherwise difficult problems, or to allow
   a security specialist to identify vulnerabilities in the way that the application has been designed
   or implemented.
+
+
+  No longer maintained: Archived by OWASP in 2021. OWASP ZAP is the project''s own successor and covers
+  the same intercepting-proxy ground.'
 categories:
 - web
 homepage: https://github.com/OWASP/OWASP-WebScarab
@@ -17,3 +21,4 @@ install:
   - parrot
   - ubuntu
 version: 20200519-d22bd60-0kali1
+deprecated_by: zaproxy

@@ -1,7 +1,11 @@
 id: sprayingtoolkit
 summary: Scripts to make password spraying attacks against Lync/S4B, OWA & O365
-description: A set of Python scripts/utilities that tries to make password spraying attacks against Lync/S4B
+description: 'A set of Python scripts/utilities that tries to make password spraying attacks against Lync/S4B
   & OWA a lot quicker, less painful and more efficient.
+
+
+  No longer maintained: Archived upstream in 2022. NetExec covers password spraying against the same services
+  and is maintained.'
 categories:
 - other
 homepage: https://github.com/byt3bl33d3r/SprayingToolkit

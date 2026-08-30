@@ -1,12 +1,16 @@
 id: koadic
 summary: Windows post-exploitation rootkit
-description: This package contains Koadic, or COM Command & Control. It is a Windows post-exploitation
+description: 'This package contains Koadic, or COM Command & Control. It is a Windows post-exploitation
   rootkit similar to other penetration testing tools such as Meterpreter and Powershell Empire. The major
   difference is that Koadic does most of its operations using Windows Script Host (a.k.a. JScript/VBScript),
   with compatibility in the core to support a default installation of Windows 2000 with no service packs
   (and potentially even versions of NT4) all the way through Windows 10. It is possible to serve payloads
   completely in memory from stage 0 to beyond, as well as use cryptographically secure communications
   over SSL and TLS (depending on what the victim OS has enabled).
+
+
+  No longer maintained: The repository was removed by its author and the project is unmaintained. Nothing
+  replaces it directly; maintained C2 frameworks such as Sliver or Empire cover the same ground.'
 categories:
 - other
 homepage: https://github.com/zerosum0x0/koadic

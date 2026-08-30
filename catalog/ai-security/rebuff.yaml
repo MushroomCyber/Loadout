@@ -4,9 +4,10 @@ description: 'Rebuff layered four prompt-injection defences — heuristics, a mo
   store of known attacks, and canary tokens — behind one API.
 
 
-  The repository was archived by its authors in August 2024 and receives no fixes. Listed because it still
-  appears in AI-security tooling round-ups and someone will look for it; use llm-guard, which is maintained
-  and covers the same ground. It is also a library with no console script, so `pipx` refuses it.'
+  No longer maintained: The repository was archived by its authors in August 2024. Protect AI archived
+  llm-guard too, so this catalog no longer names a packaged replacement -- the maintained options in this
+  space are NVIDIA''s NeMo-Guardrails and guardrails-ai, both libraries you add to a project with pip
+  rather than tools you install.'
 categories:
 - ai-security
 - detection
@@ -19,7 +20,4 @@ phases:
 homepage: https://github.com/protectai/rebuff
 repo: protectai/rebuff
 license: Apache-2.0
-deprecated_by: llm-guard
-alternatives:
-- llm-guard
 install: []

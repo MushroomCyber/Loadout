@@ -326,3 +326,74 @@ def test_every_requires_python_specifier_parses():
         if specifier:
             validate_specifier(specifier)  # raises InvalidSpecifier on a typo
             assert tool_id
+
+
+# ---------------------------------------------------------------------------
+# Recommendations that are still alive
+# ---------------------------------------------------------------------------
+
+
+def _all_entries() -> dict:
+    import yaml
+
+    root = Path(__file__).resolve().parent.parent / "catalog"
+    return {
+        entry["id"]: entry
+        for entry in (
+            yaml.safe_load(p.read_text(encoding="utf-8")) for p in root.rglob("*.yaml")
+        )
+    }
+
+
+def test_no_tool_is_deprecated_in_favour_of_another_deprecated_tool():
+    """rebuff and vigil-llm pointed at llm-guard, which Protect AI then
+    archived, so the catalog was routing two dead tools to a third. A successor
+    that is itself dead is worse than no successor, because `loadout audit`
+    prints it as the thing to move to.
+    """
+    entries = _all_entries()
+    chains = [
+        f"{tool_id} -> {entry['deprecated_by']}"
+        for tool_id, entry in entries.items()
+        if entry.get("deprecated_by") and entries.get(entry["deprecated_by"], {}).get("deprecated_by")
+    ]
+    assert chains == [], f"deprecated tools pointing at deprecated tools: {chains}"
+
+
+def test_a_deprecated_tool_is_never_named_by_a_bundled_loadout():
+    """Applying a loadout is a recommendation to install every tool in it."""
+    import yaml
+
+    entries = _all_entries()
+    root = Path(__file__).resolve().parent.parent / "loadout" / "data" / "loadouts"
+    offenders = []
+    for path in sorted(root.glob("*.yaml")):
+        manifest = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for tool_id in manifest.get("tools") or []:
+            if entries.get(tool_id, {}).get("deprecated_by"):
+                offenders.append(f"{path.name}: {tool_id}")
+    assert offenders == [], f"loadouts recommending superseded tools: {offenders}"
+
+
+def test_every_tool_upstream_has_archived_says_so():
+    """Confirmed against the GitHub API with tools/audit_upstream.py, which is
+    how this list was produced. `archived` is set by the project's own owners,
+    so it is a statement and not an inference -- but it is only visible to
+    someone who goes looking, which is what the audit script is for.
+
+    Re-run it when adding entries; a newly archived project belongs here.
+    """
+    known_archived = {
+        "crackmapexec", "dumpsterdiver", "goldeneye", "google-nexus-tools",
+        "havoc", "jboss-autopwn", "koadic", "libsmali-java", "llm-guard",
+        "maryam", "mdk3", "powersploit", "pyrit", "rebuff", "sprayingtoolkit",
+        "stegcracker", "veil", "vigil-llm", "webscarab",
+    }
+    entries = _all_entries()
+    silent = [
+        tool_id
+        for tool_id in sorted(known_archived)
+        if tool_id in entries
+        and "No longer maintained" not in (entries[tool_id].get("description") or "")
+    ]
+    assert silent == [], f"archived upstream but the entry does not say so: {silent}"
