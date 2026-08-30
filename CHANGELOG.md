@@ -130,6 +130,16 @@ the machine actually has.
 
 ### Fixed
 
+- **The browser's Run button ran the bare binary with no arguments**, which is
+  the one thing nobody means: `nmap` printed a warning and exited, `pyrit_scan`
+  printed its help, and anything needing a target could not be driven at all.
+  It now asks for a command line, pre-filled with the binary. The line is split
+  with `shlex` and run without a shell, so a pipe or `$(...)` reaches the tool
+  as a literal argument -- and it is echoed back with `shlex.join`, because
+  `" ".join` would redisplay a safely-quoted argument as a shell line that
+  would be destructive if anyone pasted it. A non-zero exit is now reported,
+  since a traceback that has scrolled past otherwise looks like nothing
+  happened.
 - A test replaced `subprocess.run` by assigning to the module attribute rather
   than through `monkeypatch`, so the stub leaked into every test that ran
   afterwards. Nothing later in the suite ran a subprocess, so it stayed

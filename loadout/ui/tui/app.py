@@ -371,6 +371,76 @@ if TEXTUAL_AVAILABLE:
                 actions.mount(Button("Retry", variant="primary", id="btn-retry", compact=True))
             actions.mount(Button("Close", id="btn-close", compact=True))
 
+    class RunScreen(ModalScreen[str]):
+        """Ask what to run before handing the terminal over.
+
+        Running a bare binary is almost never what an operator wants: `nmap`
+        with no arguments prints a warning and exits, `pyrit_scan` prints its
+        help, and anything that needs a target cannot be driven at all. For a
+        command-line tool the arguments *are* the interface, so ask for them
+        rather than guessing that no arguments will do.
+        """
+
+        BINDINGS: ClassVar[list[BindingType]] = [
+            Binding("escape", "cancel", "Cancel"),
+        ]
+
+        DEFAULT_CSS = """
+        RunScreen { align: center middle; }
+        #box {
+            width: 78; height: auto;
+            border: round $accent; background: $surface; padding: 1 2;
+        }
+        #title { text-style: bold; margin-bottom: 1; }
+        #cmdline { margin-bottom: 1; }
+        #hint { color: $text-muted; margin-bottom: 1; }
+        #actions { height: auto; align: right middle; }
+        #actions Button { margin-left: 1; }
+        """
+
+        def __init__(self, binary: str, tool_id: str) -> None:
+            super().__init__()
+            self._binary = binary
+            self._tool_id = tool_id
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="box"):
+                yield Label(f"Run {self._tool_id}", id="title")
+                yield Input(value=f"{self._binary} ", id="cmdline")
+                yield Static(
+                    "Runs in this terminal with no shell, so pipes and "
+                    "redirects are passed through as literal arguments.",
+                    id="hint",
+                )
+                with Horizontal(id="actions"):
+                    yield Button("Run", variant="primary", id="btn-go", compact=True)
+                    yield Button("Cancel", id="btn-cancel", compact=True)
+
+        def on_mount(self) -> None:
+            field = self.query_one("#cmdline", Input)
+            field.focus()
+            # Cursor after the binary name, ready for arguments -- the whole
+            # point of the screen.
+            field.cursor_position = len(field.value)
+
+        @on(Input.Submitted, "#cmdline")
+        def _submitted(self, event: Input.Submitted) -> None:
+            event.stop()
+            self.dismiss(event.value)
+
+        @on(Button.Pressed, "#btn-go")
+        def _go(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.dismiss(self.query_one("#cmdline", Input).value)
+
+        @on(Button.Pressed, "#btn-cancel")
+        def _cancel(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.dismiss("")
+
+        def action_cancel(self) -> None:
+            self.dismiss("")
+
     class LoadoutCommands(CommandProvider):
         """Loadouts as fuzzy-searchable commands in Textual's built-in palette
         (``ctrl+p``). Applying one calls the exact same `_run_for()` the
@@ -868,8 +938,11 @@ if TEXTUAL_AVAILABLE:
             self._run_for(sorted(self.marked))
 
         def action_run_tool(self) -> None:
-            """Run the selected tool's binary directly, outside any provider
-            install/remove flow -- for a tool that is already on PATH."""
+            """Ask for a command line, then run it outside the UI.
+
+            Not the bare binary: see :class:`RunScreen` for why no arguments is
+            the one thing an operator almost never means.
+            """
             tool = self._selected_tool()
             if tool is None:
                 return
@@ -884,20 +957,67 @@ if TEXTUAL_AVAILABLE:
                 self.notify(f"{binary} is not installed.", severity="warning")
                 return
 
+            tool_id = tool.id
+
+            def _launch(cmdline: str | None) -> None:
+                if cmdline and cmdline.strip():
+                    self._run_command(cmdline, tool_id)
+
+            self.push_screen(RunScreen(binary, tool_id), _launch)
+
+        def _run_command(self, cmdline: str, tool_id: str) -> None:
+            """Suspend the UI and run *cmdline*, then wait to be dismissed.
+
+            No shell: the line is split with shlex and validated, so a pipe or
+            a `$(...)` in the box is passed to the tool as a literal argument
+            rather than interpreted. The pause afterwards exists because the
+            alternative is the TUI repainting over the output the moment the
+            command exits.
+            """
+            import shlex
+
             from ...policy import validate_argv
 
             try:
-                argv = validate_argv([binary])
+                argv = validate_argv(shlex.split(cmdline))
+            except ValueError as exc:
+                self.notify(f"could not parse that command line: {exc}", severity="error")
+                return
             except Exception as exc:
                 self.notify(str(exc), severity="error")
                 return
+            if not argv:
+                return
+
+            import shutil as _shutil
+
+            if not _shutil.which(argv[0]):
+                self.notify(f"{argv[0]} is not on PATH.", severity="warning")
+                return
 
             with self.suspend():
-                print(f"\n$ {' '.join(argv)}\n")
-                subprocess.run(argv, check=False)  # noqa: S603
-                input("\nPress Enter to return to loadout...")
-            self.ctx.state.mark_used(tool.id)
-            self.ctx.state.record("run", tool.id)
+                # shlex.join, not " ".join: an argument containing a space or a
+                # metacharacter must be echoed back quoted. Otherwise
+                # `nmap -oN "; rm -rf /"` -- which ran perfectly safely as a
+                # single argv element -- is displayed as a shell line that
+                # would destroy the machine if anyone pasted it into one.
+                print(f"\n$ {shlex.join(argv)}\n")
+                try:
+                    completed = subprocess.run(argv, check=False)  # noqa: S603
+                    code = completed.returncode
+                except KeyboardInterrupt:
+                    code = 130
+                except OSError as exc:  # pragma: no cover - which() screened this
+                    print(f"\ncould not run {argv[0]}: {exc}")
+                    code = 127
+                # Say so when it failed. Several tools exit non-zero after
+                # printing a traceback that has already scrolled past, and
+                # "it did nothing" is the wrong thing for the user to conclude.
+                status = "" if code == 0 else f"  [exit {code}]"
+                input(f"\nPress Enter to return to loadout...{status}")
+
+            self.ctx.state.mark_used(tool_id)
+            self.ctx.state.record("run", tool_id)
 
         # -- watchers --------------------------------------------------------
 
