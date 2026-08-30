@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-DOCS = ("README.md", "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md", "TODO.md")
+DOCS = ("README.md", "CONTRIBUTING.md", "SECURITY.md", "CHANGELOG.md")
 
 
 def read(name: str) -> str:
@@ -103,3 +103,63 @@ def test_readme_does_not_resurrect_the_old_name():
         text = (ROOT / name).read_text(encoding="utf-8").lower()
         assert "kalitools" not in text, f"{name} still refers to kalitools"
         assert "kali tools manager" not in text, f"{name} still refers to the old name"
+
+
+# ---------------------------------------------------------------------------
+# What the public repository publishes
+# ---------------------------------------------------------------------------
+
+
+def tracked_files() -> list[str]:
+    """Every path git would publish. Skipped where git is unavailable."""
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ["git", "ls-files"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):  # pragma: no cover
+        pytest.skip("git is not available")
+    if result.returncode != 0 or not result.stdout.strip():  # pragma: no cover
+        pytest.skip("not a git checkout")
+    return result.stdout.splitlines()
+
+
+def test_development_notes_are_not_published():
+    """TODO.md is working notes on the author's machine. The repository is
+    public; the public backlog is the issue tracker."""
+    assert "TODO.md" not in tracked_files()
+
+
+def test_no_local_or_generated_files_are_published():
+    """A committed virtualenv, cache or coverage file is how a local path --
+    and sometimes a local secret -- reaches a public repository."""
+    import fnmatch
+
+    forbidden = (
+        ".venv/*", "venv/*", "*.pyc", "__pycache__/*", ".env", "*.log",
+        ".coverage", "htmlcov/*", ".pytest_cache/*", ".ruff_cache/*",
+        ".mypy_cache/*", "*.egg-info/*", ".cache/*", "*.swp", ".DS_Store",
+        "*.pem", "*.key", "id_rsa*", "*.sqlite", "*.sqlite3",
+    )
+    published = tracked_files()
+    offenders = [
+        path
+        for path in published
+        for pattern in forbidden
+        if fnmatch.fnmatch(path, pattern)
+    ]
+    assert offenders == [], f"these would be published: {offenders}"
+
+
+def test_the_only_published_database_is_the_compiled_catalog():
+    """state.db holds one machine's install history, stars and provenance. It
+    lives under XDG_STATE_HOME precisely so it can never be committed, but a
+    stray copy inside the tree would be published without anyone noticing."""
+    databases = [p for p in tracked_files() if p.endswith(".db")]
+    assert databases == ["loadout/data/catalog.db"], databases

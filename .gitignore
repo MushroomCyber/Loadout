@@ -30,6 +30,11 @@ htmlcov/
 # Local test scratch
 .testhome/
 .t/
+.cache/
+
+# Development notes, deliberately not published. The public backlog is
+# GitHub Issues; this file is working notes and stays on the author's box.
+TODO.md
 
 # OS / editor
 .DS_Store

@@ -96,7 +96,6 @@ the machine actually has.
 - An `ansi_shadow` banner, baked in as a constant rather than a runtime
   dependency, with the machine's facts set beside it. Falls back to the
   existing one-line form below 96x30 and switches on resize.
-- [TODO.md](TODO.md), tracking what is outstanding.
 
 ### Changed
 

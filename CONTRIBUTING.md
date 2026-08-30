@@ -3,8 +3,9 @@
 The easiest useful contribution is **adding a tool to the catalog** — one YAML
 file, no Python. See [docs/CATALOG.md](docs/CATALOG.md).
 
-For code, [TODO.md](TODO.md) is the current backlog, ordered by how much each
-item affects someone actually using the tool.
+For code, the [issue tracker](https://github.com/MushroomCyber/Loadout/issues)
+is the backlog. Open one before a large change so the approach can be agreed
+first.
 
 ## Setup
 

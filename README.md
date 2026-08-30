@@ -463,9 +463,9 @@ ruff check .
 mypy loadout
 ```
 
-[TODO.md](TODO.md) tracks what is outstanding, from packaging and signature
-verification to the modules where test coverage is thinnest. It is the place to
-look for something to pick up.
+Open [issues](https://github.com/MushroomCyber/Loadout/issues) are the place to
+look for something to pick up, and the place to propose something that is not
+there yet.
 
 ---
 
