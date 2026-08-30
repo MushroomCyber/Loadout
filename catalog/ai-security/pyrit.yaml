@@ -23,3 +23,8 @@ alternatives:
 install:
 - provider: pipx
   package: pyrit
+binaries:
+- pyrit_scan
+- pyrit_shell
+- pyrit_backend
+verify: pyrit_scan --help

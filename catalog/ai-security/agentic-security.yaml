@@ -16,3 +16,5 @@ license: Apache-2.0
 install:
 - provider: pipx
   package: agentic-security
+binaries:
+- agentic_security

@@ -1,0 +1,25 @@
+id: vigil-llm
+summary: Scanner for prompt injection and other LLM input risks (unmaintained)
+description: 'Vigil scans prompts against YARA rules, a vector database of known injections, transformer
+  classifiers and canary tokens, and ships as a Python library plus a REST API server.
+
+
+  Not published to PyPI and unchanged since January 2024, so there is no packaged install: clone the repository
+  and follow its README. Prefer llm-guard for anything load-bearing.'
+categories:
+- ai-security
+- detection
+tags:
+- llm
+- blue-team
+- prompt-injection
+phases:
+- discovery
+homepage: https://github.com/deadbits/vigil-llm
+repo: deadbits/vigil-llm
+license: Apache-2.0
+deprecated_by: llm-guard
+alternatives:
+- llm-guard
+- rebuff
+install: []

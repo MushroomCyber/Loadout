@@ -52,16 +52,21 @@ the machine actually has.
   user's trust store; and a declared signature that fails is not waivable by
   `--allow-unverified`, which exists for projects that publish nothing to
   check against.
-- **An `ai-security` category**, with twelve entries: `garak`, `pyrit`,
+- **An `ai-security` category**, with sixteen entries: `garak`, `pyrit`,
   `promptfoo`, `adversarial-robustness-toolbox`, `textattack` and
   `agentic-security` for testing models and agents; `modelscan`, `picklescan`
   and `fickling` for the model files themselves (a pickle is executable code,
   so these are filed under `malware` as well); `llm-guard` for the defensive
-  side; and `hexstrike-ai` and `dark-moon`, which are listed without an install
-  route because neither is packaged anywhere -- inventing one would fail on a
-  user's machine. Plus an `ai-redteam` loadout. It is the first category where
-  `apt` is the answer for none of the entries, which is what the multi-provider
-  design was for.
+  side; `counterfit` for driving ML attacks from a CLI; and `giskard`,
+  `rebuff`, `vigil-llm`, `hexstrike-ai` and `dark-moon`, listed without an
+  install route because none of them is installable as a command -- some are
+  libraries with no console script (pipx refuses those outright), some are
+  clone-and-run, and one was never published. Inventing a route for any of them
+  would fail on a user's machine. `rebuff` and `vigil-llm` are unmaintained and
+  carry `deprecated_by: llm-guard` so `loadout audit` says so. Plus an
+  `ai-redteam` loadout of the eight that do install. It is the first category
+  where `apt` is the answer for none of the entries, which is what the
+  multi-provider design was for.
 - **Offline bundles** -- `loadout bundle create` on a connected machine,
   `loadout bundle install` on one with no network at all. Carries apt packages
   with their full dependency closure and verified GitHub release artifacts;

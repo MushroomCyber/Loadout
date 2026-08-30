@@ -4,13 +4,15 @@ description: Testing LLM applications, agents, and the model files themselves
 tags:
 - ai-security
 - red-team
+# Only tools that actually install. The libraries in this category
+# (adversarial-robustness-toolbox, giskard, llm-guard, rebuff) declare no
+# console script, so pipx refuses them; modelscan pins python_requires <3.13
+# and fails on a current Kali, and picklescan covers the same ground here.
 tools:
-- adversarial-robustness-toolbox
 - agentic-security
+- counterfit
 - fickling
 - garak
-- llm-guard
-- modelscan
 - picklescan
 - promptfoo
 - pyrit

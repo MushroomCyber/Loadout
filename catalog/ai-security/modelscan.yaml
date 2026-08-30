@@ -1,8 +1,13 @@
 id: modelscan
 summary: Scan model files for code that executes on load
-description: A pickle is executable code, and most model formats are pickles. modelscan reads a saved
+description: 'A pickle is executable code, and most model formats are pickles. modelscan reads a saved
   model without loading it and reports the operators that would run -- the same job a file scanner does,
   on a file type nobody treats as executable.
+
+
+  Upstream pins `python_requires <3.13`, so `pipx install` fails on a current Kali (Python 3.13). Use
+  picklescan there, or run modelscan under an older interpreter with `pipx install --python python3.12
+  modelscan`.'
 categories:
 - ai-security
 - malware

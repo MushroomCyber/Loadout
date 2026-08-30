@@ -1,0 +1,26 @@
+id: giskard
+summary: 'Test suite for ML and LLM models: bias, robustness, performance'
+description: 'Giskard scans a model for the failure classes that matter in production — performance bias,
+  robustness, prompt injection and harmful output — and produces a report rather than a score. Aimed at
+  the assurance side of AI work more than the offensive one.
+
+
+  This is a library, not a command-line tool: it declares no console script, so `pipx` refuses it. Add
+  it to a project instead — `pip install giskard` inside that project''s virtualenv.'
+categories:
+- ai-security
+- detection
+tags:
+- ml
+- llm
+- testing
+- blue-team
+phases:
+- discovery
+homepage: https://github.com/Giskard-AI/giskard-oss
+repo: Giskard-AI/giskard-oss
+license: Apache-2.0
+alternatives:
+- garak
+- promptfoo
+install: []

@@ -15,10 +15,23 @@ import yaml
 
 CATALOG = Path(__file__).resolve().parent.parent / "catalog" / "ai-security"
 
-#: Entries with no packaged install. Both are clone-and-run projects: neither
-#: is on PyPI or npm, and Dark-Moon's GitHub releases carry no assets. Inventing
-#: a route for them would produce a confident failure on someone's machine.
-NO_INSTALL_ROUTE = {"hexstrike-ai", "dark-moon"}
+#: Entries with no packaged install, and why each one has none. Verified on a
+#: real box: `pipx install` refuses any package that declares no console
+#: script, so a pipx route for a library is a confident failure on a user's
+#: machine rather than a working install.
+NO_INSTALL_ROUTE = {
+    # Clone-and-run: not on PyPI or npm, and Dark-Moon's releases carry no
+    # assets.
+    "hexstrike-ai",
+    "dark-moon",
+    # Libraries with no console script -- pipx says "No apps associated".
+    "llm-guard",
+    "adversarial-robustness-toolbox",
+    "giskard",
+    "rebuff",
+    # Never published to PyPI.
+    "vigil-llm",
+}
 
 
 def entries() -> list[dict]:
@@ -30,7 +43,7 @@ def entries() -> list[dict]:
 
 def test_the_category_directory_exists_and_is_populated():
     assert CATALOG.is_dir()
-    assert len(entries()) >= 12
+    assert len(entries()) >= 16
 
 
 def test_ai_security_is_a_known_category():
@@ -61,7 +74,7 @@ def test_every_entry_records_a_homepage_and_licence():
         assert entry.get("license"), f"{entry['id']} has no licence"
 
 
-def test_the_clone_and_run_tools_declare_no_install_route():
+def test_the_unpackaged_tools_declare_no_install_route():
     """Rather than a guessed one. They stay searchable and `loadout show` gives
     the repository; pretending they are installable would fail on a machine."""
     by_id = {e["id"]: e for e in entries()}
@@ -143,3 +156,48 @@ def catalog_source_ids() -> set[str]:
         yaml.safe_load(path.read_text(encoding="utf-8"))["id"]
         for path in root.rglob("*.yaml")
     }
+
+
+def test_every_pipx_route_names_a_package_that_installs_a_command():
+    """pipx installs applications. A package declaring no console script is one
+    pipx refuses outright -- two entries shipped with exactly that mistake
+    before this test existed, so the rule is pinned rather than remembered.
+
+    The list is what each wheel declares, checked against PyPI.
+    """
+    provides_a_command = {
+        "garak",
+        "textattack",
+        "fickling",
+        "picklescan",
+        "pyrit",
+        "counterfit",
+        "modelscan",
+        "agentic-security",
+    }
+    for entry in entries():
+        for method in entry.get("install") or []:
+            if method["provider"] == "pipx":
+                assert method["package"] in provides_a_command, (
+                    f"{entry['id']} declares a pipx route for "
+                    f"{method['package']!r}, which must be known to install a "
+                    "command -- verify with `pipx install` before adding it"
+                )
+
+
+def test_every_entry_with_a_pipx_route_records_its_binaries():
+    """Without them `loadout verify` falls back to guessing the binary from the
+    tool id, and pyrit installs pyrit_scan, not pyrit."""
+    for entry in entries():
+        routes = entry.get("install") or []
+        if any(m["provider"] == "pipx" for m in routes):
+            assert entry.get("binaries"), f"{entry['id']} has a pipx route but no binaries"
+
+
+def test_superseded_tools_point_at_a_maintained_replacement():
+    """`loadout audit` reads deprecated_by to tell someone what to move to."""
+    by_id = {e["id"]: e for e in entries()}
+    for tool_id in ("rebuff", "vigil-llm"):
+        replacement = by_id[tool_id].get("deprecated_by")
+        assert replacement, f"{tool_id} is unmaintained but names no replacement"
+        assert replacement in by_id, f"{tool_id} points at unknown {replacement!r}"

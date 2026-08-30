@@ -1,0 +1,25 @@
+id: rebuff
+summary: Prompt-injection detector for LLM applications (unmaintained)
+description: 'Rebuff layered four prompt-injection defences — heuristics, a model-based check, a vector
+  store of known attacks, and canary tokens — behind one API.
+
+
+  The repository was archived by its authors in August 2024 and receives no fixes. Listed because it still
+  appears in AI-security tooling round-ups and someone will look for it; use llm-guard, which is maintained
+  and covers the same ground. It is also a library with no console script, so `pipx` refuses it.'
+categories:
+- ai-security
+- detection
+tags:
+- llm
+- blue-team
+- prompt-injection
+phases:
+- discovery
+homepage: https://github.com/protectai/rebuff
+repo: protectai/rebuff
+license: Apache-2.0
+deprecated_by: llm-guard
+alternatives:
+- llm-guard
+install: []

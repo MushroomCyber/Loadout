@@ -1,0 +1,29 @@
+id: counterfit
+summary: Command-line harness for attacking machine-learning models
+description: 'Microsoft''s Counterfit wraps published ML attack frameworks behind one CLI, so a model
+  can be assessed the way a service would be — pick a target, pick an attack, run it — rather than by
+  writing a research notebook.
+
+
+  Upstream publishes only pre-release versions to PyPI (0.1.4.dev9 is current) and the repository has
+  been quiet since mid-2025. It installs and runs; treat it as unmaintained rather than abandoned.'
+categories:
+- ai-security
+tags:
+- ml
+- adversarial
+- microsoft
+phases:
+- discovery
+binaries:
+- counterfit
+homepage: https://github.com/Azure/counterfit
+repo: Azure/counterfit
+license: MIT
+verify: counterfit --help
+alternatives:
+- adversarial-robustness-toolbox
+- textattack
+install:
+- provider: pipx
+  package: counterfit

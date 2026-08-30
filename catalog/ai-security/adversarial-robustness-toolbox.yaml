@@ -1,8 +1,12 @@
 id: adversarial-robustness-toolbox
 summary: Evasion, poisoning, extraction and inference attacks against ML models
-description: ART implements the standard academic attacks against machine-learning models -- evasion,
+description: 'ART implements the standard academic attacks against machine-learning models -- evasion,
   poisoning, model extraction and membership inference -- plus the defences, across most major frameworks.
   The reference implementation most other ML attack tooling is measured against.
+
+
+  This is a library, not a command-line tool: it declares no console script, so `pipx` refuses it. Add
+  it to a project instead — `pip install adversarial-robustness-toolbox` inside that project''s virtualenv.'
 categories:
 - ai-security
 tags:
@@ -14,6 +18,4 @@ phases:
 homepage: https://github.com/Trusted-AI/adversarial-robustness-toolbox
 repo: Trusted-AI/adversarial-robustness-toolbox
 license: MIT
-install:
-- provider: pipx
-  package: adversarial-robustness-toolbox
+install: []
