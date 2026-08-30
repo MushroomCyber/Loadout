@@ -52,6 +52,15 @@ the machine actually has.
   user's trust store; and a declared signature that fails is not waivable by
   `--allow-unverified`, which exists for projects that publish nothing to
   check against.
+- **Offline bundles** -- `loadout bundle create` on a connected machine,
+  `loadout bundle install` on one with no network at all. Carries apt packages
+  with their full dependency closure and verified GitHub release artifacts;
+  `inspect` shows what is inside without unpacking and `verify` checks a
+  bundle is intact and built for this architecture. The archive is treated as
+  untrusted input: every file is checksummed into the manifest and
+  re-checksummed before use, member paths are validated before extraction, and
+  the build platform is recorded. Providers that cannot travel are reported per
+  tool with a reason instead of being silently dropped.
 - **`loadout verify`** -- runs each installed tool's catalog `verify:` command
   and reports what actually works. An install that reported success is not the
   same as a tool that runs, and the difference shows up on site. Exits

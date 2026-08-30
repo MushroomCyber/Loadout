@@ -18,9 +18,10 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from ..errors import ProviderError
 from ..model import InstallMethod, Tool
 from ..policy import validate_package_name
-from .base import CommandStep, Provider, ProviderStatus, Step
+from .base import CommandStep, Provider, ProviderStatus, PythonStep, Step
 
 #: Written by `loadout mirror set`; used only when offline mode is active.
 LOCAL_SOURCES = Path("/etc/apt/sources.list.d/loadout-local.list")
@@ -78,6 +79,85 @@ class AptProvider(Provider):
             CommandStep(
                 argv=argv,
                 description=f"apt-get install {package}",
+                elevate=True,
+            )
+        ]
+
+    def plan_fetch(self, tool: Tool, method: InstallMethod, dest: Path) -> list[Step]:
+        """Download the package *and its dependency closure* into *dest*.
+
+        `apt-get download` fetches one package and nothing it needs, which on
+        an isolated machine means an install that stops on the first missing
+        dependency. `install --download-only` resolves the closure the same way
+        a real install would, so what lands in the bundle is what the target
+        will actually need.
+
+        `--reinstall` matters: without it apt downloads nothing for a package
+        already present on the *building* machine, and the bundle silently
+        comes out empty for exactly the tools its author uses most.
+        """
+        package = validate_package_name(self.spec_value(method, "package"))
+
+        def _prepare(ctx) -> None:
+            # apt refuses an archives directory that has no `partial/` inside
+            # it -- "Archives directory .../partial is missing" -- and will not
+            # create one itself. Done as a step rather than in the planner so
+            # planning still touches nothing.
+            (dest / "partial").mkdir(parents=True, exist_ok=True)
+
+        argv = [
+            *self._base_argv(),
+            "install",
+            "--download-only",
+            "--reinstall",
+            "-y",
+            "-o", f"Dir::Cache::archives={dest}",
+            "--",
+            package,
+        ]
+        return [
+            PythonStep(
+                fn=_prepare,
+                description=f"prepare {dest} for apt",
+                detail=f"mkdir -p {dest}/partial",
+            ),
+            CommandStep(
+                argv=argv,
+                description=f"download {package} and its dependencies",
+                # apt takes its own lock and writes to the cache directory even
+                # when only downloading.
+                elevate=True,
+            ),
+        ]
+
+    def plan_install_local(
+        self, tool: Tool, method: InstallMethod, files: list[Path]
+    ) -> list[Step]:
+        """Install from .deb files already on disk, resolving between them.
+
+        `apt-get install ./a.deb ./b.deb` rather than `dpkg -i`: apt orders the
+        packages and satisfies each one's dependencies from the others in the
+        list, where dpkg would fail on whichever it happened to unpack first.
+        """
+        debs = [str(f) for f in files if f.name.endswith(".deb")]
+        if not debs:
+            raise ProviderError(
+                f"{tool.id}: the bundle holds no .deb files for this tool"
+            )
+        argv = [
+            *self._base_argv(),
+            "install",
+            "-y",
+            "--no-download",
+            "--allow-downgrades",
+            "-o", "Dpkg::Options::=--force-confold",
+            "--",
+            *debs,
+        ]
+        return [
+            CommandStep(
+                argv=argv,
+                description=f"install {tool.id} from {len(debs)} bundled package(s)",
                 elevate=True,
             )
         ]

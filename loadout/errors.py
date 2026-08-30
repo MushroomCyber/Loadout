@@ -85,6 +85,12 @@ class PrivilegeError(LoadoutError):
     exit_code = 8
 
 
+class BundleError(LoadoutError):
+    """An offline bundle could not be built, read, or trusted."""
+
+    exit_code = 10
+
+
 class UnsafeArgument(LoadoutError):
     """Something that would have reached an argv failed validation."""
 

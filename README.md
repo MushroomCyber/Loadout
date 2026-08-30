@@ -26,6 +26,7 @@ backend your machine actually has.
 
 ```bash
 loadout install nuclei          # apt on Kali, brew on macOS, go anywhere else
+loadout bundle create -l dfir-responder -o kit.tar   # then install it with no network
 loadout sync                    # converge this box to the team's loadout.yaml
 loadout report --since 30d      # signed inventory of what you used, for the report
 ```
@@ -41,6 +42,7 @@ loadout report --since 30d      # signed inventory of what you used, for the rep
 | Verifies downloaded binaries against published checksums | n/a | yes, by default |
 | "Which tools exist for lateral movement?" | no | `loadout phase lateral-movement` |
 | "What should I use instead of dirbuster?" | no | `loadout alt dirbuster` |
+| Install onto a machine with no internet | no | `loadout bundle` |
 | Reproduce this exact toolset on another box | no | `loadout sync` |
 | Prove which tool versions an engagement used | no | `loadout report` |
 
@@ -217,6 +219,44 @@ loadout loadout diff acme-webapp-2026
 | `detection-engineer` | Building and validating detections |
 | `cloud-auditor` | Cloud and container posture |
 | `forensics-starter`, `osint-minimal`, `ctf-basics` | Starter kits |
+
+### Take a kit somewhere with no network
+
+Incident response happens on isolated segments. Client sites block egress.
+Classified work has no route out at all. Build the kit where there *is*
+network, carry it in, install it where there is none.
+
+```bash
+# on a connected machine
+loadout bundle create -l dfir-responder -o kit.tar
+loadout bundle inspect kit.tar          # what is in it, and what was left out
+
+# on the isolated one
+loadout bundle verify kit.tar           # intact? built for this architecture?
+loadout bundle install kit.tar
+```
+
+A bundle is a tar holding a `manifest.json` and the artifacts themselves — apt
+packages **with their full dependency closure**, and verified GitHub release
+binaries. Nothing about installing it touches the network.
+
+The bundle is the one thing here that arrives from outside, onto a machine
+picked precisely because it is isolated, so it is treated as untrusted input:
+
+- every file is checksummed into the manifest when built and **re-checksummed
+  before use** — otherwise a bundle would be a clean way around all the
+  checksum and signature verification everywhere else;
+- member paths are validated before extraction, so no `..`, absolute path,
+  symlink or device node can write outside the target;
+- the build platform is recorded, because a bundle of amd64 debs is not a kit
+  on an arm64 box and mid-engagement is the wrong time to find out.
+
+**What cannot travel:** `go`, `cargo`, `pipx`, `npm` and `gem` routes need a
+toolchain or a package index on the far side. Those are reported per tool with
+a reason rather than quietly dropped — a bundle that held less than it claimed
+would be discovered on the isolated machine, which is the worst place to
+discover anything. Where a tool has both a bundleable and a non-bundleable
+route, the bundleable one is chosen even if the catalog ranks it lower.
 
 ### Check the kit before you need it
 

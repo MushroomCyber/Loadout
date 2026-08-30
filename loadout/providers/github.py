@@ -160,17 +160,7 @@ class GithubReleaseProvider(Provider):
         signature: SignatureSpec | None = None,
     ) -> None:
         release = self._fetch_release(repo, tag)
-        assets = [
-            ReleaseAsset(
-                name=a.get("name", ""),
-                url=a.get("browser_download_url", ""),
-                size=int(a.get("size") or 0),
-            )
-            for a in release.get("assets", [])
-            if a.get("browser_download_url")
-        ]
-        if not assets:
-            raise ProviderError(f"{repo}: release has no downloadable assets")
+        assets = self._assets_of(release, repo)
 
         asset = self._select_asset(assets, pattern)
         if asset is None:
@@ -209,16 +199,135 @@ class GithubReleaseProvider(Provider):
             ctx.progress(f"verifying {asset.name}", 55.0)
             verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
 
-            ctx.progress("extracting", 70.0)
-            extracted = self._extract(archive, tmp / "unpacked", binary)
+            self._place_binary(ctx, archive, binary, target, workdir=tmp)
 
-            ctx.progress(f"installing to {target}", 90.0)
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(extracted, target)
-            target.chmod(target.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    def _place_binary(
+        self, ctx: ExecContext, archive: Path, binary: str, target: Path, *, workdir: Path
+    ) -> None:
+        """Extract *archive* and put *binary* at *target*.
+
+        Shared by the online install and the offline bundle install, so the two
+        cannot drift on extraction safety, permissions, or the PATH warning.
+        """
+        ctx.progress("extracting", 70.0)
+        extracted = self._extract(archive, workdir / "unpacked", binary)
+
+        ctx.progress(f"installing to {target}", 90.0)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(extracted, target)
+        target.chmod(target.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
         if str(target.parent) not in os.environ.get("PATH", "").split(os.pathsep):
             ctx.warn(f"{target.parent} is not on your PATH; {binary} will not be runnable")
+
+    # -- offline bundles ---------------------------------------------------
+
+    def plan_fetch(self, tool: Tool, method: InstallMethod, dest: Path) -> list[Step]:
+        """Download the release artifact into *dest*, fully verified.
+
+        Verification happens here, on the connected machine, because that is
+        the only place the checksum file and the signature can be fetched from.
+        What travels is an artifact already checked against its publisher's
+        key; the bundle manifest's own sha256 then covers it in transit.
+        """
+        repo = str(self.spec_value(method, "repo")).strip()
+        if repo.count("/") != 1:
+            raise ProviderError(f"github repo must be 'owner/name', got {repo!r}")
+        pattern = str(method.spec.get("asset") or "")
+        checksums = str(method.spec.get("checksums") or "")
+        signature = parse_spec(method.spec.get("signature"))
+        tag = str(method.spec.get("tag") or "")
+
+        def _fetch(ctx: ExecContext) -> None:
+            release = self._fetch_release(repo, tag)
+            assets = self._assets_of(release, repo)
+            asset = self._select_asset(assets, pattern)
+            if asset is None:
+                names = ", ".join(a.name for a in assets[:6])
+                raise ProviderError(
+                    f"{repo}: no asset matched {pattern or 'this platform'}. "
+                    f"Available: {names}"
+                )
+
+            checksum_text = ""
+            expected = ""
+            if checksums:
+                checksum_text = self._fetch_checksum_file(assets, checksums)
+                expected = parse_checksum_file(checksum_text, asset.name)
+                if not expected:
+                    raise VerificationError(f"{checksums} has no entry for {asset.name}")
+
+            dest.mkdir(parents=True, exist_ok=True)
+            archive = dest / asset.name
+            ctx.progress(f"downloading {asset.name}", 20.0)
+            self._download(asset.url, archive)
+
+            if signature is not None:
+                ctx.progress(f"checking {signature.type} signature", 55.0)
+                self._verify_signature(
+                    assets=assets,
+                    spec=signature,
+                    archive=archive,
+                    checksum_text=checksum_text,
+                    checksums_name=checksums,
+                    workdir=dest,
+                )
+            ctx.progress(f"verifying {asset.name}", 80.0)
+            verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
+
+        return [
+            PythonStep(
+                fn=_fetch,
+                description=f"fetch {repo} release artifact for the bundle",
+                detail=(
+                    f"GET {API_ROOT}/repos/{repo}/releases/"
+                    f"{'tags/' + tag if tag else 'latest'}\n"
+                    f"  match asset: {pattern or '<auto: platform match>'}\n"
+                    f"  verify: {checksums or '<none published -- will refuse>'}\n"
+                    f"  signature: {_describe_signature(signature)}\n"
+                    f"  into: {dest}"
+                ),
+            )
+        ]
+
+    def plan_install_local(
+        self, tool: Tool, method: InstallMethod, files: list[Path]
+    ) -> list[Step]:
+        """Install from an artifact already extracted out of a bundle."""
+        repo = str(self.spec_value(method, "repo")).strip()
+        binary = tool.primary_binary or repo.split("/")[1]
+        target = user_bin_dir() / binary
+        archives = [f for f in files if not f.name.endswith((".asc", ".sig", ".minisig"))]
+        if not archives:
+            raise ProviderError(f"{tool.id}: the bundle holds no artifact for this tool")
+        archive = archives[0]
+
+        def _install(ctx: ExecContext) -> None:
+            with tempfile.TemporaryDirectory(prefix="loadout-gh-") as tmpdir:
+                self._place_binary(ctx, archive, binary, target, workdir=Path(tmpdir))
+
+        return [
+            PythonStep(
+                fn=_install,
+                description=f"install {binary} from the bundle",
+                detail=f"{archive.name}  ->  {target}",
+            )
+        ]
+
+    @staticmethod
+    def _assets_of(release: dict[str, Any], repo: str) -> list[ReleaseAsset]:
+        assets = [
+            ReleaseAsset(
+                name=a.get("name", ""),
+                url=a.get("browser_download_url", ""),
+                size=int(a.get("size") or 0),
+            )
+            for a in release.get("assets", [])
+            if a.get("browser_download_url")
+        ]
+        if not assets:
+            raise ProviderError(f"{repo}: release has no downloadable assets")
+        return assets
 
     def _fetch_release(self, repo: str, tag: str = "") -> dict[str, Any]:
         from ..http_util import polite_get

@@ -14,8 +14,10 @@ import subprocess
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from ..errors import BundleError
 from ..model import InstallMethod, Tool
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -119,6 +121,35 @@ class Provider(ABC):
     @abstractmethod
     def plan_remove(self, tool: Tool, method: InstallMethod) -> list[Step]:
         """Steps that would remove *tool* installed via *method*."""
+
+    def plan_fetch(self, tool: Tool, method: InstallMethod, dest: Path) -> list[Step]:
+        """Steps that download everything *tool* needs into *dest*, installing
+        nothing. This is what makes an offline bundle possible.
+
+        The default refuses. A provider that cannot fetch without also
+        installing, or whose artifacts are useless without a compiler on the
+        far side, should leave it that way: a bundle that silently contained
+        less than it claimed would be discovered on the isolated machine,
+        which is the worst possible place to discover it.
+        """
+        raise BundleError(
+            f"{self.name} cannot be bundled for offline install",
+            remediation=(
+                f"{self.name} needs a build toolchain or a package index on the "
+                "target machine. Prefer an apt or github route for tools that "
+                "have to travel."
+            ),
+        )
+
+    def plan_install_local(
+        self, tool: Tool, method: InstallMethod, files: list[Path]
+    ) -> list[Step]:
+        """Steps that install *tool* from already-downloaded *files*.
+
+        The other half of :meth:`plan_fetch`, and the only path that runs on
+        the isolated machine.
+        """
+        raise BundleError(f"{self.name} cannot install from a bundle")
 
     # -- inspection --------------------------------------------------------
 

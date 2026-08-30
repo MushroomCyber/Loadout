@@ -348,6 +348,31 @@ def build_parser() -> argparse.ArgumentParser:
                    default="json")
     p.add_argument("--output", "-o", type=Path)
 
+    # -- offline bundles ---------------------------------------------------
+    p = sub.add_parser("bundle", help="Build and install offline kits.")
+    bsub = p.add_subparsers(dest="bundle_command", required=True)
+
+    q = bsub.add_parser("create", help="Download a kit for an offline machine.")
+    q.add_argument("tools", nargs="*", help="Tools to include.")
+    q.add_argument("--loadout", "-l", default="", help="Include a named loadout.")
+    q.add_argument("--out", "-o", type=Path, required=True,
+                   help="Bundle to write (.tar or .tar.gz).")
+    q.add_argument("--dry-run", action="store_true")
+    q.add_argument("--allow-unverified", action="store_true",
+                   help="Bundle artifacts that publish no checksum.")
+
+    q = bsub.add_parser("inspect", help="Show what a bundle contains.")
+    q.add_argument("archive", type=Path)
+
+    q = bsub.add_parser("verify", help="Check a bundle is intact and installable here.")
+    q.add_argument("archive", type=Path)
+
+    q = bsub.add_parser("install", help="Install from a bundle, using no network.")
+    q.add_argument("archive", type=Path)
+    q.add_argument("tools", nargs="*", help="Only these (default: everything in it).")
+    q.add_argument("--yes", "-y", action="store_true")
+    q.add_argument("--dry-run", action="store_true")
+
     # -- environment -------------------------------------------------------
     sub.add_parser("doctor", help="Diagnose environment problems.")
 
@@ -1670,6 +1695,230 @@ def cmd_doctor(ctx: Context) -> int:
 # Dispatch
 # ---------------------------------------------------------------------------
 
+def _event_sink(ctx: Context):
+    """Progress reporting for plans run outside the install command.
+
+    `cmd_install` wraps its own sink in a rich progress bar built around a
+    single tool at a time. Bundle operations run many fetches back to back, so
+    they report step by step instead -- but through the same Event stream, so
+    there is still only one execution path.
+    """
+    from ..executor import EVENT_ACTION_DONE, EVENT_ACTION_START, EVENT_WARN
+
+    console = out.get_console()
+
+    def sink(event) -> None:
+        if ctx.json_mode:
+            return
+        if event.kind == EVENT_ACTION_START:
+            console.print(f"  [dim]{event.message}[/dim]", highlight=False)
+        elif event.kind == EVENT_WARN:
+            out.print_warn(event.message)
+        elif event.kind == EVENT_ACTION_DONE:
+            if event.success:
+                out.print_ok(event.message)
+            else:
+                out.print_error(f"{event.tool_id}: {event.message}")
+
+    return sink
+
+
+def cmd_bundle(ctx: Context) -> int:
+    command = ctx.args.bundle_command
+    if command == "create":
+        return _bundle_create(ctx)
+    if command == "inspect":
+        return _bundle_inspect(ctx)
+    if command == "verify":
+        return _bundle_verify(ctx)
+    return _bundle_install(ctx)
+
+
+def _bundle_tool_ids(ctx: Context) -> list[str]:
+    tool_ids = list(ctx.args.tools)
+    if ctx.args.loadout:
+        from .. import loadouts
+
+        manifest = loadouts.get(ctx.args.loadout)
+        if manifest is None:
+            out.print_error(f"No loadout named {ctx.args.loadout!r}")
+            return []
+        tool_ids = list(manifest.tools) + tool_ids
+    return tool_ids
+
+
+def _bundle_create(ctx: Context) -> int:
+    import tempfile
+
+    from .. import bundle as bundle_mod
+    from ..executor import Executor
+
+    tool_ids = _bundle_tool_ids(ctx)
+    if not tool_ids:
+        out.print_error("Nothing to bundle.", "Name some tools, or pass --loadout.")
+        return 2
+
+    with tempfile.TemporaryDirectory(prefix="loadout-bundle-") as staging:
+        root = Path(staging)
+        plan, skipped = bundle_mod.plan_fetch(ctx, tool_ids, root)
+
+        if ctx.args.dry_run:
+            out.render_plan(plan, verbose=True)
+            for entry in skipped:
+                out.print_warn(f"{entry.tool_id}: {entry.reason}")
+            return 0
+        if not plan.actions:
+            out.print_error(
+                "Nothing in this set can be bundled.",
+                "Bundles carry apt packages and verified GitHub releases; "
+                "everything else needs a toolchain on the target.",
+            )
+            for entry in skipped:
+                out.print_warn(f"{entry.tool_id}: {entry.reason}")
+            return 1
+
+        executor = Executor(
+            sink=_event_sink(ctx),
+            allow_unverified=ctx.args.allow_unverified,
+            state=None,
+        )
+        result = executor.run(plan)
+
+        bundled = bundle_mod.collect(root, plan)
+        manifest = bundle_mod.build_manifest(bundled, skipped, root)
+        bundle_mod.write(ctx.args.out, manifest, root)
+
+    size_mb = ctx.args.out.stat().st_size / 1024 / 1024
+    files = len(manifest.files)
+    if ctx.json_mode:
+        out.emit_json({**manifest.to_dict(), "archive": str(ctx.args.out),
+                       "bytes": ctx.args.out.stat().st_size})
+        return 0 if result.ok else 1
+
+    for entry in manifest.skipped:
+        out.print_warn(f"not bundled — {entry.tool_id}: {entry.reason}")
+
+    if not manifest.tools:
+        # Never a tick for an empty kit. Someone carries this to a machine with
+        # no network and no second chance; "it built fine" is the worst
+        # possible thing to have been told.
+        out.print_error(
+            f"{ctx.args.out} contains nothing.",
+            "Every tool was skipped or failed to download — see above.",
+        )
+        return 1
+
+    out.print_ok(
+        f"{ctx.args.out}  —  {len(manifest.tools)} tool(s), {files} file(s), "
+        f"{size_mb:.1f} MB"
+    )
+    out.print_note(
+        f"Built for {manifest.distro}/{manifest.arch}. Install with: "
+        f"loadout bundle install {ctx.args.out.name}"
+    )
+    return 0 if result.ok else 1
+
+
+def _bundle_inspect(ctx: Context) -> int:
+    from .. import bundle as bundle_mod
+
+    manifest = bundle_mod.read_manifest(ctx.args.archive)
+    if ctx.json_mode:
+        out.emit_json(manifest.to_dict())
+        return 0
+
+    console = out.get_console()
+    console.print(
+        f"[bold]{ctx.args.archive.name}[/bold]  [dim]format {manifest.format} · "
+        f"built {manifest.created_at} on {manifest.distro}/{manifest.arch} "
+        f"by loadout {manifest.loadout_version}[/dim]",
+        highlight=False,
+    )
+    rows = [
+        {
+            "tool": entry.tool_id,
+            "via": entry.provider,
+            "files": str(len(entry.files)),
+            "size": f"{sum(f.size for f in entry.files) / 1024 / 1024:.1f} MB",
+        }
+        for entry in manifest.tools
+    ]
+    if rows:
+        out.render_table(rows, ["tool", "via", "files", "size"])
+    for entry in manifest.skipped:
+        out.print_warn(f"not bundled — {entry.tool_id}: {entry.reason}")
+    for warning in bundle_mod.platform_warnings(manifest):
+        out.print_warn(warning)
+    return 0
+
+
+def _bundle_verify(ctx: Context) -> int:
+    """Check a bundle without installing anything from it.
+
+    Worth having as its own command: the point of carrying a bundle is that
+    the far side has no network, so "is this intact" needs answering before
+    someone is standing in front of the isolated machine.
+    """
+    import tempfile
+
+    from .. import bundle as bundle_mod
+
+    with tempfile.TemporaryDirectory(prefix="loadout-verify-") as staging:
+        manifest = bundle_mod.extract(ctx.args.archive, Path(staging))
+    warnings = bundle_mod.platform_warnings(manifest)
+
+    if ctx.json_mode:
+        out.emit_json(
+            {"archive": str(ctx.args.archive), "ok": True,
+             "files": len(manifest.files), "warnings": warnings}
+        )
+        return 0
+
+    out.print_ok(
+        f"{ctx.args.archive.name}: {len(manifest.files)} file(s) match the manifest"
+    )
+    for warning in warnings:
+        out.print_warn(warning)
+    return 0
+
+
+def _bundle_install(ctx: Context) -> int:
+    import tempfile
+
+    from .. import bundle as bundle_mod
+    from ..executor import Executor
+    from ..policy import refresh_credentials
+
+    with tempfile.TemporaryDirectory(prefix="loadout-bundle-") as staging:
+        root = Path(staging)
+        manifest = bundle_mod.extract(ctx.args.archive, root)
+        for warning in bundle_mod.platform_warnings(manifest):
+            out.print_warn(warning)
+
+        plan = bundle_mod.plan_install(ctx, manifest, root, list(ctx.args.tools))
+        for entry in plan.skipped:
+            out.print_warn(f"{entry.tool_id}: {entry.reason}")
+        if not plan.actions:
+            out.print_error("Nothing from this bundle can be installed here.")
+            return 1
+
+        out.render_plan(plan, verbose=bool(ctx.args.dry_run))
+        if ctx.args.dry_run:
+            return 0
+        if not out.confirm("Install these?", assume_yes=ctx.args.yes):
+            return 0
+        if plan.needs_root and not refresh_credentials():
+            out.print_error("Could not obtain the privileges this install needs.")
+            return 8
+
+        executor = Executor(sink=_event_sink(ctx), state=ctx.state)
+        result = executor.run(plan)
+
+    if ctx.json_mode:
+        out.emit_json(result.to_dict())
+    return 0 if result.ok else 1
+
+
 def cmd_verify(ctx: Context) -> int:
     """Run each tool's catalog verify command and report what actually works.
 
@@ -1770,6 +2019,7 @@ _COMMANDS = {
     "export": cmd_export,
     "doctor": cmd_doctor,
     "verify": cmd_verify,
+    "bundle": cmd_bundle,
 }
 
 

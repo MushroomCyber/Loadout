@@ -22,6 +22,10 @@ from .providers import (
 
 ACTION_INSTALL = "install"
 ACTION_REMOVE = "remove"
+#: Downloading for an offline bundle, which installs nothing. Distinct from
+#: ACTION_INSTALL so progress does not announce "installed nmap" for a plan
+#: that only ever wrote a .deb into a staging directory.
+ACTION_FETCH = "fetch"
 
 
 @dataclass

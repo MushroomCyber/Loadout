@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Any
 
 from .errors import LoadoutError, PrivilegeError
-from .planner import ACTION_INSTALL, Plan, PlannedAction
+from .planner import ACTION_FETCH, ACTION_INSTALL, Plan, PlannedAction
 from .policy import Privilege, detect_privilege, elevate, subprocess_env
 from .providers.apt import AptProvider, apt_status_fd_args
 from .providers.base import CommandStep, PythonStep, Step
@@ -48,7 +48,7 @@ EVENT_PLAN_DONE = "plan_done"
 
 #: Past tense per action. f"{action}ed" gives "removeed", which every user who
 #: removes a tool would see.
-_PAST_TENSE = {"install": "installed", "remove": "removed"}
+_PAST_TENSE = {"install": "installed", "remove": "removed", "fetch": "fetched"}
 
 
 def past_tense(action: str) -> str:
@@ -225,7 +225,10 @@ class Executor:
 
         elapsed = time.monotonic() - started
         version = ""
-        if success and not self.dry_run:
+        # A fetch downloads into a staging directory and installs nothing, so
+        # recording it as installed state would make `loadout list --installed`
+        # lie on the machine that built the bundle.
+        if success and not self.dry_run and action.action != ACTION_FETCH:
             version = self._record(action, elapsed)
 
         self.sink(
