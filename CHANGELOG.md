@@ -87,14 +87,12 @@ the machine actually has.
 - Issue templates (including an "add a tool" form for the catalog) and a pull
   request checklist.
 - **Mouse control throughout the browser.** An action row in the detail pane
-  (Install/Remove, Star, Run, Alternatives), a batch bar that appears once
+  (Install/Remove, Star, Alternatives), a batch bar that appears once
   something is marked, provider toggles, clickable category chips, and
   Retry/Close on the install modal so a failure has a next step. Every button
   calls the action its key binding already called, so the two cannot drift.
 - **Command palette** (`ctrl+p`) with the bundled loadouts in it, matching
   either the name or the slug `loadout apply` takes.
-- **`ctrl+r`** runs the highlighted tool, suspending the UI and restoring it
-  afterwards.
 - An `ansi_shadow` banner, baked in as a constant rather than a runtime
   dependency, with the machine's facts set beside it. Falls back to the
   existing one-line form below 96x30 and switches on resize.
@@ -130,16 +128,33 @@ the machine actually has.
 
 ### Fixed
 
-- **The browser's Run button ran the bare binary with no arguments**, which is
-  the one thing nobody means: `nmap` printed a warning and exited, `pyrit_scan`
-  printed its help, and anything needing a target could not be driven at all.
-  It now asks for a command line, pre-filled with the binary. The line is split
-  with `shlex` and run without a shell, so a pipe or `$(...)` reaches the tool
-  as a literal argument -- and it is echoed back with `shlex.join`, because
-  `" ".join` would redisplay a safely-quoted argument as a shell line that
-  would be destructive if anyone pasted it. A non-zero exit is now reported,
-  since a traceback that has scrolled past otherwise looks like nothing
-  happened.
+- **Installing a package that asks a debconf question froze the browser.**
+  `wireshark` was the reported case: the download finished, the bar sat at
+  100%, and nothing else happened. `DEBIAN_FRONTEND=noninteractive` was being
+  set on the `sudo` process, and sudo's `env_reset` discards the environment
+  before exec'ing the real command — Debian's `env_keep` does not include it.
+  dpkg therefore configured packages with the interactive dialog frontend, and
+  wireshark-common's "should non-superusers be able to capture packets?" drew a
+  prompt on `/dev/tty` underneath the full-screen UI, waiting for an answer
+  that could not be typed. Elevated commands now cross the boundary as
+  `sudo env VAR=value …`, which needs no sudoers cooperation, and apt-get
+  passes `--force-confdef` alongside `--force-confold` so a changed config file
+  is dpkg's decision rather than a second invisible question. (If your sudoers
+  whitelists specific commands rather than granting general access, `env` now
+  needs to be among them.)
+- **Quitting during an install printed a `NoActiveAppError` traceback** over
+  the terminal, once per line the package manager had left to say. The install
+  modal reached the app through `self.app`, which walks the widget tree and
+  fails the moment the screen is detached — and the executor's worker thread
+  outlives its screen. It now captures the app at mount and drops updates once
+  the UI is gone, which is the correct outcome for a screen nobody is looking
+  at.
+- **The browser's Run button is gone.** Handing a live terminal to an arbitrary
+  tool from inside a full-screen app has to get stdin ownership, suspend and
+  resume, and the press-Enter pause all right, and each of those broke in a
+  different way. Installing tools is loadout's job; running them is the
+  shell's. `loadout run` still exists on the command line, where a terminal is
+  not something that has to be borrowed.
 - A test replaced `subprocess.run` by assigning to the module attribute rather
   than through `monkeypatch`, so the stub leaked into every test that ran
   afterwards. Nothing later in the suite ran a subprocess, so it stayed

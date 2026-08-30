@@ -337,7 +337,6 @@ rows on tools rather than on the program's own name.
 | `enter` | Install / remove the highlighted tool |
 | `ctrl+a` | Install everything marked |
 | `ctrl+s` | Star |
-| `ctrl+r` | Run the highlighted tool — asks for a command line first |
 | `ctrl+p` | Command palette — fuzzy-find and apply a loadout |
 | `f5` | Re-read what is installed |
 | `esc` | Clear filter, then clear marks, then quit |

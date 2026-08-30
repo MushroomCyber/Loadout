@@ -367,3 +367,45 @@ class TestDockerProvider:
 
 def _boom(_ctx) -> None:
     raise LoadoutError("kaboom")
+
+
+def test_an_elevated_step_carries_the_noninteractive_env_into_the_argv(monkeypatch):
+    """End to end for the wireshark freeze: the executor must name the
+    variables it wants preserved, or elevate() has nothing to carry and sudo's
+    env_reset drops them. Pinning the argv is the only way to catch this --
+    the environment dict looks correct either way.
+    """
+    from loadout.executor import CommandStep, ExecContext, Executor
+    from loadout.policy import Privilege
+
+    spawned: list = []
+    executor = Executor(privilege=Privilege(is_root=False, sudo_path="/usr/bin/sudo"))
+    monkeypatch.setattr(
+        Executor, "_spawn", lambda self, argv, step, ctx: spawned.append(argv) or 0
+    )
+
+    step = CommandStep(
+        argv=["apt-get", "install", "-y", "--", "wireshark"],
+        description="apt-get install wireshark",
+        elevate=True,
+    )
+    executor._run_step(step, ExecContext(emit=lambda _e: None, tool_id="wireshark"))
+
+    argv = spawned[0]
+    assert "DEBIAN_FRONTEND=noninteractive" in argv
+    assert "NEEDRESTART_MODE=a" in argv
+    assert argv.index("DEBIAN_FRONTEND=noninteractive") < argv.index("apt-get")
+
+
+def test_apt_install_never_prompts_about_a_config_file():
+    """`-y` answers apt's own questions; a conffile that changed upstream is
+    dpkg's question and needs its own answer. Unanswered, it draws a prompt on
+    /dev/tty -- which under a TUI is an invisible hang, not a question."""
+    from loadout.model import InstallMethod, Tool
+    from loadout.providers.apt import AptProvider
+
+    tool = Tool(id="wireshark")
+    method = InstallMethod(provider="apt", spec={"package": "wireshark"})
+    argv = AptProvider().plan_install(tool, method)[0].argv
+    assert "Dpkg::Options::=--force-confdef" in argv
+    assert "Dpkg::Options::=--force-confold" in argv

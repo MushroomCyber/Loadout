@@ -15,9 +15,10 @@ from __future__ import annotations
 import hashlib
 import logging
 import os
+import re
 import shutil
 import subprocess
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -31,10 +32,15 @@ _CONTROL_CHARS = frozenset(chr(c) for c in [*range(0x00, 0x20), 0x7F])
 
 #: Environment applied to every package-manager subprocess. Without this, apt
 #: and friends can block forever on a debconf prompt whose output is piped away.
+#:
+#: These have to survive :func:`elevate` as well -- see :func:`_env_prefix`.
 NONINTERACTIVE_ENV = {
     "DEBIAN_FRONTEND": "noninteractive",
     "NEEDRESTART_MODE": "a",
 }
+
+#: A shell-safe environment variable name.
+_ENV_NAME_RE = re.compile(r"^[A-Z_][A-Z0-9_]*$")
 
 
 @dataclass(frozen=True)
@@ -145,20 +151,66 @@ def has_cached_credentials(privilege: Privilege | None = None) -> bool:
         return False
 
 
-def elevate(argv: Sequence[str], *, privilege: Privilege | None = None) -> list[str]:
-    """Return *argv* prefixed with sudo when required. The only sudo call site."""
+def _env_prefix(preserve: Mapping[str, str]) -> list[str]:
+    """``['env', 'NAME=value', ...]`` -- how variables cross the sudo boundary.
+
+    sudo runs with ``env_reset`` by default, so the environment we hand to the
+    *sudo* process is discarded before the real command is exec'd. Assigning on
+    sudo's own command line (``sudo NAME=value cmd``) needs the SETENV sudoers
+    tag and fails outright without it. Running ``env`` as root works
+    everywhere, because env is just a program that builds an environment.
+    """
+    argv = [shutil.which("env") or "/usr/bin/env"]
+    for name, value in sorted(preserve.items()):
+        if not _ENV_NAME_RE.match(name):
+            raise UnsafeArgument(f"Refusing to export unsafe variable name: {name!r}")
+        text = str(value)
+        if any(ch in _CONTROL_CHARS for ch in text):
+            raise UnsafeArgument(f"Refusing control characters in ${name}")
+        argv.append(f"{name}={text}")
+    return argv
+
+
+def elevate(
+    argv: Sequence[str],
+    *,
+    privilege: Privilege | None = None,
+    preserve: Mapping[str, str] | None = None,
+) -> list[str]:
+    """Return *argv* prefixed with sudo when required. The only sudo call site.
+
+    *preserve* names the variables that must reach the elevated command rather
+    than being dropped by sudo's ``env_reset``. Nothing is preserved unless a
+    caller asks for it by name -- passing the whole environment through sudo is
+    the thing env_reset exists to prevent.
+    """
     privilege = privilege or detect_privilege()
     checked = validate_argv(argv)
-    full = [*privilege.prefix(), *checked]
+    prefix = privilege.prefix()
+    if prefix and preserve:
+        # Already root means no sudo and no env_reset: the variables we set on
+        # the subprocess arrive on their own.
+        checked = [*_env_prefix(preserve), *checked]
+    full = [*prefix, *checked]
     logger.info("elevating: %s", " ".join(full))
     return full
 
 
-def subprocess_env(extra: dict[str, str] | None = None) -> dict[str, str]:
-    env = dict(os.environ)
-    env.update(NONINTERACTIVE_ENV)
+def deliberate_env(extra: Mapping[str, str] | None = None) -> dict[str, str]:
+    """The variables loadout sets on purpose, as opposed to those inherited.
+
+    This is exactly the set that has to survive elevation: everything else in
+    the environment either belongs to the user's shell or is sudo's business.
+    """
+    env = dict(NONINTERACTIVE_ENV)
     if extra:
         env.update(extra)
+    return env
+
+
+def subprocess_env(extra: Mapping[str, str] | None = None) -> dict[str, str]:
+    env = dict(os.environ)
+    env.update(deliberate_env(extra))
     return env
 
 

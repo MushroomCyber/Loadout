@@ -551,34 +551,6 @@ async def test_clicking_a_category_chip_filters_like_the_old_listview_did(app):
         assert table.row_count == 1  # only ffuf is tagged web in the fixture
 
 
-async def test_run_action_reports_a_missing_binary_without_crashing(app, monkeypatch):
-    """masscan has no binaries in the fixture; Run must degrade to a notice,
-    not an exception, and never call subprocess.run for an unknown command.
-
-    monkeypatch, not a bare assignment: `app_module.subprocess` *is* the global
-    subprocess module, so assigning to it leaks into every later test in the
-    session -- which is exactly what happened, silently, until something else
-    in the suite finally ran a subprocess.
-    """
-    import subprocess as subprocess_module
-
-    calls = []
-    monkeypatch.setattr(
-        subprocess_module, "run", lambda *a, **k: calls.append(a) or None
-    )
-
-    async with app.run_test() as pilot:
-        from textual.widgets import DataTable, Input
-
-        pilot.app.query_one("#query", Input).value = "masscan"
-        await pilot.pause()
-        pilot.app.query_one("#table", DataTable).focus()
-        await pilot.pause()
-        pilot.app.action_run_tool()
-        await pilot.pause()
-        assert not calls
-
-
 async def test_install_modal_shows_close_and_retry_on_failure():
     """A failed install must offer Retry, not just Esc with no next step."""
     import argparse
@@ -651,23 +623,26 @@ async def test_command_palette_includes_bundled_loadouts(app):
 
 
 # ---------------------------------------------------------------------------
-# Run: the arguments are the interface
+# The install modal outliving its app
 # ---------------------------------------------------------------------------
 
 
-async def test_run_asks_for_a_command_line_instead_of_running_a_bare_binary(app, monkeypatch):
-    """`nmap` with no arguments prints a warning and exits; `pyrit_scan` prints
-    its help. Running the bare binary is the one thing nobody means."""
-    from textual.widgets import DataTable, Input
+async def test_the_run_button_is_gone():
+    """Handing a live terminal to an arbitrary tool from inside a full-screen
+    app never worked reliably -- stdin ownership, suspend/resume and the
+    press-Enter pause each broke in a different way. Getting tools onto the
+    machine is loadout's job; running them is the shell's."""
+    from loadout.ui.tui.app import LoadoutBrowser
 
-    from loadout.ui.tui.app import RunScreen
-
-    monkeypatch.setattr("shutil.which", lambda _n: "/usr/bin/nmap")
-    ran: list = []
-    monkeypatch.setattr(
-        "loadout.ui.tui.app.LoadoutBrowser._run_command",
-        lambda self, cmdline, tool_id: ran.append(cmdline),
+    assert not hasattr(LoadoutBrowser, "action_run_tool")
+    assert not hasattr(LoadoutBrowser, "_run_command")
+    assert not any(
+        getattr(binding, "action", None) == "run_tool" for binding in LoadoutBrowser.BINDINGS
     )
+
+
+async def test_the_detail_pane_offers_no_run_button(app):
+    from textual.widgets import DataTable, Input
 
     async with app.run_test() as pilot:
         await pilot.pause()
@@ -675,186 +650,54 @@ async def test_run_asks_for_a_command_line_instead_of_running_a_bare_binary(app,
         await pilot.pause()
         pilot.app.query_one("#table", DataTable).focus()
         await pilot.pause()
-        pilot.app.action_run_tool()
-        await pilot.pause()
-
-        assert isinstance(pilot.app.screen, RunScreen)
-        # Pre-filled with the binary and a space, so arguments can be typed
-        # straight away.
-        assert pilot.app.screen.query_one("#cmdline", Input).value == "nmap "
-        assert ran == [], "nothing should run until the command line is confirmed"
+        labels = {str(b.label) for b in pilot.app.query("#detail Button")}
+        assert "Run" not in labels
+        assert not list(pilot.app.query("#btn-run"))
 
 
-async def test_confirming_the_run_screen_passes_the_whole_command_line(app, monkeypatch):
-    from textual.widgets import DataTable, Input
+async def test_output_arriving_after_the_screen_closes_is_dropped_not_raised():
+    """The executor drains a subprocess on a worker thread. Quitting mid-install
+    detaches the screen while that drain is still going, and `self.app` on a
+    detached widget raises NoActiveAppError -- which used to escape through the
+    executor and print a traceback for every line apt had left to say.
+    """
+    import argparse
 
-    monkeypatch.setattr("shutil.which", lambda _n: "/usr/bin/nmap")
-    ran: list = []
-    monkeypatch.setattr(
-        "loadout.ui.tui.app.LoadoutBrowser._run_command",
-        lambda self, cmdline, tool_id: ran.append((cmdline, tool_id)),
-    )
+    from loadout.providers.base import ProviderStatus
+    from loadout.ui.cli import Context
+    from loadout.ui.tui.app import InstallScreen
 
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        pilot.app.query_one("#query", Input).value = "nmap"
-        await pilot.pause()
-        pilot.app.query_one("#table", DataTable).focus()
-        await pilot.pause()
-        pilot.app.action_run_tool()
-        await pilot.pause()
+    args = argparse.Namespace(as_json=False, catalog=None, prefer=[])
+    screen = InstallScreen(Context(args=args), object(), "install")
+    screen.ctx._statuses = {"apt": ProviderStatus(name="apt", available=True)}
 
-        pilot.app.screen.query_one("#cmdline", Input).value = "nmap -sV 10.0.0.1"
-        pilot.app.screen.query_one("#btn-go").press()
-        await pilot.pause()
-
-    assert ran == [("nmap -sV 10.0.0.1", "nmap")]
+    # Never mounted: exactly the state a screen is in once the app has torn it
+    # down, and the state in which `self.app` blows up.
+    called: list = []
+    screen._post(called.append, "a line of apt output")
+    assert called == []
 
 
-async def test_cancelling_the_run_screen_runs_nothing(app, monkeypatch):
-    from textual.widgets import DataTable, Input
+async def test_a_failing_call_from_thread_stops_further_posts():
+    """Once the app refuses one update it will refuse the rest. Trying anyway
+    turns a clean shutdown into one exception per output line."""
+    import argparse
 
-    monkeypatch.setattr("shutil.which", lambda _n: "/usr/bin/nmap")
-    ran: list = []
-    monkeypatch.setattr(
-        "loadout.ui.tui.app.LoadoutBrowser._run_command",
-        lambda self, cmdline, tool_id: ran.append(cmdline),
-    )
+    from loadout.ui.cli import Context
+    from loadout.ui.tui.app import InstallScreen
 
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        pilot.app.query_one("#query", Input).value = "nmap"
-        await pilot.pause()
-        pilot.app.query_one("#table", DataTable).focus()
-        await pilot.pause()
-        pilot.app.action_run_tool()
-        await pilot.pause()
-        pilot.app.screen.query_one("#btn-cancel").press()
-        await pilot.pause()
+    args = argparse.Namespace(as_json=False, catalog=None, prefer=[])
+    screen = InstallScreen(Context(args=args), object(), "install")
 
-    assert ran == []
+    attempts: list = []
 
+    class DeadApp:
+        def call_from_thread(self, method, *a):
+            attempts.append(a)
+            raise RuntimeError("app is shutting down")
 
-async def test_a_shell_metacharacter_is_passed_as_an_argument_not_interpreted(app, monkeypatch):
-    """The box takes a command line, not a shell line. A user typing a pipe
-    should see the tool receive it, not have a shell act on it."""
-    import contextlib
-    import types
-
-    import loadout.ui.tui.app as app_module
-
-    captured: list = []
-    monkeypatch.setattr("shutil.which", lambda _n: "/usr/bin/nmap")
-    monkeypatch.setattr(
-        app_module.subprocess,
-        "run",
-        lambda argv, **kw: captured.append(argv) or types.SimpleNamespace(returncode=0),
-    )
-    monkeypatch.setattr("builtins.input", lambda *_a: "")
-    # The headless harness has no terminal to hand back, so App.suspend raises.
-    monkeypatch.setattr(
-        app_module.LoadoutBrowser, "suspend", lambda self: contextlib.nullcontext()
-    )
-
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        pilot.app._run_command("nmap -oN '; rm -rf /' target", "nmap")
-        await pilot.pause()
-
-    assert captured, "the command never ran"
-    assert captured[0] == ["nmap", "-oN", "; rm -rf /", "target"]
-
-
-async def test_an_unparseable_command_line_is_reported_not_run(app, monkeypatch):
-    import contextlib
-
-    import loadout.ui.tui.app as app_module
-
-    captured: list = []
-    monkeypatch.setattr("shutil.which", lambda _n: "/usr/bin/nmap")
-    monkeypatch.setattr(app_module.subprocess, "run", lambda *a, **k: captured.append(a))
-    monkeypatch.setattr(
-        app_module.LoadoutBrowser, "suspend", lambda self: contextlib.nullcontext()
-    )
-
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        pilot.app._run_command('nmap "unclosed', "nmap")
-        await pilot.pause()
-
-    assert captured == []
-
-
-async def test_run_is_refused_for_a_tool_with_no_binary(app):
-    """masscan has no binaries in the fixture, so there is nothing to prompt
-    for -- the screen must not open at all."""
-    from textual.widgets import DataTable, Input
-
-    from loadout.ui.tui.app import RunScreen
-
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        pilot.app.query_one("#query", Input).value = "masscan"
-        await pilot.pause()
-        pilot.app.query_one("#table", DataTable).focus()
-        await pilot.pause()
-        pilot.app.action_run_tool()
-        await pilot.pause()
-        assert not isinstance(pilot.app.screen, RunScreen)
-
-
-async def test_the_echoed_command_line_is_quoted_so_it_is_safe_to_paste(app, monkeypatch):
-    """`" ".join(argv)` turns a safely-quoted argument back into a shell line.
-    `nmap -oN "; rm -rf /"` ran harmlessly as one argv element, but echoing it
-    unquoted puts a destructive command on screen for someone to copy."""
-    import contextlib
-    import io
-    import types
-    from contextlib import redirect_stdout
-
-    import loadout.ui.tui.app as app_module
-
-    monkeypatch.setattr("shutil.which", lambda _n: "/usr/bin/nmap")
-    monkeypatch.setattr(
-        app_module.subprocess, "run", lambda *a, **k: types.SimpleNamespace(returncode=0)
-    )
-    monkeypatch.setattr("builtins.input", lambda *_a: "")
-    monkeypatch.setattr(
-        app_module.LoadoutBrowser, "suspend", lambda self: contextlib.nullcontext()
-    )
-
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        buffer = io.StringIO()
-        with redirect_stdout(buffer):
-            pilot.app._run_command("nmap -oN '; rm -rf /' target", "nmap")
-        echoed = buffer.getvalue()
-
-    assert "'; rm -rf /'" in echoed, echoed
-    assert "-oN ; rm -rf / target" not in echoed
-
-
-async def test_a_failing_command_reports_its_exit_code(app, monkeypatch):
-    """counterfit installs and then dies on an import error. Without the code,
-    a traceback that has scrolled past leaves 'it did nothing'."""
-    import contextlib
-    import types
-
-    import loadout.ui.tui.app as app_module
-
-    prompts: list = []
-    monkeypatch.setattr("shutil.which", lambda _n: "/usr/bin/counterfit")
-    monkeypatch.setattr(
-        app_module.subprocess, "run", lambda *a, **k: types.SimpleNamespace(returncode=1)
-    )
-    monkeypatch.setattr("builtins.input", lambda prompt="": prompts.append(prompt) or "")
-    monkeypatch.setattr(
-        app_module.LoadoutBrowser, "suspend", lambda self: contextlib.nullcontext()
-    )
-
-    async with app.run_test() as pilot:
-        await pilot.pause()
-        pilot.app._run_command("counterfit --help", "counterfit")
-        await pilot.pause()
-
-    assert prompts and "exit 1" in prompts[0]
+    screen._app = DeadApp()
+    screen._live = True
+    screen._post(print, "one")
+    screen._post(print, "two")
+    assert len(attempts) == 1

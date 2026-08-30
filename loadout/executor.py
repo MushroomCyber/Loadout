@@ -32,7 +32,7 @@ from typing import Any
 
 from .errors import LoadoutError, PrivilegeError
 from .planner import ACTION_FETCH, ACTION_INSTALL, Plan, PlannedAction
-from .policy import Privilege, detect_privilege, elevate, subprocess_env
+from .policy import Privilege, deliberate_env, detect_privilege, elevate, subprocess_env
 from .providers.apt import AptProvider, apt_status_fd_args
 from .providers.base import CommandStep, PythonStep, Step
 
@@ -297,7 +297,14 @@ class Executor:
 
         argv = list(step.argv)
         if step.elevate:
-            argv = elevate(argv, privilege=self.privilege)
+            # The env we set below is applied to the *sudo* process, and sudo's
+            # env_reset drops it before exec'ing the real command. Name it here
+            # so elevate() can carry it across.
+            argv = elevate(
+                argv,
+                privilege=self.privilege,
+                preserve=deliberate_env(step.env),
+            )
 
         if self.dry_run:
             context.progress(f"[dry-run] {' '.join(argv)}")
@@ -311,14 +318,20 @@ class Executor:
             # makes the user re-run the command by hand to learn anything.
             tail = [line for line in self._recent_output if line.strip()][-4:]
             detail = ("\n  " + "\n  ".join(tail)) if tail else ""
+            # step.argv, not argv: the latter now starts with the sudo/env
+            # wrapper, and "`sudo` exited 100" names the wrong program.
             raise LoadoutError(
-                f"`{Path(argv[0]).name}` exited {returncode}{detail}",
-                remediation=_troubleshoot(argv),
+                f"`{Path(step.argv[0]).name}` exited {returncode}{detail}",
+                remediation=_troubleshoot(list(step.argv)),
             )
 
     def _spawn(self, argv: list[str], step: CommandStep, context: ExecContext) -> int:
         env = subprocess_env(step.env)
-        use_status_fd = (argv and "apt-get" in argv[0]) or "apt-get" in argv[:2]
+        # Decided from the step, not from `argv`: by the time it reaches here
+        # argv may be wrapped in `sudo env VAR=value ...`, and looking for
+        # apt-get in the first two tokens then finds the wrapper instead. The
+        # step knows what it is regardless of how it was elevated.
+        use_status_fd = bool(step.argv) and Path(step.argv[0]).name == "apt-get"
 
         if use_status_fd:
             # fd 1 is our own stdout -- already piped below, always open, and

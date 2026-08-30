@@ -221,3 +221,98 @@ class TestChecksumParsing:
     def test_path_prefixes_are_matched_on_basename(self):
         text = f"{'b' * 64}  ./dist/tool_linux_amd64.tar.gz\n"
         assert parse_checksum_file(text, "tool_linux_amd64.tar.gz") == "b" * 64
+
+
+# ---------------------------------------------------------------------------
+# Crossing the sudo boundary
+# ---------------------------------------------------------------------------
+
+
+def test_elevate_carries_named_variables_across_sudos_env_reset():
+    """sudo runs with `env_reset`: the environment handed to the sudo process is
+    discarded before the real command is exec'd, and DEBIAN_FRONTEND is not in
+    Debian's env_keep. Setting it on the subprocess -- which is what
+    subprocess_env alone does -- therefore never reached apt-get, and dpkg
+    configured packages with the interactive dialog frontend. wireshark-common
+    asks whether non-superusers may capture packets, so an install froze on a
+    prompt drawn underneath the TUI.
+    """
+    from loadout.policy import Privilege, elevate
+
+    argv = elevate(
+        ["apt-get", "install", "-y", "--", "wireshark"],
+        privilege=Privilege(is_root=False, sudo_path="/usr/bin/sudo"),
+        preserve={"DEBIAN_FRONTEND": "noninteractive"},
+    )
+    assert argv[0] == "/usr/bin/sudo"
+    assert argv[1].endswith("env")
+    assert "DEBIAN_FRONTEND=noninteractive" in argv
+    # env must come before the command, or it is an argument to apt-get.
+    assert argv.index("DEBIAN_FRONTEND=noninteractive") < argv.index("apt-get")
+
+
+def test_elevate_does_not_wrap_in_env_when_already_root():
+    """No sudo means no env_reset: the subprocess environment arrives intact,
+    and an extra exec through env would be noise in the audit log."""
+    from loadout.policy import Privilege, elevate
+
+    argv = elevate(
+        ["apt-get", "install", "-y"],
+        privilege=Privilege(is_root=True, sudo_path=None),
+        preserve={"DEBIAN_FRONTEND": "noninteractive"},
+    )
+    assert argv[0] == "apt-get"
+
+
+def test_elevate_preserves_nothing_unless_asked():
+    """Passing the whole environment through sudo is the thing env_reset exists
+    to prevent. Preservation is opt-in, by name."""
+    from loadout.policy import Privilege, elevate
+
+    argv = elevate(
+        ["apt-get", "update"],
+        privilege=Privilege(is_root=False, sudo_path="/usr/bin/sudo"),
+    )
+    assert argv == ["/usr/bin/sudo", "apt-get", "update"]
+
+
+def test_a_preserved_variable_name_is_validated():
+    """The assignments land in an argv that runs as root. A name carrying its
+    own `=` would smuggle a second variable in."""
+    import pytest
+
+    from loadout.errors import UnsafeArgument
+    from loadout.policy import Privilege, elevate
+
+    for bad in ("PATH=/tmp/x LD_PRELOAD", "lowercase", "HAS SPACE", ""):
+        with pytest.raises(UnsafeArgument):
+            elevate(
+                ["apt-get", "update"],
+                privilege=Privilege(is_root=False, sudo_path="/usr/bin/sudo"),
+                preserve={bad: "x"},
+            )
+
+
+def test_a_preserved_value_rejects_control_characters():
+    import pytest
+
+    from loadout.errors import UnsafeArgument
+    from loadout.policy import Privilege, elevate
+
+    with pytest.raises(UnsafeArgument):
+        elevate(
+            ["apt-get", "update"],
+            privilege=Privilege(is_root=False, sudo_path="/usr/bin/sudo"),
+            preserve={"DEBIAN_FRONTEND": "noninteractive\nEVIL=1"},
+        )
+
+
+def test_deliberate_env_is_the_noninteractive_set_plus_the_steps_own():
+    from loadout.policy import deliberate_env
+
+    env = deliberate_env({"GIT_TERMINAL_PROMPT": "0"})
+    assert env["DEBIAN_FRONTEND"] == "noninteractive"
+    assert env["NEEDRESTART_MODE"] == "a"
+    assert env["GIT_TERMINAL_PROMPT"] == "0"
+    # Not the inherited environment -- only what loadout sets on purpose.
+    assert "PATH" not in env
