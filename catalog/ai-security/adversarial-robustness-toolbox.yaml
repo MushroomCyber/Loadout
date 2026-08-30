@@ -1,0 +1,19 @@
+id: adversarial-robustness-toolbox
+summary: Evasion, poisoning, extraction and inference attacks against ML models
+description: ART implements the standard academic attacks against machine-learning models -- evasion,
+  poisoning, model extraction and membership inference -- plus the defences, across most major frameworks.
+  The reference implementation most other ML attack tooling is measured against.
+categories:
+- ai-security
+tags:
+- ml
+- adversarial
+- research
+phases:
+- discovery
+homepage: https://github.com/Trusted-AI/adversarial-robustness-toolbox
+repo: Trusted-AI/adversarial-robustness-toolbox
+license: MIT
+install:
+- provider: pipx
+  package: adversarial-robustness-toolbox

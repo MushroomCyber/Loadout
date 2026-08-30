@@ -1,0 +1,26 @@
+id: dark-moon
+summary: Autonomous pentesting platform with an LLM planner and a privacy gateway
+description: 'Dark-Moon plans and executes assessments with an LLM ''brain'' driving domain agents for
+  web, Active Directory, Kubernetes and network. Its privacy gateway tokenises IPs, hostnames and credentials
+  before anything reaches the model, which is what makes it usable on engagements where the scope cannot
+  leave the perimeter.
+
+
+  No packaged install: clone the repository and run `./install.sh`, which needs Docker and Docker Compose
+  plus an LLM provider. Launch assessments with `./darkmoon.sh`.'
+categories:
+- ai-security
+tags:
+- llm
+- agents
+- automation
+- docker
+phases:
+- discovery
+- execution
+homepage: https://github.com/ASCIT31/Dark-Moon
+repo: ASCIT31/Dark-Moon
+license: GPL-3.0
+alternatives:
+- hexstrike-ai
+install: []

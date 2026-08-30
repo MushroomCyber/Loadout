@@ -1,0 +1,18 @@
+id: agentic-security
+summary: Fuzzer and attack harness for LLM agents
+description: Aims a library of jailbreak and injection payloads at an agent endpoint and reports which
+  get through. Targets agents specifically -- the tool-calling loop, not just the model.
+categories:
+- ai-security
+tags:
+- llm
+- agents
+- fuzzing
+phases:
+- discovery
+homepage: https://github.com/msoedov/agentic_security
+repo: msoedov/agentic_security
+license: Apache-2.0
+install:
+- provider: pipx
+  package: agentic-security

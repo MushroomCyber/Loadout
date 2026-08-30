@@ -1,0 +1,24 @@
+id: promptfoo
+summary: Prompt evaluation and automated LLM red-teaming
+description: promptfoo runs a declarative suite of assertions against prompts and models, and includes
+  a red-team mode that generates adversarial inputs for a described application. The config-file approach
+  makes it the easiest of these to put in CI.
+categories:
+- ai-security
+tags:
+- llm
+- red-team
+- ci
+phases:
+- discovery
+binaries:
+- promptfoo
+homepage: https://github.com/promptfoo/promptfoo
+repo: promptfoo/promptfoo
+license: MIT
+verify: promptfoo --version
+alternatives:
+- garak
+install:
+- provider: npm
+  package: promptfoo

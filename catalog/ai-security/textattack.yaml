@@ -1,0 +1,20 @@
+id: textattack
+summary: Adversarial attacks and data augmentation for NLP models
+description: TextAttack generates adversarial examples against text classifiers -- the NLP equivalent
+  of a fuzzing harness -- and is useful for probing content filters and moderation models.
+categories:
+- ai-security
+tags:
+- ml
+- nlp
+- adversarial
+phases:
+- discovery
+binaries:
+- textattack
+homepage: https://github.com/QData/TextAttack
+repo: QData/TextAttack
+license: MIT
+install:
+- provider: pipx
+  package: textattack

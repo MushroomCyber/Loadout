@@ -32,6 +32,9 @@ CATEGORIES: dict[str, str] = {
     "mobile": "Mobile security",
     "cloud": "Cloud & container security",
     "hardware": "Hardware & embedded",
+    # Testing AI systems, and testing the model files themselves -- a routine
+    # line item on web and cloud engagements since about 2024.
+    "ai-security": "AI & LLM security",
     # defensive / analytical
     "forensics": "Digital forensics",
     "incident-response": "Incident response & DFIR",

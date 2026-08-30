@@ -1,0 +1,25 @@
+id: hexstrike-ai
+summary: MCP server exposing 150+ security tools to AI agents
+description: 'HexStrike AI is an MCP server that lets an AI agent drive real security tooling -- nmap,
+  nuclei, sqlmap, ghidra and around 150 others -- for authorised pentesting and bug bounty work, with
+  human approval on execution.
+
+
+  No packaged install: clone the repository, create a virtualenv, `pip install -r requirements.txt`, and
+  run `python3 hexstrike_server.py`. The tools it drives are the ones this catalog already installs.'
+categories:
+- ai-security
+tags:
+- llm
+- agents
+- mcp
+- automation
+phases:
+- discovery
+- execution
+homepage: https://github.com/0x4m4/hexstrike-ai
+repo: 0x4m4/hexstrike-ai
+license: MIT
+alternatives:
+- dark-moon
+install: []

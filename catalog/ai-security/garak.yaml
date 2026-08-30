@@ -1,0 +1,26 @@
+id: garak
+summary: 'LLM vulnerability scanner: jailbreaks, prompt injection, data leakage'
+description: garak probes a large language model for the failure modes that matter on an engagement --
+  prompt injection, jailbreaks, training-data leakage, toxicity and package hallucination -- across a
+  few dozen built-in probe families. Works against hosted APIs and local models.
+categories:
+- ai-security
+tags:
+- llm
+- red-team
+- scanner
+phases:
+- discovery
+- initial-access
+binaries:
+- garak
+homepage: https://github.com/NVIDIA/garak
+repo: NVIDIA/garak
+license: Apache-2.0
+verify: garak --version
+alternatives:
+- pyrit
+- promptfoo
+install:
+- provider: pipx
+  package: garak

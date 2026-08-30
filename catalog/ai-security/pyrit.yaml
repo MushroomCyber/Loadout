@@ -1,0 +1,25 @@
+id: pyrit
+summary: Microsoft's risk-identification framework for generative AI systems
+description: 'PyRIT automates red-teaming of generative AI: it drives multi-turn attack conversations
+  against a target model, scores the responses, and reports which objectives succeeded. Built for repeatable
+  assessment rather than one-off prompts.
+
+
+  Not to be confused with the old `pyrit` WPA-PSK cracking tool, which is unrelated, Python 2, and no
+  longer packaged by Debian or Kali.'
+categories:
+- ai-security
+tags:
+- llm
+- red-team
+- microsoft
+phases:
+- discovery
+homepage: https://github.com/Azure/PyRIT
+repo: Azure/PyRIT
+license: MIT
+alternatives:
+- garak
+install:
+- provider: pipx
+  package: pyrit

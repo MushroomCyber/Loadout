@@ -1,0 +1,25 @@
+id: fickling
+summary: Decompile, analyse and rewrite Python pickle bytecode
+description: Trail of Bits' pickle tool. Where the scanners answer 'is this dangerous', fickling shows
+  you exactly what the pickle does by decompiling it back to Python -- the one to reach for when you need
+  to explain a finding rather than just flag it.
+categories:
+- ai-security
+- reverse
+tags:
+- ml
+- supply-chain
+- reverse-engineering
+phases:
+- discovery
+binaries:
+- fickling
+homepage: https://github.com/trailofbits/fickling
+repo: trailofbits/fickling
+license: LGPL-3.0
+alternatives:
+- picklescan
+- modelscan
+install:
+- provider: pipx
+  package: fickling

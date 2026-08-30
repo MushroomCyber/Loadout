@@ -1,0 +1,24 @@
+id: picklescan
+summary: Detect malicious payloads in Python pickle files
+description: Scans pickle files -- including the ones inside PyTorch checkpoints and other model archives
+  -- for the globals that make loading one arbitrary code execution.
+categories:
+- ai-security
+- malware
+tags:
+- ml
+- supply-chain
+- scanner
+phases:
+- discovery
+binaries:
+- picklescan
+homepage: https://github.com/mmaitre314/picklescan
+repo: mmaitre314/picklescan
+license: MIT
+alternatives:
+- modelscan
+- fickling
+install:
+- provider: pipx
+  package: picklescan

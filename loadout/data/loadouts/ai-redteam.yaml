@@ -1,0 +1,17 @@
+slug: ai-redteam
+name: AI Red Team
+description: Testing LLM applications, agents, and the model files themselves
+tags:
+- ai-security
+- red-team
+tools:
+- adversarial-robustness-toolbox
+- agentic-security
+- fickling
+- garak
+- llm-guard
+- modelscan
+- picklescan
+- promptfoo
+- pyrit
+- textattack

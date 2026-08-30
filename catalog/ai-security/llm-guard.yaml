@@ -1,0 +1,20 @@
+id: llm-guard
+summary: Input and output scanners for LLM applications
+description: 'The blue-team side: a library of scanners that sit in front of and behind a model, catching
+  prompt injection, secrets, PII and toxic output. Useful on an engagement for working out what the target''s
+  defences actually catch.'
+categories:
+- ai-security
+- detection
+tags:
+- llm
+- blue-team
+- defence
+phases:
+- discovery
+homepage: https://github.com/protectai/llm-guard
+repo: protectai/llm-guard
+license: MIT
+install:
+- provider: pipx
+  package: llm-guard

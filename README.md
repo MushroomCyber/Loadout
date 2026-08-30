@@ -218,6 +218,7 @@ loadout loadout diff acme-webapp-2026
 | `dfir-responder` | Host and log forensics |
 | `detection-engineer` | Building and validating detections |
 | `cloud-auditor` | Cloud and container posture |
+| `ai-redteam` | LLM applications, agents, and model-file scanning |
 | `forensics-starter`, `osint-minimal`, `ctf-basics` | Starter kits |
 
 ### Take a kit somewhere with no network

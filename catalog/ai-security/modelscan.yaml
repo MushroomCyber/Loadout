@@ -1,0 +1,26 @@
+id: modelscan
+summary: Scan model files for code that executes on load
+description: A pickle is executable code, and most model formats are pickles. modelscan reads a saved
+  model without loading it and reports the operators that would run -- the same job a file scanner does,
+  on a file type nobody treats as executable.
+categories:
+- ai-security
+- malware
+tags:
+- ml
+- supply-chain
+- scanner
+phases:
+- discovery
+binaries:
+- modelscan
+homepage: https://github.com/protectai/modelscan
+repo: protectai/modelscan
+license: Apache-2.0
+verify: modelscan --version
+alternatives:
+- picklescan
+- fickling
+install:
+- provider: pipx
+  package: modelscan

@@ -172,12 +172,18 @@ gpg --armor --export <fingerprint>            # the block to paste in
 
 `recon` `web` `network` `wireless` `exploitation` `post-exploitation`
 `password` `vuln-scan` `fuzzing` `database` `social` `mobile` `cloud`
-`hardware` `forensics` `incident-response` `detection` `monitoring`
-`sniffing` `reverse` `malware` `crypto` `threat-intel` `reporting`
-`utility` `other`
+`hardware` `ai-security` `forensics` `incident-response` `detection`
+`monitoring` `sniffing` `reverse` `malware` `crypto` `threat-intel`
+`reporting` `utility` `other`
 
 The vocabulary is deliberately wider than offence: "all good security tools"
 includes the blue and purple team, or the name overpromises.
+
+`ai-security` covers both halves of the problem: testing AI systems (prompt
+injection, jailbreaks, agent harnesses) and testing the *model files*
+themselves. The second is easy to overlook — a pickle is executable code and
+most model formats are pickles, so `modelscan` and `picklescan` are filed under
+`malware` too.
 
 ## Phases
 
