@@ -5,9 +5,10 @@ description: 'A pickle is executable code, and most model formats are pickles. m
   on a file type nobody treats as executable.
 
 
-  Upstream pins `python_requires <3.13`, so `pipx install` fails on a current Kali (Python 3.13). Use
-  picklescan there, or run modelscan under an older interpreter with `pipx install --python python3.12
-  modelscan`.'
+  Upstream pins `requires_python >=3.10,<3.13`. Loadout builds the pipx venv with a matching interpreter
+  when the machine has one, and refuses the install with that explanation when it does not — which is
+  the case on a stock Kali, where 3.13 is the only Python present. Install python3.12 to use it, or use
+  picklescan, which covers the same ground with no such pin.'
 categories:
 - ai-security
 - malware
@@ -29,3 +30,4 @@ alternatives:
 install:
 - provider: pipx
   package: modelscan
+  requires_python: '>=3.10,<3.13'

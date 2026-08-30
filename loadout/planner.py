@@ -110,6 +110,9 @@ class Planner:
         self.preferred = [p.strip().lower() for p in (preferred or []) if p.strip()]
         #: Optional pre-fetched "what each provider already has" map.
         self.installed = installed or {}
+        #: Routes ruled out by the provider itself, kept so the error can say
+        #: *why* rather than only that nothing was available.
+        self._unusable: dict[str, list[str]] = {}
 
     # -- resolution --------------------------------------------------------
 
@@ -131,6 +134,13 @@ class Planner:
                 provider = get_provider(method.provider)
             except KeyError:
                 continue
+            # The backend is installed, but ask it whether it can do *this*
+            # job. A package pinned below the machine's Python is a route that
+            # will certainly fail, and finding that out now costs nothing.
+            reason = provider.unusable_reason(method)
+            if reason:
+                self._unusable.setdefault(tool.id, []).append(f"{method.provider}: {reason}")
+                continue
             preference = (
                 self.preferred.index(method.provider)
                 if method.provider in self.preferred
@@ -150,7 +160,9 @@ class Planner:
         viable = self.viable_methods(tool)
         if not viable:
             raise NoViableProvider(
-                tool.id, tried=[m.provider for m in tool.install]
+                tool.id,
+                tried=[m.provider for m in tool.install],
+                unusable=self._unusable.get(tool.id, []),
             )
         return viable[0]
 
@@ -211,7 +223,14 @@ class Planner:
                 else:
                     provider_name, method = self.choose_method(tool)
             except NoViableProvider as exc:
-                plan.skipped.append(SkippedTool(tool_id, exc.message))
+                # The reason is the actionable half. "No available installer"
+                # alone sends someone to install a package manager they already
+                # have, when the real answer is "this package needs a Python
+                # this machine does not have".
+                detail = "; ".join(exc.unusable)
+                plan.skipped.append(
+                    SkippedTool(tool_id, f"{exc.message} — {detail}" if detail else exc.message)
+                )
                 continue
 
             already = self.is_installed(tool, provider_name, method)
@@ -275,7 +294,7 @@ def _coalesce_apt(plan: Plan, action: str) -> Plan:
     verb = "install" if action == ACTION_INSTALL else "remove"
     argv = [*provider._base_argv(), verb, "-y"]
     if action == ACTION_INSTALL:
-        argv += ["-o", "Dpkg::Options::=--force-confold"]
+        argv += list(provider.DPKG_NONINTERACTIVE)
     argv += ["--", *packages]
 
     merged_step = CommandStep(

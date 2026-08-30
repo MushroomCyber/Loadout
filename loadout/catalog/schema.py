@@ -195,6 +195,14 @@ def _validate_method_spec(provider: str, method: dict[str, Any], label: str) -> 
     # A signature block is checked at catalog-validate time so a typo fails
     # review rather than an install on someone else's machine -- by which
     # point the artifact is already downloaded.
+    if "requires_python" in spec:
+        from ..pyversion import InvalidSpecifier, validate_specifier
+
+        try:
+            validate_specifier(str(spec["requires_python"]))
+        except InvalidSpecifier as exc:
+            return [f"{label}: requires_python: {exc}"]
+
     if "signature" in spec:
         from ..signature import validate_spec as validate_signature
 

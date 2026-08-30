@@ -1,7 +1,11 @@
 id: theharvester
 summary: OSINT gathering of emails, hosts and employee names
-description: The package contains a tool for gathering subdomain names, e-mail addresses, virtual hosts,
+description: 'The package contains a tool for gathering subdomain names, e-mail addresses, virtual hosts,
   open ports/ banners, and employee names from different public sources (search engines, pgp key servers).
+
+
+  Installed from the distribution repositories. The `theHarvester` package on PyPI is a single 0.0.1 release
+  from 2019 against a project now on 4.x, so there is deliberately no pipx route.'
 categories:
 - recon
 tags:
@@ -23,6 +27,4 @@ install:
   - debian
   - parrot
   - ubuntu
-- provider: pipx
-  package: theHarvester
 version: 4.10.1-0kali2

@@ -131,6 +131,53 @@ class PipxProvider(_ToolchainProvider):
     version_flag = "--version"
     default_priority = 25
 
+    def _requires_python(self, method: InstallMethod) -> str:
+        return str(method.spec.get("requires_python") or "").strip()
+
+    def unusable_reason(self, method: InstallMethod) -> str:
+        """Refuse a route no interpreter on this machine can satisfy."""
+        specifier = self._requires_python(method)
+        if not specifier:
+            return ""
+        from ..pyversion import InvalidSpecifier, explain_gap, find_interpreter
+
+        try:
+            if find_interpreter(specifier) is not None:
+                return ""
+            return explain_gap(specifier)
+        except InvalidSpecifier as exc:  # pragma: no cover - schema rejects these
+            return f"unreadable requires_python: {exc}"
+
+    def plan_install(self, tool: Tool, method: InstallMethod) -> list[Step]:
+        """Pick the interpreter explicitly when the package constrains it.
+
+        pipx builds the venv with whatever `python3` happens to be, so a
+        package supporting 3.10-3.12 fails on a 3.13 box even when 3.12 is
+        installed alongside. Naming the interpreter is the difference between
+        "cannot install this" and "installs fine".
+        """
+        specifier = self._requires_python(method)
+        if not specifier:
+            return super().plan_install(tool, method)
+
+        from ..pyversion import find_interpreter, python_from_path
+
+        interpreter = find_interpreter(specifier)
+        if interpreter is None:
+            # The planner screens this out via unusable_reason(); reaching here
+            # means someone called the provider directly.
+            raise NotImplementedError(self.unusable_reason(method))
+
+        spec = self._resolve_spec(method)
+        argv = ["pipx", "install", "--python", interpreter, spec]
+        return [
+            CommandStep(
+                argv=argv,
+                description=f"pipx install {spec} (on {python_from_path(interpreter)})",
+                elevate=self.needs_root,
+            )
+        ]
+
     def list_installed(self) -> set[str]:
         import json
 

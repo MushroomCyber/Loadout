@@ -409,3 +409,118 @@ def test_apt_install_never_prompts_about_a_config_file():
     argv = AptProvider().plan_install(tool, method)[0].argv
     assert "Dpkg::Options::=--force-confdef" in argv
     assert "Dpkg::Options::=--force-confold" in argv
+
+
+# ---------------------------------------------------------------------------
+# A route the machine cannot run
+# ---------------------------------------------------------------------------
+
+
+def test_pipx_names_the_interpreter_when_the_package_pins_one(monkeypatch):
+    """pipx builds the venv with whatever `python3` is, so a package supporting
+    3.10-3.12 fails on a 3.13 box even when 3.12 is installed alongside."""
+    from loadout.model import InstallMethod, Tool
+    from loadout.providers.lang import PipxProvider
+
+    monkeypatch.setattr("loadout.pyversion.find_interpreter", lambda _s: "/usr/bin/python3.12")
+    method = InstallMethod(
+        provider="pipx", spec={"package": "modelscan", "requires_python": ">=3.10,<3.13"}
+    )
+    step = PipxProvider().plan_install(Tool(id="modelscan"), method)[0]
+    assert step.argv == ["pipx", "install", "--python", "/usr/bin/python3.12", "modelscan"]
+    assert "python3.12" in step.description
+
+
+def test_pipx_leaves_the_argv_alone_when_no_interpreter_is_pinned():
+    """Most packages have no meaningful pin; adding --python to every install
+    would break the day a machine's python3 moves."""
+    from loadout.model import InstallMethod, Tool
+    from loadout.providers.lang import PipxProvider
+
+    method = InstallMethod(provider="pipx", spec={"package": "garak"})
+    step = PipxProvider().plan_install(Tool(id="garak"), method)[0]
+    assert step.argv == ["pipx", "install", "garak"]
+
+
+def test_a_route_no_interpreter_satisfies_is_reported_before_anything_runs(monkeypatch):
+    """Stock Kali has 3.13 and nothing else, so modelscan cannot be installed
+    there at all. The answer must be a sentence, not a pip traceback."""
+    from loadout.model import InstallMethod
+    from loadout.providers.lang import PipxProvider
+
+    monkeypatch.setattr("loadout.pyversion.find_interpreter", lambda _s: None)
+    monkeypatch.setattr("loadout.pyversion.explain_gap", lambda s: f"needs Python {s}; has 3.13.12")
+    method = InstallMethod(
+        provider="pipx", spec={"package": "modelscan", "requires_python": ">=3.10,<3.13"}
+    )
+    reason = PipxProvider().unusable_reason(method)
+    assert ">=3.10,<3.13" in reason
+    assert "3.13.12" in reason
+
+
+def test_a_usable_route_reports_no_reason(monkeypatch):
+    from loadout.model import InstallMethod
+    from loadout.providers.lang import PipxProvider
+
+    monkeypatch.setattr("loadout.pyversion.find_interpreter", lambda _s: "/usr/bin/python3")
+    method = InstallMethod(
+        provider="pipx", spec={"package": "pyrit", "requires_python": ">=3.10,<3.15"}
+    )
+    assert PipxProvider().unusable_reason(method) == ""
+    assert PipxProvider().unusable_reason(InstallMethod(provider="pipx", spec={"package": "x"})) == ""
+
+
+def test_the_planner_drops_an_unusable_route_and_keeps_the_reason(catalog, all_available, monkeypatch):
+    """A route that will certainly fail must not be planned. When it was the
+    only route, the error has to say why -- "install a package manager" is
+    wrong advice when the manager is installed and the package is the problem.
+    """
+    from loadout.errors import NoViableProvider
+    from loadout.model import InstallMethod, Tool
+    from loadout.planner import Planner
+    from loadout.providers.lang import PipxProvider
+
+    monkeypatch.setattr(
+        PipxProvider, "unusable_reason", lambda self, m: "needs Python >=3.10,<3.13; has 3.13.12"
+    )
+    tool = Tool(
+        id="modelscan",
+        install=(
+            InstallMethod(
+                provider="pipx", spec={"package": "modelscan", "requires_python": ">=3.10,<3.13"}
+            ),
+        ),
+    )
+    planner = Planner(catalog, distro="kali", statuses=all_available)
+    assert planner.viable_methods(tool) == []
+    with pytest.raises(NoViableProvider) as caught:
+        planner.choose_method(tool)
+    assert "3.13.12" in caught.value.remediation
+
+
+def test_the_merged_apt_transaction_is_as_noninteractive_as_a_single_one(catalog, all_available):
+    """Installing a loadout merges every apt action into one apt-get call. That
+    merged argv is built separately from the single-package one, and drifted:
+    it carried --force-confold but not --force-confdef. It is the path most
+    likely to meet a debconf question, since it installs the most packages.
+    """
+    from loadout.planner import ACTION_INSTALL, Planner
+
+    plan = Planner(catalog, distro="kali", statuses=all_available).plan(
+        ["nmap", "masscan"], action=ACTION_INSTALL, skip_installed=False
+    )
+    merged = [s for a in plan.actions for s in a.steps if "apt-get" in s.argv[0]]
+    assert merged, "expected a merged apt step"
+    argv = merged[0].argv
+    assert "Dpkg::Options::=--force-confdef" in argv
+    assert "Dpkg::Options::=--force-confold" in argv
+
+
+def test_both_apt_install_paths_use_one_definition_of_the_options():
+    """Two copies of the same argv fragment is how the drift happened."""
+    import inspect
+
+    from loadout.providers.apt import AptProvider
+
+    source = inspect.getsource(AptProvider)
+    assert source.count('"Dpkg::Options::=--force-confold"') == 1

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from loadout.catalog.compile import load_source_tree
@@ -261,3 +263,66 @@ class TestSignatureValidation:
         entry = self._entry(None)
         entry["install"][0].pop("signature")
         assert validate_entry(entry, origin="test.yaml").errors == []
+
+
+# ---------------------------------------------------------------------------
+# Install routes that name a real package
+# ---------------------------------------------------------------------------
+
+
+def _pipx_routes() -> list[tuple[str, str, dict]]:
+    """(tool id, package, method) for every pipx route in the YAML source."""
+    import yaml
+
+    root = Path(__file__).resolve().parent.parent / "catalog"
+    found = []
+    for path in root.rglob("*.yaml"):
+        entry = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for method in entry.get("install") or []:
+            if method.get("provider") == "pipx":
+                found.append((entry["id"], method["package"], method))
+    return sorted(found)
+
+
+def test_no_pipx_route_points_at_a_package_that_does_not_exist():
+    """netexec had one. There is no `netexec` on PyPI -- upstream ships through
+    apt and its own installer -- so the route was a package nobody published,
+    and it only stayed hidden because apt is tried first on Kali.
+
+    The list is what was verified against the live index; adding a route means
+    checking it and adding it here, which is the point.
+    """
+    verified = {
+        "adversarial-robustness-toolbox", "agentic-security", "counterfit",
+        "fickling", "garak", "impacket", "mitmproxy", "modelscan", "picklescan",
+        "prowler", "pyrit", "scoutsuite", "sigma-cli", "sqlmap", "textattack",
+        "volatility3",
+    }
+    unverified = sorted({pkg for _t, pkg, _m in _pipx_routes()} - verified)
+    assert unverified == [], (
+        f"unverified pipx packages: {unverified} -- confirm each exists on PyPI, "
+        "is not a reserved-name placeholder, and installs a command"
+    )
+
+
+def test_no_pipx_route_points_at_a_reserved_name_placeholder():
+    """`spiderfoot` on PyPI is a 2026 placeholder whose own summary reads
+    "Reserved name placeholder. No functionality."; `theHarvester` is a single
+    0.0.1 from 2019 against a project now on 4.x. Both had routes inferred from
+    the tool id when the catalog was seeded. A security tool installing an empty
+    package under a name someone else controls is the wrong failure to have.
+    """
+    known_placeholders = {"spiderfoot", "theHarvester"}
+    packages = {pkg for _t, pkg, _m in _pipx_routes()}
+    assert not (packages & known_placeholders)
+
+
+def test_every_requires_python_specifier_parses():
+    """A typo here would silently rule the route out on every machine."""
+    from loadout.pyversion import validate_specifier
+
+    for tool_id, _pkg, method in _pipx_routes():
+        specifier = method.get("requires_python")
+        if specifier:
+            validate_specifier(specifier)  # raises InvalidSpecifier on a typo
+            assert tool_id

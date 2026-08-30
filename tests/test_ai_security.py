@@ -201,3 +201,14 @@ def test_superseded_tools_point_at_a_maintained_replacement():
         replacement = by_id[tool_id].get("deprecated_by")
         assert replacement, f"{tool_id} is unmaintained but names no replacement"
         assert replacement in by_id, f"{tool_id} points at unknown {replacement!r}"
+
+
+def test_modelscan_declares_the_python_pin_that_makes_it_fail_on_kali():
+    """Upstream pins requires_python >=3.10,<3.13 and Kali ships only 3.13.
+    Declared, the planner refuses it with that sentence; undeclared, the user
+    gets forty lines of pip output after the download has already happened."""
+    by_id = {e["id"]: e for e in entries()}
+    routes = by_id["modelscan"]["install"]
+    pipx = [m for m in routes if m["provider"] == "pipx"]
+    assert pipx, "modelscan lost its pipx route"
+    assert pipx[0]["requires_python"] == ">=3.10,<3.13"

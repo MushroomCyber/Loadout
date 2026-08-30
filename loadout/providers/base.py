@@ -87,6 +87,18 @@ class Provider(ABC):
     executables: tuple[str, ...] = ()
     #: True when its operations need root.
     needs_root: bool = False
+
+    def unusable_reason(self, method: InstallMethod) -> str:
+        """Why this specific route cannot work here, or "" if it can.
+
+        Distinct from :class:`ProviderStatus`, which answers "is this backend
+        installed at all". A backend can be perfectly healthy and still be
+        unable to install one particular package -- pipx is fine, but it cannot
+        put a package pinned to Python <3.13 on a machine that only has 3.13.
+        Knowing that at planning time turns a wall of pip output into a
+        sentence, and turns it up before anything is downloaded.
+        """
+        return ""
     #: Lower wins when several providers can install the same tool.
     default_priority: int = 50
 

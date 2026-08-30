@@ -6,12 +6,16 @@ Carries the fixes for the privileged path:
   remove (the previous release validated only on install);
 * ``--`` always separates options from package names, so a name beginning with
   ``-`` can never be read as a flag;
-* ``DEBIAN_FRONTEND=noninteractive`` is set, so a debconf prompt whose output is
-  piped away cannot hang the process forever;
+* ``DEBIAN_FRONTEND=noninteractive`` is set *and carried across sudo*, so a
+  debconf prompt cannot draw itself on a terminal the user cannot reach;
+* every install path shares one definition of the dpkg options, because
+  duplicating them is how the merged path lost ``--force-confdef``;
 * installed state comes from one bulk ``dpkg-query``, not one call per package.
 """
 
 from __future__ import annotations
+
+from typing import ClassVar
 
 import math
 import shutil
@@ -56,6 +60,15 @@ class AptProvider(Provider):
 
     # -- planning ----------------------------------------------------------
 
+    #: Answers dpkg's conffile question, which `-y` does not cover: `-y` is
+    #: apt's own prompt. Defined once because it was duplicated across the
+    #: single-package and merged paths and promptly drifted -- the merged path,
+    #: the one a loadout apply uses, was missing --force-confdef.
+    DPKG_NONINTERACTIVE: ClassVar[tuple[str, ...]] = (
+        "-o", "Dpkg::Options::=--force-confdef",
+        "-o", "Dpkg::Options::=--force-confold",
+    )
+
     def _base_argv(self) -> list[str]:
         argv = ["apt-get"]
         if self.offline and LOCAL_SOURCES.exists():
@@ -71,8 +84,7 @@ class AptProvider(Provider):
             *self._base_argv(),
             "install",
             "-y",
-            "-o", "Dpkg::Options::=--force-confdef",
-            "-o", "Dpkg::Options::=--force-confold",
+            *self.DPKG_NONINTERACTIVE,
             "--",
             package,
         ]
@@ -151,8 +163,7 @@ class AptProvider(Provider):
             "-y",
             "--no-download",
             "--allow-downgrades",
-            "-o", "Dpkg::Options::=--force-confdef",
-            "-o", "Dpkg::Options::=--force-confold",
+            *self.DPKG_NONINTERACTIVE,
             "--",
             *debs,
         ]
@@ -192,8 +203,7 @@ class AptProvider(Provider):
                     *self._base_argv(),
                     "upgrade",
                     "-y",
-                    "-o", "Dpkg::Options::=--force-confdef",
-                    "-o", "Dpkg::Options::=--force-confold",
+                    *self.DPKG_NONINTERACTIVE,
                 ],
                 description="upgrade all packages",
                 elevate=True,

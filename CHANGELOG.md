@@ -127,6 +127,25 @@ the machine actually has.
 
 ### Fixed
 
+- **Three pipx routes pointed at packages that were not what the entry meant.**
+  Found by auditing every pipx route in the catalog against the live PyPI index
+  rather than by a report: `netexec` has no package on PyPI at all (404);
+  `spiderfoot` is a reserved-name placeholder whose own summary reads "Reserved
+  name placeholder. No functionality."; `theHarvester` is a single 0.0.1 from
+  2019 against a project now on 4.x. All three were inferred from the tool id
+  when the catalog was seeded and never checked, and all three stayed hidden
+  because apt is tried first on Kali — they would have fired on a machine
+  without the Kali repositories. The routes are gone and a test pins the set of
+  packages that have been verified, so adding one means checking it.
+- **`pipx install modelscan` failed with forty lines of pip output** ending in
+  "Ignored the following versions that require a different python version".
+  A pipx route can now declare `requires_python`; loadout builds the venv with a
+  matching interpreter when the machine has one (`pipx install --python …`), and
+  otherwise refuses the route while planning with a sentence naming the gap and
+  the release that closes it. On a stock Kali, `loadout install modelscan` now
+  says: *needs Python >=3.10,<3.13; this machine has 3.13.12 — install
+  python3.12 to use it*, before anything is downloaded.
+
 - **Installing a package that asks a debconf question froze the browser.**
   `wireshark` was the reported case: the download finished, the bar sat at
   100%, and nothing else happened. `DEBIAN_FRONTEND=noninteractive` was being

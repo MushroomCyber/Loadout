@@ -1,11 +1,16 @@
 id: spiderfoot
 summary: Automated OSINT collection and correlation platform
-description: This package contains an open source intelligence (OSINT) automation tool. Its goal is to
+description: 'This package contains an open source intelligence (OSINT) automation tool. Its goal is to
   automate the process of gathering intelligence about a given target, which may be an IP address, domain
-  name, hostname, network subnet, ASN, e-mail address or person's name. SpiderFoot can be used offensively,
+  name, hostname, network subnet, ASN, e-mail address or person''s name. SpiderFoot can be used offensively,
   i.e. as part of a black-box penetration test to gather information about the target, or defensively
   to identify what information you or your organisation are freely providing for attackers to use against
   you.
+
+
+  Installed from the distribution repositories. The `spiderfoot` name on PyPI is a reserved placeholder
+  with no functionality, so there is deliberately no pipx route: on a machine without the Kali repositories,
+  clone the upstream repository instead.'
 categories:
 - recon
 - threat-intel
@@ -30,6 +35,4 @@ install:
   - debian
   - parrot
   - ubuntu
-- provider: pipx
-  package: spiderfoot
 version: 4.0-0kali5

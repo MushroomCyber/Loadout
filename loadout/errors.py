@@ -52,16 +52,34 @@ class NoViableProvider(LoadoutError):
 
     exit_code = 5
 
-    def __init__(self, tool_id: str, *, tried: list[str] | None = None) -> None:
+    def __init__(
+        self,
+        tool_id: str,
+        *,
+        tried: list[str] | None = None,
+        unusable: list[str] | None = None,
+    ) -> None:
         tried = tried or []
+        unusable = unusable or []
         detail = f" (catalog offers: {', '.join(tried)})" if tried else ""
+        # A route ruled out for a specific, knowable reason is far more useful
+        # than the generic "install one of these package managers", which is
+        # wrong advice when the manager is present and the package is the
+        # problem.
+        if unusable:
+            remediation = "; ".join(unusable)
+        else:
+            remediation = (
+                "Install one of those package managers, or run "
+                "`loadout providers` to see what was detected."
+            )
         super().__init__(
             f"No available installer for {tool_id!r}{detail}",
-            remediation="Install one of those package managers, or run "
-            "`loadout providers` to see what was detected.",
+            remediation=remediation,
         )
         self.tool_id = tool_id
         self.tried = tried
+        self.unusable = unusable
 
 
 class ProviderError(LoadoutError):

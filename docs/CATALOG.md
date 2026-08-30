@@ -224,3 +224,29 @@ box with APT present. CI runs `enrich` on a schedule in a
 
 `loadout catalog update` never overwrites what an entry already states — APT
 only supplies what is missing. Curation always wins.
+
+### `requires_python` (pipx routes)
+
+A pipx route may declare the interpreter the package needs, as a PEP 440
+specifier:
+
+```yaml
+install:
+  - provider: pipx
+    package: modelscan
+    requires_python: ">=3.10,<3.13"
+```
+
+Loadout builds the venv with a matching interpreter when the machine has one
+(`pipx install --python …`), and refuses the route at planning time when it does
+not — naming the gap and the release that would close it, instead of letting pip
+fail after the download with forty lines about ignored versions.
+
+Copy the value from the package's own metadata rather than guessing:
+
+```bash
+curl -s https://pypi.org/pypi/<package>/json | python3 -c 'import json,sys;print(json.load(sys.stdin)["info"]["requires_python"])'
+```
+
+Only declare it when the package really is constrained. A route with no
+`requires_python` uses whatever `python3` is, which is right for the majority.
