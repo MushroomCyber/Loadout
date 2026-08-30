@@ -15,12 +15,11 @@ Carries the fixes for the privileged path:
 
 from __future__ import annotations
 
-from typing import ClassVar
-
 import math
 import shutil
 import subprocess
 from pathlib import Path
+from typing import ClassVar
 
 from ..errors import ProviderError
 from ..model import InstallMethod, Tool
