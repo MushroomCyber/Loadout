@@ -1,0 +1,23 @@
+id: kali-anonsurf
+summary: Route all traffic through Tor with one command
+description: 'A port of Parrot OS''s AnonSurf to Kali: transparently redirects all outbound traffic through
+  Tor via iptables rules and disables IPv6 to prevent leaks, with `start`/`stop`/`change` subcommands.
+
+
+  No packaged install: clone the repository and run the included `installer.sh` as root, which installs
+  a systemd service.'
+categories:
+- network
+tags:
+- anonymity
+- tor
+- tunneling
+phases:
+- resource-development
+homepage: https://github.com/Und3rf10w/kali-anonsurf
+repo: Und3rf10w/kali-anonsurf
+license: GPL-3.0
+alternatives:
+- multitor
+- proxychains-ng
+install: []

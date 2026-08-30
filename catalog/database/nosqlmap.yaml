@@ -1,0 +1,25 @@
+id: nosqlmap
+summary: Automated NoSQL injection and MongoDB/CouchDB misconfiguration testing
+description: 'sqlmap''s approach applied to NoSQL stores: automates injection testing against MongoDB
+  and CouchDB, and separately checks for common misconfigurations like an exposed admin interface with
+  no authentication.
+
+
+  No packaged install: the `NoSQLMap` name on PyPI is an unrelated 0.0.1 placeholder, not this project.
+  Clone the repository and run `python2 nosqlmap.py` -- it is written for Python 2 and unmaintained since
+  2018; expect to patch it.'
+categories:
+- database
+tags:
+- nosql
+- mongodb
+- injection
+phases:
+- initial-access
+homepage: https://github.com/codingo/NoSQLMap
+repo: codingo/NoSQLMap
+license: GPL-2.0
+alternatives:
+- sqlmap
+- ghauri
+install: []

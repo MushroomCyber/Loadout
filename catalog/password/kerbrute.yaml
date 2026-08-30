@@ -1,0 +1,28 @@
+id: kerbrute
+summary: Bruteforce and enumerate Active Directory accounts via Kerberos pre-auth
+description: Kerberos pre-authentication failure tells you a username exists without touching an event
+  log the way a failed LDAP or SMB bind does -- so this enumerates and brute-forces AD accounts far more
+  quietly than the alternatives.
+categories:
+- password
+- post-exploitation
+tags:
+- active-directory
+- kerberos
+- bruteforce
+- windows
+phases:
+- discovery
+- lateral-movement
+binaries:
+- kerbrute
+homepage: https://github.com/ropnop/kerbrute
+repo: ropnop/kerbrute
+license: MIT
+verify: kerbrute --version
+alternatives:
+- netexec
+- impacket
+install:
+- provider: go
+  module: github.com/ropnop/kerbrute

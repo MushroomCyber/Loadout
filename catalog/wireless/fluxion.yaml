@@ -1,0 +1,25 @@
+id: fluxion
+summary: Automated WPA/WPA2 evil-twin phishing attack
+description: Deauthenticates clients off the real access point, stands up a cloned open one with a captive
+  portal asking for the WiFi password, and captures whatever gets typed in -- a social-engineering attack
+  on the handshake rather than a cracking attack on it.
+categories:
+- wireless
+- social
+tags:
+- wifi
+- evil-twin
+- phishing
+phases:
+- initial-access
+binaries:
+- fluxion
+homepage: https://github.com/FluxionNetwork/fluxion
+repo: FluxionNetwork/fluxion
+license: GPL-3.0
+alternatives:
+- wifite
+- aircrack-ng
+install:
+- provider: apt
+  package: fluxion

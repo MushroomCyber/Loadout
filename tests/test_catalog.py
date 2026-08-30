@@ -293,10 +293,11 @@ def test_no_pipx_route_points_at_a_package_that_does_not_exist():
     checking it and adding it here, which is the point.
     """
     verified = {
-        "adversarial-robustness-toolbox", "agentic-security", "counterfit",
-        "fickling", "garak", "impacket", "mitmproxy", "modelscan", "picklescan",
-        "prowler", "pyrit", "scoutsuite", "sigma-cli", "sqlmap", "textattack",
-        "volatility3",
+        "adversarial-robustness-toolbox", "agentic-security", "androguard", "checkov",
+        "counterfit", "fickling", "frida-tools", "garak", "holehe", "impacket",
+        "ldapdomaindump", "maigret", "mitmproxy", "mobsf", "modelscan", "objection",
+        "picklescan", "prowler", "pyrit", "scoutsuite", "sigma-cli", "socialscan",
+        "sqlmap", "textattack", "volatility3",
     }
     unverified = sorted({pkg for _t, pkg, _m in _pipx_routes()} - verified)
     assert unverified == [], (
@@ -397,3 +398,43 @@ def test_every_tool_upstream_has_archived_says_so():
         and "No longer maintained" not in (entries[tool_id].get("description") or "")
     ]
     assert silent == [], f"archived upstream but the entry does not say so: {silent}"
+
+
+# ---------------------------------------------------------------------------
+# The hackingtool diff -- gem/pipx routes with binaries verified on Kali
+# ---------------------------------------------------------------------------
+
+
+def test_every_gem_route_records_the_binary_it_actually_installs():
+    """`gem install haiti-hash` installs a binary named `haiti`, not
+    `haiti-hash` -- confirmed by installing it and reading the gem's bin
+    directory, the same discipline as the pipx binaries check below."""
+    import yaml
+
+    root = Path(__file__).resolve().parent.parent / "catalog"
+    for path in root.rglob("*.yaml"):
+        entry = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for method in entry.get("install") or []:
+            if method["provider"] == "gem":
+                assert entry.get("binaries"), f"{entry['id']} has a gem route but no binaries"
+
+
+def test_no_entry_duplicates_a_tool_already_in_the_catalog_by_repo():
+    """wifite2, social-engineer-toolkit and hping were all candidates from the
+    hackingtool diff that turned out to already be catalogued under a
+    different id -- `wifite`, `set` and `hping3` respectively, all confirmed by
+    matching the upstream repository rather than the name. Two entries
+    pointing at the same upstream project is confusing in search results and
+    in `loadout show`.
+    """
+    import yaml
+
+    root = Path(__file__).resolve().parent.parent / "catalog"
+    by_repo: dict[str, list[str]] = {}
+    for path in root.rglob("*.yaml"):
+        entry = yaml.safe_load(path.read_text(encoding="utf-8"))
+        repo = (entry.get("repo") or "").lower()
+        if repo:
+            by_repo.setdefault(repo, []).append(entry["id"])
+    dupes = {repo: ids for repo, ids in by_repo.items() if len(ids) > 1}
+    assert dupes == {}, f"multiple catalog entries for the same repository: {dupes}"

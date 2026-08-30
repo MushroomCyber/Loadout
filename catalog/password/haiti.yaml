@@ -1,0 +1,23 @@
+id: haiti
+summary: Identify a hash's type from the string alone
+description: Reads a hash and reports which algorithms it could be, ranked by how commonly each one appears
+  -- the first step before pointing hashcat or john at something whose type you have not been told.
+categories:
+- password
+tags:
+- hash
+- identification
+phases:
+- discovery
+binaries:
+- haiti
+homepage: https://github.com/noraj/haiti
+repo: noraj/haiti
+license: MIT
+verify: haiti --version
+alternatives:
+- hashcat
+- john
+install:
+- provider: gem
+  gem: haiti-hash

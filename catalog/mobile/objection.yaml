@@ -1,0 +1,25 @@
+id: objection
+summary: Runtime mobile exploration without a jailbreak or root
+description: Attaches to a running Android or iOS app via Frida and gives you a shell for bypassing SSL
+  pinning and root/jailbreak detection, dumping keychain data, and patching behaviour live -- the interactive
+  complement to MobSF's static report.
+categories:
+- mobile
+tags:
+- android
+- ios
+- instrumentation
+- dynamic-analysis
+phases:
+- initial-access
+binaries:
+- objection
+homepage: https://github.com/sensepost/objection
+repo: sensepost/objection
+license: GPL-3.0
+alternatives:
+- frida
+- mobile-security-framework-mobsf
+install:
+- provider: pipx
+  package: objection

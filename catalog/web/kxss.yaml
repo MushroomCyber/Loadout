@@ -1,0 +1,23 @@
+id: kxss
+summary: Find where a URL's query parameters get reflected into the page, unescaped
+description: Takes a list of URLs, injects a canary into every parameter, and reports which ones come
+  back unescaped -- narrowing a wordlist of thousands of URLs down to the handful actually worth throwing
+  an XSS payload at.
+categories:
+- web
+- fuzzing
+tags:
+- xss
+- web
+phases:
+- discovery
+binaries:
+- kxss
+homepage: https://github.com/Emoe/kxss
+repo: Emoe/kxss
+license: MIT
+alternatives:
+- xsstrike
+install:
+- provider: go
+  module: github.com/Emoe/kxss

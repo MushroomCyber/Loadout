@@ -1,0 +1,25 @@
+id: maigret
+summary: Collect a dossier on a username across 3000+ sites
+description: 'The maintained successor to Sherlock''s approach: checks a username against thousands of
+  sites in parallel and reports where it exists, with a report format built for the OSINT-collection part
+  of an engagement rather than a quick check.'
+categories:
+- recon
+tags:
+- osint
+- username
+phases:
+- reconnaissance
+binaries:
+- maigret
+- update_sitesmd
+homepage: https://github.com/soxoj/maigret
+repo: soxoj/maigret
+license: MIT
+verify: maigret --version
+alternatives:
+- holehe
+- socialscan
+install:
+- provider: pipx
+  package: maigret

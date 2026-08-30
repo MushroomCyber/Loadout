@@ -1,0 +1,25 @@
+id: rang3r
+summary: Multi-threaded IP and port scanner
+description: 'A lightweight, dependency-light threaded scanner for sweeping a range of hosts and ports
+  -- reach for it over rustscan or nmap when the target environment cannot have anything more built or
+  installed.
+
+
+  No packaged install: not published to PyPI. Clone the repository and run `pip install -r requirements.txt`,
+  then `python3 rang3r.py`.'
+categories:
+- recon
+- network
+tags:
+- port-scan
+- scanner
+phases:
+- reconnaissance
+homepage: https://github.com/floriankunushevci/rang3r
+repo: floriankunushevci/rang3r
+license: GPL-3.0
+alternatives:
+- rustscan
+- nmap
+- masscan
+install: []

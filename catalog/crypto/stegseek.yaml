@@ -1,0 +1,25 @@
+id: stegseek
+summary: Crack steghide-embedded JPEG steganography, orders of magnitude faster
+description: A wordlist attack against steghide's own passphrase scheme -- roughly 2,000,000 times faster
+  than steghide's own bruteforce because it works directly against the crc32 checks rather than fully
+  extracting on every attempt.
+categories:
+- crypto
+- forensics
+tags:
+- steganography
+- ctf
+- bruteforce
+phases:
+- discovery
+binaries:
+- stegseek
+homepage: https://github.com/RickdeJager/stegseek
+repo: RickdeJager/stegseek
+license: GPL-2.0
+verify: stegseek --version
+alternatives:
+- zsteg
+install:
+- provider: apt
+  package: stegseek

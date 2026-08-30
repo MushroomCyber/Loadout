@@ -1,0 +1,24 @@
+id: apk2gold
+summary: Decompile an Android APK straight to readable Java
+description: 'A thin wrapper chaining dex2jar and a Java decompiler so a single command produces readable
+  source instead of the multi-step dex-to-jar-to-decompile dance done by hand.
+
+
+  No packaged install: clone the repository and run `./apk2gold.sh`, which needs `unzip` and a JDK on
+  PATH.'
+categories:
+- mobile
+- reverse
+tags:
+- android
+- apk
+- decompile
+phases:
+- discovery
+homepage: https://github.com/lxdvs/apk2gold
+repo: lxdvs/apk2gold
+license: Apache-2.0
+alternatives:
+- apktool
+- androguard
+install: []

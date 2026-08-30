@@ -1,0 +1,26 @@
+id: checkov
+summary: Static analysis for Terraform, CloudFormation, Kubernetes and Dockerfiles
+description: Scans infrastructure-as-code before it is applied -- misconfigured S3 buckets, overly permissive
+  IAM, missing encryption -- against several thousand built-in policies. The check that belongs in CI,
+  not just on the finished cloud account.
+categories:
+- cloud
+tags:
+- iac
+- terraform
+- kubernetes
+- static-analysis
+phases:
+- discovery
+binaries:
+- checkov
+homepage: https://github.com/bridgecrewio/checkov
+repo: bridgecrewio/checkov
+license: Apache-2.0
+verify: checkov --version
+alternatives:
+- prowler
+- scoutsuite
+install:
+- provider: pipx
+  package: checkov

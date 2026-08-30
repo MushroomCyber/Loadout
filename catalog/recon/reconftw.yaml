@@ -1,0 +1,25 @@
+id: reconftw
+summary: 'Orchestrated recon pipeline: subdomains through vuln scanning, one command'
+description: 'Chains dozens of existing recon and vuln-scanning tools -- subfinder, nuclei, httpx, gau
+  and many more -- into one pipeline covering subdomain enumeration, content discovery, and vulnerability
+  scanning end to end, rather than running each tool by hand and stitching the output together.
+
+
+  No packaged install: clone the repository and run `./install.sh`, which installs the ~30 tools it orchestrates.
+  Expect it to take a while and to want a fair amount of disk space.'
+categories:
+- recon
+- vuln-scan
+tags:
+- recon
+- automation
+- bug-bounty
+phases:
+- reconnaissance
+- discovery
+homepage: https://github.com/six2dez/reconftw
+repo: six2dez/reconftw
+license: MIT
+alternatives:
+- sn1per
+install: []

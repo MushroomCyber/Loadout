@@ -1,0 +1,23 @@
+id: hcxdumptool
+summary: Capture WPA handshakes and PMKID from wireless devices for hashcat/john
+description: Captures the handshake -- or, faster, just the PMKID that many access points leak without
+  a client ever connecting -- and hands off to hcxpcapngtool to convert it into the hash format hashcat
+  and john expect.
+categories:
+- wireless
+tags:
+- wifi
+- handshake
+- pmkid
+phases:
+- reconnaissance
+binaries:
+- hcxdumptool
+homepage: https://github.com/ZerBea/hcxdumptool
+repo: ZerBea/hcxdumptool
+license: MIT
+alternatives:
+- aircrack-ng
+install:
+- provider: apt
+  package: hcxdumptool

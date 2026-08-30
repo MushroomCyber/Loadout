@@ -1,0 +1,25 @@
+id: xsstrike
+summary: 'XSS detection suite: context analysis, payload generation, WAF fingerprinting'
+description: Parses the page's own context around a reflection point to generate a payload that fits it,
+  rather than firing a static payload list -- and fingerprints the WAF in front of the target to pick
+  something that gets past it.
+categories:
+- web
+- fuzzing
+tags:
+- xss
+- web
+- waf-bypass
+phases:
+- discovery
+- initial-access
+binaries:
+- xsstrike
+homepage: https://github.com/UltimateHackers/XSStrike
+repo: UltimateHackers/XSStrike
+license: GPL-3.0
+alternatives:
+- kxss
+install:
+- provider: apt
+  package: xsstrike

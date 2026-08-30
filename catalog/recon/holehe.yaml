@@ -1,0 +1,23 @@
+id: holehe
+summary: Check which sites an email address has an account on
+description: Queries password-reset and registration endpoints across 120+ sites to confirm whether an
+  email address is registered there, without ever sending a reset email. The email-side counterpart to
+  a username-enumeration tool like maigret.
+categories:
+- recon
+tags:
+- osint
+- email
+phases:
+- reconnaissance
+binaries:
+- holehe
+homepage: https://github.com/megadose/holehe
+repo: megadose/holehe
+license: GPL-3.0
+alternatives:
+- maigret
+- socialscan
+install:
+- provider: pipx
+  package: holehe

@@ -1,0 +1,23 @@
+id: ghauri
+summary: Cross-platform SQL injection detection and exploitation tool
+description: 'Aimed at the cases sqlmap''s heuristics miss or are slow on -- particularly time-based blind
+  injection, where its detection logic is meaningfully faster.
+
+
+  No packaged install: not published to PyPI. Clone the repository and run `pip install -r requirements.txt`,
+  then `python3 ghauri.py`.'
+categories:
+- database
+- web
+tags:
+- sqli
+- web
+phases:
+- initial-access
+homepage: https://github.com/r0oth3x49/ghauri
+repo: r0oth3x49/ghauri
+license: MIT
+alternatives:
+- sqlmap
+- nosqlmap
+install: []

@@ -1,0 +1,23 @@
+id: zsteg
+summary: Detect steganographically hidden data in PNG and BMP images
+description: Walks the standard LSB-hiding techniques against PNG and BMP files and reports what it finds
+  -- the go-to first check on an image in a stego CTF challenge, and a narrower complement to stegseek,
+  which targets steghide's JPEG format instead.
+categories:
+- crypto
+- forensics
+tags:
+- steganography
+- ctf
+phases:
+- discovery
+binaries:
+- zsteg
+homepage: https://github.com/zed-0xff/zsteg
+repo: zed-0xff/zsteg
+license: MIT
+alternatives:
+- stegseek
+install:
+- provider: gem
+  gem: zsteg

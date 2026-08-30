@@ -125,7 +125,32 @@ the machine actually has.
   and `docker` are implemented but no catalog entry uses them, so a toggle for
   either could only ever empty the table.
 
+### Added
+
+- **A figlet-style banner on the sudo handover.** The terminal the browser hands
+  over for `sudo` to use now opens with the same `LOADOUT` art the app itself
+  starts with, not a bare word -- so it still looks like loadout rather than
+  some other program asking for a password. Falls back to the plain word below
+  96 columns or on a terminal that cannot encode the block glyphs, same as the
+  app's own banner.
+- **37 tools**, sourced from a diff against hackingtool's own catalog
+  (Z4nzu/hackingtool) and vetted before anything was added: mobile and
+  reverse-engineering (`androguard`, `frida`, `objection`,
+  `mobile-security-framework-mobsf`, `apk2gold`), cloud (`checkov`), AD/Kerberos
+  (`kerbrute`, `ldapdomaindump`), recon (`maigret`, `holehe`, `socialscan`,
+  `rustscan`, `reconftw`, `sn1per`, `red_hawk`, `rang3r`), web (`xsstrike`,
+  `kxss`, `secretfinder`, `xss-loader`), password/hash (`haiti`, `cupp`,
+  `hash-buster`, `lazagne`), wireless (`fluxion`, `hcxdumptool`), steganography
+  (`zsteg`, `stegseek`), C2 (`mythic`), and several more. Of 88 candidates in
+  that list not already catalogued, 4 were dropped for being archived or quiet
+  3+ years upstream, and a further dozen -- phishing/OTP credential-stealing
+  kits, thin DoS scripts, and entries with sketchy provenance -- were excluded
+  on review rather than imported wholesale. Every pipx and gem route was
+  confirmed with a real install on Kali and the resulting binaries read back
+  from the venv, not inferred from a wheel's declared metadata.
+
 ### Fixed
+
 
 - **The sudo handover from the browser was abrupt and unexplained.** The UI
   vanished, one bare line landed on top of whatever the shell had been showing,

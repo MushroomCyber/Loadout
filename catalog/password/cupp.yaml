@@ -1,0 +1,21 @@
+id: cupp
+summary: Generate a targeted wordlist from personal details about someone
+description: Prompts for a target's name, dates, pet names and the like and permutes them into a wordlist
+  for a password-guessing attack -- the classic answer to 'people reuse predictable passwords built from
+  things about themselves'.
+categories:
+- password
+tags:
+- wordlist
+- social-engineering
+phases:
+- reconnaissance
+binaries:
+- cupp
+- cupp.py
+homepage: https://github.com/Mebus/cupp
+repo: Mebus/cupp
+license: GPL-3.0
+install:
+- provider: apt
+  package: cupp

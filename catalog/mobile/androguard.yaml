@@ -1,0 +1,26 @@
+id: androguard
+summary: Reverse engineering and analysis toolkit for Android apps
+description: Parses and disassembles DEX/APK/AXML/ARSC without needing a device or emulator -- control-flow
+  graphs, cross-references, permissions and manifest analysis from the command line or as a library. The
+  engine several other Android tools build on.
+categories:
+- mobile
+- reverse
+tags:
+- android
+- apk
+- static-analysis
+phases:
+- discovery
+binaries:
+- androguard
+homepage: https://github.com/androguard/androguard
+repo: androguard/androguard
+license: Apache-2.0
+verify: androguard --version
+alternatives:
+- mobile-security-framework-mobsf
+- objection
+install:
+- provider: pipx
+  package: androguard

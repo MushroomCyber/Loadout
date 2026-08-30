@@ -1,0 +1,30 @@
+id: frida
+summary: Dynamic instrumentation toolkit -- inject JavaScript into a running process
+description: Hooks functions, traces calls and patches behaviour in a live process -- Android, iOS, Windows,
+  Linux, macOS -- without recompiling it. Where static analysis stops and you need to watch what a binary
+  or app actually does at runtime.
+categories:
+- mobile
+- reverse
+tags:
+- android
+- ios
+- instrumentation
+- dynamic-analysis
+phases:
+- discovery
+- initial-access
+binaries:
+- frida
+- frida-trace
+- frida-ps
+- frida-ls-devices
+homepage: https://github.com/frida/frida
+repo: frida/frida
+license: wxWindows
+verify: frida --version
+alternatives:
+- objection
+install:
+- provider: pipx
+  package: frida-tools

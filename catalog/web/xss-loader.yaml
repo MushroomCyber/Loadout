@@ -1,0 +1,24 @@
+id: xss-loader
+summary: XSS payload generator, dork-based scanner and vulnerable-parameter finder
+description: 'Generates XSS payloads in several encodings, searches for likely-vulnerable pages via search-engine
+  dorks, and checks a given URL''s parameters for reflection -- a smaller, more manual complement to xsstrike''s
+  automated context-aware approach.
+
+
+  No packaged install: not published to PyPI. Clone the repository and run `pip install -r requirements.txt`,
+  then `python3 xss-loader.py`.'
+categories:
+- web
+- fuzzing
+tags:
+- xss
+- web
+phases:
+- discovery
+homepage: https://github.com/capture0x/XSS-LOADER
+repo: capture0x/XSS-LOADER
+license: MIT
+alternatives:
+- xsstrike
+- kxss
+install: []

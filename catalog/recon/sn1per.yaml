@@ -1,0 +1,23 @@
+id: sn1per
+summary: Automated attack-surface reconnaissance, combining many recon tools
+description: 'Runs a broad suite of recon and vuln-scanning tools against a target and collects the results
+  in one report -- similar ground to reconftw, with more emphasis on attack-surface mapping than on the
+  bug-bounty subdomain workflow specifically.
+
+
+  No packaged install: clone the repository and run `bash install.sh`, which pulls in the tools it orchestrates.'
+categories:
+- recon
+- vuln-scan
+tags:
+- recon
+- automation
+phases:
+- reconnaissance
+- discovery
+homepage: https://github.com/1N3/Sn1per
+repo: 1N3/Sn1per
+license: GPL-3.0
+alternatives:
+- reconftw
+install: []

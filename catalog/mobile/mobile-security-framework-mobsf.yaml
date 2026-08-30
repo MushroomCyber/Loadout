@@ -1,0 +1,29 @@
+id: mobile-security-framework-mobsf
+summary: Automated static and dynamic analysis platform for Android, iOS and Windows apps
+description: 'Runs a mobile app through static analysis, an optional dynamic analysis in an emulator,
+  and API/malware/secrets checks, then serves the result as a web report. The all-in-one platform where
+  androguard and frida are the components.
+
+
+  Starting it launches a local web server and downloads JADX on first run; it is not a single-shot CLI
+  scanner. `mobsf --help` shows the server options.'
+categories:
+- mobile
+tags:
+- android
+- ios
+- static-analysis
+- dynamic-analysis
+phases:
+- discovery
+binaries:
+- mobsf
+homepage: https://github.com/MobSF/Mobile-Security-Framework-MobSF
+repo: MobSF/Mobile-Security-Framework-MobSF
+license: GPL-3.0
+alternatives:
+- androguard
+- objection
+install:
+- provider: pipx
+  package: mobsf

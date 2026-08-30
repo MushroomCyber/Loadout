@@ -1,0 +1,18 @@
+id: maskphish
+summary: Disguise a phishing link behind a legitimate-looking short URL
+description: 'Wraps a URL in a masked link that shows a chosen domain in previews and hover text -- for
+  authorized phishing-simulation engagements testing whether staff check a link before clicking it.
+
+
+  No packaged install: it is one shell script. Clone the repository and run `bash maskphish.sh`.'
+categories:
+- social
+tags:
+- phishing
+- social-engineering
+phases:
+- initial-access
+homepage: https://github.com/jaykali/maskphish
+repo: jaykali/maskphish
+license: MIT
+install: []

@@ -1,0 +1,24 @@
+id: socialscan
+summary: Check email address and username availability across platforms, accurately
+description: Queries each platform's own API rather than scraping profile pages, which is what lets it
+  avoid the false positives that plague broad username-checking tools -- fast and precise over a shorter,
+  curated list of platforms.
+categories:
+- recon
+tags:
+- osint
+- email
+- username
+phases:
+- reconnaissance
+binaries:
+- socialscan
+homepage: https://github.com/iojw/socialscan
+repo: iojw/socialscan
+license: MIT
+alternatives:
+- maigret
+- holehe
+install:
+- provider: pipx
+  package: socialscan

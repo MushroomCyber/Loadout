@@ -1,0 +1,25 @@
+id: rustscan
+summary: Very fast port scanner that hands results to nmap for the deep scan
+description: Scans all 65535 ports in seconds using an adaptive rate limiter, then pipes the open ones
+  straight into nmap for service and version detection -- nmap's accuracy without nmap's full-range scan
+  time.
+categories:
+- recon
+- network
+tags:
+- port-scan
+- scanner
+phases:
+- reconnaissance
+binaries:
+- rustscan
+homepage: https://github.com/RustScan/RustScan
+repo: RustScan/RustScan
+license: GPL-3.0
+verify: rustscan --version
+alternatives:
+- nmap
+- masscan
+install:
+- provider: cargo
+  crate: rustscan

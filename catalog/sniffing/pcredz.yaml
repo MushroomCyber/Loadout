@@ -1,0 +1,24 @@
+id: pcredz
+summary: Extract credentials and hashes from a packet capture or live interface
+description: 'Reads a pcap or a live interface and pulls out credit card numbers, and credentials and
+  challenge/response hashes from POP, IMAP, SMTP, NTLMv1/v2, Kerberos and SNMP -- the credential-harvesting
+  complement to a general packet capture.
+
+
+  No packaged install: not published to PyPI. Clone the repository and run `pip install -r requirements.txt`,
+  then `python3 Pcredz`.'
+categories:
+- sniffing
+- password
+tags:
+- pcap
+- credentials
+- sniffing
+phases:
+- discovery
+homepage: https://github.com/lgandx/PCredz
+repo: lgandx/PCredz
+license: GPL-3.0
+alternatives:
+- lazagne
+install: []

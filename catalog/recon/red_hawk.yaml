@@ -1,0 +1,22 @@
+id: red_hawk
+summary: 'All-in-one recon: info gathering, vulnerability scanning, WHOIS, crawling'
+description: 'A single PHP script bundling the recon steps someone new to web testing would otherwise
+  run as five separate tools -- server info, WHOIS, subdomains, a basic crawl and simple vuln checks --
+  useful as a fast first pass or a learning tool.
+
+
+  No packaged install: clone the repository and run `php rhawk.php`, which needs PHP and its curl extension.'
+categories:
+- recon
+- web
+tags:
+- recon
+- scanner
+phases:
+- reconnaissance
+homepage: https://github.com/Tuhinshubhra/RED_HAWK
+repo: Tuhinshubhra/RED_HAWK
+license: MIT
+alternatives:
+- reconftw
+install: []

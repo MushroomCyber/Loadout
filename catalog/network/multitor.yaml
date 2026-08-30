@@ -1,0 +1,24 @@
+id: multitor
+summary: Run several independent Tor instances behind a load-balancing HAProxy
+description: 'Spins up multiple isolated Tor processes and load-balances across them through HAProxy,
+  which spreads requests across more exit circuits than a single Tor instance would -- useful where one
+  circuit''s rate limit is the bottleneck.
+
+
+  No packaged install: clone the repository and run `./multitor` as root, which needs `tor`, `haproxy`
+  and `privoxy` already installed.'
+categories:
+- network
+tags:
+- anonymity
+- tor
+- tunneling
+phases:
+- resource-development
+homepage: https://github.com/trimstray/multitor
+repo: trimstray/multitor
+license: GPL-3.0
+alternatives:
+- kali-anonsurf
+- proxychains-ng
+install: []

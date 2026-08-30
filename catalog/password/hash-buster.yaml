@@ -1,0 +1,24 @@
+id: hash-buster
+summary: Crack common hashes via free online lookup services
+description: 'Submits a hash to several free hash-lookup services and reports any hit -- a quick first
+  check before spending compute on hashcat, and only useful for hashes common enough to already be in
+  one of those services'' tables.
+
+
+  No packaged install: not published to PyPI. Clone the repository and run `pip install -r requirements.txt`,
+  then `python3 main.py`.'
+categories:
+- password
+tags:
+- hash
+- online-service
+phases:
+- discovery
+homepage: https://github.com/s0md3v/Hash-Buster
+repo: s0md3v/Hash-Buster
+license: MIT
+alternatives:
+- hashcat
+- john
+- haiti
+install: []
