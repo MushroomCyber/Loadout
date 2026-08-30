@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any
 
 from .. import __version__, configure_console, configure_logging, logger
+from .. import verify as verify_mod
 from ..errors import LoadoutError
 from . import output as out
 
@@ -349,6 +350,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     # -- environment -------------------------------------------------------
     sub.add_parser("doctor", help="Diagnose environment problems.")
+
+    p = sub.add_parser("verify", help="Check that installed tools actually run.")
+    p.add_argument("tools", nargs="*", help="Tools to check (default: everything installed).")
+    p.add_argument("--timeout", type=int, default=verify_mod.DEFAULT_TIMEOUT,
+                   help=f"Seconds to allow each check (default: {verify_mod.DEFAULT_TIMEOUT}).")
+    p.add_argument("--jobs", "-j", type=int, default=verify_mod.DEFAULT_JOBS,
+                   help=f"Checks to run at once (default: {verify_mod.DEFAULT_JOBS}).")
+    p.add_argument("--quiet", "-q", action="store_true",
+                   help="Only report tools that failed.")
 
     return parser
 
@@ -1660,6 +1670,79 @@ def cmd_doctor(ctx: Context) -> int:
 # Dispatch
 # ---------------------------------------------------------------------------
 
+def cmd_verify(ctx: Context) -> int:
+    """Run each tool's catalog verify command and report what actually works.
+
+    Exits non-zero when anything failed, so this is usable as the last line of
+    a build script or the check before going on site.
+    """
+    from ..errors import ToolNotFound
+    from ..verify import STATUS_FAILED, STATUS_OK, STATUS_PRESENT, verify_all
+
+    if ctx.args.tools:
+        tools = []
+        for tool_id in ctx.args.tools:
+            tool = ctx.catalog.get(tool_id)
+            if tool is None:
+                raise ToolNotFound(tool_id, suggestions=ctx.catalog.suggest(tool_id))
+            tools.append(tool)
+    else:
+        installed = ctx.installed()
+        tools = [t for t in ctx.catalog.search("", limit=0) if t.id in installed]
+
+    if not tools:
+        if ctx.json_mode:
+            out.emit_json([])
+        else:
+            out.print_note("Nothing installed to verify.")
+        return 0
+
+    results = verify_all(tools, timeout=ctx.args.timeout, jobs=ctx.args.jobs)
+
+    if ctx.json_mode:
+        out.emit_json([r.to_dict() for r in results])
+        return 1 if any(r.status == STATUS_FAILED for r in results) else 0
+
+    badge = {
+        STATUS_OK: f"[green]{out.glyph('ok')}[/green]",
+        STATUS_PRESENT: f"[yellow]{out.glyph('ok')}[/yellow]",
+        STATUS_FAILED: f"[red]{out.glyph('fail')}[/red]",
+    }
+    console = out.get_console()
+    for result in results:
+        if ctx.args.quiet and result.status != STATUS_FAILED:
+            continue
+        console.print(
+            f"{badge.get(result.status, '[dim]?[/dim]')} [bold]{result.tool_id}[/bold] "
+            f"[dim]{result.detail}[/dim]",
+            highlight=False,
+        )
+
+    failed = [r for r in results if r.status == STATUS_FAILED]
+    checked = sum(1 for r in results if r.status == STATUS_OK)
+    present = sum(1 for r in results if r.status == STATUS_PRESENT)
+    unchecked = len(results) - checked - present - len(failed)
+
+    # "present" and "unchecked" are reported separately from "ok" because they
+    # are weaker claims, and a summary that hid the difference would overstate
+    # what this run actually proved.
+    parts = [f"[green]{checked} verified[/green]"]
+    if present:
+        parts.append(f"[yellow]{present} on PATH, unverified[/yellow]")
+    if unchecked:
+        parts.append(f"[dim]{unchecked} not checkable[/dim]")
+    if failed:
+        parts.append(f"[red]{len(failed)} failed[/red]")
+    console.print("  " + " · ".join(parts), highlight=False)
+
+    if present or unchecked:
+        out.print_note(
+            "Tools with no `verify:` in the catalog can only be checked for "
+            "presence on PATH. Adding one is a catalog pull request."
+        )
+    return 1 if failed else 0
+
+
 _COMMANDS = {
     "list": cmd_list,
     "search": cmd_search,
@@ -1686,6 +1769,7 @@ _COMMANDS = {
     "holds": cmd_hold,
     "export": cmd_export,
     "doctor": cmd_doctor,
+    "verify": cmd_verify,
 }
 
 

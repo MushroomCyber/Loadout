@@ -218,6 +218,33 @@ loadout loadout diff acme-webapp-2026
 | `cloud-auditor` | Cloud and container posture |
 | `forensics-starter`, `osint-minimal`, `ctf-basics` | Starter kits |
 
+### Check the kit before you need it
+
+An install that reported success is not the same as a tool that runs. A Go
+binary can land off `PATH`, an apt package can install while its interpreter
+does not, a release archive can hold the wrong architecture — all three report
+"installed" and all three fail on site.
+
+```bash
+loadout verify                  # everything installed
+loadout verify nmap ffuf        # just these
+loadout verify --quiet          # only what is broken
+```
+
+```
+✓ ffuf   ffuf version v2.1.0
+✓ nmap   Nmap version 7.99 ( https://nmap.org )
+✗ nuclei nuclei: not found on PATH
+  2 verified · 1 failed
+```
+
+It exits non-zero if anything failed, so it works as the last line of a
+pre-engagement script. Four outcomes are reported separately rather than
+collapsed, because they are not equally strong claims: **verified** means the
+catalog's `verify:` command ran and exited 0; **on PATH** means the binary was
+found but never run; **failed** means it did not work; **not checkable** means
+the catalog records neither a command nor a binary name.
+
 ### Prove what you used
 
 Pentest reports and DFIR chain-of-custody both need "which tools, which
@@ -245,6 +272,7 @@ loadout export --format loadout  > loadout.yaml
 loadout list --installed --json | jq -r '.[].id'
 loadout install nuclei --dry-run --json | jq '.actions[].steps'
 loadout doctor --json | jq '.[] | select(.severity != "ok")'
+loadout verify --json | jq -r '.[] | select(.status == "failed") | .tool'
 ```
 
 ---

@@ -551,13 +551,21 @@ async def test_clicking_a_category_chip_filters_like_the_old_listview_did(app):
         assert table.row_count == 1  # only ffuf is tagged web in the fixture
 
 
-async def test_run_action_reports_a_missing_binary_without_crashing(app):
+async def test_run_action_reports_a_missing_binary_without_crashing(app, monkeypatch):
     """masscan has no binaries in the fixture; Run must degrade to a notice,
-    not an exception, and never call subprocess.run for an unknown command."""
-    import loadout.ui.tui.app as app_module
+    not an exception, and never call subprocess.run for an unknown command.
+
+    monkeypatch, not a bare assignment: `app_module.subprocess` *is* the global
+    subprocess module, so assigning to it leaks into every later test in the
+    session -- which is exactly what happened, silently, until something else
+    in the suite finally ran a subprocess.
+    """
+    import subprocess as subprocess_module
 
     calls = []
-    app_module.subprocess.run = lambda *a, **k: calls.append(a) or None  # type: ignore[assignment]
+    monkeypatch.setattr(
+        subprocess_module, "run", lambda *a, **k: calls.append(a) or None
+    )
 
     async with app.run_test() as pilot:
         from textual.widgets import DataTable, Input

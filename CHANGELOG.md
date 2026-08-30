@@ -52,6 +52,14 @@ the machine actually has.
   user's trust store; and a declared signature that fails is not waivable by
   `--allow-unverified`, which exists for projects that publish nothing to
   check against.
+- **`loadout verify`** -- runs each installed tool's catalog `verify:` command
+  and reports what actually works. An install that reported success is not the
+  same as a tool that runs, and the difference shows up on site. Exits
+  non-zero on failure so it can gate a pre-engagement script. Four outcomes
+  stay distinct (verified / on PATH / failed / not checkable) rather than
+  collapsing into pass-fail, because finding a binary is a weaker claim than
+  running one. This also gives the catalog's `verify:` field its first
+  consumer -- it had been parsed and stored since the rewrite and never read.
 - Issue templates (including an "add a tool" form for the catalog) and a pull
   request checklist.
 - **Mouse control throughout the browser.** An action row in the detail pane
@@ -98,6 +106,10 @@ the machine actually has.
 
 ### Fixed
 
+- A test replaced `subprocess.run` by assigning to the module attribute rather
+  than through `monkeypatch`, so the stub leaked into every test that ran
+  afterwards. Nothing later in the suite ran a subprocess, so it stayed
+  invisible until one did.
 - **Installs failed as a non-root sudo user** with `E: Write error - write (9:
   Bad file descriptor)` repeated once per status write, and were reported as
   failures even though dpkg had installed the package correctly. APT's progress

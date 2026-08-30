@@ -119,6 +119,45 @@ class TestElevation:
                     offenders.append(f"{path.name}:{number}")
         assert offenders == [], f"sudo constructed outside policy.py: {offenders}"
 
+    def test_no_module_ever_asks_for_a_shell(self):
+        """README promises "No `shell=True` anywhere" and SECURITY.md rests on
+        it: every argv this program builds comes from catalog or user input, so
+        one shell would turn a catalog entry into remote code execution.
+
+        The sudo check above proves the claim next to it is enforced; this one
+        was not, which is how a documented security property quietly stops
+        being true.
+        """
+        import pathlib
+
+        root = pathlib.Path(__file__).resolve().parent.parent / "loadout"
+        offenders = []
+        for path in sorted(root.rglob("*.py")):
+            text = path.read_text(encoding="utf-8")
+            for number, line in enumerate(text.splitlines(), 1):
+                stripped = line.strip()
+                if stripped.startswith("#"):
+                    continue
+                if "shell=True" in stripped.replace(" ", ""):
+                    offenders.append(f"{path.name}:{number}")
+        assert offenders == [], f"shell=True found: {offenders}"
+
+    def test_no_module_runs_a_string_through_os_system_or_popen(self):
+        """`os.system` and `os.popen` are shells by another name."""
+        import pathlib
+
+        root = pathlib.Path(__file__).resolve().parent.parent / "loadout"
+        offenders = []
+        for path in sorted(root.rglob("*.py")):
+            text = path.read_text(encoding="utf-8")
+            for number, line in enumerate(text.splitlines(), 1):
+                stripped = line.strip()
+                if stripped.startswith("#"):
+                    continue
+                if "os.system(" in stripped or "os.popen(" in stripped:
+                    offenders.append(f"{path.name}:{number}")
+        assert offenders == [], f"shell-by-another-name found: {offenders}"
+
 
 class TestSubprocessEnv:
     def test_forces_noninteractive_frontends(self):

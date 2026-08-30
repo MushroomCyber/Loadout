@@ -97,6 +97,24 @@ a warning-level event.
 If upstream publishes no checksums at all, prefer another provider, or say so in
 the pull request so it can be discussed.
 
+### The `verify:` command
+
+`verify:` is the command `loadout verify` runs to prove a tool actually works.
+Pick something that exits 0 cheaply and needs no arguments, network or target:
+
+```yaml
+verify: nmap --version
+```
+
+Avoid anything that scans, connects, or writes. This runs across a user's whole
+installed set, so a verify command with side effects is a verify command that
+gets someone in trouble. It is split with `shlex` and run without a shell, so
+pipes, redirects and `$(...)` are passed as literal arguments, not interpreted.
+
+An entry with no `verify:` falls back to looking for its binary on `PATH`,
+which is a weaker claim and reported as such. Adding one is the single
+cheapest improvement to a catalog entry.
+
 ### Signatures
 
 A checksum proves the download was not corrupted. It does not prove who made
