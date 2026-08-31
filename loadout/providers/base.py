@@ -9,6 +9,7 @@ without a Kali box: assert on the planned argv, not on side effects.
 
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 from abc import ABC, abstractmethod
@@ -22,6 +23,22 @@ from ..model import InstallMethod, Tool
 
 if TYPE_CHECKING:  # pragma: no cover
     from ..executor import ExecContext
+
+
+#: WSL mounts the Windows drives under /mnt and puts them on PATH, so
+#: `which npm` can find a Windows program from inside Linux.
+_WINDOWS_MOUNT_RE = re.compile(r"^/mnt/[a-z]/", re.IGNORECASE)
+
+
+def is_windows_interop(path: str) -> bool:
+    """True when *path* is a Windows executable reached through WSL interop.
+
+    It will run -- that is the point of interop -- but a toolchain invoked
+    this way installs under a Windows prefix, and the executables it produces
+    are Windows binaries that the Linux side cannot run. The install appears
+    to succeed, slowly, and leaves nothing usable behind.
+    """
+    return bool(_WINDOWS_MOUNT_RE.match(str(path)))
 
 
 @dataclass(frozen=True)
@@ -104,17 +121,48 @@ class Provider(ABC):
 
     # -- detection ---------------------------------------------------------
 
+    #: Reject an executable that is really a Windows program reached through
+    #: WSL's interop mounts. See :func:`is_windows_interop`.
+    rejects_windows_interop: bool = False
+
+    #: Executables that must also be present, beyond the one that gets invoked.
+    #: npm without node is the case that matters: `npm --version` answers
+    #: happily from its shell wrapper and then every install fails.
+    companion_executables: tuple[str, ...] = ()
+
     def detect(self) -> ProviderStatus:
         """Is this provider usable here? Cheap; called on every startup."""
+        rejected = ""
         for executable in self.executables:
             path = shutil.which(executable)
-            if path:
+            if not path:
+                continue
+            if self.rejects_windows_interop and is_windows_interop(path):
+                # Keep looking: a real Linux one may be further along PATH.
+                rejected = rejected or path
+                continue
+            missing = [n for n in self.companion_executables if not shutil.which(n)]
+            if missing:
                 return ProviderStatus(
                     name=self.name,
-                    available=True,
-                    version=self._probe_version(path),
-                    executable=path,
+                    available=False,
+                    detail=f"{executable} is on PATH but {', '.join(missing)} is not",
                 )
+            return ProviderStatus(
+                name=self.name,
+                available=True,
+                version=self._probe_version(path),
+                executable=path,
+            )
+        if rejected:
+            return ProviderStatus(
+                name=self.name,
+                available=False,
+                detail=(
+                    f"only the Windows build is on PATH ({rejected}); it installs "
+                    "into the Windows filesystem, not this one"
+                ),
+            )
         return ProviderStatus(
             name=self.name,
             available=False,

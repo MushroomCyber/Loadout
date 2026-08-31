@@ -129,6 +129,11 @@ class Planner:
                 continue
             status = self.statuses.get(method.provider)
             if status is None or not status.available:
+                # Keep the backend's own explanation. "No available installer"
+                # sends someone to install a package manager; "only the Windows
+                # build is on PATH" tells them what is actually wrong.
+                detail = status.detail if status else "not detected"
+                self._unusable.setdefault(tool.id, []).append(f"{method.provider}: {detail}")
                 continue
             try:
                 provider = get_provider(method.provider)

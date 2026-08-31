@@ -524,3 +524,102 @@ def test_both_apt_install_paths_use_one_definition_of_the_options():
 
     source = inspect.getsource(AptProvider)
     assert source.count('"Dpkg::Options::=--force-confold"') == 1
+
+
+# ---------------------------------------------------------------------------
+# A toolchain that is on PATH but cannot work here
+# ---------------------------------------------------------------------------
+
+
+def test_a_windows_toolchain_reached_through_wsl_is_not_available(monkeypatch):
+    """Under WSL /mnt/c is on PATH, so `which npm` finds the Windows npm even
+    when Linux has no node at all. It runs -- that is what interop is for --
+    but it installs into a Windows prefix and produces Windows binaries, so the
+    install crawls for minutes and leaves nothing this system can execute.
+    """
+    from loadout.providers.lang import NpmProvider
+
+    monkeypatch.setattr(
+        "shutil.which",
+        lambda n: "/mnt/c/Program Files/nodejs/npm" if n == "npm" else None,
+    )
+    status = NpmProvider().detect()
+    assert status.available is False
+    assert "Windows" in status.detail
+    assert "/mnt/c/Program Files/nodejs/npm" in status.detail
+
+
+def test_a_real_linux_toolchain_is_still_preferred_over_the_windows_one(monkeypatch):
+    """Rejecting the Windows build must not reject a working Linux one that
+    happens to sit later on PATH."""
+    from loadout.providers.lang import NpmProvider
+
+    monkeypatch.setattr(
+        "shutil.which", lambda n: {"npm": "/usr/bin/npm", "node": "/usr/bin/node"}.get(n)
+    )
+    monkeypatch.setattr(NpmProvider, "_probe_version", lambda self, path: "10.9.0")
+    status = NpmProvider().detect()
+    assert status.available is True
+    assert status.executable == "/usr/bin/npm"
+
+
+def test_npm_without_node_is_not_available(monkeypatch):
+    """`npm --version` answers from its shell wrapper with no interpreter
+    present, so npm looks fine right up until the first install fails."""
+    from loadout.providers.lang import NpmProvider
+
+    monkeypatch.setattr("shutil.which", lambda n: "/usr/bin/npm" if n == "npm" else None)
+    status = NpmProvider().detect()
+    assert status.available is False
+    assert "node" in status.detail
+
+
+def test_apt_is_not_subject_to_the_interop_rule(monkeypatch):
+    """The rule is about toolchains that install into a prefix. A system
+    package manager is never going to be the Windows one, and blanket-rejecting
+    /mnt paths would be a rule about paths rather than about behaviour."""
+    from loadout.providers.apt import AptProvider
+
+    assert AptProvider.rejects_windows_interop is False
+
+
+@pytest.mark.parametrize(
+    ("path", "expected"),
+    [
+        ("/mnt/c/Program Files/nodejs/npm", True),
+        ("/mnt/d/tools/go", True),
+        ("/MNT/C/npm", True),
+        ("/usr/bin/npm", False),
+        ("/home/user/.local/bin/npm", False),
+        ("/mnt/data/npm", False),  # a real Linux mount, not a drive letter
+        ("/mnt/npm", False),
+    ],
+)
+def test_which_paths_count_as_windows_interop(path, expected):
+    from loadout.providers.base import is_windows_interop
+
+    assert is_windows_interop(path) is expected
+
+
+def test_an_unavailable_provider_explains_itself_in_the_plan(catalog, monkeypatch):
+    """"No available installer" sends someone to install a package manager they
+    already have. The backend's own reason is the actionable half."""
+    from loadout.errors import NoViableProvider
+    from loadout.model import InstallMethod, Tool
+    from loadout.planner import Planner
+    from loadout.providers.base import ProviderStatus
+
+    statuses = {
+        "npm": ProviderStatus(
+            name="npm", available=False, detail="only the Windows build is on PATH"
+        )
+    }
+    tool = Tool(
+        id="promptfoo",
+        install=(InstallMethod(provider="npm", spec={"package": "promptfoo"}),),
+    )
+    planner = Planner(catalog, distro="kali", statuses=statuses)
+    assert planner.viable_methods(tool) == []
+    with pytest.raises(NoViableProvider) as caught:
+        planner.choose_method(tool)
+    assert "Windows" in caught.value.remediation

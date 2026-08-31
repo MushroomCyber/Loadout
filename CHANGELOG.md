@@ -151,6 +151,27 @@ the machine actually has.
 
 ### Fixed
 
+- **`npm install promptfoo` sat for minutes under WSL and then failed.** Under
+  WSL the Windows drives are on `PATH`, so `which npm` finds
+  `/mnt/c/Program Files/nodejs/npm` — the *Windows* npm — even when Linux has no
+  `node` at all. It runs, because that is what interop is for, but every call
+  crosses the interop boundary (the wait), it installs into a Windows prefix,
+  and the executables it produces are Windows binaries this system cannot run.
+  The install appears to work, slowly, and leaves nothing usable behind.
+
+  Toolchain providers now refuse an executable reached through WSL interop, and
+  npm additionally requires `node` to exist — `npm --version` answers from its
+  shell wrapper with no interpreter present, so npm looks healthy right up until
+  the first install fails. `loadout providers` reports it as unavailable with
+  the reason, and a plan that has no other route now says why:
+
+      promptfoo: No available installer for 'promptfoo' (catalog offers: npm)
+        — npm: only the Windows build is on PATH (/mnt/c/Program Files/nodejs/npm);
+          it installs into the Windows filesystem, not this one
+
+  `apt` and `docker` are deliberately exempt: this is a rule about toolchains
+  that install into a prefix, not a rule about paths.
+
 
 - **The sudo handover from the browser was abrupt and unexplained.** The UI
   vanished, one bare line landed on top of whatever the shell had been showing,

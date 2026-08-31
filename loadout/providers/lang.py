@@ -20,6 +20,10 @@ class _ToolchainProvider(Provider):
     """Common behaviour for user-scoped toolchain installs."""
 
     needs_root = False
+    #: These install into a prefix and produce executables for the host they
+    #: ran on. Reached through WSL interop that prefix is a Windows one, so
+    #: the install lands somewhere this system cannot run.
+    rejects_windows_interop = True
     #: argv fragments; ``{spec}`` is substituted with the resolved module spec.
     install_template: tuple[str, ...] = ()
     remove_template: tuple[str, ...] = ()
@@ -214,6 +218,10 @@ class NpmProvider(_ToolchainProvider):
     remove_template = ("npm", "uninstall", "--global", "{spec}")
     version_flag = "--version"
     default_priority = 55
+    #: npm is a JavaScript program. Without an interpreter it still answers
+    #: `--version` from its shell wrapper, so it looks available right up
+    #: until the first install fails.
+    companion_executables = ("node",)
 
 
 class BrewProvider(_ToolchainProvider):
