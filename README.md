@@ -459,7 +459,7 @@ Adding a tool to the catalog is the easiest useful contribution — one YAML fil
 no Python. See [docs/CATALOG.md](docs/CATALOG.md) for the format and
 [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow. There is an
 [issue template](https://github.com/MushroomCyber/Loadout/issues/new?template=add-tool.yml)
-if you would rather suggest a tool than write the entry yourself.
+if you would rather suggest a tool than write the entry yourself..
 
 ```bash
 pip install -e '.[dev,tui]'
