@@ -407,9 +407,9 @@ Adding a tool is one file and a pull request. See
 **Providers implemented:** `apt` · `brew` · `pipx` · `go` · `cargo` · `gem` ·
 `npm` · `github` (verified release downloads) · `docker`
 
-**Providers with catalog coverage today:** `apt` 768 · `brew` 33 · `github` 15 ·
-`go` 10 · `pipx` 10 · `gem` 2 · `cargo` 1. `npm` and `docker` work but no entry
-uses them yet — adding one is a pull request, not a code change.
+**Providers with catalog coverage today:** `apt` 774 · `brew` 33 · `pipx` 24 ·
+`github` 15 · `go` 12 · `gem` 4 · `cargo` 2 · `npm` 1. `docker` works but no
+entry uses it yet — adding one is a pull request, not a code change.
 
 ---
 
