@@ -1,0 +1,22 @@
+id: takeover
+summary: Subdomain takeover vulnerability scanner
+description: Checks a list of subdomains against fingerprints for services (GitHub Pages, Heroku, S3 and
+  others) that leave a dangling CNAME exploitable once the underlying resource is released -- a maintained
+  fork carrying on from the earlier, now-stale subdomain-takeover scanners.
+categories:
+- recon
+- web
+tags:
+- recon
+- subdomain
+- dns
+phases:
+- reconnaissance
+- discovery
+homepage: https://github.com/edoardottt/takeover
+repo: edoardottt/takeover
+license: MIT
+alternatives:
+- subfinder
+- amass
+install: []

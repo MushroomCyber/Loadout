@@ -1,0 +1,17 @@
+id: crivo
+summary: Extract and filter URLs, IPs, domains and subdomains from text or pages
+description: Pulls structured indicators -- URLs, IPs, domains, subdomains -- out of crawled pages or
+  raw text, the cleanup step between a crawl and a target list that otherwise gets done with a pile of
+  regex.
+categories:
+- recon
+tags:
+- recon
+- osint
+- parsing
+phases:
+- reconnaissance
+homepage: https://github.com/GMDSantana/crivo
+repo: GMDSantana/crivo
+license: MIT
+install: []

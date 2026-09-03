@@ -1,0 +1,23 @@
+id: ohmyqr
+summary: QR-code login hijacking proof of concept
+description: 'Demonstrates session hijacking against services that authenticate by scanning a QR code
+  (the WhatsApp Web pattern): it relays the real code to a victim and captures the session once they scan
+  it -- the same class of attack as QRLJacking, packaged for a specific target.
+
+
+  No packaged install: `git clone` and follow the README, which is service-specific.'
+categories:
+- social
+- exploitation
+tags:
+- social-engineering
+- session-hijacking
+- qr-code
+phases:
+- credential-access
+homepage: https://github.com/cryptedwolf/ohmyqr
+repo: cryptedwolf/ohmyqr
+license: Unknown
+alternatives:
+- qrljacking
+install: []

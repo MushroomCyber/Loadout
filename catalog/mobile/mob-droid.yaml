@@ -1,0 +1,24 @@
+id: mob-droid
+summary: Menu-driven wrapper around msfvenom for Android payloads
+description: 'Walks through msfvenom''s Android payload options as a menu instead of flags, for anyone
+  who wants the output without memorising the switches. Metasploit itself does the actual work -- this
+  only saves typing.
+
+
+  No packaged install: needs `metasploit-framework` already on PATH, which this catalog already installs.
+  `git clone` and run `./Mob-Droid.sh`.'
+categories:
+- mobile
+- exploitation
+tags:
+- android
+- payload
+- metasploit
+phases:
+- resource-development
+homepage: https://github.com/kinghacker0/Mob-Droid
+repo: kinghacker0/Mob-Droid
+license: GPL-3.0
+alternatives:
+- metasploit-framework
+install: []

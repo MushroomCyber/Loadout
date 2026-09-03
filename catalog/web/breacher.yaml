@@ -1,0 +1,26 @@
+id: breacher
+summary: Multithreaded admin login panel finder
+description: 'Checks a wordlist of common admin-panel paths against a target, threaded for speed -- the
+  one-shot version of what a full web fuzzer would do with the right wordlist, useful when that is literally
+  all that is needed.
+
+
+  No packaged install: `git clone` and run `python3 breacher.py`. Not to be confused with the unrelated
+  `breacher` package on PyPI, which is a different author''s admin-panel finder under the same name --
+  `pip install breacher` does not get you this tool.'
+categories:
+- web
+- recon
+tags:
+- web
+- recon
+- bruteforce
+phases:
+- discovery
+homepage: https://github.com/s0md3v/Breacher
+repo: s0md3v/Breacher
+license: Unknown
+alternatives:
+- ffuf
+- gobuster
+install: []

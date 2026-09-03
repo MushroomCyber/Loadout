@@ -1,0 +1,26 @@
+id: sqlscan
+summary: SQL scanner, dork-based target finder, and PHP webshell injector
+description: 'Combines Google-dork-driven target discovery with SQL injection scanning and a webshell
+  injector for PHP targets, aimed at the CTF/bug-bounty workflow of finding then confirming then landing
+  a shell in one tool rather than three.
+
+
+  No packaged install: PHP CLI script. `git clone` and run with `php sqlscan.php`.'
+categories:
+- web
+- vuln-scan
+tags:
+- web
+- sqli
+- webshell
+- dorking
+phases:
+- discovery
+- initial-access
+homepage: https://github.com/Cvar1984/sqlscan
+repo: Cvar1984/sqlscan
+license: Unknown
+alternatives:
+- sqlmap
+- dsss
+install: []

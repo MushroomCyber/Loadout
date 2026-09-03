@@ -1,0 +1,25 @@
+id: dsss
+summary: Damn Small SQLi Scanner -- SQL injection detection in ~100 lines
+description: 'sqlmap''s author''s own minimal reference implementation of SQL injection detection: small
+  enough to read start to finish, useful for understanding what sqlmap is actually doing under the hood
+  or for a quick check where sqlmap is overkill.
+
+
+  No packaged install: it is a single script. `git clone` and run `python3 dsss.py`. There is an unrelated
+  `dsss` package on PyPI (a statistics data-exchange server) -- `pip install dsss` does not get you this
+  tool.'
+categories:
+- web
+- vuln-scan
+tags:
+- web
+- sqli
+- scanner
+phases:
+- discovery
+homepage: https://github.com/stamparm/DSSS
+repo: stamparm/DSSS
+license: Unknown
+alternatives:
+- sqlmap
+install: []

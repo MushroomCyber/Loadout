@@ -1,0 +1,22 @@
+id: qrljacking
+summary: OWASP reference implementation of QR-code login session hijacking
+description: 'OWASP''s write-up and proof of concept for QRLJacking: relaying a real login QR code to
+  a victim and capturing the session once it is scanned, affecting any app that uses ''log in by scanning
+  a code'' as its auth flow. The reference project for the attack class; `ohmyqr` is a narrower implementation
+  against one target.'
+categories:
+- social
+- web
+tags:
+- social-engineering
+- session-hijacking
+- qr-code
+- owasp
+phases:
+- credential-access
+homepage: https://github.com/OWASP/QRLJacking
+repo: OWASP/QRLJacking
+license: GPL-3.0
+alternatives:
+- ohmyqr
+install: []

@@ -1,0 +1,21 @@
+id: socialfish
+summary: Phishing framework with a web dashboard and credential collection
+description: A phishing-page toolkit with a web UI for standing up and monitoring campaigns, rather than
+  the run-from-a-terminal shape most of this category has -- useful when the exercise involves someone
+  other than the operator watching results come in.
+categories:
+- social
+tags:
+- phishing
+- social-engineering
+phases:
+- initial-access
+- credential-access
+homepage: https://github.com/UndeadSec/SocialFish
+repo: UndeadSec/SocialFish
+license: BSD-3-Clause
+alternatives:
+- hiddeneye
+- advphishing
+- set
+install: []

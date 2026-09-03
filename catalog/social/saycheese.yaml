@@ -1,0 +1,20 @@
+id: saycheese
+summary: Grab a webcam snapshot from a link click, over an ngrok tunnel
+description: 'Serves a page that requests camera access and exfiltrates a snapshot on click, tunnelled
+  through ngrok so the link works off the local network -- for demonstrating what a camera-permission
+  phishing page can extract in a security-awareness exercise.
+
+
+  No packaged install: `git clone` and run `./saycheese.sh`.'
+categories:
+- social
+tags:
+- phishing
+- social-engineering
+- webcam
+phases:
+- collection
+homepage: https://github.com/hangetzzu/saycheese
+repo: hangetzzu/saycheese
+license: GPL-3.0
+install: []

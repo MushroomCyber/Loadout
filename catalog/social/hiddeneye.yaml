@@ -1,0 +1,25 @@
+id: hiddeneye
+summary: Phishing page generator with multiple tunnelling backends
+description: 'Templated credential-harvesting pages with a built-in tunnel (ngrok and others), aimed at
+  making a phishing-awareness exercise quick to stand up rather than at sophistication.
+
+
+  No packaged install: `git clone`, `pip install -r requirements.txt`, and run `python3 HiddenEye.py`.
+  Not to be confused with the unrelated `hiddeneye` package on PyPI, a different author''s tool under
+  the same name -- `pip install hiddeneye` does not get you this one.'
+categories:
+- social
+tags:
+- phishing
+- social-engineering
+phases:
+- initial-access
+- credential-access
+homepage: https://github.com/Morsmalleo/HiddenEye
+repo: Morsmalleo/HiddenEye
+license: GPL-3.0
+alternatives:
+- advphishing
+- socialfish
+- set
+install: []

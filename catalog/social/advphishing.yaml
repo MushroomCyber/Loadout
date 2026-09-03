@@ -1,0 +1,24 @@
+id: advphishing
+summary: Phishing tool with OTP bypass simulation
+description: 'Serves a cloned login page and walks a captured session through a follow-up OTP prompt,
+  for testing whether a phishing-awareness program catches a two-step lure and not just a password page.
+
+
+  No packaged install: `git clone`, `pip install -r requirements.txt`, and run `python3 AdvPhishing.py`.'
+categories:
+- social
+tags:
+- phishing
+- otp
+- social-engineering
+phases:
+- initial-access
+- credential-access
+homepage: https://github.com/Ignitetch/AdvPhishing
+repo: Ignitetch/AdvPhishing
+license: Unknown
+alternatives:
+- hiddeneye
+- socialfish
+- set
+install: []

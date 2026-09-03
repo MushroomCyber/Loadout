@@ -1,0 +1,23 @@
+id: bluepot
+summary: Bluetooth honeypot for capturing malware and attack attempts
+description: 'Accepts Bluetooth file-transfer and OBEX connections and logs what arrives, the way an SSH
+  honeypot logs credential-stuffing attempts -- useful on an engagement that includes physical or proximity-based
+  testing.
+
+
+  No packaged install: needs a JDK and a BlueCove-compatible Bluetooth stack. Clone the repository and
+  follow its README; the project has had no maintenance activity in some time, so treat it as reference
+  rather than load-bearing.'
+categories:
+- wireless
+- detection
+tags:
+- bluetooth
+- honeypot
+- blue-team
+phases:
+- collection
+homepage: https://github.com/andrewmichaelsmith/bluepot
+repo: andrewmichaelsmith/bluepot
+license: Unknown
+install: []
