@@ -905,8 +905,50 @@ def test_every_row_shades_cleanly_with_no_stray_markup():
 
     for row in BANNER_ART:
         shaded = _shade_banner_row(row)
-        assert shaded.count("[$accent]") == shaded.count("[/$accent]")
-        assert shaded.count("[$accent-darken-2]") == shaded.count("[/$accent-darken-2]")
+        for tag in ("$accent", "$accent-darken-2", "$primary", "$primary-darken-2"):
+            assert shaded.count(f"[{tag}]") == shaded.count(f"[/{tag}]"), tag
+
+
+def test_load_and_out_are_two_separate_colours():
+    """The user asked for this directly: LOAD and OUT read as two different
+    colours, not a seven-letter wall of one hue. \\$accent belongs to LOAD,
+    \\$primary to OUT, split at the column found by inspecting the actual
+    glyphs -- ansi_shadow kerns tightly enough that no column is blank across
+    every row, so the boundary could not be found by looking for a gap.
+    """
+    from loadout.ui.tui.app import _BANNER_SPLIT_COL, BANNER_ART, _shade_banner_row
+
+    row = next(r for r in BANNER_ART if "\u2588" in r and "\u2557" in r)
+    shaded = _shade_banner_row(row)
+
+    # Reconstruct what ended up in each colour family and check it lines up
+    # with the actual LOAD/OUT split column, not just that both colours
+    # appear somewhere.
+    import re
+
+    accent_text = "".join(
+        m.group(1)
+        for m in re.finditer(r"\[\$accent(?:-darken-2)?\]([^\[]*)\[/", shaded)
+    )
+    primary_text = "".join(
+        m.group(1)
+        for m in re.finditer(r"\[\$primary(?:-darken-2)?\]([^\[]*)\[/", shaded)
+    )
+    assert accent_text == row[:_BANNER_SPLIT_COL]
+    assert primary_text == row[_BANNER_SPLIT_COL:]
+
+
+def test_the_split_column_lands_between_d_and_the_second_o_not_through_a_letter():
+    """Pins the actual glyphs on each side of the split, read off the real
+    art rather than guessed at a halfway point. Row 1 shows D's closing
+    corner immediately followed by O's left wall; row 4 shows D's closing
+    curve immediately followed by O's opening curve. Both are letter-to-letter
+    transitions, not a cut through the middle of one letter's solid face."""
+    from loadout.ui.tui.app import _BANNER_SPLIT_COL, BANNER_ART
+
+    col = _BANNER_SPLIT_COL
+    assert BANNER_ART[1][col - 1 : col + 1] == "╗█"
+    assert BANNER_ART[4][col - 1 : col + 1] == "╝╚"
 
 
 def test_banner_block_still_carries_the_machine_facts(app):

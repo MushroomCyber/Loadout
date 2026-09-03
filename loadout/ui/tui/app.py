@@ -87,13 +87,32 @@ BANNER_MIN_WIDTH = 96
 #: where one letter ends and the next begins. Two shades restores that edge.
 _BANNER_OUTLINE = frozenset("═║╗╝╚╔")
 
+#: Column where "LOAD" ends and "OUT" begins, in BANNER_ART's 60-wide grid.
+#: ansi_shadow kerns tightly enough that no column is blank in every row --
+#: there is no letter gap to detect automatically -- so this was found by
+#: printing the art next to a column ruler and reading off where the second
+#: O's opening curve starts. Tied to BANNER_ART: regenerate this by hand if
+#: that constant is ever regenerated from a different font or size.
+_BANNER_SPLIT_COL = 33
+
 
 def _shade_banner_row(row: str) -> str:
-    """Bright accent for the letter face, a darker shade for its outline."""
+    """LOAD in one accent, OUT in another; each one's outline darker than its
+    own face.
+
+    Splitting the wordmark in two does what the single-colour version could
+    not: with every letter the same hue, adjacent mostly-solid shapes -- D
+    beside O -- had nothing marking where one ended and the next began.
+    """
+
+    def tag_for(item: tuple[int, str]) -> str:
+        col, ch = item
+        word = "$accent" if col < _BANNER_SPLIT_COL else "$primary"
+        return f"{word}-darken-2" if ch in _BANNER_OUTLINE else word
+
     parts = []
-    for is_outline, chars in groupby(row, key=lambda ch: ch in _BANNER_OUTLINE):
-        text = "".join(chars)
-        tag = "$accent-darken-2" if is_outline else "$accent"
+    for tag, group in groupby(enumerate(row), key=tag_for):
+        text = "".join(ch for _col, ch in group)
         parts.append(f"[{tag}]{text}[/{tag}]")
     return "".join(parts)
 
