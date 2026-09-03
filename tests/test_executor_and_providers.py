@@ -153,6 +153,83 @@ class TestGithubAssetSelection:
         assets = self._assets("tool_windows.zip")
         assert GithubReleaseProvider._select_asset(assets, "*solaris*") is None
 
+    def _auto(self, monkeypatch, system, machine, *names):
+        """Auto-detect (no pattern) against a real release's asset names,
+        for the platform *system*/*machine* claims to be running on."""
+        import platform
+
+        monkeypatch.setattr(platform, "system", lambda: system)
+        monkeypatch.setattr(platform, "machine", lambda: machine)
+        return GithubReleaseProvider._select_asset(self._assets(*names), "")
+
+    def test_a_linux_asset_named_lin_not_linux_is_still_found(self, monkeypatch):
+        """hayabusa: "hayabusa-4.0.0-lin-x64-gnu.zip". The exact string
+        "linux" never appears in its release assets at all, so the auto-guess
+        found nothing on any Linux machine until "lin" was added as an alias.
+        """
+        chosen = self._auto(
+            monkeypatch, "Linux", "x86_64",
+            "hayabusa-4.0.0-mac-x64.zip",
+            "hayabusa-4.0.0-lin-x64-gnu.zip",
+            "hayabusa-4.0.0-win-x64.zip",
+        )
+        assert chosen.name == "hayabusa-4.0.0-lin-x64-gnu.zip"
+
+    def test_a_bare_binary_with_no_archive_extension_is_selected(self, monkeypatch):
+        """velociraptor ships "velociraptor-v0.77.2-linux-amd64" -- no
+        .tar.gz/.zip/anything -- which _extract() already treats correctly as
+        the binary itself; the old extension allowlist just never let
+        anything without one of four archive suffixes be selected at all."""
+        chosen = self._auto(
+            monkeypatch, "Linux", "x86_64",
+            "velociraptor-v0.77.2-darwin-amd64",
+            "velociraptor-v0.77.2-linux-amd64",
+        )
+        assert chosen.name == "velociraptor-v0.77.2-linux-amd64"
+
+    def test_a_detached_signature_is_never_picked_over_the_binary_it_signs(self, monkeypatch):
+        """The bare-binary case above only works safely because a same-named
+        ".sig" file sitting right next to the real binary -- which also
+        matches on platform and architecture -- is excluded first."""
+        chosen = self._auto(
+            monkeypatch, "Linux", "x86_64",
+            "velociraptor-v0.77.2-linux-amd64.sig",
+            "velociraptor-v0.77.2-linux-amd64",
+        )
+        assert chosen.name == "velociraptor-v0.77.2-linux-amd64"
+
+    def test_macos_named_assets_are_found_on_darwin(self, monkeypatch):
+        """trivy -- already in this catalog -- names its release "macOS", not
+        "darwin" ("trivy_0.74.0_macOS-64bit.tar.gz"); `platform.system()`
+        reports "Darwin" and the exact string was never going to appear."""
+        chosen = self._auto(
+            monkeypatch, "Darwin", "x86_64",
+            "trivy_0.74.0_Linux-64bit.tar.gz",
+            "trivy_0.74.0_macOS-64bit.tar.gz",
+        )
+        assert chosen.name == "trivy_0.74.0_macOS-64bit.tar.gz"
+
+    def test_64bit_is_recognised_as_amd64(self, monkeypatch):
+        chosen = self._auto(
+            monkeypatch, "Linux", "x86_64",
+            "trivy_0.74.0_Linux-32bit.tar.gz",
+            "trivy_0.74.0_Linux-64bit.tar.gz",
+            "trivy_0.74.0_Linux-ARM64.tar.gz",
+        )
+        assert chosen.name == "trivy_0.74.0_Linux-64bit.tar.gz"
+
+    def test_win_as_a_short_alias_does_not_match_inside_darwin(self, monkeypatch):
+        """"win" is a legitimate short form of "windows" in a release
+        filename, and also the middle three letters of "darwin". A plain
+        substring test would make a Windows host match a macOS asset; this is
+        the case that requires the alias check to respect word boundaries."""
+        chosen = self._auto(
+            monkeypatch, "Windows", "x86_64",
+            "velociraptor-v0.77.2-darwin-amd64",
+            "velociraptor-v0.77.2-windows-amd64.exe",
+        )
+        assert chosen.name == "velociraptor-v0.77.2-windows-amd64.exe"
+
     def test_repo_must_be_owner_slash_name(self):
         with pytest.raises(ProviderError, match="owner/name"):
             GithubReleaseProvider().plan_install(

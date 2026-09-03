@@ -18,4 +18,16 @@ alternatives:
 install:
 - provider: github
   repo: Velocidex/velociraptor
-  checksums: '*checksums*.txt'
+  # No checksums*.txt in the release, confirmed against the live API --
+  # 'checksums' here pointed at a file that has never existed, which made
+  # every install fail outright rather than only skip verification. Without
+  # it the install now correctly refuses unless --allow-unverified.
+  #
+  # Velocidex DOES sign every binary individually (a .sig detached alongside
+  # each asset, e.g. velociraptor-v0.77.2-linux-amd64.sig) -- a `signature:`
+  # block here would be strictly better than a checksum ever was. Left
+  # unwired: this provider's signature support expects one signature file
+  # covering either the archive or a shared checksum listing (`signs: file`
+  # or `signs: checksums`), not a separate per-asset signature selected by
+  # matching the chosen asset's own name, which velociraptor needs and
+  # nothing else in this catalog does yet.

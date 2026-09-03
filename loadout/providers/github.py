@@ -20,6 +20,7 @@ import fnmatch
 import json
 import logging
 import os
+import re
 import shutil
 import stat
 import tarfile
@@ -61,6 +62,37 @@ class ReleaseAsset:
     name: str
     url: str
     size: int
+
+
+#: Never the binary, even when platform and architecture both match: a
+#: detached signature, a checksum listing, an installer this provider does
+#: not drive, or metadata. `_select_asset` accepts a bare binary with no
+#: extension at all (`_extract` already handles that case), so this list is
+#: what stands between "accept anything platform-matched" and picking a
+#: project's `tool-linux-amd64.sig` instead of `tool-linux-amd64`.
+_NOT_A_BINARY_EXTS = (
+    ".sig", ".asc", ".pem", ".pub",
+    ".sha256", ".sha256sum", ".sha512", ".sum",
+    ".sbom", ".spdx", ".spdx.json", ".cdx.json",
+    ".txt", ".json", ".yaml", ".yml", ".md",
+    ".msi", ".deb", ".rpm", ".pkg", ".dmg", ".apk",
+)
+
+
+def _any_token(lowered_name: str, tokens: tuple[str, ...]) -> bool:
+    """Does *lowered_name* contain any of *tokens* as a whole word?
+
+    A plain substring test is what a short alias needs to be safe: "win" is
+    a legitimate short form of "windows" in a release filename, but it is
+    also the middle three letters of "darwin" -- a bare `"win" in name` would
+    make a Windows host match a macOS asset. Hyphen, underscore, dot and the
+    start/end of the string all count as a word boundary, matching how these
+    tokens actually appear in release filenames.
+    """
+    return any(
+        re.search(rf"(?<![a-z0-9]){re.escape(token)}(?![a-z0-9])", lowered_name)
+        for token in tokens
+    )
 
 
 class GithubReleaseProvider(Provider):
@@ -377,19 +409,41 @@ class GithubReleaseProvider(Provider):
 
         system = platform.system().lower()
         machine = platform.machine().lower()
+        # Found live, against real releases, not guessed at: hayabusa names
+        # its Linux assets "lin", not "linux"
+        # ("hayabusa-4.0.0-lin-x64-gnu.zip"), so the exact string match never
+        # fired. trivy -- already in this catalog -- names its macOS assets
+        # "macOS", not "darwin" ("trivy_0.74.0_macOS-64bit.tar.gz"), the same
+        # gap on the platform this repository cannot run CI on to notice it
+        # on. velociraptor ships bare binaries with no archive extension at
+        # all ("velociraptor-v0.77.2-linux-amd64") -- _extract() already
+        # returns a non-archive asset as-is, but the old extension allowlist
+        # excluded it from ever being selected. None of this is a one-off
+        # catalog mistake; every catalog entry relies on this same guess.
+        system_aliases = {
+            "linux": ("linux", "lin"),
+            "darwin": ("darwin", "macos", "mac", "osx"),
+            "windows": ("windows", "win"),
+        }.get(system, (system,))
         arch_aliases = {
-            "x86_64": ("amd64", "x86_64", "x64"),
-            "amd64": ("amd64", "x86_64", "x64"),
+            # "64bit" is trivy's -- already in this catalog -- own naming for
+            # amd64 ("trivy_0.74.0_macOS-64bit.tar.gz"); confirmed against its
+            # real release rather than guessed at.
+            "x86_64": ("amd64", "x86_64", "x64", "64bit"),
+            "amd64": ("amd64", "x86_64", "x64", "64bit"),
             "aarch64": ("arm64", "aarch64"),
             "arm64": ("arm64", "aarch64"),
         }.get(machine, (machine,))
         for asset in assets:
             lowered = asset.name.lower()
-            if (
-                system in lowered
-                and any(a in lowered for a in arch_aliases)
-                and lowered.endswith((".tar.gz", ".tgz", ".zip", ".tar.xz"))
-            ):
+            if lowered.endswith(_NOT_A_BINARY_EXTS):
+                # A detached signature or checksum file matches on platform
+                # and architecture too whenever it is named after the binary
+                # it covers -- "tool-linux-amd64.sig" right next to
+                # "tool-linux-amd64" -- so this has to run before, not after,
+                # the match below.
+                continue
+            if _any_token(lowered, system_aliases) and _any_token(lowered, arch_aliases):
                 return asset
         return None
 

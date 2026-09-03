@@ -18,4 +18,9 @@ alternatives:
 install:
 - provider: github
   repo: Yamato-Security/hayabusa
-  checksums: '*checksums*.txt'
+  # No checksums*.txt in the release, confirmed against the live API --
+  # 'checksums' here pointed at a file that has never existed, which made
+  # every install fail outright rather than only skip verification. Without
+  # it the install now correctly refuses unless --allow-unverified, matching
+  # what upstream actually publishes. Yamato-Security does not sign releases
+  # either, so there is no `signature:` block to add in its place.

@@ -211,6 +211,44 @@ class TestShippedCatalogSource:
         assert len(described) >= 50
 
 
+class TestNoChecksumFieldPointsAtNothing:
+    """hayabusa and velociraptor both declared `checksums: '*checksums*.txt'`
+    against releases that have never published such a file, confirmed live
+    against the GitHub API -- which made every install fail outright with
+    "checksum file is not in the release assets" rather than only skip
+    verification. Pinned here so a future edit cannot silently reintroduce a
+    checksums pattern that matches nothing.
+    """
+
+    def test_hayabusa_declares_no_checksums(self):
+        from pathlib import Path
+
+        import yaml
+
+        entry = yaml.safe_load(
+            (Path(__file__).resolve().parent.parent / "catalog" / "detection" / "hayabusa.yaml")
+            .read_text(encoding="utf-8")
+        )
+        route = entry["install"][0]
+        assert "checksums" not in route, route
+
+    def test_velociraptor_declares_no_checksums(self):
+        from pathlib import Path
+
+        import yaml
+
+        entry = yaml.safe_load(
+            (
+                Path(__file__).resolve().parent.parent
+                / "catalog"
+                / "incident-response"
+                / "velociraptor.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        route = entry["install"][0]
+        assert "checksums" not in route, route
+
+
 class TestSignatureValidation:
     """A signature block is checked when the catalog is validated, so a typo
     fails review rather than an install on someone else's machine -- by which
