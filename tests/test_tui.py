@@ -869,7 +869,11 @@ async def test_clicking_a_different_chip_moves_the_bold_reverse_marker_with_it(a
         await pilot.pause()
         chips = {c.id: c for c in pilot.app.query("#facetlist Button")}
         chips["facet-web"].press()
-        await pilot.pause()
+        # A resolved style, unlike a data read, depends on Textual's CSS
+        # engine having actually reprocessed the class change -- a bare
+        # queue-drain pause was enough on Linux but flaked on a slower macOS
+        # runner. A real delay, not just a tick, is what the CSS pass needs.
+        await pilot.pause(0.1)
         assert "reverse" in str(chips["facet-web"].styles.text_style)
         assert "reverse" not in str(chips["facet-all"].styles.text_style)
 
