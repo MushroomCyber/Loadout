@@ -46,7 +46,6 @@ try:  # pragma: no cover - optional dependency
         ProgressBar,
         Static,
     )
-    from textual.widgets._button import ButtonVariant
 
     TEXTUAL_AVAILABLE = True
 except Exception:  # pragma: no cover
@@ -575,9 +574,6 @@ if TEXTUAL_AVAILABLE:
             self._rows: list[Any] = []
             self._planner_cache: Any = None
             self._active_providers: set[str] = set()
-            #: Each category chip's coverage colour, so the active chip can
-            #: take the accent and give it back when another is chosen.
-            self._chip_variant: dict[str, ButtonVariant] = {}
             #: Category slugs in sidebar order, so counts can be refreshed in
             #: place without rebuilding the chips.
             self._facet_slugs: list[str] = []
@@ -711,11 +707,7 @@ if TEXTUAL_AVAILABLE:
                 count = len(ids)
                 here = sum(1 for tool_id in ids if tool_id in installed)
                 chip.label = f"{slug[:12]:<12}{here:>3}/{count:<3}"
-                variant = self._coverage_variant(here, count)
-                self._chip_variant[f"facet-{slug}"] = variant
                 chip.set_class(count == 0, "-empty")
-                if not chip.has_class("-active"):
-                    chip.variant = variant
 
             for name, toggle in toggles.items():
                 provider = (name or "").removeprefix("prov-")
@@ -728,19 +720,6 @@ if TEXTUAL_AVAILABLE:
                 short = _SHORT_PROVIDER.get(provider, provider)
                 toggle.label = f"{short} {count}"
                 toggle.set_class(count == 0, "-empty")
-
-        def _coverage_variant(self, here: int, count: int) -> ButtonVariant:
-            """Green once a category is well covered, plain otherwise.
-
-            There used to be a third, amber state for "some but not many",
-            which nobody could read: amber means *something is wrong* in every
-            other part of a security tool's interface, and a partly-installed
-            category is not a warning. The n/N in the label carries that
-            detail now, and the colour only reinforces it.
-            """
-            if not count:
-                return "default"
-            return "success" if here / count >= 0.3 else "default"
 
         # -- data ----------------------------------------------------------
 
@@ -922,9 +901,7 @@ if TEXTUAL_AVAILABLE:
             self._facet = None if slug == "all" else ("category", slug)
             for chip in self.query("#facetlist Button").results(Button):
                 chip.remove_class("-active")
-                # Restore the coverage colour the chip was built with; only
-                # the active one wears the accent.
-                chip.variant = self._chip_variant.get(chip.id or "", "default")
+                chip.variant = "default"
             button.add_class("-active")
             button.variant = "primary"
             self._reload()

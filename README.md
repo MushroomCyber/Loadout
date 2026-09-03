@@ -363,8 +363,9 @@ Two of those carry state you can read at a glance:
   this machine *and* present in the catalog, and are labelled with how many
   entries they cover: `apt 768`, `gh 15`, `pipx 10`. An active toggle takes the
   accent colour.
-- **Category chips** show installed-over-total (`wireless 14/48`), and turn
-  green once you have a third of a category. The active chip takes the accent.
+- **Category chips** show installed-over-total (`wireless 14/48`). The active
+  chip takes the accent, bold and reverse -- the only thing a chip's colour
+  communicates is which one you clicked.
 
 ---
 

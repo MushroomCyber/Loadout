@@ -1011,3 +1011,27 @@ def test_the_narrow_terminal_status_line_matches_the_same_two_facts():
     assert "842 tools" in line
     assert "1 installed" in line
     assert "kali" not in line
+
+
+# ---------------------------------------------------------------------------
+# A category chip's colour is not a function of install coverage
+# ---------------------------------------------------------------------------
+
+
+async def test_a_well_covered_category_is_not_coloured_green(app):
+    """A category chip used to turn green once 30% of its tools were
+    installed -- a permanent badge with no relationship to whether the chip
+    was selected, indistinguishable at a glance from an actual selection
+    highlight. Removed outright: the n/N in the label already says how
+    covered a category is, and a chip's colour now says only one thing --
+    whether it is the one you clicked.
+
+    "recon" in the fixture is nmap and nothing else -- 1/1, 100% covered,
+    which is exactly the case the old code coloured green. Not a vacuous
+    check: this category would have failed under the removed behaviour.
+    """
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        recon = pilot.app.query_one("#facet-recon")
+        assert not recon.has_class("-active")
+        assert recon.variant == "default"
