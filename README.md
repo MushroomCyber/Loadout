@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <img alt="The Loadout browser running on Kali: filter box, provider toggles, category sidebar with installed-over-total counts, tool list and detail pane" src="docs/demo/loadout.png" width="900">
+  <img alt="The Loadout browser running on Kali: two-tone LOAD/OUT banner, filter box, provider toggles, category sidebar with installed-over-total counts, a tool list with its resolved VIA provider, and the detail pane" src="docs/demo/loadout.png" width="900">
 </p>
 
 ---
