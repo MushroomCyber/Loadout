@@ -195,9 +195,16 @@ class GithubReleaseProvider(Provider):
                     checksums_name=checksums_name,
                     workdir=tmp,
                 )
+                # verify_signature() raises on failure and is silent on
+                # success -- logs a debug line nobody sees during an
+                # interactive install. Say so where the log is actually
+                # visible: a passing check should be as visible as a failing
+                # one, not just the absence of an error.
+                ctx.output(f"[green]✓[/green] {signature.type} signature verified")
 
             ctx.progress(f"verifying {asset.name}", 55.0)
             verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
+            self._report_digest_result(ctx, expected)
 
             self._place_binary(ctx, archive, binary, target, workdir=tmp)
 
@@ -272,8 +279,10 @@ class GithubReleaseProvider(Provider):
                     checksums_name=checksums,
                     workdir=dest,
                 )
+                ctx.output(f"[green]✓[/green] {signature.type} signature verified")
             ctx.progress(f"verifying {asset.name}", 80.0)
             verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
+            self._report_digest_result(ctx, expected)
 
         return [
             PythonStep(
@@ -405,6 +414,24 @@ class GithubReleaseProvider(Provider):
         if response is None or response.status_code != 200:
             raise VerificationError(f"could not download {match.name}")
         return response.text
+
+    @staticmethod
+    def _report_digest_result(ctx: ExecContext, expected: str) -> None:
+        """The confirmation verify_digest() itself never gives.
+
+        It raises on a mismatch or a missing checksum without
+        ``--allow-unverified``, and is silent -- a debug log line nobody sees
+        during an interactive install -- on everything else, which conflates
+        two different outcomes into one: reaching this line means the digest
+        either matched or was skipped by ``--allow-unverified``, and only
+        *expected* being empty tells the two apart. Both need to be visible;
+        a passing check should be as loud as a failing one, and skipping the
+        check entirely is not a detail to leave to a debug log.
+        """
+        if expected:
+            ctx.output("[green]✓[/green] checksum verified (sha256)")
+        else:
+            ctx.warn("[yellow]![/yellow] no checksum published -- installed unverified")
 
     def _verify_signature(
         self,

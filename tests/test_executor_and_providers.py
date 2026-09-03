@@ -623,3 +623,46 @@ def test_an_unavailable_provider_explains_itself_in_the_plan(catalog, monkeypatc
     with pytest.raises(NoViableProvider) as caught:
         planner.choose_method(tool)
     assert "Windows" in caught.value.remediation
+
+
+class TestVerificationIsVisible:
+    """verify_digest() and verify_signature() are silent on success -- a
+    debug log line during an interactive install is nobody's confirmation.
+    These pin that a passing check is reported through the event stream the
+    install screen actually shows, and that a *skipped* check (checksum
+    present but --allow-unverified let a missing one through) is reported
+    differently from a real pass rather than looking identical to one.
+    """
+
+    def _events(self, expected: str) -> list:
+        from loadout.executor import EVENT_OUTPUT, EVENT_WARN, Event, ExecContext
+        from loadout.providers.github import GithubReleaseProvider
+
+        seen: list[Event] = []
+        ctx = ExecContext(emit=seen.append, tool_id="tool")
+        GithubReleaseProvider._report_digest_result(ctx, expected)
+        assert all(e.kind in (EVENT_OUTPUT, EVENT_WARN) for e in seen)
+        return seen
+
+    def test_a_real_checksum_match_is_confirmed_in_the_log(self):
+        from loadout.executor import EVENT_OUTPUT
+
+        events = self._events("abc123")
+        assert len(events) == 1
+        assert events[0].kind == EVENT_OUTPUT
+        assert "verified" in events[0].message
+        assert "sha256" in events[0].message
+
+    def test_an_unverified_install_is_flagged_not_reported_as_a_pass(self):
+        """expected == "" only happens when verify_digest() returned having
+        skipped the comparison entirely (--allow-unverified, no checksum
+        published) -- verify_digest() itself would have raised otherwise.
+        That must never render as the same green checkmark a real pass gets.
+        """
+        from loadout.executor import EVENT_WARN
+
+        events = self._events("")
+        assert len(events) == 1
+        assert events[0].kind == EVENT_WARN
+        assert "unverified" in events[0].message
+        assert "✓" not in events[0].message
