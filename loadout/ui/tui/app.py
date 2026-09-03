@@ -703,31 +703,40 @@ if TEXTUAL_AVAILABLE:
             query = self.query_one("#query", Input).value.strip()
             categories = [self._facet[1]] if self._facet and self._facet[0] == "category" else []
             providers = sorted(self._active_providers)
-            rows = self.ctx.catalog.search(
-                query, categories=categories, providers=providers, limit=500
-            )
-            if not query:
-                # FTS relevance has nothing to rank on an empty query, so the
-                # store falls back to alphabetical -- which opens the browser
-                # on "0trace, 7zip, above...". Put what the user is more
-                # likely to want looking at first instead.
-                rows = self._prioritised(rows)
+            if query:
+                rows = self.ctx.catalog.search(
+                    query, categories=categories, providers=providers, limit=500
+                )
+            else:
+                # FTS relevance has nothing to rank on an empty query, so
+                # priority order (starred, then installed, then alphabetical)
+                # is what decides what appears here -- and it has to run
+                # before the 500-row cap, not after. Capping first meant a
+                # starred or installed tool whose id sorted past position 500
+                # of 842 never appeared in the unfiltered browser at all,
+                # however it was marked: 17 of this box's 43 installed tools
+                # were invisible here until priority ran on the full id list.
+                all_ids = self.ctx.catalog.search_ids(
+                    "", categories=categories, providers=providers
+                )
+                top_ids = self._prioritised_ids(all_ids)[:500]
+                rows = self.ctx.catalog.get_many(top_ids)
             self._rows = rows
             self._render_rows()
             self._refresh_facet_counts(query)
 
-        def _prioritised(self, rows: list[Any]) -> list[Any]:
+        def _prioritised_ids(self, ids: list[str]) -> list[str]:
             starred = self.ctx.starred()
             installed = self.ctx.installed()
 
-            def rank(tool: Any) -> tuple[int, str]:
-                if tool.id in starred:
-                    return (0, tool.id)
-                if tool.id in installed:
-                    return (1, tool.id)
-                return (2, tool.id)
+            def rank(tool_id: str) -> tuple[int, str]:
+                if tool_id in starred:
+                    return (0, tool_id)
+                if tool_id in installed:
+                    return (1, tool_id)
+                return (2, tool_id)
 
-            return sorted(rows, key=rank)
+            return sorted(ids, key=rank)
 
         def _providers_cell(self, tool: Any) -> str:
             """Light the route that would actually run; dim the rest.

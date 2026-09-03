@@ -8,7 +8,7 @@ description: tmux enables a number of terminals (or windows) to be accessed and 
   and well-documented command interface, with the same syntax whether used interactively, as a key binding,
   or from the shell. It offers a choice of vim or Emacs key layouts.
 categories:
-- wireless
+- utility
 homepage: https://github.com/tmux/tmux/wiki
 size: 1321984
 install:

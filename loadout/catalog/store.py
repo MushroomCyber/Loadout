@@ -24,7 +24,9 @@ from ..model import Tool
 
 logger = logging.getLogger("loadout.catalog")
 
-SCHEMA_VERSION = 1
+# Bumped for the tools_fts column split (title, blob) that made name-relevance
+# ranking possible -- purely informational, nothing currently enforces it.
+SCHEMA_VERSION = 2
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -51,7 +53,7 @@ CREATE INDEX IF NOT EXISTS ix_tools_category ON tools(primary_category);
 
 _FTS_SCHEMA = """
 CREATE VIRTUAL TABLE IF NOT EXISTS tools_fts
-USING fts5(tool_id UNINDEXED, blob, tokenize='unicode61 remove_diacritics 2');
+USING fts5(tool_id UNINDEXED, title, blob, tokenize='unicode61 remove_diacritics 2');
 """
 
 #: Facet kinds that :meth:`CatalogStore.search` knows how to filter on.
@@ -276,7 +278,18 @@ class CatalogStore:
             if clauses:
                 sql += " AND " + " AND ".join(clauses)
                 head_params.extend(params)
-            sql += " ORDER BY bm25(tools_fts, 1.0, 4.0), t.id"
+            # An exact id match always wins outright. bm25 is a pure
+            # term-frequency model, and the prefix search behind every
+            # keystroke (`_to_fts_query` turns "nmap" into `"nmap"*`) means
+            # "nmapsi4" -- itself starting with "nmap", and saying "nmap"
+            # again in its own summary -- can out-score plain "nmap" on term
+            # frequency alone. _like_search, the no-FTS5 fallback below, has
+            # always special-cased this; the primary path never did.
+            sql += (
+                " ORDER BY CASE WHEN LOWER(t.id) = ? THEN 0 ELSE 1 END, "
+                "bm25(tools_fts, 4.0, 1.0), t.id"
+            )
+            head_params.append(query.lower())
             try:
                 rows = self._conn.execute(sql, head_params).fetchall()
             except sqlite3.OperationalError as exc:
@@ -377,7 +390,7 @@ def build_catalog(
 
         rows: list[tuple[str, str, str, str]] = []
         facet_rows: list[tuple[str, str, str]] = []
-        fts_rows: list[tuple[str, str]] = []
+        fts_rows: list[tuple[str, str, str]] = []
 
         for tool in tools:
             doc = json.dumps(tool.to_dict(), separators=(",", ":"), sort_keys=True)
@@ -392,13 +405,15 @@ def build_catalog(
                 facet_rows.append((tool.id, "provider", value))
             for value in tool.binaries:
                 facet_rows.append((tool.id, "binary", value.lower()))
-            fts_rows.append((tool.id, tool.search_blob()))
+            fts_rows.append((tool.id, tool.title_blob(), tool.search_blob()))
             count += 1
 
         conn.executemany("INSERT OR REPLACE INTO tools VALUES (?,?,?,?)", rows)
         conn.executemany("INSERT OR IGNORE INTO facets VALUES (?,?,?)", facet_rows)
         if use_fts:
-            conn.executemany("INSERT INTO tools_fts (tool_id, blob) VALUES (?,?)", fts_rows)
+            conn.executemany(
+                "INSERT INTO tools_fts (tool_id, title, blob) VALUES (?,?,?)", fts_rows
+            )
 
         conn.executemany(
             "INSERT OR REPLACE INTO meta VALUES (?,?)",

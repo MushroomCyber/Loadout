@@ -772,3 +772,71 @@ def test_the_screen_is_cleared_so_the_prompt_does_not_land_on_old_output(capsys)
     plan = SimpleNamespace(actions=[SimpleNamespace(tool=SimpleNamespace(id="nmap"))])
     _print_sudo_handover(plan, ACTION_INSTALL)
     assert capsys.readouterr().out.startswith(CLEAR_SCREEN)
+
+
+# ---------------------------------------------------------------------------
+# The unfiltered browse view must not silently drop installed tools
+# ---------------------------------------------------------------------------
+
+
+async def test_an_installed_tool_past_the_row_cap_still_appears_unfiltered(tmp_path):
+    """Real bug, found on a real box: browsing "all" with no search query
+    capped the SQL result at 500 rows *before* re-sorting starred/installed
+    tools to the top, so anything installed whose id happened to sort past
+    position 500 of a today-842-tool catalog never appeared at all. 17 of 43
+    installed tools on the box that found this were invisible in the
+    unfiltered view -- alphabetically from "parted" on.
+
+    Reproduced here with a synthetic catalog sized past the cap, rather than
+    depending on the real one staying above 500 entries.
+    """
+    import argparse
+
+    from loadout.catalog.store import build_catalog
+    from loadout.model import Tool
+    from loadout.providers.base import ProviderStatus
+    from loadout.ui.cli import Context
+    from loadout.ui.tui.app import LoadoutBrowser
+
+    tools = [Tool(id=f"aaa-tool-{i:04d}", summary="filler") for i in range(600)]
+    # Sorts dead last alphabetically -- well past the 500-row cap.
+    tools.append(Tool(id="zzz-installed-tool", summary="the one that must show up"))
+
+    path = tmp_path / "big.db"
+    build_catalog(path, tools, source="test")
+    from loadout.catalog.store import CatalogStore
+
+    catalog = CatalogStore(path)
+
+    args = argparse.Namespace(as_json=False, catalog=None, prefer=[])
+    ctx = Context(args=args)
+    ctx._catalog = catalog
+    ctx._statuses = {"apt": ProviderStatus(name="apt", available=True)}
+    ctx._installed = {"zzz-installed-tool"}
+    ctx._raw_inventories = {"apt": {"zzz-installed-tool"}}
+
+    app = LoadoutBrowser(ctx)
+    try:
+        async with app.run_test() as pilot:
+            await pilot.pause()
+            ids = {t.id for t in app._rows}
+            assert "zzz-installed-tool" in ids
+            assert len(app._rows) <= 500
+    finally:
+        catalog.close()
+
+
+async def test_prioritised_ids_ranks_starred_then_installed_then_alphabetical():
+    from loadout.ui.tui.app import LoadoutBrowser
+
+    class Fake:
+        def starred(self):
+            return {"b"}
+
+        def installed(self):
+            return {"c"}
+
+    rank = LoadoutBrowser._prioritised_ids
+    browser = object.__new__(LoadoutBrowser)
+    browser.ctx = Fake()
+    assert rank(browser, ["d", "c", "b", "a"]) == ["b", "c", "a", "d"]

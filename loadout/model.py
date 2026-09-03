@@ -157,6 +157,18 @@ class Tool:
             ]
         ).strip()
 
+    def title_blob(self) -> str:
+        """The identity-bearing text: id and summary, hyphens spaced out too.
+
+        A search FTS-ranks purely on term frequency across whatever it is
+        given, so typing the exact name of a well-known tool has to compete
+        with every longer description that happens to mention it in passing.
+        Indexed as its own column and weighted above the full blob, this is
+        what makes typing 'sqlmap' put sqlmap itself above another entry
+        whose description merely discusses sqlmap.
+        """
+        return f"{self.id} {self.id.replace('-', ' ')} {self.summary}".strip()
+
     def with_(self, **changes: Any) -> Tool:
         return replace(self, **changes)
 

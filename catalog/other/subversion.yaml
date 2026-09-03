@@ -7,7 +7,7 @@ description: Apache Subversion, also known as svn, is a centralised version cont
   the Subversion client (svn, svnsync), repository administration tools (svnadmin, svnlook) and a network
   server (svnserve).
 categories:
-- wireless
+- utility
 homepage: http://subversion.apache.org/
 size: 4965376
 install:

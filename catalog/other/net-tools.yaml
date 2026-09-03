@@ -6,7 +6,7 @@ description: This package includes the important tools for controlling the netwo
   aspects of IP configuration (iptunnel, ipmaddr). In the upstream package 'hostname' and friends are
   included. Those are not installed by this package, since there is a special "hostname*.deb".
 categories:
-- wireless
+- network
 homepage: http://sourceforge.net/projects/net-tools/
 size: 939008
 install:

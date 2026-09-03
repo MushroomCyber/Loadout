@@ -438,3 +438,116 @@ def test_no_entry_duplicates_a_tool_already_in_the_catalog_by_repo():
             by_repo.setdefault(repo, []).append(entry["id"])
     dupes = {repo: ids for repo, ids in by_repo.items() if len(ids) > 1}
     assert dupes == {}, f"multiple catalog entries for the same repository: {dupes}"
+
+
+class TestNameRelevance:
+    """Typing a tool's own name has to surface that tool first.
+
+    Found by actually searching the real, built catalog rather than the
+    fixture: `sqlmap` put `dsss` (a different tool whose blurb happens to
+    quote "sqlmap") above sqlmap itself, and `nmap` put `nmapsi4` above nmap.
+    bm25 is a pure term-frequency model over one merged text blob, so a short
+    document that mentions the query term twice can outscore a long one
+    whose id *is* the term but only says it once.
+    """
+
+    def test_an_exact_id_match_always_ranks_first(self, tmp_path):
+        """The real case: nmapsi4's summary says "nmap" twice in a document
+        shorter than nmap's own, which let raw term frequency put the decoy
+        above the tool whose name was typed."""
+        decoy = Tool(
+            id="nmapsi4",
+            summary="graphical interface to nmap, the nmap network scanner",
+            description="",
+        )
+        real = Tool(
+            id="nmap",
+            summary="Network discovery and service/version fingerprinting",
+            description=(
+                "Nmap is a utility for network exploration or security auditing "
+                "with a great many long-form options and flags described here."
+            ),
+        )
+        path = tmp_path / "c.db"
+        build_catalog(path, [decoy, real], source="test")
+        with CatalogStore(path) as store:
+            assert next(t.id for t in store.search("nmap")) == "nmap"
+
+    def test_a_short_document_that_merely_mentions_the_term_does_not_win(self, tmp_path):
+        """sqlmap vs. dsss, reproduced directly rather than trusted from
+        memory: a short entry whose blurb name-drops the query term must not
+        outrank the entry whose id it is."""
+        mentions_it = Tool(
+            id="dsss",
+            summary="Minimal SQLi scanner, a reference next to sqlmap sqlmap",
+            description="",
+        )
+        the_tool = Tool(
+            id="sqlmap",
+            summary="Automated SQL injection detection and exploitation",
+            description="A full-featured tool with many switches and options.",
+        )
+        path = tmp_path / "c.db"
+        build_catalog(path, [mentions_it, the_tool], source="test")
+        with CatalogStore(path) as store:
+            assert next(t.id for t in store.search("sqlmap")) == "sqlmap"
+
+    def test_the_exact_match_override_is_case_and_whitespace_insensitive(self, tmp_path):
+        tool = Tool(id="nmap", summary="Network discovery")
+        decoy = Tool(id="nmap-extra", summary="nmap nmap nmap addon scripts")
+        path = tmp_path / "c.db"
+        build_catalog(path, [decoy, tool], source="test")
+        with CatalogStore(path) as store:
+            for query in ("NMAP", "  nmap  ", "Nmap"):
+                assert next(t.id for t in store.search(query)) == "nmap", query
+
+    def test_the_override_does_not_apply_when_nothing_matches_exactly(self, tmp_path):
+        """`metasploit` (no tool has exactly that id) must still return
+        results, ranked by relevance as before -- the override only fires on
+        a real exact match, it does not suppress ordinary search."""
+        a = Tool(id="metasploit-framework", summary="Exploit development framework")
+        b = Tool(id="framework2", summary="Metasploit Framework 2")
+        path = tmp_path / "c.db"
+        build_catalog(path, [a, b], source="test")
+        with CatalogStore(path) as store:
+            ids = {t.id for t in store.search("metasploit")}
+            assert ids == {"metasploit-framework", "framework2"}
+
+    def test_the_fts_index_carries_a_title_column_separate_from_the_blob(self, tmp_path):
+        """Pins the schema shape the ranking fix depends on: without a
+        distinct, higher-weighted title column, id-match relevance has no
+        signal to key off beyond raw term frequency in one merged field."""
+        path = tmp_path / "c.db"
+        build_catalog(path, [Tool(id="nmap", summary="Network discovery")], source="test")
+        with CatalogStore(path) as store:
+            cols = {
+                row[1]
+                for row in store._conn.execute("PRAGMA table_info(tools_fts)").fetchall()
+            }
+        assert "title" in cols
+        assert "blob" in cols
+
+
+def test_generic_system_utilities_are_not_tagged_into_an_unrelated_security_category():
+    """`net-tools`, `tmux`, `screen` and `subversion` were tagged `wireless`
+    with no plausible connection -- found by clicking the wireless facet in
+    the real browser and seeing a terminal multiplexer at the top of a list
+    of RF and Bluetooth tools. Category tags come from a bulk import and were
+    never reviewed by hand; this pins the four confirmed wrong ones so they
+    cannot silently come back."""
+    import yaml
+
+    root = Path(__file__).resolve().parent.parent / "catalog"
+    known_bad = {
+        "net-tools": "wireless",
+        "tmux": "wireless",
+        "screen": "wireless",
+        "subversion": "wireless",
+    }
+    for tool_id, bad_category in known_bad.items():
+        matches = list(root.rglob(f"{tool_id}.yaml"))
+        assert matches, tool_id
+        entry = yaml.safe_load(matches[0].read_text(encoding="utf-8"))
+        assert bad_category not in (entry.get("categories") or []), (
+            f"{tool_id} is tagged {bad_category!r} again"
+        )
