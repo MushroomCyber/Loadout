@@ -24,6 +24,7 @@ on "Install" does exactly what pressing `enter` does, because both call
 from __future__ import annotations
 
 from functools import partial
+from itertools import groupby
 from typing import Any, ClassVar
 
 try:  # pragma: no cover - optional dependency
@@ -80,22 +81,49 @@ BANNER_MIN_HEIGHT = 30
 BANNER_MIN_WIDTH = 96
 
 
+#: ansi_shadow draws each glyph as a solid face plus a thinner outline frame.
+#: Flattened to one colour the two read as identical weight, and a mostly-solid
+#: shape like D sits right next to another one like O with nothing marking
+#: where one letter ends and the next begins. Two shades restores that edge.
+_BANNER_OUTLINE = frozenset("═║╗╝╚╔")
+
+
+def _shade_banner_row(row: str) -> str:
+    """Bright accent for the letter face, a darker shade for its outline."""
+    parts = []
+    for is_outline, chars in groupby(row, key=lambda ch: ch in _BANNER_OUTLINE):
+        text = "".join(chars)
+        tag = "$accent-darken-2" if is_outline else "$accent"
+        parts.append(f"[{tag}]{text}[/{tag}]")
+    return "".join(parts)
+
+
 def banner_block(ctx: Any) -> str:
     """The art with this machine's facts set beside it, not under it.
 
     Stacking the status line below would cost a seventh row for something
     that fits in the whitespace the art already has.
     """
-    rows = list(BANNER_ART)
+    rows = [_shade_banner_row(row) for row in BANNER_ART]
     # The middle rows are the letterforms' waist, where the art is most even.
     # Text alongside them reads as placed rather than dropped in.
     for offset, fact in zip((2, 3), _facts(ctx), strict=False):
         rows[offset] = f"{rows[offset]}   [dim]{fact}[/dim]"
-    return "[$accent]" + "\n".join(rows) + "[/$accent]"
+    return "\n".join(rows)
 
 
 def _facts(ctx: Any) -> tuple[str, str]:
-    """The two lines of machine state the banner shows in either form."""
+    """The two lines of machine state the banner shows in either form.
+
+    Distro detection used to sit on the second line as a bare word --
+    "kali" -- with nothing saying what it was or why it mattered. Someone
+    looking at their own terminal already knows what they installed; the only
+    time that value is worth seeing is when detection has gone *wrong*, which
+    is exactly what `loadout doctor` and `loadout providers` are for. The
+    providers line is the actionable half of what used to share that row --
+    what loadout can actually reach on this machine -- so it keeps the row to
+    itself.
+    """
     try:
         total = ctx.catalog.count()
     except Exception:
@@ -104,12 +132,6 @@ def _facts(ctx: Any) -> tuple[str, str]:
         installed = len(ctx.installed())
     except Exception:
         installed = 0
-    try:
-        from ...providers import detect_distro
-
-        where = detect_distro()
-    except Exception:
-        where = "unknown"
     try:
         ready = sorted(
             _SHORT_PROVIDER.get(name, name)
@@ -120,14 +142,16 @@ def _facts(ctx: Any) -> tuple[str, str]:
         ready = []
     return (
         f"{total} tools · {installed} installed",
-        f"{where} · {' '.join(ready) or 'no providers detected'}",
+        f"via {' '.join(ready)}" if ready else "no providers detected",
     )
 
 
 def status_line(ctx: Any) -> str:
     """One line of chrome: who we are, and the state of this machine.
 
-    The fallback for terminals too small to spend six rows on a name.
+    The fallback for terminals too small to spend six rows on a name. Carries
+    the same two facts as the full banner and nothing else -- see `_facts`
+    for why the distro name is not one of them.
     """
     try:
         total = ctx.catalog.count()
@@ -137,13 +161,7 @@ def status_line(ctx: Any) -> str:
         installed = len(ctx.installed())
     except Exception:
         installed = 0
-    try:
-        from ...providers import detect_distro
-
-        where = detect_distro()
-    except Exception:
-        where = "unknown"
-    return f"[b]loadout[/b]  [dim]{total} tools · {installed} installed · {where}[/dim]"
+    return f"[b]loadout[/b]  [dim]{total} tools · {installed} installed[/dim]"
 
 
 if TEXTUAL_AVAILABLE:
@@ -495,6 +513,14 @@ if TEXTUAL_AVAILABLE:
         #facets { width: 26; border-right: solid $panel; }
         #facetlist { height: 1fr; padding: 0 1; }
         #facetlist Button { width: 100%; text-align: left; }
+        /* Selection and "well covered" both read as a solid colour fill on
+           this button -- primary blue for the one, success green for the
+           other -- and at a glance those are just two colours in a list, not
+           two different KINDS of state. Provider toggles already mark their
+           active one bold+reverse on top of the colour; the category list
+           never got the same treatment, so a green chip you have not clicked
+           looked exactly as "selected" as the one you actually chose. */
+        #facetlist Button.-active { text-style: bold reverse; }
         #table  { height: 1fr; }
         #detail { height: 40%; border-top: solid $panel; padding: 0 1; }
         .detail-actions { height: auto; margin-bottom: 1; }

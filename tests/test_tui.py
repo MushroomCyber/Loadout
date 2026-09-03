@@ -840,3 +840,132 @@ async def test_prioritised_ids_ranks_starred_then_installed_then_alphabetical():
     browser = object.__new__(LoadoutBrowser)
     browser.ctx = Fake()
     assert rank(browser, ["d", "c", "b", "a"]) == ["b", "c", "a", "d"]
+
+
+# ---------------------------------------------------------------------------
+# Selection must be visually distinct from the coverage colour
+# ---------------------------------------------------------------------------
+
+
+async def test_the_selected_category_chip_is_bold_reverse_not_just_a_colour(app):
+    """Selection and \"well covered\" both render as a solid colour fill --
+    primary blue for the one, success green for the other -- which look like
+    the same *kind* of highlight at a glance. Provider toggles already mark
+    their active one bold+reverse on top of the colour (`.provider-toggle.
+    -active`); the category list never got the matching rule, so a
+    well-covered category you had not clicked was as visually loud as the one
+    you actually selected.
+    """
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        chips = {c.id: c for c in pilot.app.query("#facetlist Button")}
+        active = chips["facet-all"]
+        assert active.has_class("-active")
+        assert "reverse" in str(active.styles.text_style)
+
+
+async def test_clicking_a_different_chip_moves_the_bold_reverse_marker_with_it(app):
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        chips = {c.id: c for c in pilot.app.query("#facetlist Button")}
+        chips["facet-web"].press()
+        await pilot.pause()
+        assert "reverse" in str(chips["facet-web"].styles.text_style)
+        assert "reverse" not in str(chips["facet-all"].styles.text_style)
+
+
+# ---------------------------------------------------------------------------
+# The banner needs two shades to read as letters, not a solid block
+# ---------------------------------------------------------------------------
+
+
+def test_the_banner_shades_its_outline_darker_than_its_face():
+    """ansi_shadow draws each glyph as a solid face (\u2588) plus a thinner
+    outline frame (the box-drawing characters). Rendered in one flat colour
+    the two read as identical weight, and adjacent letters that are mostly
+    solid blocks -- D next to O -- lose the edge between them entirely."""
+    from loadout.ui.tui.app import BANNER_ART, _shade_banner_row
+
+    row = next(r for r in BANNER_ART if "\u2588" in r and "\u2557" in r)
+    shaded = _shade_banner_row(row)
+    assert "[$accent]" in shaded
+    assert "[$accent-darken-2]" in shaded
+    # Every character survives the round trip -- shading must not drop or
+    # reorder any of the art.
+    import re
+
+    plain = re.sub(r"\[/?[^\]]+\]", "", shaded)
+    assert plain == row
+
+
+def test_every_row_shades_cleanly_with_no_stray_markup():
+    """A run of only spaces must not turn into an empty, orphaned tag pair --
+    Rich accepts it, but it is dead weight in every row of the banner."""
+    from loadout.ui.tui.app import BANNER_ART, _shade_banner_row
+
+    for row in BANNER_ART:
+        shaded = _shade_banner_row(row)
+        assert shaded.count("[$accent]") == shaded.count("[/$accent]")
+        assert shaded.count("[$accent-darken-2]") == shaded.count("[/$accent-darken-2]")
+
+
+def test_banner_block_still_carries_the_machine_facts(app):
+    from loadout.ui.tui.app import banner_block
+
+    text = banner_block(app.ctx)
+    assert "tools" in text
+    assert "installed" in text
+
+
+# ---------------------------------------------------------------------------
+# The facts line names what it shows, and drops what nobody needed
+# ---------------------------------------------------------------------------
+
+
+def test_the_facts_no_longer_show_a_bare_unexplained_distro_name():
+    """The second line used to read \"kali · apt gem gh pipx\" -- a bare word
+    with nothing saying what it was. Someone looking at their own terminal
+    already knows what they installed; detection is what `loadout doctor` and
+    `loadout providers` are for. The providers list -- what loadout can
+    actually reach here -- is the actionable half, and now says so."""
+    from types import SimpleNamespace
+
+    from loadout.providers.base import ProviderStatus
+    from loadout.ui.tui.app import _facts
+
+    ctx = SimpleNamespace(
+        catalog=SimpleNamespace(count=lambda: 842),
+        installed=lambda: {"nmap"},
+        provider_status={"apt": ProviderStatus(name="apt", available=True)},
+    )
+    first, second = _facts(ctx)
+    assert "842 tools" in first
+    assert second == "via apt"
+    assert "kali" not in second
+    assert "unknown" not in second
+
+
+def test_the_facts_say_so_plainly_when_nothing_is_available():
+    from types import SimpleNamespace
+
+    from loadout.ui.tui.app import _facts
+
+    ctx = SimpleNamespace(
+        catalog=SimpleNamespace(count=lambda: 842),
+        installed=lambda: set(),
+        provider_status={},
+    )
+    _, second = _facts(ctx)
+    assert second == "no providers detected"
+
+
+def test_the_narrow_terminal_status_line_matches_the_same_two_facts():
+    from types import SimpleNamespace
+
+    from loadout.ui.tui.app import status_line
+
+    ctx = SimpleNamespace(catalog=SimpleNamespace(count=lambda: 842), installed=lambda: {"nmap"})
+    line = status_line(ctx)
+    assert "842 tools" in line
+    assert "1 installed" in line
+    assert "kali" not in line
