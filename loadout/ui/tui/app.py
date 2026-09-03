@@ -212,6 +212,12 @@ if TEXTUAL_AVAILABLE:
             if installed and state.get("version"):
                 status += f" [dim]{state['version']}[/dim]"
             header = f"[b]{tool.id}[/b]  {status}"
+            if installed and state.get("verify_method"):
+                header += (
+                    f"  [green]✓ {state['verify_method']} verified[/green]"
+                    if state.get("verify_ok")
+                    else "  [yellow]! unverified[/yellow]"
+                )
             if tool.summary:
                 lines.append(tool.summary)
                 lines.append("")
@@ -297,6 +303,7 @@ if TEXTUAL_AVAILABLE:
             border: round $accent; background: $surface; padding: 1 2;
         }
         #title { text-style: bold; margin-bottom: 1; }
+        #verify { height: auto; }
         #log { height: 1fr; border-top: solid $panel; margin-top: 1; }
         #actions { height: auto; margin-top: 1; align: right middle; }
         #actions Button { margin-left: 1; }
@@ -323,6 +330,7 @@ if TEXTUAL_AVAILABLE:
                 )
                 yield ProgressBar(total=100, show_eta=False, id="bar")
                 yield Static("", id="status")
+                yield Static("", id="verify")
                 yield VerticalScroll(Static("", id="logtext"), id="log")
                 yield Horizontal(id="actions")
 
@@ -364,6 +372,7 @@ if TEXTUAL_AVAILABLE:
             event.stop()
             self._done = False
             self.query_one("#logtext", Static).update("")
+            self.query_one("#verify", Static).update("")
             self.query_one("#bar", ProgressBar).update(progress=0)
             self.query_one("#actions", Horizontal).remove_children()
             self._execute()
@@ -374,11 +383,13 @@ if TEXTUAL_AVAILABLE:
                 EVENT_ACTION_DONE,
                 EVENT_OUTPUT,
                 EVENT_PROGRESS,
+                EVENT_VERIFY,
                 EVENT_WARN,
                 Executor,
             )
 
             log_lines: list[str] = []
+            verify_events: list[tuple[str, str, bool]] = []
 
             def sink(event) -> None:
                 if event.kind == EVENT_PROGRESS and event.percent is not None:
@@ -386,6 +397,9 @@ if TEXTUAL_AVAILABLE:
                 elif event.kind in (EVENT_OUTPUT, EVENT_WARN):
                     log_lines.append(event.message)
                     self._post(self._append_log, log_lines[-14:])
+                elif event.kind == EVENT_VERIFY:
+                    verify_events.append((event.tool_id, event.message, event.success))
+                    self._post(self._set_verify, list(verify_events))
                 elif event.kind == EVENT_ACTION_DONE:
                     mark = "[green]✓[/green]" if event.success else "[red]✗[/red]"
                     log_lines.append(f"{mark} {event.tool_id}: {event.message}")
@@ -420,6 +434,21 @@ if TEXTUAL_AVAILABLE:
             except NoMatches:  # pragma: no cover - screen torn down mid-update
                 self._live = False
 
+        def _set_verify(self, events: list[tuple[str, str, bool]]) -> None:
+            """Render verification outcomes on their own line, not the
+            scrolling log -- a 14-line install log easily pushes a passing
+            checksum check out of view before the user reads it."""
+            lines = []
+            for tool_id, method, ok in events:
+                if ok:
+                    lines.append(f"[green]✓[/green] {tool_id}: {method} verified")
+                else:
+                    lines.append(f"[yellow]![/yellow] {tool_id}: unverified ({method})")
+            try:
+                self.query_one("#verify", Static).update("\n".join(lines))
+            except NoMatches:  # pragma: no cover - screen torn down mid-update
+                self._live = False
+
         def _finish(self, summary: str, failed: bool) -> None:
             self._done = True
             if not self.is_attached:  # pragma: no cover - quit during install
@@ -430,6 +459,156 @@ if TEXTUAL_AVAILABLE:
             if failed:
                 actions.mount(Button("Retry", variant="primary", id="btn-retry", compact=True))
             actions.mount(Button("Close", id="btn-close", compact=True))
+
+    class SelfUpdateScreen(ModalScreen[bool]):
+        """Loadout updating itself, through the same `loadout.selfupdate`
+        the CLI's `self-update` calls -- two front doors, one mechanism, so
+        the refusals (dirty tree, diverged history, fast-forward only) cannot
+        drift between them.
+
+        The remote it would pull from is shown *before* the button that pulls
+        from it: this screen is the one place a user can update code with a
+        single keypress, and what that key trusts should be on screen.
+        """
+
+        BINDINGS: ClassVar[list[BindingType]] = [Binding("escape", "close", "Close")]
+
+        DEFAULT_CSS = """
+        SelfUpdateScreen { align: center middle; }
+        #ubox {
+            width: 76; height: auto;
+            border: round $accent; background: $surface; padding: 1 2;
+        }
+        #utitle { text-style: bold; margin-bottom: 1; }
+        #uactions { height: auto; margin-top: 1; align: right middle; }
+        #uactions Button { margin-left: 1; }
+        """
+
+        def __init__(self) -> None:
+            super().__init__()
+            self._status: Any = None
+            self._app: Any = None
+            self._live = False
+            self._changed = False
+
+        def compose(self) -> ComposeResult:
+            with Vertical(id="ubox"):
+                yield Label("Update Loadout", id="utitle")
+                yield Static("[dim]checking for updates…[/dim]", id="ubody")
+                yield Horizontal(id="uactions")
+
+        def on_mount(self) -> None:
+            self._app = self.app
+            self._live = True
+            self._check()
+
+        def on_unmount(self) -> None:
+            self._live = False
+
+        def _post(self, method: Any, *args: Any) -> None:
+            if not self._live or self._app is None:
+                return
+            try:
+                self._app.call_from_thread(method, *args)
+            except Exception:  # pragma: no cover - app going away
+                self._live = False
+
+        def action_close(self) -> None:
+            self.dismiss(self._changed)
+
+        @on(Button.Pressed, "#btn-uclose")
+        def _btn_uclose(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.action_close()
+
+        @on(Button.Pressed, "#btn-udo")
+        def _btn_udo(self, event: Button.Pressed) -> None:
+            event.stop()
+            self.query_one("#uactions", Horizontal).remove_children()
+            self.query_one("#ubody", Static).update("[dim]updating…[/dim]")
+            self._apply()
+
+        @work(thread=True)
+        def _check(self) -> None:
+            """git fetch is a network call -- off the UI thread."""
+            from ... import selfupdate
+
+            root = selfupdate.find_repo_root()
+            if root is None:
+                self._post(
+                    self._show,
+                    "Loadout is not running from a git checkout, so it cannot "
+                    "update itself.\n[dim]Reinstall from the latest release "
+                    "instead.[/dim]",
+                    False,
+                )
+                return
+            status = selfupdate.check_update(root)
+            self._status = status
+            self._post(self._show, self._describe(status), status.can_update)
+
+        @work(thread=True)
+        def _apply(self) -> None:
+            from ... import selfupdate
+
+            status = self._status
+            result = selfupdate.apply_update(status.repo_root, status)
+            if not result.ok:
+                self._post(self._show, f"[red]{result.error}[/red]", False)
+                return
+            self._changed = True
+            lines = [
+                f"[green]✓[/green] updated "
+                f"{result.old_commit[:10]} -> {result.new_commit[:10]}",
+                "",
+                "[b]Restart loadout[/b] to run the updated code.",
+            ]
+            if result.deps_changed:
+                lines.append(
+                    "[yellow]![/yellow] pyproject.toml changed -- reinstall with:\n"
+                    "    pip install -e '.[dev,tui]'"
+                )
+            self._post(self._show, "\n".join(lines), False)
+
+        @staticmethod
+        def _describe(status: Any) -> str:
+            if status.error:
+                return f"[red]{status.error}[/red]"
+            head = (
+                f"[dim]remote[/dim]  {status.remote_url}\n"
+                f"[dim]branch[/dim]  {status.branch}\n"
+                f"[dim]   now[/dim]  {status.current_commit[:10]}"
+            )
+            if status.up_to_date:
+                return f"{head}\n\n[green]✓[/green] Loadout is up to date."
+            head += f"\n[dim]latest[/dim]  {status.remote_commit[:10]}"
+            if status.dirty:
+                return (
+                    f"{head}\n\n[yellow]![/yellow] This checkout has uncommitted "
+                    "changes.\n[dim]Commit or stash them first -- updating would "
+                    "overwrite them.[/dim]"
+                )
+            if status.ahead:
+                return (
+                    f"{head}\n\n[yellow]![/yellow] This checkout has "
+                    f"{status.ahead} commit(s) the remote does not.\n"
+                    "[dim]Resolve it with git; this screen only fast-forwards.[/dim]"
+                )
+            return f"{head}\n\n{status.behind} commit(s) behind."
+
+        def _show(self, body: str, offer_update: bool) -> None:
+            try:
+                self.query_one("#ubody", Static).update(body)
+                actions = self.query_one("#uactions", Horizontal)
+            except NoMatches:  # pragma: no cover - screen torn down mid-update
+                self._live = False
+                return
+            actions.remove_children()
+            if offer_update:
+                actions.mount(
+                    Button("Update", variant="primary", id="btn-udo", compact=True)
+                )
+            actions.mount(Button("Close", id="btn-uclose", compact=True))
 
     class LoadoutCommands(CommandProvider):
         """Loadouts as fuzzy-searchable commands in Textual's built-in palette
@@ -556,6 +735,7 @@ if TEXTUAL_AVAILABLE:
             Binding("enter", "act", "Install/Remove"),
             Binding("ctrl+a", "apply_marked", "Apply marked"),
             Binding("ctrl+s", "star", "Star"),
+            Binding("ctrl+u", "self_update", "Update loadout"),
             Binding("f5", "refresh", "Refresh"),
             Binding("down", "cursor_down", "", show=False),
             Binding("up", "cursor_up", "", show=False),
@@ -968,6 +1148,9 @@ if TEXTUAL_AVAILABLE:
         def action_refresh(self) -> None:
             self.ctx._installed = None
             self._reload()
+
+        def action_self_update(self) -> None:
+            self.push_screen(SelfUpdateScreen())
 
         def action_act(self) -> None:
             tool = self._selected_tool()

@@ -1039,3 +1039,231 @@ async def test_a_well_covered_category_is_not_coloured_green(app):
         recon = pilot.app.query_one("#facet-recon")
         assert not recon.has_class("-active")
         assert recon.variant == "default"
+
+
+# ---------------------------------------------------------------------------
+# Verification stays visible after the install log is gone
+# ---------------------------------------------------------------------------
+
+
+async def test_the_detail_pane_says_how_an_installed_tool_was_verified(app):
+    """The checksum line scrolls out of a 14-line install log long before a
+    user reads it, and the install screen closes. If a tool was verified,
+    the pane you look at afterwards has to still say so."""
+    from textual.widgets import Input, Static
+
+    from loadout.state import get_state_db
+    from loadout.ui.tui.app import ToolDetail
+
+    get_state_db().set_installed(
+        "nmap", True, provider="github", verify_method="checksum", verify_ok=True
+    )
+    async with app.run_test() as pilot:
+        pilot.app.query_one("#query", Input).value = "nmap"
+        await pilot.pause()
+        detail = pilot.app.query_one("#detail", ToolDetail)
+        text = " ".join(str(child.render()) for child in detail.query(Static))
+        assert "checksum verified" in text
+
+
+async def test_an_unverified_install_is_not_dressed_up_as_a_verified_one(app):
+    from textual.widgets import Input, Static
+
+    from loadout.state import get_state_db
+    from loadout.ui.tui.app import ToolDetail
+
+    get_state_db().set_installed(
+        "nmap", True, provider="github", verify_method="checksum", verify_ok=False
+    )
+    async with app.run_test() as pilot:
+        pilot.app.query_one("#query", Input).value = "nmap"
+        await pilot.pause()
+        detail = pilot.app.query_one("#detail", ToolDetail)
+        text = " ".join(str(child.render()) for child in detail.query(Static))
+        assert "unverified" in text
+        assert "verified" in text  # the word is there, but not as a pass
+        assert "✓ checksum" not in text
+
+
+async def test_a_provider_with_no_verification_step_claims_nothing(app):
+    """apt has no checksum stage of ours to report. Silence is correct --
+    "unverified" would be a false accusation."""
+    from textual.widgets import Input, Static
+
+    from loadout.state import get_state_db
+    from loadout.ui.tui.app import ToolDetail
+
+    get_state_db().set_installed("nmap", True, provider="apt")
+    async with app.run_test() as pilot:
+        pilot.app.query_one("#query", Input).value = "nmap"
+        await pilot.pause()
+        detail = pilot.app.query_one("#detail", ToolDetail)
+        text = " ".join(str(child.render()) for child in detail.query(Static))
+        assert "verified" not in text
+
+
+async def test_the_install_screen_reports_verification_outside_the_scrolling_log(app):
+    """The verification line has to be a sibling of the log, not a line in
+    it: the log keeps only the last 14 lines, and apt alone emits far more
+    than that after the check has passed."""
+    from textual.widgets import Static
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+
+        screen._set_verify([("hayabusa", "checksum", True)])
+        screen._append_log([f"line {n}" for n in range(40)])
+        await pilot.pause()
+
+        verify = screen.query_one("#verify", Static)
+        assert "checksum verified" in str(verify.render())
+        assert verify not in screen.query_one("#log").walk_children()
+
+
+async def test_a_skipped_check_is_reported_as_unverified_not_as_a_pass(app):
+    from textual.widgets import Static
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+
+        screen._set_verify([("hayabusa", "checksum", False)])
+        await pilot.pause()
+
+        rendered = str(screen.query_one("#verify", Static).render())
+        assert "unverified" in rendered
+        assert "✓" not in rendered
+
+
+# ---------------------------------------------------------------------------
+# Updating Loadout itself, from inside Loadout
+# ---------------------------------------------------------------------------
+
+
+def _status(**overrides):
+    from pathlib import Path
+
+    from loadout.selfupdate import UpdateStatus
+
+    fields = {
+        "repo_root": Path("/checkout"),
+        "branch": "main",
+        "remote_url": "https://github.com/MushroomCyber/Loadout.git",
+        "current_commit": "a" * 40,
+        "remote_commit": "b" * 40,
+        "ahead": 0,
+        "behind": 3,
+        "dirty": False,
+    }
+    fields.update(overrides)
+    return UpdateStatus(**fields)
+
+
+async def _open_update_screen(pilot, status):
+    """Drive the real screen with a canned status -- no git, no network."""
+    from loadout import selfupdate
+    from loadout.ui.tui.app import SelfUpdateScreen
+
+    original_root = selfupdate.find_repo_root
+    original_check = selfupdate.check_update
+    selfupdate.find_repo_root = lambda *a, **k: status.repo_root
+    selfupdate.check_update = lambda root: status
+    try:
+        screen = SelfUpdateScreen()
+        pilot.app.push_screen(screen)
+        await pilot.app.workers.wait_for_complete()
+        await pilot.pause()
+        return screen
+    finally:
+        selfupdate.find_repo_root = original_root
+        selfupdate.check_update = original_check
+
+
+async def test_the_update_screen_names_the_remote_it_would_pull_from(app):
+    """One keypress updates the code this process runs. What that key
+    trusts belongs on screen, above the button that acts on it."""
+    from textual.widgets import Static
+
+    async with app.run_test() as pilot:
+        screen = await _open_update_screen(pilot, _status())
+        body = str(screen.query_one("#ubody", Static).render())
+        assert "github.com/MushroomCyber/Loadout" in body
+        assert "3 commit(s) behind" in body
+        assert screen.query("#btn-udo")
+
+
+async def test_an_up_to_date_checkout_offers_no_update_button(app):
+    from textual.widgets import Static
+
+    async with app.run_test() as pilot:
+        screen = await _open_update_screen(pilot, _status(behind=0))
+        assert "up to date" in str(screen.query_one("#ubody", Static).render())
+        assert not screen.query("#btn-udo")
+
+
+async def test_a_dirty_checkout_is_refused_with_its_reason_shown(app):
+    """This checkout may be the user's own working copy. Offering a button
+    that would discard their uncommitted work is the failure mode."""
+    from textual.widgets import Static
+
+    async with app.run_test() as pilot:
+        screen = await _open_update_screen(pilot, _status(dirty=True))
+        body = str(screen.query_one("#ubody", Static).render())
+        assert "uncommitted" in body
+        assert not screen.query("#btn-udo")
+
+
+async def test_a_diverged_checkout_is_refused_rather_than_force_merged(app):
+    from textual.widgets import Static
+
+    async with app.run_test() as pilot:
+        screen = await _open_update_screen(pilot, _status(ahead=2))
+        body = str(screen.query_one("#ubody", Static).render())
+        assert "commit(s) the remote does not" in body
+        assert not screen.query("#btn-udo")
+
+
+async def test_a_failed_check_shows_the_error_not_an_update_button(app):
+    from textual.widgets import Static
+
+    async with app.run_test() as pilot:
+        screen = await _open_update_screen(
+            pilot, _status(error="git fetch failed: no route to host")
+        )
+        assert "no route to host" in str(screen.query_one("#ubody", Static).render())
+        assert not screen.query("#btn-udo")
+
+
+async def test_a_successful_update_tells_the_user_to_restart(app):
+    """The running process has already imported the old modules; a
+    fast-forward on disk changes nothing until loadout is restarted."""
+    from textual.widgets import Static
+
+    from loadout import selfupdate
+    from loadout.selfupdate import UpdateResult
+
+    async with app.run_test() as pilot:
+        screen = await _open_update_screen(pilot, _status())
+        original = selfupdate.apply_update
+        selfupdate.apply_update = lambda root, status=None: UpdateResult(
+            ok=True, old_commit="a" * 40, new_commit="b" * 40
+        )
+        try:
+            await pilot.click("#btn-udo")
+            await pilot.app.workers.wait_for_complete()
+            await pilot.pause()
+        finally:
+            selfupdate.apply_update = original
+
+        body = str(screen.query_one("#ubody", Static).render())
+        assert "Restart loadout" in body
+        assert "aaaaaaaaaa -> bbbbbbbbbb" in body

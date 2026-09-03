@@ -376,6 +376,10 @@ def build_parser() -> argparse.ArgumentParser:
     # -- environment -------------------------------------------------------
     sub.add_parser("doctor", help="Diagnose environment problems.")
 
+    p = sub.add_parser("self-update", help="Update Loadout itself from its git checkout.")
+    p.add_argument("--check", action="store_true", help="Only report whether an update is available.")
+    p.add_argument("--yes", "-y", action="store_true")
+
     p = sub.add_parser("verify", help="Check that installed tools actually run.")
     p.add_argument("tools", nargs="*", help="Tools to check (default: everything installed).")
     p.add_argument("--timeout", type=int, default=verify_mod.DEFAULT_TIMEOUT,
@@ -627,6 +631,7 @@ def _run_plan(ctx: Context, plan, *, action: str) -> int:
         EVENT_ACTION_DONE,
         EVENT_OUTPUT,
         EVENT_PROGRESS,
+        EVENT_VERIFY,
         EVENT_WARN,
         Executor,
         past_tense,
@@ -689,6 +694,14 @@ def _run_plan(ctx: Context, plan, *, action: str) -> int:
                 bar.update(task, completed=event.percent, description=event.message[:48])
         elif event.kind == EVENT_WARN:
             out.print_warn(event.message)
+        elif event.kind == EVENT_VERIFY:
+            # Always shown, not gated behind --log-level DEBUG like EVENT_OUTPUT
+            # below -- a passing checksum/signature check should be as visible
+            # as a failing one, not something you only see by asking for it.
+            if event.success:
+                out.print_ok(f"{event.tool_id}: {event.message} verified")
+            else:
+                out.print_warn(f"{event.tool_id}: unverified ({event.message})")
         elif event.kind == EVENT_OUTPUT and args.log_level.upper() == "DEBUG":
             console.print(f"    [dim]{event.message}[/dim]", highlight=False)
         elif event.kind == EVENT_ACTION_DONE:
@@ -1691,6 +1704,90 @@ def cmd_doctor(ctx: Context) -> int:
     return {"ok": 0, "warn": 0, "fail": 2}.get(worst, 1)
 
 
+def cmd_self_update(ctx: Context) -> int:
+    """Exactly one JSON document per invocation in --json mode, and a mutating
+    pull always needs an explicit --yes there -- an interactive confirm
+    prompt has no meaning against a script's stdout."""
+    from .. import selfupdate
+
+    def _fail(message: str, *, remediation: str = "", extra: dict[str, Any] | None = None) -> int:
+        if ctx.json_mode:
+            out.emit_json({"ok": False, "error": message, **(extra or {})})
+        else:
+            out.print_error(message, remediation=remediation)
+        return 1
+
+    repo_root = selfupdate.find_repo_root()
+    if repo_root is None:
+        return _fail(
+            "Loadout isn't running from a git checkout, so it can't update itself.",
+            remediation="`git pull` in your checkout, or reinstall from the latest release.",
+        )
+
+    status = selfupdate.check_update(repo_root)
+    if status.error:
+        return _fail(f"Could not check for updates: {status.error}", extra=status.to_dict())
+
+    if not ctx.json_mode:
+        out.print_note(
+            f"{status.branch}: {status.current_commit[:10]} -> {status.remote_commit[:10]} "
+            f"({status.remote_url})"
+        )
+
+    check_only = getattr(ctx.args, "check", False)
+    if status.up_to_date or check_only:
+        if ctx.json_mode:
+            out.emit_json(status.to_dict())
+        elif status.up_to_date:
+            out.print_ok("Loadout is up to date.")
+        else:
+            out.print_note(f"{status.behind} commit(s) behind.")
+        return 0
+
+    if status.dirty:
+        return _fail(
+            "Local changes would be overwritten.",
+            remediation="Commit or stash them first.",
+            extra=status.to_dict(),
+        )
+    if status.ahead:
+        return _fail(
+            "This checkout has local commits the remote doesn't have.",
+            remediation="Resolve manually with git.",
+            extra=status.to_dict(),
+        )
+
+    assume_yes = getattr(ctx.args, "yes", False)
+    if not assume_yes:
+        if ctx.json_mode:
+            return _fail("confirmation required -- pass --yes", extra=status.to_dict())
+        if not out.confirm(f"Pull {status.behind} commit(s) and update Loadout?"):
+            out.print_note("Aborted.")
+            return 130
+
+    result = selfupdate.apply_update(repo_root, status)
+    if ctx.json_mode:
+        out.emit_json(
+            {
+                "ok": result.ok,
+                "old_commit": result.old_commit,
+                "new_commit": result.new_commit,
+                "deps_changed": result.deps_changed,
+                "error": result.error,
+            }
+        )
+        return 0 if result.ok else 1
+
+    if not result.ok:
+        out.print_error(result.error)
+        return 1
+    out.print_ok(f"Updated {result.old_commit[:10]} -> {result.new_commit[:10]}")
+    if result.deps_changed:
+        out.print_note("pyproject.toml changed -- reinstall with: pip install -e '.[dev,tui]'")
+    out.print_note("Restart loadout to run the updated code.")
+    return 0
+
+
 # ---------------------------------------------------------------------------
 # Dispatch
 # ---------------------------------------------------------------------------
@@ -2018,6 +2115,7 @@ _COMMANDS = {
     "holds": cmd_hold,
     "export": cmd_export,
     "doctor": cmd_doctor,
+    "self-update": cmd_self_update,
     "verify": cmd_verify,
     "bundle": cmd_bundle,
 }

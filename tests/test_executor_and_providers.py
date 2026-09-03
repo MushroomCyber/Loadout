@@ -712,23 +712,27 @@ class TestVerificationIsVisible:
     """
 
     def _events(self, expected: str) -> list:
-        from loadout.executor import EVENT_OUTPUT, EVENT_WARN, Event, ExecContext
+        from loadout.executor import EVENT_OUTPUT, EVENT_VERIFY, EVENT_WARN, Event, ExecContext
         from loadout.providers.github import GithubReleaseProvider
 
         seen: list[Event] = []
         ctx = ExecContext(emit=seen.append, tool_id="tool")
         GithubReleaseProvider._report_digest_result(ctx, expected)
-        assert all(e.kind in (EVENT_OUTPUT, EVENT_WARN) for e in seen)
+        assert all(e.kind in (EVENT_OUTPUT, EVENT_WARN, EVENT_VERIFY) for e in seen)
         return seen
 
     def test_a_real_checksum_match_is_confirmed_in_the_log(self):
-        from loadout.executor import EVENT_OUTPUT
+        from loadout.executor import EVENT_OUTPUT, EVENT_VERIFY
 
         events = self._events("abc123")
-        assert len(events) == 1
-        assert events[0].kind == EVENT_OUTPUT
-        assert "verified" in events[0].message
-        assert "sha256" in events[0].message
+        log_events = [e for e in events if e.kind == EVENT_OUTPUT]
+        verify_events = [e for e in events if e.kind == EVENT_VERIFY]
+        assert len(log_events) == 1
+        assert "verified" in log_events[0].message
+        assert "sha256" in log_events[0].message
+        assert len(verify_events) == 1
+        assert verify_events[0].message == "checksum"
+        assert verify_events[0].success is True
 
     def test_an_unverified_install_is_flagged_not_reported_as_a_pass(self):
         """expected == "" only happens when verify_digest() returned having
@@ -736,10 +740,75 @@ class TestVerificationIsVisible:
         published) -- verify_digest() itself would have raised otherwise.
         That must never render as the same green checkmark a real pass gets.
         """
-        from loadout.executor import EVENT_WARN
+        from loadout.executor import EVENT_VERIFY, EVENT_WARN
 
         events = self._events("")
-        assert len(events) == 1
-        assert events[0].kind == EVENT_WARN
-        assert "unverified" in events[0].message
-        assert "✓" not in events[0].message
+        warn_events = [e for e in events if e.kind == EVENT_WARN]
+        verify_events = [e for e in events if e.kind == EVENT_VERIFY]
+        assert len(warn_events) == 1
+        assert "unverified" in warn_events[0].message
+        assert "✓" not in warn_events[0].message
+        assert len(verify_events) == 1
+        assert verify_events[0].success is False
+
+
+class TestSummarizeVerification:
+    """The (method, ok) pair the executor persists to state and the TUI
+    detail panel reads back."""
+
+    def test_a_pass_wins_over_a_missing_secondary_check(self):
+        from loadout.executor import _summarize_verification
+
+        result = _summarize_verification([("signature", True), ("checksum", False)])
+        assert result == ("signature", True)
+
+    def test_no_checks_means_not_applicable(self):
+        from loadout.executor import _summarize_verification
+
+        assert _summarize_verification([]) == ("", False)
+
+    def test_all_failed_checks_report_the_last_method(self):
+        from loadout.executor import _summarize_verification
+
+        assert _summarize_verification([("checksum", False)]) == ("checksum", False)
+
+
+class TestVerificationPersistsToState:
+    """A passing checksum/signature check outlives the install screen --
+    it has to reach state.db, since that is what the tool detail panel and
+    `loadout list` read back after the install log is long gone."""
+
+    def test_a_passing_verification_is_recorded(self, catalog, all_available, tmp_path):
+        from loadout.state import StateDB
+
+        def fake_verify(ctx) -> None:
+            ctx.verified("checksum", True)
+
+        plan = Planner(catalog, distro="kali", statuses=all_available).plan(
+            ["ffuf"], provider_override="go"
+        )
+        plan.actions[0].steps = [PythonStep(fn=fake_verify, description="verify")]
+        state = StateDB(tmp_path / "state.db")
+        result = Executor(dry_run=False, state=state).run(plan)
+        assert result.ok
+        row = state.get("ffuf")
+        assert row is not None
+        assert row["verify_method"] == "checksum"
+        assert row["verify_ok"] == 1
+
+    def test_a_provider_that_never_verifies_leaves_state_blank(
+        self, catalog, all_available, tmp_path
+    ):
+        """apt and friends have no checksum/signature step -- that must read
+        back as "not applicable", not as a failed check."""
+        from loadout.state import StateDB
+
+        plan = Planner(catalog, distro="kali", statuses=all_available).plan(
+            ["ffuf"], provider_override="go"
+        )
+        plan.actions[0].steps = [PythonStep(fn=lambda ctx: None, description="noop")]
+        state = StateDB(tmp_path / "state.db")
+        Executor(dry_run=False, state=state).run(plan)
+        row = state.get("ffuf")
+        assert row["verify_method"] == ""
+        assert row["verify_ok"] == 0

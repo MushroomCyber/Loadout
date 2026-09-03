@@ -233,6 +233,7 @@ class GithubReleaseProvider(Provider):
                 # visible: a passing check should be as visible as a failing
                 # one, not just the absence of an error.
                 ctx.output(f"[green]✓[/green] {signature.type} signature verified")
+                ctx.verified(signature.type, True)
 
             ctx.progress(f"verifying {asset.name}", 55.0)
             verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
@@ -312,6 +313,7 @@ class GithubReleaseProvider(Provider):
                     workdir=dest,
                 )
                 ctx.output(f"[green]✓[/green] {signature.type} signature verified")
+                ctx.verified(signature.type, True)
             ctx.progress(f"verifying {asset.name}", 80.0)
             verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
             self._report_digest_result(ctx, expected)
@@ -484,8 +486,10 @@ class GithubReleaseProvider(Provider):
         """
         if expected:
             ctx.output("[green]✓[/green] checksum verified (sha256)")
+            ctx.verified("checksum", True)
         else:
             ctx.warn("[yellow]![/yellow] no checksum published -- installed unverified")
+            ctx.verified("checksum", False)
 
     def _verify_signature(
         self,

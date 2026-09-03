@@ -159,3 +159,80 @@ class TestCliContract:
     def test_read_only_commands_succeed(self, command, capsys):
         assert main(["--json", command]) == 0
         json.loads(capsys.readouterr().out)
+
+
+def _git(repo, *args: str) -> None:
+    result = subprocess.run(
+        ["git", "-C", str(repo), *args], capture_output=True, text=True, check=False
+    )
+    assert result.returncode == 0, result.stderr
+
+
+def _self_update_checkout(tmp_path):
+    """A local remote+clone pair standing in for Loadout's own git checkout,
+    so this exercises the `self-update` command's plumbing without depending
+    on -- or mutating -- the real repository this test suite runs from."""
+    remote = tmp_path / "remote"
+    remote.mkdir()
+    _git(remote, "init", "--quiet", "--initial-branch=main")
+    _git(remote, "config", "user.email", "test@example.com")
+    _git(remote, "config", "user.name", "Test")
+    (remote / "pyproject.toml").write_text("[project]\nname = 'x'\n", encoding="utf-8")
+    _git(remote, "add", ".")
+    _git(remote, "commit", "--quiet", "-m", "initial")
+
+    local = tmp_path / "local"
+    subprocess.run(
+        ["git", "clone", "--quiet", str(remote), str(local)], check=True, capture_output=True
+    )
+    _git(local, "config", "user.email", "test@example.com")
+    _git(local, "config", "user.name", "Test")
+    return remote, local
+
+
+class TestSelfUpdateCLI:
+    def test_reports_no_git_checkout_cleanly(self, capsys, monkeypatch):
+        from loadout import selfupdate
+
+        monkeypatch.setattr(selfupdate, "find_repo_root", lambda: None)
+        assert main(["self-update", "--check"]) == 1
+        assert "Traceback" not in capsys.readouterr().err
+
+    def test_check_reports_up_to_date_without_prompting(self, tmp_path, capsys, monkeypatch):
+        from loadout import selfupdate
+
+        _remote, local = _self_update_checkout(tmp_path)
+        monkeypatch.setattr(selfupdate, "find_repo_root", lambda: local)
+
+        assert main(["--json", "self-update", "--check"]) == 0
+        payload = json.loads(capsys.readouterr().out)
+        assert payload["up_to_date"] is True
+
+    def test_yes_pulls_a_fast_forward_update(self, tmp_path, capsys, monkeypatch):
+        from loadout import selfupdate
+
+        remote, local = _self_update_checkout(tmp_path)
+        (remote / "code.py").write_text("x = 1\n", encoding="utf-8")
+        _git(remote, "add", ".")
+        _git(remote, "commit", "--quiet", "-m", "add code")
+        monkeypatch.setattr(selfupdate, "find_repo_root", lambda: local)
+
+        assert main(["--json", "self-update", "--yes"]) == 0
+        payload = json.loads(capsys.readouterr().out)
+        assert payload["ok"] is True
+        assert payload["old_commit"] != payload["new_commit"]
+        assert (local / "code.py").exists()
+
+    def test_without_yes_and_no_tty_aborts_rather_than_hangs(
+        self, tmp_path, capsys, monkeypatch
+    ):
+        from loadout import selfupdate
+
+        remote, local = _self_update_checkout(tmp_path)
+        (remote / "code.py").write_text("x = 1\n", encoding="utf-8")
+        _git(remote, "add", ".")
+        _git(remote, "commit", "--quiet", "-m", "add code")
+        monkeypatch.setattr(selfupdate, "find_repo_root", lambda: local)
+
+        assert main(["self-update"]) == 130
+        assert "Traceback" not in capsys.readouterr().err

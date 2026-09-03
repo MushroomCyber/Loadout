@@ -43,6 +43,7 @@ EVENT_ACTION_START = "action_start"
 EVENT_PROGRESS = "progress"
 EVENT_OUTPUT = "output"
 EVENT_WARN = "warn"
+EVENT_VERIFY = "verify"
 EVENT_ACTION_DONE = "action_done"
 EVENT_PLAN_DONE = "plan_done"
 
@@ -123,6 +124,11 @@ class ExecContext:
     allow_unverified: bool = False
     dry_run: bool = False
     tool_id: str = ""
+    #: Every verification a provider reported for this action, in order --
+    #: e.g. [("signature", True), ("checksum", True)] or [("checksum", False)]
+    #: for "no checksum published". Read back by the executor to persist a
+    #: summary and by the TUI to show it outside the scrolling log.
+    verify_checks: list[tuple[str, bool]] = field(default_factory=list)
 
     def progress(self, message: str, percent: float | None = None) -> None:
         self.emit(
@@ -134,6 +140,16 @@ class ExecContext:
 
     def output(self, line: str) -> None:
         self.emit(Event(EVENT_OUTPUT, message=line, tool_id=self.tool_id))
+
+    def verified(self, method: str, ok: bool) -> None:
+        """Record a verification outcome (checksum, gpg signature, ...).
+
+        Separate from :meth:`output`/:meth:`warn` because those lines scroll
+        out of a long install log -- this is read back after the run to show
+        a verification badge that does not.
+        """
+        self.verify_checks.append((method, ok))
+        self.emit(Event(EVENT_VERIFY, message=method, success=ok, tool_id=self.tool_id))
 
 
 class Executor:
@@ -229,7 +245,7 @@ class Executor:
         # recording it as installed state would make `loadout list --installed`
         # lie on the machine that built the bundle.
         if success and not self.dry_run and action.action != ACTION_FETCH:
-            version = self._record(action, elapsed)
+            version = self._record(action, elapsed, context)
 
         self.sink(
             Event(
@@ -251,7 +267,7 @@ class Executor:
             version=version,
         )
 
-    def _record(self, action: PlannedAction, elapsed: float) -> str:
+    def _record(self, action: PlannedAction, elapsed: float, context: ExecContext) -> str:
         """Persist the outcome, including the version -- this is what makes
         `loadout report` able to state exactly what was used and when."""
         if self.state is None:
@@ -264,6 +280,7 @@ class Executor:
             version = provider.installed_version(action.tool, action.method) or ""
         except Exception:
             version = ""
+        verify_method, verify_ok = _summarize_verification(context.verify_checks)
         try:
             installed = action.action == ACTION_INSTALL
             self.state.set_installed(
@@ -271,6 +288,8 @@ class Executor:
                 installed,
                 provider=action.provider,
                 version=version,
+                verify_method=verify_method,
+                verify_ok=verify_ok,
             )
             self.state.record(
                 action.action,
@@ -376,6 +395,23 @@ class Executor:
                 context.output(text)
         process.wait()
         return process.returncode
+
+
+def _summarize_verification(checks: list[tuple[str, bool]]) -> tuple[str, bool]:
+    """Collapse an action's verification events into one (method, ok) pair.
+
+    A method that passed wins over one that didn't -- a github install that
+    checked a signature and then found no separate checksum file is still
+    verified overall, not "unverified" because the second check had nothing
+    to check. An empty result means the provider never called `verified()`
+    at all (apt and friends have no such step, not an unverified one).
+    """
+    if not checks:
+        return "", False
+    passed = [method for method, ok in checks if ok]
+    if passed:
+        return "+".join(passed), True
+    return checks[-1][0], False
 
 
 def _insert_options(argv: list[str], options: list[str]) -> list[str]:

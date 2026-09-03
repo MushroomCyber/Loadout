@@ -39,7 +39,7 @@ loadout report --since 30d      # signed inventory of what you used, for the rep
 |---|---|---|
 | Works on Kali, Ubuntu, Arch, macOS, WSL | partly | yes |
 | Installs Go / Rust / pipx / release-binary tools | no | yes |
-| Verifies downloaded binaries against published checksums | n/a | yes, by default |
+| Verifies downloaded binaries against published checksums | n/a | yes, by default — and shows you it did |
 | "Which tools exist for lateral movement?" | no | `loadout phase lateral-movement` |
 | "What should I use instead of dirbuster?" | no | `loadout alt dirbuster` |
 | Install onto a machine with no internet | no | `loadout bundle` |
@@ -106,13 +106,37 @@ Two different things get upgraded, and they are separate commands on purpose:
 **Loadout itself** comes from this repository, and **the tools it installed for
 you** come from their own package managers.
 
-To upgrade Loadout:
+To upgrade Loadout, from Loadout:
+
+```bash
+loadout self-update --check   # what would change, and where it would come from
+loadout self-update           # fast-forward this checkout
+```
+
+or press `ctrl+u` in the interactive browser, which does the same thing behind a
+screen that names the remote before it offers the button.
+
+It is deliberately narrow. It **refuses** rather than guesses:
+
+| Situation | What happens |
+|---|---|
+| Uncommitted changes in the checkout | refused — this may be your working copy |
+| Local commits the remote doesn't have | refused — resolve it with git, not with a button |
+| Anything but a fast-forward | refused — it can never rewrite history you have |
+| A dependency change | reported, never auto-installed |
+
+It runs `git` and nothing else: no pip, no hooks, no privilege escalation. It
+also merges the exact commit it showed you, not whatever the branch moved to
+while you were reading. Restart `loadout` afterwards — the running process
+already imported the old code.
+
+The equivalent by hand, which `self-update` is a wrapper around:
 
 ```bash
 cd Loadout
 git pull
 source .venv/bin/activate
-pip install -e '.[dev,tui]'   # picks up dependency changes
+pip install -e '.[dev,tui]'   # only needed when dependencies changed
 loadout --version
 loadout catalog info          # confirm the new catalog is the one in use
 ```
@@ -338,6 +362,7 @@ rows on tools rather than on the program's own name.
 | `ctrl+a` | Install everything marked |
 | `ctrl+s` | Star |
 | `ctrl+p` | Command palette — fuzzy-find and apply a loadout |
+| `ctrl+u` | Update Loadout itself (see [Upgrading Loadout](#upgrading-loadout)) |
 | `f5` | Re-read what is installed |
 | `esc` | Clear filter, then clear marks, then quit |
 
@@ -441,6 +466,7 @@ implies:
 - `sudo` is constructed in exactly one function, `policy.elevate()` — enforced by a test.
 - Every package name is validated before it reaches an argv, and `--` always separates options from names.
 - Downloaded artifacts are checksummed against the release's own checksum file. **No checksum means refusal**, not a warning; `--allow-unverified` is an explicit opt-in.
+- **A check that passed says so.** The install screen carries the result on its own line above the log (which keeps only the last 14 lines — apt alone scrolls a passing check out of sight), the CLI prints it without needing `--log-level DEBUG`, and it is recorded in state so the detail pane still shows `✓ checksum verified` long after the install. A *skipped* check reads as `unverified`, never as a pass.
 - Where upstream signs its releases, the catalog pins the key and the signature is checked with `gpg`, `minisign` or `cosign`. The signing key must be the pinned one — a valid signature by some *other* key is a failure, which is the check a bare `gpg --verify` exit code does not make. Verification runs against a throwaway keyring, so a catalog entry can never read or write your own. **A declared signature cannot be waived by `--allow-unverified`**; that flag is for projects that publish nothing to check against, not for checks that fail.
 - Archive extraction refuses absolute paths and `..` traversal.
 - No `shell=True` anywhere.
