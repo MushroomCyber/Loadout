@@ -19,6 +19,7 @@ license: MIT
 alternatives:
 - maigret
 - holehe
+verify: socialscan --version
 install:
 - provider: pipx
   package: socialscan

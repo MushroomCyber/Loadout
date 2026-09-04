@@ -23,6 +23,7 @@ alternatives:
 - grype
 - syft
 size: 240533504
+verify: trivy --version
 install:
 - provider: apt
   package: trivy

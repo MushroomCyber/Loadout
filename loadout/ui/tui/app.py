@@ -44,6 +44,7 @@ try:  # pragma: no cover - optional dependency
         Input,
         Label,
         ProgressBar,
+        RichLog,
         Static,
     )
 
@@ -63,6 +64,24 @@ _SHORT_PROVIDER = {"github": "gh", "cargo": "crate", "docker": "img"}
 #: Above this many results the per-tool lines are traded for a count: the
 #: install modal is 22 rows and the log has to keep most of them.
 _VERIFY_LINE_LIMIT = 3
+
+#: How much of an install's output the log keeps. It used to keep 14 lines,
+#: which meant a failure whose cause scrolled past was only recoverable by
+#: re-running the whole install under --log-level DEBUG. Bounded rather than
+#: unbounded because an apt dist-upgrade can emit tens of thousands of lines.
+_LOG_MAX_LINES = 2000
+
+
+#: Every row is rendered eagerly, so this bounds the work one keystroke can
+#: cause rather than standing in for the catalog's size. The whole 842-entry
+#: catalog renders in about 0.14s, which is why browsing is no longer cut off
+#: at 500 -- the entries past that used to be reachable only by filtering,
+#: which is fine for searching and wrong for browsing.
+_BROWSE_LIMIT = 2000
+
+#: Search results are relevance-ranked, so what falls past this is noise
+#: rather than a page 2 anybody wants to reach.
+_SEARCH_LIMIT = 500
 
 
 def verify_summary(events: list[tuple[str, str, bool]]) -> str:
@@ -263,6 +282,12 @@ if TEXTUAL_AVAILABLE:
                 if value:
                     lines.append(f"[dim]{label:>10}[/dim]  {value}")
 
+            if installed:
+                from ..output import relative_age
+
+                field("installed", relative_age(state.get("installed_at") or ""))
+                field("last run", relative_age(state.get("last_used") or "") or "never")
+
             field("category", ", ".join(tool.categories))
             field("phases", ", ".join(tool.phases))
             field("tags", ", ".join(tool.tags))
@@ -367,16 +392,37 @@ if TEXTUAL_AVAILABLE:
                     yield ProgressBar(total=100, show_eta=False, id="bar")
                     yield Static("", id="status")
                     yield Static("", id="verify")
-                yield VerticalScroll(Static("", id="logtext"), id="log")
-                yield Horizontal(id="actions")
+                yield RichLog(
+                    id="log",
+                    max_lines=_LOG_MAX_LINES,
+                    markup=True,
+                    wrap=True,
+                    auto_scroll=True,
+                    highlight=False,
+                )
+                with Horizontal(id="actions"):
+                    # Mounted once and toggled rather than mounted and
+                    # removed per attempt: removal completes a frame later
+                    # than the retry that triggered it can finish, and the
+                    # remount then collides with the button still holding
+                    # the id.
+                    yield Button(
+                        "Retry", variant="primary", id="btn-retry", compact=True
+                    )
+                    yield Button("Close", id="btn-close", compact=True)
 
         def on_mount(self) -> None:
             self._app = self.app
             self._live = True
+            self._show_actions(retry=False, close=False)
             self._execute()
 
         def on_unmount(self) -> None:
             self._live = False
+
+        def _show_actions(self, *, retry: bool, close: bool) -> None:
+            self.query_one("#btn-retry", Button).display = retry
+            self.query_one("#btn-close", Button).display = close
 
         def _post(self, method: Any, *args: Any) -> None:
             """Run *method* on the UI thread, unless there is no longer a UI.
@@ -407,10 +453,10 @@ if TEXTUAL_AVAILABLE:
         def _btn_retry(self, event: Button.Pressed) -> None:
             event.stop()
             self._done = False
-            self.query_one("#logtext", Static).update("")
+            self.query_one("#log", RichLog).clear()
             self.query_one("#verify", Static).update("")
             self.query_one("#bar", ProgressBar).update(progress=0)
-            self.query_one("#actions", Horizontal).remove_children()
+            self._show_actions(retry=False, close=False)
             self._execute()
 
         @work(thread=True)
@@ -424,22 +470,21 @@ if TEXTUAL_AVAILABLE:
                 Executor,
             )
 
-            log_lines: list[str] = []
             verify_events: list[tuple[str, str, bool]] = []
 
             def sink(event) -> None:
                 if event.kind == EVENT_PROGRESS and event.percent is not None:
                     self._post(self._set_progress, event.percent, event.message)
                 elif event.kind in (EVENT_OUTPUT, EVENT_WARN):
-                    log_lines.append(event.message)
-                    self._post(self._append_log, log_lines[-14:])
+                    self._post(self._append_log, event.message)
                 elif event.kind == EVENT_VERIFY:
                     verify_events.append((event.tool_id, event.message, event.success))
                     self._post(self._set_verify, list(verify_events))
                 elif event.kind == EVENT_ACTION_DONE:
                     mark = "[green]✓[/green]" if event.success else "[red]✗[/red]"
-                    log_lines.append(f"{mark} {event.tool_id}: {event.message}")
-                    self._post(self._append_log, log_lines[-14:])
+                    self._post(
+                        self._append_log, f"{mark} {event.tool_id}: {event.message}"
+                    )
 
             executor = Executor(sink=sink, state=self.ctx.state)
             failed = False
@@ -464,9 +509,9 @@ if TEXTUAL_AVAILABLE:
             except NoMatches:  # pragma: no cover - screen torn down mid-update
                 self._live = False
 
-        def _append_log(self, lines: list[str]) -> None:
+        def _append_log(self, line: str) -> None:
             try:
-                self.query_one("#logtext", Static).update("\n".join(lines))
+                self.query_one("#log", RichLog).write(line)
             except NoMatches:  # pragma: no cover - screen torn down mid-update
                 self._live = False
 
@@ -491,10 +536,7 @@ if TEXTUAL_AVAILABLE:
                 return
             self.query_one("#bar", ProgressBar).update(progress=100)
             self.query_one("#status", Static).update(summary)
-            actions = self.query_one("#actions", Horizontal)
-            if failed:
-                actions.mount(Button("Retry", variant="primary", id="btn-retry", compact=True))
-            actions.mount(Button("Close", id="btn-close", compact=True))
+            self._show_actions(retry=failed, close=True)
 
     class SelfUpdateScreen(ModalScreen[bool]):
         """Loadout updating itself, through the same `loadout.selfupdate`
@@ -945,21 +987,24 @@ if TEXTUAL_AVAILABLE:
             providers = sorted(self._active_providers)
             if query:
                 rows = self.ctx.catalog.search(
-                    query, categories=categories, providers=providers, limit=500
+                    query,
+                    categories=categories,
+                    providers=providers,
+                    limit=_SEARCH_LIMIT,
                 )
             else:
                 # FTS relevance has nothing to rank on an empty query, so
                 # priority order (starred, then installed, then alphabetical)
                 # is what decides what appears here -- and it has to run
-                # before the 500-row cap, not after. Capping first meant a
-                # starred or installed tool whose id sorted past position 500
-                # of 842 never appeared in the unfiltered browser at all,
-                # however it was marked: 17 of this box's 43 installed tools
-                # were invisible here until priority ran on the full id list.
+                # before the row cap, not after. Capping first meant a
+                # starred or installed tool whose id sorted past the cap never
+                # appeared in the unfiltered browser at all, however it was
+                # marked: 17 of this box's 43 installed tools were invisible
+                # here until priority ran on the full id list.
                 all_ids = self.ctx.catalog.search_ids(
                     "", categories=categories, providers=providers
                 )
-                top_ids = self._prioritised_ids(all_ids)[:500]
+                top_ids = self._prioritised_ids(all_ids)[:_BROWSE_LIMIT]
                 rows = self.ctx.catalog.get_many(top_ids)
             self._rows = rows
             self._render_rows()
@@ -1059,10 +1104,16 @@ if TEXTUAL_AVAILABLE:
                     f"[dim]no tools match {' · '.join(why)}{marked}[/dim]"
                 )
                 return
-            # "500 tools" next to a banner reading "774 tools" is two answers
-            # to one question. Say "of" whenever the list is capped, whether by
-            # a filter or by the search limit.
-            scope = f"{shown} of {total}" if shown < total else f"{shown} tools"
+            # "500 tools" next to a banner reading "842 tools" is two answers
+            # to one question. Say "of" whenever the list is capped, and say
+            # which cap it is: a search that hit its limit is showing the best
+            # matches, not hiding the rest of a browse.
+            if query and shown >= _SEARCH_LIMIT:
+                scope = f"top {shown} matches of {total}"
+            elif shown < total:
+                scope = f"{shown} of {total}"
+            else:
+                scope = f"{shown} tools"
             self.query_one("#hint", Static).update(
                 f"[dim]{scope} · {here} installed{marked}[/dim]"
             )

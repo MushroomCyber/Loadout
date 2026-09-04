@@ -20,6 +20,7 @@ license: GPL-3.0
 alternatives:
 - frida
 - mobile-security-framework-mobsf
+verify: objection --help
 install:
 - provider: pipx
   package: objection

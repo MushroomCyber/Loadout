@@ -303,6 +303,63 @@ class TestSignatureValidation:
         assert validate_entry(entry, origin="test.yaml").errors == []
 
 
+def _signature_blocks() -> list[tuple[str, dict]]:
+    """(tool id, signature block) for every signature declared in the source."""
+    import yaml
+
+    root = Path(__file__).resolve().parent.parent / "catalog"
+    found = []
+    for path in sorted(root.rglob("*.yaml")):
+        entry = yaml.safe_load(path.read_text(encoding="utf-8"))
+        for method in entry.get("install") or []:
+            block = method.get("signature")
+            if block:
+                found.append((entry["id"], block))
+    return found
+
+
+class TestShippedSignaturePins:
+    """The catalog's own signature blocks, not synthetic ones. A pin that
+    stops matching the key it was taken from silently downgrades every
+    install of that tool, and nothing else in the test suite would notice."""
+
+    def test_every_shipped_block_validates(self):
+        from loadout.signature import validate_spec
+
+        for tool_id, block in _signature_blocks():
+            assert validate_spec(block) == [], tool_id
+
+    def test_a_gpg_pin_carries_the_key_and_the_fingerprint_to_check_it_against(self):
+        """The key alone would accept any signature made by it; the
+        fingerprint is what asserts *which* key that is."""
+        for tool_id, block in _signature_blocks():
+            if block.get("type") != "gpg":
+                continue
+            key = block.get("public_key", "")
+            assert key.startswith("-----BEGIN PGP PUBLIC KEY BLOCK-----"), tool_id
+            assert key.rstrip().endswith("-----END PGP PUBLIC KEY BLOCK-----"), tool_id
+            assert len(block.get("key_fingerprint", "")) == 40, tool_id
+
+    def test_velociraptor_verifies_the_asset_it_downloads(self):
+        """Velocidex publishes no checksum file at all, so this entry is
+        signature-or-nothing -- dropping the block would leave the catalog's
+        only route to it installing unverified."""
+        import yaml
+
+        path = (
+            Path(__file__).resolve().parent.parent
+            / "catalog"
+            / "incident-response"
+            / "velociraptor.yaml"
+        )
+        method = yaml.safe_load(path.read_text(encoding="utf-8"))["install"][0]
+        assert "checksums" not in method
+        signature = method["signature"]
+        assert signature["type"] == "gpg"
+        assert signature["asset"] == "{asset}.sig"
+        assert signature["signs"] == "artifact"
+
+
 # ---------------------------------------------------------------------------
 # Install routes that name a real package
 # ---------------------------------------------------------------------------

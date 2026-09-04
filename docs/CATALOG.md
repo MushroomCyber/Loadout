@@ -90,7 +90,8 @@ matter; use `priority` (lower wins, default 50) when you want to steer, and
 
 `checksums:` names the release asset holding the digests — usually a glob like
 `"*checksums*.txt"`. **An entry with no `checksums` will refuse to install**
-unless the user passes `--allow-unverified`. That is deliberate: this project
+unless the user passes `--allow-unverified`, or a `signature:` block covers the
+artifact itself (see [Signatures](#signatures)). That is deliberate: this project
 downloads and executes third-party binaries, and "we could not verify it" is not
 a warning-level event.
 
@@ -141,7 +142,7 @@ install:
 | Key | Meaning |
 |---|---|
 | `type` | `gpg`, `minisign` or `cosign`. The matching binary must be installed, or the install refuses. |
-| `asset` | Glob matching the detached signature among the release assets. |
+| `asset` | Glob matching the detached signature among the release assets. `{asset}` in it is replaced with the name of the asset platform detection picked. |
 | `signs` | `artifact` (default) or `checksums`. Most projects sign `SHA256SUMS` and let it cover the artifacts. |
 | `public_key` | The trust anchor, inline. Required for `gpg` and `minisign`; for `cosign` either this or a pinned identity. |
 | `key_fingerprint` | Optional for `gpg`: 40 hex characters, asserted against the key that actually made the signature. |
@@ -159,6 +160,32 @@ Three rules are worth knowing before you write one:
 - **Verification never touches the user's keyring.** Each check runs against a
   throwaway `GNUPGHOME` holding only your pinned key, so a catalog entry can
   neither read nor write anyone's trust store.
+
+#### When every asset is signed separately
+
+Some projects publish no shared checksum file and sign each asset instead, so
+the signature's name is only knowable once an asset has been chosen. Write
+`{asset}` and it is substituted with the selected asset's filename:
+
+```yaml
+install:
+  - provider: github
+    repo: Velocidex/velociraptor
+    signature:
+      type: gpg
+      asset: "{asset}.sig"        # velociraptor-v0.77.2-linux-amd64.sig
+      signs: artifact
+      key_fingerprint: "0572F28B4EF19A043F4CBBE0B22A7FB19CB6CFA1"
+      public_key: |
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+        ...
+```
+
+A signature over the artifact is a stronger claim than a checksum over it, so
+an entry like this one installs without `checksums:` and without
+`--allow-unverified`. The checksum step is skipped rather than waived: it has
+nothing left to prove about bytes a pinned key already vouched for. Publish
+both and both still run.
 
 Get the fingerprint and armoured key from upstream's documented release key —
 not from whatever a keyserver search returns first:

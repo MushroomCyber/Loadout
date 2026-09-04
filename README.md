@@ -351,6 +351,15 @@ The screenshot at the top of this page is exactly what you get. The banner
 drops to a single line on terminals under 96x30, so a small window spends its
 rows on tools rather than on the program's own name.
 
+The whole catalog is browsable with an empty filter — starred first, then
+installed, then alphabetical. Typing a query switches to relevance ranking and
+shows the top 500 matches, which the hint line says outright rather than
+implying the rest do not exist.
+
+The detail pane reports what state already knew and never showed: how a tool
+was verified, when it was installed, and when it was last run through
+`loadout run`. "last run 6mo ago" is what tells you a kit needs pruning.
+
 ### Keys
 
 | Key | Action |
@@ -466,7 +475,7 @@ implies:
 - `sudo` is constructed in exactly one function, `policy.elevate()` — enforced by a test.
 - Every package name is validated before it reaches an argv, and `--` always separates options from names.
 - Downloaded artifacts are checksummed against the release's own checksum file. **No checksum means refusal**, not a warning; `--allow-unverified` is an explicit opt-in.
-- **A check that passed says so.** The install screen carries the result in the progress block, above the divider and outside the log (which keeps only the last 14 lines — apt alone scrolls a passing check out of sight); a batch install collapses it to a count rather than a line per tool, the CLI prints it without needing `--log-level DEBUG`, and it is recorded in state so the detail pane still shows `✓ checksum verified` long after the install. A *skipped* check reads as `unverified`, never as a pass.
+- **A check that passed says so.** The install screen carries the result in the progress block, above the divider and outside the scrolling log; a batch install collapses it to a count rather than a line per tool, the CLI prints it without needing `--log-level DEBUG`, and it is recorded in state so the detail pane still shows `✓ checksum verified` long after the install. A *skipped* check reads as `unverified`, never as a pass.
 - Where upstream signs its releases, the catalog pins the key and the signature is checked with `gpg`, `minisign` or `cosign`. The signing key must be the pinned one — a valid signature by some *other* key is a failure, which is the check a bare `gpg --verify` exit code does not make. Verification runs against a throwaway keyring, so a catalog entry can never read or write your own. **A declared signature cannot be waived by `--allow-unverified`**; that flag is for projects that publish nothing to check against, not for checks that fail.
 - Archive extraction refuses absolute paths and `..` traversal.
 - No `shell=True` anywhere.

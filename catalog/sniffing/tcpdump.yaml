@@ -20,6 +20,7 @@ alternatives:
 - wireshark
 - tshark
 size: 1378304
+verify: tcpdump --version
 install:
 - provider: apt
   package: tcpdump

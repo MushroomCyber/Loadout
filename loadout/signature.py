@@ -54,6 +54,19 @@ SIGNS_ARTIFACT = "artifact"
 SIGNS_CHECKSUMS = "checksums"
 SIGNS_CHOICES = (SIGNS_ARTIFACT, SIGNS_CHECKSUMS)
 
+#: Stands, inside ``asset``, for the name of the release asset that platform
+#: detection actually picked. Some projects publish no shared checksum file
+#: and instead sign every asset separately, so the signature's name is only
+#: knowable once the artifact has been chosen -- Velocidex ships
+#: ``velociraptor-v0.77.2-linux-amd64.sig`` beside
+#: ``velociraptor-v0.77.2-linux-amd64``, and a fixed glob would either miss
+#: it or match the wrong platform's signature.
+ASSET_PLACEHOLDER = "{asset}"
+
+#: Anything else in braces is a typo, and one that would otherwise surface as
+#: "signature file not in the release assets" during someone's install.
+_PLACEHOLDER_RE = re.compile(r"\{[^}]*\}")
+
 TYPE_GPG = "gpg"
 TYPE_MINISIGN = "minisign"
 TYPE_COSIGN = "cosign"
@@ -144,6 +157,11 @@ def parse_spec(raw: Any) -> SignatureSpec | None:
     )
 
 
+def resolve_asset(spec: SignatureSpec, artifact_name: str) -> str:
+    """The glob to match the signature file with, for this artifact."""
+    return spec.asset.replace(ASSET_PLACEHOLDER, artifact_name)
+
+
 def validate_spec(raw: Any) -> list[str]:
     """Catalog-time validation, so a broken block fails review rather than an
     install on someone else's machine."""
@@ -159,7 +177,8 @@ def validate_spec(raw: Any) -> list[str]:
             f"signature: unknown type {kind!r}. Valid: {', '.join(SIGNATURE_TYPES)}"
         )
 
-    if not str(raw.get("asset", "")).strip():
+    asset = str(raw.get("asset", "")).strip()
+    if not asset:
         errors.append("signature: missing 'asset' (glob matching the signature file)")
 
     signs = str(raw.get("signs", SIGNS_ARTIFACT)).strip().lower() or SIGNS_ARTIFACT
@@ -167,6 +186,23 @@ def validate_spec(raw: Any) -> list[str]:
         errors.append(
             f"signature: 'signs' must be one of {', '.join(SIGNS_CHOICES)}, "
             f"got {signs!r}"
+        )
+
+    unknown = [
+        token
+        for token in _PLACEHOLDER_RE.findall(asset)
+        if token != ASSET_PLACEHOLDER
+    ]
+    if unknown:
+        errors.append(
+            f"signature: unknown placeholder(s) in 'asset': {', '.join(unknown)}. "
+            f"Only {ASSET_PLACEHOLDER} is substituted."
+        )
+    if ASSET_PLACEHOLDER in asset and signs == SIGNS_CHECKSUMS:
+        errors.append(
+            f"signature: 'asset' names itself after the artifact "
+            f"({ASSET_PLACEHOLDER}) but 'signs' says it covers the checksum "
+            "file. A per-artifact signature covers that artifact."
         )
 
     public_key = str(raw.get("public_key", "")).strip()

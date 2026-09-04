@@ -18,6 +18,7 @@ license: GPL-3.0
 alternatives:
 - maigret
 - socialscan
+verify: holehe --help
 install:
 - provider: pipx
   package: holehe

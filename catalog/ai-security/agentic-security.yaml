@@ -13,6 +13,7 @@ phases:
 homepage: https://github.com/msoedov/agentic_security
 repo: msoedov/agentic_security
 license: Apache-2.0
+verify: agentic_security --help
 install:
 - provider: pipx
   package: agentic-security

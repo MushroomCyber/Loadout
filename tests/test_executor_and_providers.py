@@ -752,6 +752,59 @@ class TestVerificationIsVisible:
         assert verify_events[0].success is False
 
 
+class TestASignatureCoversWhatAChecksumWouldHave:
+    """A detached signature over the artifact proves more about those exact
+    bytes than a checksum listing does. An entry whose upstream publishes one
+    and no checksum file must not be treated as unverified, and must not have
+    its install refused for missing the weaker check.
+    """
+
+    def _events(self, expected: str, *, artifact_signed: bool) -> list:
+        from loadout.executor import Event, ExecContext
+        from loadout.providers.github import GithubReleaseProvider
+
+        seen: list[Event] = []
+        ctx = ExecContext(emit=seen.append, tool_id="velociraptor")
+        GithubReleaseProvider._report_digest_result(
+            ctx, expected, artifact_signed=artifact_signed
+        )
+        return seen
+
+    def test_a_signed_artifact_with_no_checksum_claims_nothing_further(self):
+        assert self._events("", artifact_signed=True) == []
+
+    def test_an_unsigned_artifact_with_no_checksum_is_still_flagged(self):
+        from loadout.executor import EVENT_WARN
+
+        events = self._events("", artifact_signed=False)
+        assert [e for e in events if e.kind == EVENT_WARN]
+
+    def test_a_published_checksum_is_still_checked_alongside_the_signature(self):
+        """Defence in depth: signing does not make the checksum file that was
+        also published something to skip."""
+        from loadout.executor import EVENT_VERIFY
+
+        events = self._events("abc123", artifact_signed=True)
+        verify = [e for e in events if e.kind == EVENT_VERIFY]
+        assert len(verify) == 1
+        assert verify[0].message == "checksum"
+        assert verify[0].success is True
+
+    def test_the_dry_run_does_not_threaten_to_refuse_a_signed_entry(self):
+        from loadout.providers.github import _describe_verify
+        from loadout.signature import parse_spec
+
+        spec = parse_spec({"type": "gpg", "asset": "{asset}.sig", "public_key": "k"})
+        described = _describe_verify("", spec)
+        assert "will refuse" not in described
+        assert "gpg" in described
+
+    def test_an_unsigned_entry_with_no_checksum_still_says_it_will_refuse(self):
+        from loadout.providers.github import _describe_verify
+
+        assert "will refuse" in _describe_verify("", None)
+
+
 class TestSummarizeVerification:
     """The (method, ok) pair the executor persists to state and the TUI
     detail panel reads back."""

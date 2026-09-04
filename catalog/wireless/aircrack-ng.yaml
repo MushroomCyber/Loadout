@@ -25,6 +25,7 @@ alternatives:
 - wifite
 - hcxdumptool
 size: 2591744
+verify: aircrack-ng --help
 install:
 - provider: apt
   package: aircrack-ng

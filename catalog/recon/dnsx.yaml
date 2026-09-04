@@ -20,6 +20,7 @@ alternatives:
 - dnsrecon
 - massdns
 size: 31990784
+verify: dnsx --version
 install:
 - provider: apt
   package: dnsx

@@ -30,6 +30,44 @@ GLYPHS = {
 }
 
 
+#: Coarse on purpose. "4 months ago" is what decides whether a tool gets
+#: pruned; "4 months, 3 days" is a precision nobody acts on.
+_AGE_STEPS = (
+    (365.0, "y"),
+    (30.0, "mo"),
+    (7.0, "w"),
+    (1.0, "d"),
+)
+
+
+def relative_age(timestamp: str, *, now: Any = None) -> str:
+    """"3 weeks ago" for an ISO-8601 timestamp, or "" if there isn't one.
+
+    Returns "" rather than a placeholder for anything unparseable: a state
+    file written by an older version, or hand-edited, should read as "not
+    recorded" and not as a date.
+    """
+    from datetime import datetime, timezone
+
+    if not timestamp:
+        return ""
+    try:
+        when = datetime.fromisoformat(timestamp)
+    except ValueError:
+        return ""
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=timezone.utc)
+    current = now or datetime.now(timezone.utc)
+    days = (current - when).total_seconds() / 86400.0
+    if days < 0:
+        # A clock that moved backwards, not a tool installed in the future.
+        return "just now"
+    for threshold, suffix in _AGE_STEPS:
+        if days >= threshold:
+            return f"{int(days // threshold)}{suffix} ago"
+    return "today"
+
+
 @functools.lru_cache(maxsize=1)
 def _terminal_is_ascii_only() -> bool:
     """True when stdout cannot encode our glyphs.
@@ -176,6 +214,10 @@ def render_detail(tool: Any, status: dict | None = None, provider_status: dict |
     def row(label: str, value: str) -> None:
         if value:
             body.add_row(label, value)
+
+    if status.get("installed"):
+        row("installed", relative_age(status.get("installed_at", "")))
+        row("last run", relative_age(status.get("last_used", "")) or "never")
 
     row("category", ", ".join(tool.categories))
     row("phases", ", ".join(tool.phases))

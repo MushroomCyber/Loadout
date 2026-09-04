@@ -593,10 +593,12 @@ async def test_install_modal_shows_close_and_retry_on_failure():
             await pilot.app.push_screen(screen)
             for _ in range(40):
                 await pilot.pause()
-                if screen._done and screen.query("#actions Button"):
+                if screen._done:
                     break
             assert screen._done
-            labels = {str(b.label) for b in screen.query("#actions Button")}
+            labels = {
+                str(b.label) for b in screen.query("#actions Button") if b.display
+            }
             assert labels == {"Retry", "Close"}
         finally:
             executor_module.Executor.run = original
@@ -796,10 +798,13 @@ async def test_an_installed_tool_past_the_row_cap_still_appears_unfiltered(tmp_p
     from loadout.model import Tool
     from loadout.providers.base import ProviderStatus
     from loadout.ui.cli import Context
-    from loadout.ui.tui.app import LoadoutBrowser
+    from loadout.ui.tui.app import _BROWSE_LIMIT, LoadoutBrowser
 
-    tools = [Tool(id=f"aaa-tool-{i:04d}", summary="filler") for i in range(600)]
-    # Sorts dead last alphabetically -- well past the 500-row cap.
+    tools = [
+        Tool(id=f"aaa-tool-{i:04d}", summary="filler")
+        for i in range(_BROWSE_LIMIT + 100)
+    ]
+    # Sorts dead last alphabetically -- well past the row cap.
     tools.append(Tool(id="zzz-installed-tool", summary="the one that must show up"))
 
     path = tmp_path / "big.db"
@@ -821,7 +826,42 @@ async def test_an_installed_tool_past_the_row_cap_still_appears_unfiltered(tmp_p
             await pilot.pause()
             ids = {t.id for t in app._rows}
             assert "zzz-installed-tool" in ids
-            assert len(app._rows) <= 500
+            assert len(app._rows) <= _BROWSE_LIMIT
+    finally:
+        catalog.close()
+
+
+async def test_the_whole_catalog_is_browsable_without_filtering(tmp_path):
+    """The list used to stop at 500 of 842, so a third of the catalog was
+    reachable only by typing something into the filter box -- fine for
+    searching, wrong for browsing."""
+    import argparse
+
+    from loadout.catalog.store import CatalogStore, build_catalog
+    from loadout.model import Tool
+    from loadout.providers.base import ProviderStatus
+    from loadout.ui.cli import Context
+    from loadout.ui.tui.app import LoadoutBrowser
+
+    tools = [Tool(id=f"tool-{i:04d}", summary="filler") for i in range(842)]
+    path = tmp_path / "full.db"
+    build_catalog(path, tools, source="test")
+    catalog = CatalogStore(path)
+
+    args = argparse.Namespace(as_json=False, catalog=None, prefer=[])
+    ctx = Context(args=args)
+    ctx._catalog = catalog
+    ctx._statuses = {"apt": ProviderStatus(name="apt", available=True)}
+    ctx._installed = set()
+    ctx._raw_inventories = {"apt": set()}
+
+    browser = LoadoutBrowser(ctx)
+    try:
+        async with browser.run_test() as pilot:
+            await pilot.pause()
+            assert len(browser._rows) == 842
+            hint = str(browser.query_one("#hint").render())
+            assert "842 tools" in hint
     finally:
         catalog.close()
 
@@ -1046,6 +1086,26 @@ async def test_a_well_covered_category_is_not_coloured_green(app):
 # ---------------------------------------------------------------------------
 
 
+async def test_the_detail_pane_says_how_long_a_tool_has_been_there(app):
+    """state.py has recorded this since the beginning and nothing showed it,
+    so the pane could not answer the one question that decides what to
+    prune."""
+    from textual.widgets import Input, Static
+
+    from loadout.state import get_state_db
+    from loadout.ui.tui.app import ToolDetail
+
+    get_state_db().set_installed("nmap", True, provider="apt")
+    async with app.run_test() as pilot:
+        pilot.app.query_one("#query", Input).value = "nmap"
+        await pilot.pause()
+        detail = pilot.app.query_one("#detail", ToolDetail)
+        text = " ".join(str(child.render()) for child in detail.query(Static))
+        assert "installed" in text
+        assert "today" in text
+        assert "never" in text
+
+
 async def test_the_detail_pane_says_how_an_installed_tool_was_verified(app):
     """The checksum line scrolls out of a 14-line install log long before a
     user reads it, and the install screen closes. If a tool was verified,
@@ -1117,7 +1177,8 @@ async def test_the_install_screen_reports_verification_outside_the_scrolling_log
         await pilot.pause()
 
         screen._set_verify([("hayabusa", "checksum", True)])
-        screen._append_log([f"line {n}" for n in range(40)])
+        for n in range(40):
+            screen._append_log(f"line {n}")
         await pilot.pause()
 
         verify = screen.query_one("#verify", Static)
@@ -1172,6 +1233,76 @@ def test_nothing_is_claimed_when_no_check_ran():
     from loadout.ui.tui.app import verify_summary
 
     assert verify_summary([]) == ""
+
+
+async def test_the_install_log_keeps_more_than_one_screenful(app):
+    """A failed install used to be unexplainable: the log kept the last 14
+    lines, so whatever caused the failure had usually scrolled past and the
+    only way back to it was re-running the whole install under
+    --log-level DEBUG."""
+    from textual.widgets import RichLog
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import _LOG_MAX_LINES, InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+
+        screen._append_log("E: Unable to locate package amass")
+        for n in range(300):
+            screen._append_log(f"Reading database ... {n}%")
+        await pilot.pause()
+
+        log = screen.query_one("#log", RichLog)
+        assert log.max_lines == _LOG_MAX_LINES
+        assert len(log.lines) > 200
+
+
+async def test_no_button_is_offered_while_the_install_is_still_running(app):
+    """Both buttons exist from the start so a retry never remounts them onto
+    ids the previous attempt still holds -- but neither may be reachable
+    until the run is over."""
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+        # The empty plan's worker would otherwise finish mid-test and answer
+        # the question this test is asking.
+        screen._live = False
+
+        screen._show_actions(retry=False, close=False)
+        assert not [b for b in screen.query("#actions Button") if b.display]
+
+        screen._finish("[green]done[/green]", False)
+        visible = {str(b.label) for b in screen.query("#actions Button") if b.display}
+        assert visible == {"Close"}
+
+
+async def test_retrying_starts_the_log_from_empty(app):
+    """The previous attempt's output above the new one reads as part of it."""
+    from textual.widgets import Button, RichLog
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+
+        screen._append_log("first attempt")
+        screen._finish("[red]failed[/red]", True)
+        await pilot.pause()
+
+        screen.query_one("#btn-retry", Button).press()
+        await pilot.pause()
+
+        assert screen.query_one("#log", RichLog).lines == []
 
 
 # ---------------------------------------------------------------------------

@@ -421,3 +421,65 @@ def test_verification_does_not_need_gpg_agent(keys, artifact, tmp_path):
     assert seen, "no gpg invocations recorded"
     for argv in seen:
         assert "--no-autostart" in argv, argv
+
+
+# ---------------------------------------------------------------------------
+# Signatures named after the asset they cover
+# ---------------------------------------------------------------------------
+
+
+def test_a_per_asset_signature_resolves_against_the_chosen_artifact():
+    """Velocidex publishes no checksum file and signs every asset separately,
+    so the signature's name is only knowable once platform detection has
+    picked one -- a fixed glob would match another platform's signature."""
+    from loadout.signature import resolve_asset
+
+    spec = parse_spec(
+        {"type": "gpg", "asset": "{asset}.sig", "public_key": "k"}
+    )
+    assert spec is not None
+    assert (
+        resolve_asset(spec, "velociraptor-v0.77.2-linux-amd64")
+        == "velociraptor-v0.77.2-linux-amd64.sig"
+    )
+
+
+def test_a_pattern_without_the_placeholder_is_left_alone():
+    from loadout.signature import resolve_asset
+
+    spec = parse_spec({"type": "gpg", "asset": "*.asc", "public_key": "k"})
+    assert spec is not None
+    assert resolve_asset(spec, "tool-linux-amd64.tar.gz") == "*.asc"
+
+
+def test_a_misspelled_placeholder_fails_review_not_someone_s_install():
+    errors = " ".join(
+        validate_spec({"type": "gpg", "asset": "{artifact}.sig", "public_key": "k"})
+    )
+    assert "unknown placeholder" in errors
+    assert "{artifact}" in errors
+
+
+def test_a_per_asset_signature_cannot_claim_to_cover_the_checksum_file():
+    """The two are contradictory: a file named after the artifact is a
+    signature over that artifact, not over a shared checksum listing."""
+    errors = " ".join(
+        validate_spec(
+            {
+                "type": "gpg",
+                "asset": "{asset}.sig",
+                "public_key": "k",
+                "signs": "checksums",
+            }
+        )
+    )
+    assert "covers the checksum file" in errors
+
+
+def test_the_placeholder_is_accepted_for_the_artifact_it_belongs_to():
+    assert (
+        validate_spec(
+            {"type": "gpg", "asset": "{asset}.sig", "public_key": "k"}
+        )
+        == []
+    )

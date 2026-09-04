@@ -23,6 +23,7 @@ alternatives:
 - httprobe
 - whatweb
 size: 56858624
+verify: httpx --help
 install:
 - provider: apt
   package: httpx-toolkit

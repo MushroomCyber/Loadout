@@ -33,7 +33,14 @@ from typing import TYPE_CHECKING, Any
 from ..errors import ProviderError, VerificationError
 from ..model import InstallMethod, Tool
 from ..policy import parse_checksum_file, verify_digest
-from ..signature import SIGNS_CHECKSUMS, SignatureSpec, parse_spec, verify_signature
+from ..signature import (
+    ASSET_PLACEHOLDER,
+    SIGNS_CHECKSUMS,
+    SignatureSpec,
+    parse_spec,
+    resolve_asset,
+    verify_signature,
+)
 from .base import CommandStep, Provider, ProviderStatus, PythonStep, Step
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -44,11 +51,30 @@ logger = logging.getLogger("loadout.providers.github")
 API_ROOT = "https://api.github.com"
 
 
+def _describe_verify(checksums: str, spec: SignatureSpec | None) -> str:
+    """What --dry-run shows about the checksum step.
+
+    A signature over the artifact makes the checksum optional rather than
+    missing, so a signed entry with no checksum file must not be described as
+    one that will refuse to install.
+    """
+    if checksums:
+        return checksums
+    if spec is not None and spec.signs != SIGNS_CHECKSUMS:
+        return f"<none published -- covered by the {spec.type} signature>"
+    return "<none published -- will refuse>"
+
+
 def _describe_signature(spec: SignatureSpec | None) -> str:
     """What --dry-run shows about verification, in one line."""
     if spec is None:
         return "<none published>"
-    where = "the checksum file" if spec.signs == SIGNS_CHECKSUMS else "the artifact"
+    if spec.signs == SIGNS_CHECKSUMS:
+        where = "the checksum file"
+    elif ASSET_PLACEHOLDER in spec.asset:
+        where = "the selected asset"
+    else:
+        where = "the artifact"
     pin = spec.key_fingerprint or "pinned key"
     return f"{spec.type} over {where}, {pin}"
 
@@ -147,7 +173,7 @@ class GithubReleaseProvider(Provider):
                 detail=(
                     f"GET {API_ROOT}/repos/{repo}/releases/latest\n"
                     f"  match asset: {pattern or '<auto: platform match>'}\n"
-                    f"  verify: {checksums or '<none published -- will refuse>'}\n"
+                    f"  verify: {_describe_verify(checksums, signature)}\n"
                     f"  signature: {_describe_signature(signature)}\n"
                     f"  install: {target}"
                 ),
@@ -217,6 +243,7 @@ class GithubReleaseProvider(Provider):
             ctx.progress(f"downloading {asset.name}", 10.0)
             self._download(asset.url, archive)
 
+            artifact_signed = False
             if signature is not None:
                 ctx.progress(f"checking {signature.type} signature", 40.0)
                 self._verify_signature(
@@ -234,10 +261,15 @@ class GithubReleaseProvider(Provider):
                 # one, not just the absence of an error.
                 ctx.output(f"[green]✓[/green] {signature.type} signature verified")
                 ctx.verified(signature.type, True)
+                artifact_signed = signature.signs != SIGNS_CHECKSUMS
 
             ctx.progress(f"verifying {asset.name}", 55.0)
-            verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
-            self._report_digest_result(ctx, expected)
+            # Skipped, not waived: claiming --allow-unverified in the log for
+            # an install the user verified with a signature would be a lie
+            # about how the file was checked.
+            if expected or not artifact_signed:
+                verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
+            self._report_digest_result(ctx, expected, artifact_signed=artifact_signed)
 
             self._place_binary(ctx, archive, binary, target, workdir=tmp)
 
@@ -302,6 +334,7 @@ class GithubReleaseProvider(Provider):
             ctx.progress(f"downloading {asset.name}", 20.0)
             self._download(asset.url, archive)
 
+            artifact_signed = False
             if signature is not None:
                 ctx.progress(f"checking {signature.type} signature", 55.0)
                 self._verify_signature(
@@ -314,9 +347,14 @@ class GithubReleaseProvider(Provider):
                 )
                 ctx.output(f"[green]✓[/green] {signature.type} signature verified")
                 ctx.verified(signature.type, True)
+                artifact_signed = signature.signs != SIGNS_CHECKSUMS
             ctx.progress(f"verifying {asset.name}", 80.0)
-            verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
-            self._report_digest_result(ctx, expected)
+            # Skipped, not waived: claiming --allow-unverified in the log for
+            # an install the user verified with a signature would be a lie
+            # about how the file was checked.
+            if expected or not artifact_signed:
+                verify_digest(archive, expected, allow_unverified=ctx.allow_unverified)
+            self._report_digest_result(ctx, expected, artifact_signed=artifact_signed)
 
         return [
             PythonStep(
@@ -326,7 +364,7 @@ class GithubReleaseProvider(Provider):
                     f"GET {API_ROOT}/repos/{repo}/releases/"
                     f"{'tags/' + tag if tag else 'latest'}\n"
                     f"  match asset: {pattern or '<auto: platform match>'}\n"
-                    f"  verify: {checksums or '<none published -- will refuse>'}\n"
+                    f"  verify: {_describe_verify(checksums, signature)}\n"
                     f"  signature: {_describe_signature(signature)}\n"
                     f"  into: {dest}"
                 ),
@@ -472,7 +510,9 @@ class GithubReleaseProvider(Provider):
         return response.text
 
     @staticmethod
-    def _report_digest_result(ctx: ExecContext, expected: str) -> None:
+    def _report_digest_result(
+        ctx: ExecContext, expected: str, *, artifact_signed: bool = False
+    ) -> None:
         """The confirmation verify_digest() itself never gives.
 
         It raises on a mismatch or a missing checksum without
@@ -483,11 +523,17 @@ class GithubReleaseProvider(Provider):
         *expected* being empty tells the two apart. Both need to be visible;
         a passing check should be as loud as a failing one, and skipping the
         check entirely is not a detail to leave to a debug log.
+
+        *artifact_signed* is the third outcome: a signature was checked over
+        these exact bytes, so there is nothing left for a checksum to prove.
+        Reporting that as "unverified" would be false, and refusing the
+        install over it would reject the stronger check for lacking the
+        weaker one.
         """
         if expected:
             ctx.output("[green]✓[/green] checksum verified (sha256)")
             ctx.verified("checksum", True)
-        else:
+        elif not artifact_signed:
             ctx.warn("[yellow]![/yellow] no checksum published -- installed unverified")
             ctx.verified("checksum", False)
 
@@ -507,14 +553,19 @@ class GithubReleaseProvider(Provider):
         is the more common release practice, so both are supported and the
         catalog says which.
         """
+        # Resolved against the artifact that was actually selected, so an
+        # entry whose upstream signs each asset separately picks the
+        # signature belonging to this platform's asset rather than some
+        # other platform's.
+        pattern = resolve_asset(spec, archive.name)
         signature_asset = next(
-            (a for a in assets if fnmatch.fnmatch(a.name, spec.asset)),
+            (a for a in assets if fnmatch.fnmatch(a.name, pattern)),
             None,
         )
         if signature_asset is None:
             names = ", ".join(a.name for a in assets[:6])
             raise VerificationError(
-                f"signature file {spec.asset!r} is not in the release assets. "
+                f"signature file {pattern!r} is not in the release assets. "
                 f"Available: {names}"
             )
 

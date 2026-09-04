@@ -22,7 +22,7 @@ from typing import Any
 
 logger = logging.getLogger("loadout.state")
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS tool_state (
     starred       INTEGER NOT NULL DEFAULT 0,
     notes         TEXT,
     verify_method TEXT NOT NULL DEFAULT '',
-    verify_ok     INTEGER NOT NULL DEFAULT 0
+    verify_ok     INTEGER NOT NULL DEFAULT 0,
+    installed_at  TEXT
 );
 
 CREATE TABLE IF NOT EXISTS history (
@@ -110,6 +111,19 @@ class StateDB:
             conn.execute("ALTER TABLE tool_state ADD COLUMN verify_method TEXT NOT NULL DEFAULT ''")
         if "verify_ok" not in existing:
             conn.execute("ALTER TABLE tool_state ADD COLUMN verify_ok INTEGER NOT NULL DEFAULT 0")
+        if "installed_at" not in existing:
+            conn.execute("ALTER TABLE tool_state ADD COLUMN installed_at TEXT")
+            # Backfilled rather than left blank: history already holds when
+            # each install happened, and a machine that has been managed for
+            # a year should not read as though every tool arrived today.
+            conn.execute(
+                """UPDATE tool_state SET installed_at = (
+                       SELECT MAX(ts) FROM history
+                       WHERE history.tool_id = tool_state.tool_id
+                         AND history.action = 'install'
+                         AND history.success = 1
+                   )"""
+            )
 
     # -- tool state --------------------------------------------------------
 
@@ -126,8 +140,8 @@ class StateDB:
         with self._tx() as conn:
             conn.execute(
                 """INSERT INTO tool_state(tool_id, installed, provider, version,
-                                           verify_method, verify_ok)
-                   VALUES(?,?,?,?,?,?)
+                                           verify_method, verify_ok, installed_at)
+                   VALUES(?,?,?,?,?,?,?)
                    ON CONFLICT(tool_id) DO UPDATE SET
                        installed     = excluded.installed,
                        provider      = CASE WHEN excluded.provider != ''
@@ -135,7 +149,12 @@ class StateDB:
                        version       = CASE WHEN excluded.version != ''
                                         THEN excluded.version ELSE tool_state.version END,
                        verify_method = excluded.verify_method,
-                       verify_ok     = excluded.verify_ok""",
+                       verify_ok     = excluded.verify_ok,
+                       -- A removal must not stamp a fresh install date on a
+                       -- row it is about to mark uninstalled.
+                       installed_at  = CASE WHEN excluded.installed = 1
+                                        THEN excluded.installed_at
+                                        ELSE tool_state.installed_at END""",
                 (
                     tool_id,
                     int(bool(installed)),
@@ -143,6 +162,7 @@ class StateDB:
                     version,
                     verify_method,
                     int(bool(verify_ok)),
+                    _utcnow() if installed else None,
                 ),
             )
 

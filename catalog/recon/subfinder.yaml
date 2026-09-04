@@ -18,6 +18,7 @@ alternatives:
 - assetfinder
 - findomain
 size: 32525312
+verify: subfinder --version
 install:
 - provider: apt
   package: subfinder
