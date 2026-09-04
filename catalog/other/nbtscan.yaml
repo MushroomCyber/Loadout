@@ -6,6 +6,8 @@ description: NBTscan is a program for scanning IP networks for NetBIOS name info
   (such as Ethernet). This program is useful for security checks, network discovery and forensics investigations.
 categories:
 - recon
+binaries:
+- nbtscan
 homepage: https://github.com/resurrecting-open-source-projects/nbtscan
 size: 58368
 install:

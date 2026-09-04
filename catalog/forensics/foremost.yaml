@@ -9,6 +9,8 @@ categories:
 - forensics
 tags:
 - carving
+binaries:
+- foremost
 homepage: https://sourceforge.net/projects/foremost/
 size: 104448
 install:

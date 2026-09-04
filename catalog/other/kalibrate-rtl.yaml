@@ -4,6 +4,8 @@ description: Kalibrate, or kal, can scan for GSM base stations in a given freque
   GSM base stations to calculate the local oscillator frequency offset.
 categories:
 - wireless
+binaries:
+- kal
 homepage: https://github.com/steve-m/kalibrate-rtl
 size: 63488
 install:

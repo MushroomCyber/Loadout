@@ -4,6 +4,8 @@ description: Certi is an utility to play with ADCS, allows one to request ticket
   about related objects. Basically, it's the impacket copy of Certify.
 categories:
 - other
+binaries:
+- certi
 homepage: https://github.com/zer1t0/certi
 size: 120832
 install:

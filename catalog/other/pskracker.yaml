@@ -4,6 +4,8 @@ description: This package contains a collection of WPA/WPA2/WPS default algorith
   written in C. This is useful for testing/auditing wireless networks and contains bleeding edge algorithms.
 categories:
 - other
+binaries:
+- pskracker
 homepage: https://github.com/soxrok2212/PSKracker
 size: 37888
 install:

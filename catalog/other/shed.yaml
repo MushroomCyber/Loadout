@@ -7,6 +7,8 @@ description: 'shed (Simple Hex Editor) is an easy application for viewing and ed
   because file is not loaded into memory; - Large file support. shed is useful in forensics investigations.'
 categories:
 - other
+binaries:
+- shed
 homepage: http://shed.sf.net
 size: 62464
 install:

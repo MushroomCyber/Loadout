@@ -12,6 +12,8 @@ description: 'dcfldd was initially developed at Department of Defense Computer F
   as well as files natively. - When dd uses a default block size (bs, ibs, obs) of 5'
 categories:
 - forensics
+binaries:
+- dcfldd
 homepage: https://github.com/resurrecting-open-source-projects/dcfldd
 size: 115712
 install:

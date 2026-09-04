@@ -8,6 +8,8 @@ description: 'Rake is a simple ruby build program with capabilities similar to m
   rake do not require that rake be installed on target systems.'
 categories:
 - recon
+binaries:
+- rake
 homepage: https://github.com/ruby/rake
 size: 212992
 install:

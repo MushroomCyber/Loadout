@@ -7,6 +7,8 @@ description: ngrep strives to provide most of GNU grep's common features, applyi
   tools, such as tcpdump and snoop.
 categories:
 - sniffing
+binaries:
+- ngrep
 homepage: https://github.com/jpr5/ngrep
 size: 74752
 install:

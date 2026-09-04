@@ -8,6 +8,8 @@ description: 'Havoc is a modern, malleable post-exploitation command and control
   and the closest equivalent for the same engagements.'
 categories:
 - other
+binaries:
+- havoc
 homepage: https://github.com/HavocFramework/Havoc
 size: 28449792
 install:

@@ -3,6 +3,8 @@ summary: SCTP network scanner for discovery and security
 description: SCTP network scanner for discovery and security
 categories:
 - vuln-scan
+binaries:
+- sctpscan
 homepage: https://github.com/philpraxis/sctpscan
 size: 79872
 install:

@@ -7,6 +7,8 @@ description: This package contains a Simple SSL Enabled HTTP server with the pri
   possible using phishery's -i [in docx], -o [out docx], and -u [url] options.
 categories:
 - other
+binaries:
+- phishery
 homepage: https://github.com/ryhanson/phishery
 size: 5302272
 install:

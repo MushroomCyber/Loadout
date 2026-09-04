@@ -6,6 +6,9 @@ description: This package contains Slim(toolkit). It was called DockerSlim, and 
   smaller and more secure while providing advanced visibility and improved usability working with the
 categories:
 - other
+binaries:
+- slimtoolkit
+- slim-sensor
 homepage: https://github.com/slimtoolkit/slim
 size: 70666240
 install:

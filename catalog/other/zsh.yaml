@@ -6,6 +6,10 @@ description: Zsh is a UNIX command interpreter (shell) usable as an interactive 
   (with autoloading), a history mechanism, and a host of other features.
 categories:
 - reporting
+binaries:
+- zsh
+- rzsh
+- zsh5
 homepage: https://www.zsh.org/
 size: 2558976
 install:

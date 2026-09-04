@@ -6,6 +6,10 @@ description: This package contains code-oss, a code editor with what developers 
   is built from Microsoft open source code named code-oss.
 categories:
 - other
+binaries:
+- code-oss
+- code
+- vscode
 homepage: https://github.com/microsoft/vscode
 size: 2609858560
 install:

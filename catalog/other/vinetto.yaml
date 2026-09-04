@@ -6,6 +6,8 @@ description: 'vinetto is a console program to extract thumbnail pictures and the
   path, ...) about deleted pictures.'
 categories:
 - forensics
+binaries:
+- vinetto
 homepage: https://github.com/AtesComp/Vinetto
 size: 239616
 install:

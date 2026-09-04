@@ -5,6 +5,12 @@ description: SniffJoke is an application for Linux that handle transparently you
   readed by a passive wiretapping technology (IDS or sniffer).
 categories:
 - sniffing
+binaries:
+- sniffjoke
+- sj-commit-results
+- sj-iptcpopt-probe
+- sniffjoke-autotest
+- sniffjokectl
 homepage: https://github.com/vecna/sniffjoke
 size: 530432
 install:

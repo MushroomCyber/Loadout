@@ -7,6 +7,8 @@ categories:
 - other
 tags:
 - wordlists
+binaries:
+- bopscrk
 homepage: https://github.com/r3nt0n/bopscrk/
 size: 103424
 install:

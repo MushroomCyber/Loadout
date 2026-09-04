@@ -8,6 +8,8 @@ description: OpenVPN is an application to securely tunnel IP networks over a sin
   over NAT or connection-oriented stateful firewalls (such as Linux's iptables).
 categories:
 - network
+binaries:
+- openvpn
 homepage: https://openvpn.net/community/
 size: 1890304
 install:

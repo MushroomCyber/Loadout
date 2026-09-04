@@ -6,6 +6,8 @@ description: 'This package contains a tool for managing Charts. Charts are packa
   applications * Intelligently manage your Kubernetes manifest files'
 categories:
 - other
+binaries:
+- helm
 homepage: https://github.com/helm/helm
 size: 63405056
 install:

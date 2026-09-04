@@ -8,6 +8,8 @@ description: The program is used to try discovery a password for encrypted LUKS 
   the password is really short and/or weak).
 categories:
 - other
+binaries:
+- bruteforce-luks
 homepage: https://github.com/glv2/bruteforce-luks
 size: 48128
 install:

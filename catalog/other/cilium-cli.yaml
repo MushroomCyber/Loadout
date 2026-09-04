@@ -4,6 +4,8 @@ description: This package contains a CLI to install, manage & troubleshoot Kuber
   Cilium.
 categories:
 - other
+binaries:
+- cilium
 homepage: https://github.com/cilium/cilium-cli
 size: 195690496
 install:

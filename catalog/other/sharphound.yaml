@@ -3,6 +3,8 @@ summary: C# Data Collector for BloodHound
 description: This package contains the pre-built SharpHound.
 categories:
 - other
+binaries:
+- sharphound
 homepage: https://github.com/SpecterOps/SharpHound
 size: 3260416
 install:

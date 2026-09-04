@@ -5,6 +5,8 @@ description: SSLyze is a Python tool that can analyze the SSL configuration of a
   misconfigurations affecting their SSL servers.
 categories:
 - recon
+binaries:
+- sslyze
 homepage: https://github.com/nabla-c0d3/sslyze
 size: 2299904
 install:

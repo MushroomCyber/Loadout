@@ -11,6 +11,8 @@ categories:
 - recon
 tags:
 - dns
+binaries:
+- dnsrecon
 homepage: https://github.com/darkoperator/dnsrecon
 size: 1522688
 install:

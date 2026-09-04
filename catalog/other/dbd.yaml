@@ -7,6 +7,8 @@ description: dbd is a Netcat-clone, designed to be portable and offer strong enc
   under the GNU General Public License.
 categories:
 - post-exploitation
+binaries:
+- dbd
 homepage: https://github.com/gitdurandal/dbd
 size: 2982912
 install:

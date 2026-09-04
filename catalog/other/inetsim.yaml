@@ -7,6 +7,8 @@ description: 'INetSim is a software suite for simulating common internet service
   * Detailed logging and reports * TLS/SSL support for several services'
 categories:
 - forensics
+binaries:
+- inetsim
 homepage: https://www.inetsim.org/index.html
 size: 1114112
 install:

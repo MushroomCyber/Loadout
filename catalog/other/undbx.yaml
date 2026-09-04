@@ -6,6 +6,8 @@ description: UnDBX is a tool to extract, recover and undelete e-mail messages fr
   from fragments of deleted messages that were not overwritten. UnDBX is useful in forensics investigations.
 categories:
 - forensics
+binaries:
+- undbx
 homepage: https://github.com/ZungBang/undbx
 size: 62464
 install:

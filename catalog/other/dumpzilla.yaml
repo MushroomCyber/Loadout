@@ -8,6 +8,8 @@ description: Dumpzilla application is developed in Python 3.x and has as purpose
   sections, search customization and extract certain content.
 categories:
 - forensics
+binaries:
+- dumpzilla
 homepage: http://www.dumpzilla.org/
 size: 139264
 install:

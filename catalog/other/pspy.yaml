@@ -6,6 +6,9 @@ description: pspy is a command line tool designed to snoop on processes without 
   on the command line is a bad idea.
 categories:
 - other
+binaries:
+- pspy
+- pspy-binaries
 homepage: https://github.com/DominicBreuker/pspy
 size: 9661440
 install:

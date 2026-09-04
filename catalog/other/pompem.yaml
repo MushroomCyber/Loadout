@@ -7,6 +7,8 @@ description: 'Find exploit with a system of advanced search, designed to automat
   of networks and systems. The search results can be exported to HTML or text format.'
 categories:
 - other
+binaries:
+- pompem
 homepage: https://github.com/rfunix/Pompem
 size: 55296
 install:

@@ -8,6 +8,9 @@ description: recoverdm recover disks with bad sectors. You can recover files as 
   forensics investigations.
 categories:
 - forensics
+binaries:
+- recoverdm
+- mergebad
 homepage: https://www.vanheusden.com/recoverdm
 size: 65536
 install:

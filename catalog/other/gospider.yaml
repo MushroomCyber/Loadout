@@ -7,6 +7,8 @@ description: 'This package contains a Fast web spider written in Go. The feature
   input - Crawl multiple sites in parallel - Random mobile/web User-AgentShowcases'
 categories:
 - other
+binaries:
+- gospider
 homepage: https://github.com/jaeles-project/gospider
 size: 11729920
 install:

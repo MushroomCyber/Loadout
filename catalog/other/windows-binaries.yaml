@@ -5,6 +5,9 @@ categories:
 - post-exploitation
 tags:
 - windows
+binaries:
+- windows-binaries
+- windows-resources
 homepage: https://www.kali.org
 size: 5804032
 install:

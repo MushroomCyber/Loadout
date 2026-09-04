@@ -9,6 +9,8 @@ description: Normally, without access to the original source code, testing the s
 categories:
 - reverse
 size: 13785088
+binaries:
+- javasnoop
 install:
 - provider: apt
   package: javasnoop

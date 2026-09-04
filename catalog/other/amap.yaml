@@ -6,6 +6,10 @@ description: AMAP stands for Application MAPper. It is a next-generation scannin
   the responses in a list of response strings.
 categories:
 - other
+binaries:
+- amap
+- amap6
+- amapcrap
 homepage: https://www.thc.org
 size: 288768
 install:

@@ -8,6 +8,8 @@ categories:
 - sniffing
 tags:
 - ssl-strip
+binaries:
+- sslstrip
 homepage: https://github.com/L1ghtn1ng/sslstrip
 alternatives:
 - bettercap

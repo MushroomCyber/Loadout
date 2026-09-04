@@ -5,6 +5,8 @@ description: Hotpatch is a library that can be used to dynamically load a shared
   target process. The API is a C API, but also supported in C++.
 categories:
 - other
+binaries:
+- hotpatcher
 homepage: https://github.com/vikasnkumar/hotpatch
 size: 226304
 install:

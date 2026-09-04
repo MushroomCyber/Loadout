@@ -14,6 +14,8 @@ categories:
 - post-exploitation
 tags:
 - windows
+binaries:
+- ncat-w32
 homepage: https://nmap.org/ncat/
 size: 1685504
 install:

@@ -5,6 +5,10 @@ description: sslh lets one accept HTTPS, SSH, OpenVPN, tinc and XMPP connections
   which almost never block port 443) while still serving HTTPS on that port.
 categories:
 - recon
+binaries:
+- sslh
+- sslh-ev
+- sslh-select
 homepage: http://www.rutschle.net/tech/sslh/README.html
 size: 525312
 install:

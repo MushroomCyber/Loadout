@@ -5,6 +5,8 @@ description: This package contains a command-line tool that scans the shell comm
   information and helps avoid accidentally exposing sensitive data in the command history.
 categories:
 - other
+binaries:
+- PassDetective
 homepage: https://github.com/aydinnyunus/PassDetective
 size: 3997696
 install:

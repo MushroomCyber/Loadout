@@ -4,6 +4,8 @@ description: dnstracer determines where a given Domain Name Server (DNS) gets it
   a given hostname, and follows the chain of DNS servers back to the authoritative answer.
 categories:
 - recon
+binaries:
+- dnstracer
 homepage: http://www.mavetju.org/unix/dnstracer.php
 size: 60416
 install:

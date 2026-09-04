@@ -6,6 +6,8 @@ description: ext3grep is a simple tool intended to aid anyone who accidentally d
 categories:
 - forensics
 size: 306176
+binaries:
+- ext3grep
 install:
 - provider: apt
   package: ext3grep

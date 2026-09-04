@@ -3,6 +3,8 @@ summary: security auditing toolkit (desktop)
 description: This package contains caido desktop, a security auditing toolkit.
 categories:
 - other
+binaries:
+- caido
 homepage: https://github.com/caido/caido
 size: 500733952
 install:

@@ -11,6 +11,8 @@ categories:
 - forensics
 tags:
 - recovery
+binaries:
+- dd_rescue
 homepage: http://www.garloff.de/kurt/linux/ddrescue/
 size: 420864
 install:

@@ -6,6 +6,8 @@ description: This package contains a security tool that mounts automated phishin
   from captive portals and third party login pages or WPA/WPA2 secret passphrases.
 categories:
 - other
+binaries:
+- wifiphisher
 homepage: https://github.com/sophron/wifiphisher
 size: 8283136
 install:

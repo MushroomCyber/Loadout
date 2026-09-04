@@ -7,6 +7,8 @@ description: 'Sherlock relies on the site''s designers providing a  unique URL f
   CNET, IFTTT, Instagram, PlayStore  PyPI, Scribd, Telegram, TikTok, Tinder etc.'
 categories:
 - other
+binaries:
+- sherlock
 homepage: https://github.com/sherlock-project/sherlock
 size: 192512
 install:

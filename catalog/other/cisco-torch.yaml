@@ -11,6 +11,8 @@ description: The main feature that makes cisco-torch different from similar tool
 categories:
 - vuln-scan
 size: 119808
+binaries:
+- cisco-torch
 install:
 - provider: apt
   package: cisco-torch

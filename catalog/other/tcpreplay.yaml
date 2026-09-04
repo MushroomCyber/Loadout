@@ -10,6 +10,14 @@ description: Tcpreplay is aimed at testing the performance of a NIDS by replayin
   and pcap based captures are possible.
 categories:
 - sniffing
+binaries:
+- tcpreplay
+- tcpbridge
+- tcpcapinfo
+- tcpliveplay
+- tcpprep
+- tcpreplay-edit
+- tcprewrite
 homepage: http://tcpreplay.appneta.com/
 size: 2238464
 install:

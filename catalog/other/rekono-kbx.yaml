@@ -8,6 +8,8 @@ description: Rekono is an automation platform that combines different hacking to
   easily from anywhere and using any device.
 categories:
 - other
+binaries:
+- rekono
 homepage: https://github.com/pablosnt/rekono
 size: 136192
 install:

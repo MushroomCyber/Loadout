@@ -7,6 +7,8 @@ categories:
 - web
 tags:
 - fuzzing
+binaries:
+- wfuzz
 homepage: http://www.edge-security.com/wfuzz.php
 size: 1622016
 install:

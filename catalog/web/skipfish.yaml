@@ -10,6 +10,8 @@ categories:
 tags:
 - scanner
 size: 576512
+binaries:
+- skipfish
 install:
 - provider: apt
   package: skipfish

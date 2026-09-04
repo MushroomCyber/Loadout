@@ -12,6 +12,9 @@ description: 'Wapiti allows you to audit the security of your web applications. 
   the server - Shellshock - DirBuster like - Server Side Request Forgery (through use o'
 categories:
 - recon
+binaries:
+- wapiti
+- wapiti-getcookie
 homepage: https://wapiti.sourceforge.net/
 size: 3422208
 install:

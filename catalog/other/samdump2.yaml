@@ -6,6 +6,8 @@ description: This tool is designed to dump Windows 2k/NT/XP password hashes from
   encryption layer to the password hashes stored in the SAM database.
 categories:
 - password
+binaries:
+- samdump2
 homepage: https://ophcrack.sourceforge.net/
 size: 44032
 install:

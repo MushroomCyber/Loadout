@@ -6,6 +6,8 @@ description: XSRFProbe is an advanced Cross Site Request Forgery (CSRF/XSRF) Aud
   of concepts with each found vulnerability.
 categories:
 - other
+binaries:
+- xsrfprobe
 homepage: https://github.com/0xInfection/XSRFProbe
 size: 194560
 install:

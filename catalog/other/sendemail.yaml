@@ -6,6 +6,9 @@ description: SendEmail is a lightweight, completely command line based, SMTP ema
   a straight forward interface, making it very easy to use.
 categories:
 - network
+binaries:
+- sendemail
+- sendEmail
 homepage: http://caspian.dotconf.net/menu/Software/SendEmail/
 size: 109568
 install:

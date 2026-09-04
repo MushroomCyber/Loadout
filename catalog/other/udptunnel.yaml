@@ -5,6 +5,8 @@ description: UDPTunnel is a small program which can tunnel UDP packets bi-direct
   which allows only outgoing TCP connections. UDPTunnel also can be used for security tests in networks.
 categories:
 - post-exploitation
+binaries:
+- udptunnel
 homepage: http://www1.cs.columbia.edu/~lennox/udptunnel/
 size: 37888
 install:

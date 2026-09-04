@@ -5,6 +5,8 @@ description: 'This package is FreeRadius Wireless Pawn Edition. There are suppor
   OTPs) * EAP-TTLS/MSCHAPv1 * EAP-TTLS/MSCHAPv2 * EAP-MD5'
 categories:
 - wireless
+binaries:
+- freeradius-wpe
 homepage: https://www.freeradius.org/
 size: 4924416
 install:

@@ -5,6 +5,9 @@ description: This package contains a utility to identify hash types. Have you ev
   will name it for you.
 categories:
 - other
+binaries:
+- name-that-hash
+- nth
 homepage: https://github.com/HashPals/Name-That-Hash
 size: 125952
 install:

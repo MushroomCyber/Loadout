@@ -6,6 +6,8 @@ description: Cntlm is a fast and efficient NTLM proxy, with support for TCP/IP t
   page contains detailed information.
 categories:
 - password
+binaries:
+- cntlm
 homepage: https://github.com/versat/cntlm/
 size: 719872
 install:

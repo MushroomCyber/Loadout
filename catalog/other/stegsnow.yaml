@@ -8,6 +8,8 @@ description: 'This utility can conceal messages in ASCII text by appending white
   is useful for personal security, forensics investigations and other actions.'
 categories:
 - crypto
+binaries:
+- stegsnow
 homepage: https://www.darkside.com.au/snow
 size: 57344
 install:

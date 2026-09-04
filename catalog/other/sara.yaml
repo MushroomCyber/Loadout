@@ -4,6 +4,8 @@ description: This package contains an autonomous RouterOS configuration analyzer
   issues on MikroTik hardware.
 categories:
 - other
+binaries:
+- sara
 homepage: https://github.com/caster0x00/sara
 size: 75776
 install:

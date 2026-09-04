@@ -6,6 +6,8 @@ description: 'HexWalk is an Hex editor, viewer, analyzer based on opensource pro
   - Bin/Dec/Hex Converter - Hex file editing - Diff file analysis - Byte Patterns to parse headers'
 categories:
 - other
+binaries:
+- hexwalk
 homepage: https://www.hexwalk.com
 size: 958464
 install:

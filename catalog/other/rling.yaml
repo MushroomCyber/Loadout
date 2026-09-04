@@ -4,6 +4,12 @@ description: This package is similar to the rli utility found in hashcat-utils, 
   rli compares a single file against another file(s) and removes all duplicates.
 categories:
 - other
+binaries:
+- rling
+- dedupe
+- getpass
+- rehex
+- splitlen
 homepage: https://github.com/Cynosureprime/rling
 size: 169984
 install:

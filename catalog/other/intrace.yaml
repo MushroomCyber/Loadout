@@ -5,6 +5,8 @@ description: InTrace is a traceroute-like application that enables users to enum
   could be useful for network reconnaissance and firewall bypassing.
 categories:
 - recon
+binaries:
+- intrace
 homepage: https://github.com/robertswiecki/intrace
 size: 53248
 install:

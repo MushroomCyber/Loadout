@@ -3,6 +3,8 @@ summary: SMTP user enumeration and testing tool
 description: Test for SMTP user enumeration (RCPT TO and VRFY), internal spoofing, and relay.
 categories:
 - other
+binaries:
+- ismtp
 homepage: https://github.com/altjx/ipwn/
 size: 40960
 install:

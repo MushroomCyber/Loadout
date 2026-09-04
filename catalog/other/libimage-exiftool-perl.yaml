@@ -12,6 +12,8 @@ description: 'Image::ExifTool is a customizable set of Perl modules plus a full-
   for inverse date/time conversion * Time::Piece (in per'
 categories:
 - vuln-scan
+binaries:
+- exiftool
 homepage: https://exiftool.org/
 size: 29885440
 install:

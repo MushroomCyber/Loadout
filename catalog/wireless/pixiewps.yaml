@@ -6,6 +6,8 @@ categories:
 - wireless
 tags:
 - wps
+binaries:
+- pixiewps
 homepage: https://github.com/wiire/pixiewps
 size: 120832
 install:

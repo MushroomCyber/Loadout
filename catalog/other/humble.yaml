@@ -3,6 +3,8 @@ summary: HTTP Headers Analyzer
 description: This package contains an  humble, and fast, security-oriented HTTP headers analyzer.
 categories:
 - other
+binaries:
+- humble
 homepage: https://github.com/rfc-st/humble
 size: 462848
 install:

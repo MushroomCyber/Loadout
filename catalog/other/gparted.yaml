@@ -4,6 +4,8 @@ description: GParted uses libparted to detect and manipulate devices and partiti
   (optional) filesystem tools provide support for filesystems not included in libparted.
 categories:
 - forensics
+binaries:
+- gparted
 homepage: https://gparted.org
 size: 2368512
 install:

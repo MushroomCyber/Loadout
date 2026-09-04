@@ -5,6 +5,8 @@ description: SQLMC (SQL Injection Massive Checker) is a tool designed to scan a 
   vulnerabilities, and reports its findings.
 categories:
 - other
+binaries:
+- sqlmc
 homepage: https://github.com/malvads/sqlmc
 size: 66560
 install:

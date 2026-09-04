@@ -4,6 +4,8 @@ description: WATOBO is intended to enable security professionals to perform high
   web application security audits. It works like a local web proxy.
 categories:
 - web
+binaries:
+- watobo
 homepage: https://sourceforge.net/projects/watobo/
 size: 3441664
 install:

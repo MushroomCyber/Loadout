@@ -6,6 +6,8 @@ description: Metagoofil is an information gathering tool designed for extracting
   See /usr/share/doc/metagoofil/README.md.gz.
 categories:
 - recon
+binaries:
+- metagoofil
 homepage: https://github.com/opsdisk/metagoofil
 size: 129024
 install:

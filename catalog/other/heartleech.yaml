@@ -8,6 +8,8 @@ description: 'This is a typical "heartbleed" tool. It can scan for systems vulne
   information'
 categories:
 - web
+binaries:
+- heartleech
 homepage: https://github.com/robertdavidgraham/heartleech
 size: 999424
 install:

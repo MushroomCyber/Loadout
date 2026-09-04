@@ -8,6 +8,8 @@ description: Unhide.rb is a forensics tool to find processes hidden by rootkits.
   in its daily scans.
 categories:
 - forensics
+binaries:
+- unhide.rb
 homepage: https://launchpad.net/unhide.rb
 size: 31744
 install:

@@ -11,6 +11,8 @@ description: DirBuster is a multi threaded java application designed to brute fo
   force, which leaves the hidden directories and files nowhere to hide.
 categories:
 - recon
+binaries:
+- dirbuster
 homepage: https://www.owasp.org/index.php/Category:OWASP_DirBuster_Project
 alternatives:
 - feroxbuster

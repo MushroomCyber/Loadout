@@ -7,6 +7,8 @@ description: htshells is a series of web based attacks based around the .htacces
   own directory.
 categories:
 - other
+binaries:
+- htshells
 homepage: https://github.com/wireghoul/htshells
 size: 57344
 install:

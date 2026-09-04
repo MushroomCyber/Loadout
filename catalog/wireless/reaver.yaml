@@ -8,6 +8,9 @@ categories:
 - wireless
 tags:
 - wps
+binaries:
+- reaver
+- wash
 homepage: https://github.com/t6x/reaver-wps-fork-t6x
 size: 871424
 install:

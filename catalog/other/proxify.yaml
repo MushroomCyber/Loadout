@@ -11,6 +11,10 @@ description: This package contains a Swiss Army Knife Proxy for rapid deployment
   replay in Burp
 categories:
 - other
+binaries:
+- proxify
+- mitmrelay
+- replay-proxify
 homepage: https://github.com/projectdiscovery/proxify
 size: 36789248
 install:

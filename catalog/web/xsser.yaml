@@ -7,6 +7,8 @@ categories:
 - web
 tags:
 - xss
+binaries:
+- xsser
 homepage: https://xsser.03c8.net/
 size: 25151488
 install:

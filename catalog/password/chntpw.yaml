@@ -8,6 +8,12 @@ description: This little program provides a way to view information and change u
   homepage.
 categories:
 - password
+binaries:
+- chntpw
+- reged
+- sampasswd
+- samunlock
+- samusrgrp
 homepage: http://pogostick.net/~pnh/ntpasswd/
 size: 498688
 install:

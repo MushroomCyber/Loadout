@@ -5,6 +5,8 @@ description: DAVTest tests WebDAV enabled servers by uploading test executable f
   for penetration testers to quickly and easily determine if enabled DAV services are exploitable.
 categories:
 - web
+binaries:
+- davtest
 homepage: https://github.com/cldrn/davtest
 size: 70656
 install:

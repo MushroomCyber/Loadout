@@ -4,6 +4,8 @@ description: enumIAX is an Inter Asterisk Exchange protocol username brute-force
   operate in two distinct modes; Sequential Username Guessing or Dictionary Attack.
 categories:
 - vuln-scan
+binaries:
+- enumiax
 homepage: https://enumiax.sourceforge.net/
 size: 35840
 install:

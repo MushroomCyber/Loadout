@@ -6,6 +6,8 @@ description: This package contains a useful little tool that will generate a nic
   and output a graph in any format supported by graphviz.
 categories:
 - other
+binaries:
+- rev-proxy-grapher
 homepage: https://github.com/mricon/rev-proxy-grapher
 size: 211968
 install:

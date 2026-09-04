@@ -5,6 +5,8 @@ description: Rid Enum is a RID cycling attack that attempts to enumerate user ac
   the user accounts when its finished enumerating.
 categories:
 - other
+binaries:
+- ridenum
 homepage: https://github.com/trustedsec/ridenum
 size: 32768
 install:

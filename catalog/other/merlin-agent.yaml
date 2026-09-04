@@ -3,6 +3,8 @@ summary: Cross-platform post-exploitation HTTP/2 Command & Control agent
 description: This package contains the Agent code for Merlin post-exploitation command and control framework.
 categories:
 - other
+binaries:
+- merlin-agent
 homepage: https://github.com/Ne0nd0g/merlin-agent
 size: 12111872
 install:

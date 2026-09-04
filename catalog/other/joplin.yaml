@@ -11,6 +11,8 @@ description: This package contains a free, open source note taking and to-do app
   other metadata are saved to plain text files which can be easily inspected, backed up and moved around.
 categories:
 - other
+binaries:
+- joplin
 homepage: https://github.com/laurent22/joplin
 size: 430656512
 install:

@@ -4,6 +4,8 @@ description: This package contains an exploitation shell which focuses on exploi
   injection vulnerabilities.
 categories:
 - other
+binaries:
+- shellfire
 homepage: https://github.com/unix-ninja/shellfire
 size: 83968
 install:

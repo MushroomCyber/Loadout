@@ -11,6 +11,8 @@ description: 'This package contains legacy integration scripts for configuring v
 categories:
 - other
 size: 37888
+binaries:
+- vconfig
 install:
 - provider: apt
   package: vlan

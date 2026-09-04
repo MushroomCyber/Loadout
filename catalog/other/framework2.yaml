@@ -4,6 +4,8 @@ description: Version 2 of the Metasploit Framework. No longer updated but still 
   shellcode.
 categories:
 - other
+binaries:
+- framework2
 homepage: https://www.metasploit.com
 size: 8203264
 install:

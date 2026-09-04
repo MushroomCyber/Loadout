@@ -3,6 +3,8 @@ summary: Web backdoor cookie script kit
 description: Scripts for creating Web backdoors using cookies, with module support
 categories:
 - web
+binaries:
+- webacoo
 homepage: https://github.com/anestisb/WeBaCoo
 size: 66560
 install:

@@ -12,6 +12,8 @@ description: 'This package can find query parameters for URL endpoints. Web appl
   sources. Arjun is useful for penetration testing (PENTEST) and network sec'
 categories:
 - other
+binaries:
+- arjun
 homepage: https://github.com/s0md3v/Arjun
 size: 356352
 install:

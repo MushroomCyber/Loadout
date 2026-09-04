@@ -7,6 +7,8 @@ description: 'cloud_enum enumerates public resources matching user requested key
   and network security analysis serving as OSINT.'
 categories:
 - other
+binaries:
+- cloud_enum
 homepage: https://github.com/initstring/cloud_enum
 size: 80896
 install:

@@ -9,6 +9,8 @@ description: 'This package contains Crowbar (formally known as Levye). It is a b
   SSH private key authentication (-b sshkey) * VNC key authentication (-b vpn)'
 categories:
 - other
+binaries:
+- crowbar
 homepage: https://github.com/galkan/crowbar
 size: 460800
 install:

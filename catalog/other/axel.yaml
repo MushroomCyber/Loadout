@@ -10,6 +10,8 @@ categories:
 - web
 tags:
 - download
+binaries:
+- axel
 homepage: https://github.com/axel-download-accelerator/axel
 size: 228352
 install:

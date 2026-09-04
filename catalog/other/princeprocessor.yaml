@@ -8,6 +8,8 @@ description: Princeprocessor is a password candidate generator and can be though
   of the algorithm.
 categories:
 - other
+binaries:
+- princeprocessor
 homepage: https://github.com/hashcat/princeprocessor
 size: 123904
 install:

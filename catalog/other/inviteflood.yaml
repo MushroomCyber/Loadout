@@ -5,6 +5,8 @@ description: A tool to perform SIP/SDP INVITE message flooding over UDP/IP. It w
   and execute on a variety of Linux distributions.
 categories:
 - vuln-scan
+binaries:
+- inviteflood
 homepage: http://www.hackingvoip.com/sec_tools.html
 size: 33792
 install:

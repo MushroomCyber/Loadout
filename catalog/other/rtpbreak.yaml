@@ -7,6 +7,8 @@ description: With rtpbreak you can detect, reconstruct and analyze any RTP sessi
   networks.
 categories:
 - vuln-scan
+binaries:
+- rtpbreak
 homepage: http://dallachiesa.com/code/rtpbreak/
 size: 94208
 install:

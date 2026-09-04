@@ -4,6 +4,8 @@ description: TInjA is a CLI tool for testing web pages for template injection vu
   44 of the most relevant template engines for eight different programming languages.
 categories:
 - other
+binaries:
+- tinja
 homepage: https://github.com/Hackmanit/TInjA
 size: 13243392
 install:

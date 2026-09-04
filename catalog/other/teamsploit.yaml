@@ -8,6 +8,8 @@ description: 'TeamSploit makes group-based penetration testing fun and easy, pro
   to fellow team members.'
 categories:
 - other
+binaries:
+- teamsploit
 homepage: http://www.teamsploit.com
 size: 2373632
 install:

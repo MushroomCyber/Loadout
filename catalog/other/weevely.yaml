@@ -5,6 +5,8 @@ description: Weevely is a stealth PHP web shell that simulate telnet-like connec
   manage legit web accounts, even free hosted ones.
 categories:
 - web
+binaries:
+- weevely
 homepage: https://github.com/epinna/weevely3/
 size: 920576
 install:

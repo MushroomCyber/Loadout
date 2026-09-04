@@ -8,6 +8,8 @@ categories:
 - password
 tags:
 - windows
+binaries:
+- ophcrack
 homepage: https://ophcrack.sourceforge.net/
 size: 513024
 install:

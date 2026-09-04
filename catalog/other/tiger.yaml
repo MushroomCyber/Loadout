@@ -12,6 +12,10 @@ description: 'TIGER, or the ''tiger'' scripts, is a set of tools (Bourne shell s
   and deviations. This package provides all the security scripts and data files for'
 categories:
 - monitoring
+binaries:
+- tiger
+- tigercron
+- tigexp
 homepage: http://savannah.nongnu.org/projects/tiger/
 size: 7987200
 install:

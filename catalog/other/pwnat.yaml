@@ -6,6 +6,8 @@ description: pwnat, pronounced "poe-nat", is a tool that allows any number of cl
   trying to connect.
 categories:
 - post-exploitation
+binaries:
+- pwnat
 homepage: https://samy.pl/pwnat/
 size: 66560
 install:

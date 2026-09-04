@@ -3,6 +3,8 @@ summary: Dictionary attack tool for SQL Server
 description: SQLdict is a dictionary attack tool for SQL Server.
 categories:
 - web
+binaries:
+- sqldict
 homepage: https://ntsecurity.nu/toolbox/sqldict/
 size: 148480
 install:

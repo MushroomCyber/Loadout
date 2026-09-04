@@ -8,6 +8,8 @@ description: TLSSLed is a Linux shell script whose purpose is to evaluate the se
   and the current SSL/TLS renegotiation capabilities.
 categories:
 - recon
+binaries:
+- tlssled
 homepage: http://www.taddong.com/en/lab.html
 size: 38912
 install:

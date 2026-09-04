@@ -6,6 +6,8 @@ description: Miss Identify (missidentify) is a program to find MS Windows type w
   Miss Identify is useful in forensics investigations.
 categories:
 - forensics
+binaries:
+- missidentify
 homepage: https://missidentify.sf.net
 size: 48128
 install:

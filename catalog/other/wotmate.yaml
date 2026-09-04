@@ -9,6 +9,8 @@ description: 'This package contains a reimplementation the defunct PGP pathfinde
   maintains a "web of trust."'
 categories:
 - other
+binaries:
+- wotmate
 homepage: https://github.com/mricon/wotmate
 size: 205824
 install:

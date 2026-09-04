@@ -8,6 +8,8 @@ categories:
 - web
 tags:
 - discovery
+binaries:
+- dirsearch
 homepage: https://github.com/maurosoria/dirsearch
 size: 457728
 install:

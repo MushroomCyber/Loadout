@@ -6,6 +6,8 @@ description: FakeIKEd, or fiked for short, is a fake IKE daemon supporting just 
   in order to capture XAUTH login credentials; it doesn’t currently do the client part of full MitM.
 categories:
 - sniffing
+binaries:
+- fiked
 homepage: https://www.roe.ch/FakeIKEd
 size: 177152
 install:

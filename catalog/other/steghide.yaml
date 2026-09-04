@@ -7,6 +7,8 @@ description: Steghide is steganography program which hides bits of a data file i
   distribution of hidden bits in the container data. Steghide is useful in digital forensics investigations.
 categories:
 - crypto
+binaries:
+- steghide
 homepage: http://steghide.sourceforge.net/
 size: 488448
 install:

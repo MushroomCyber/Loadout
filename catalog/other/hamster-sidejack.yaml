@@ -5,6 +5,8 @@ description: Hamster is tool or "sidejacking". It acts as a proxy server that re
   using the Ferret program. You need a copy of that as well.
 categories:
 - web
+binaries:
+- hamster-sidejack
 homepage: http://www.erratasec.com/research.html
 size: 157696
 install:

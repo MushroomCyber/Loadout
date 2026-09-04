@@ -8,6 +8,8 @@ categories:
 - network
 tags:
 - file-transfer
+binaries:
+- atftp
 homepage: https://sourceforge.net/projects/atftp
 size: 99328
 install:

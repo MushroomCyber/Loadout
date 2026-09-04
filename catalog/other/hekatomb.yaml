@@ -5,6 +5,8 @@ description: Hekatomb is a Python script that connects to an LDAP directory to r
   and use Domain backup keys to decrypt them.
 categories:
 - other
+binaries:
+- hekatomb
 homepage: https://github.com/ProcessusT/HEKATOMB
 size: 64512
 install:

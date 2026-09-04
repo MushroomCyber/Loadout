@@ -12,6 +12,12 @@ description: 'Unhide is a forensic tool to find processes and TCP/UDP ports hidd
   is useful for network security checks, in addition to forensics investigations.'
 categories:
 - forensics
+binaries:
+- unhide
+- unhide-linux
+- unhide-posix
+- unhide-tcp
+- unhide_rb
 homepage: https://www.unhide-forensics.info
 size: 176128
 install:

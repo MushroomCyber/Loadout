@@ -7,6 +7,8 @@ description: 'Vim is an almost compatible version of the UNIX editor Vi. Many ne
   packages if you need more (or less).'
 categories:
 - other
+binaries:
+- vim.basic
 homepage: https://www.vim.org/
 size: 4234240
 install:

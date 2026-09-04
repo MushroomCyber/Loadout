@@ -10,6 +10,8 @@ description: 'NetSED is a small and handy utility designed to alter, in real tim
   task at hand. It ideally complements a tool suite based on ngrep, netcat, and tcpdump.'
 categories:
 - other
+binaries:
+- netsed
 homepage: http://silicone.homelinux.org/projects/netsed/
 size: 54272
 install:

@@ -9,6 +9,8 @@ description: This package contains Advanced Open Source Intelligence (OSINT) Fra
   IP2Proxy LITE data available from https://www.ip2location.com/proxy-database.
 categories:
 - other
+binaries:
+- reconspider
 homepage: https://github.com/bhavsec/reconspider
 size: 389974016
 install:

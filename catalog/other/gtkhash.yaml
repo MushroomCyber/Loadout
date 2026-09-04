@@ -5,6 +5,8 @@ description: GtkHash is a small GTK+ utility which allows users to compute messa
   RIPEMD, TIGER and WHIRLPOOL.
 categories:
 - vuln-scan
+binaries:
+- gtkhash
 homepage: https://gtkhash.org
 size: 508928
 install:

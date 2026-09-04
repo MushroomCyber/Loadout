@@ -12,6 +12,8 @@ description: 'bruteforce-salted-openssl try to find the passphrase or password o
   file without knowing anything about it would take way too much time (unless t'
 categories:
 - other
+binaries:
+- bruteforce-salted-openssl
 homepage: https://github.com/glv2/bruteforce-salted-openssl
 size: 58368
 install:

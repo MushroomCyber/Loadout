@@ -6,6 +6,8 @@ description: Sshuttle makes it possible to access remote networks using SSH. It 
   installed.
 categories:
 - network
+binaries:
+- sshuttle
 homepage: https://github.com/sshuttle/sshuttle
 size: 881664
 install:

@@ -12,6 +12,8 @@ description: 'Exiv2 is a C++ library and a command line utility to manage image 
   with Canon and Nikon cameras'
 categories:
 - forensics
+binaries:
+- exiv2
 homepage: https://www.exiv2.org/
 size: 439296
 install:

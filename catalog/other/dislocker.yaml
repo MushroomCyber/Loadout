@@ -10,6 +10,13 @@ description: Dislocker has been designed to read BitLocker encrypted partitions 
   This tool is useful in cryptography managing and forensics investigations.
 categories:
 - other
+binaries:
+- dislocker
+- dislocker-bek
+- dislocker-file
+- dislocker-find
+- dislocker-fuse
+- dislocker-metadata
 homepage: https://github.com/Aorimn/dislocker
 size: 97280
 install:

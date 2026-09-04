@@ -6,6 +6,8 @@ description: Spooftooph is designed to automate spoofing or cloning Bluetooth de
   device information when the devices are in Discoverable Mode (specificaly the same Address).
 categories:
 - wireless
+binaries:
+- spooftooph
 homepage: http://www.hackfromacave.com/projects/spooftooph.html
 size: 75776
 install:

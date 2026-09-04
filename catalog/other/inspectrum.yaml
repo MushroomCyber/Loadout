@@ -12,6 +12,8 @@ description: 'inspectrum is a tool for analysing captured signals, primarily fro
   period, filtered samples and demodulated data'
 categories:
 - wireless
+binaries:
+- inspectrum
 homepage: https://github.com/miek/inspectrum
 size: 330752
 install:

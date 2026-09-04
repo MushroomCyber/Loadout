@@ -4,6 +4,8 @@ description: dnswalk is a DNS debugger.  It performs zone transfers of specified
   database in numerous ways for internal consistency, as well as accuracy.
 categories:
 - recon
+binaries:
+- dnswalk
 homepage: https://github.com/davebarr/dnswalk
 size: 47104
 install:

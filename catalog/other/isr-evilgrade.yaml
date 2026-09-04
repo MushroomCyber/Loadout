@@ -6,6 +6,8 @@ description: Evilgrade is a modular framework that allows the user to take advan
   has an autoconfiguration when new binary agents are set.
 categories:
 - sniffing
+binaries:
+- evilgrade
 homepage: https://github.com/infobyte/evilgrade
 size: 13787136
 install:

@@ -6,6 +6,9 @@ description: This Perl script listens on TCP port 443 and responds with complete
   scan to the console. Rickrolls scanner in the hex dump.
 categories:
 - other
+binaries:
+- hb-honeypot
+- hb_honeypot.pl
 homepage: https://packetstormsecurity.com/files/126068/Heartbleed-Honeypot-Script.html
 size: 13312
 install:

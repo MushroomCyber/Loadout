@@ -7,6 +7,8 @@ description: 'This package contains a Python based ingestor for BloodHound, base
   branch. This package installs the library for Python 3.'
 categories:
 - other
+binaries:
+- bloodhound-python
 homepage: https://github.com/dirkjanm/bloodhound.py
 size: 362496
 install:

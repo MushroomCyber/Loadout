@@ -7,6 +7,8 @@ description: DHCPig initiates an advanced DHCP exhaustion attack. It will consum
   2k3/2k8, ...).
 categories:
 - vuln-scan
+binaries:
+- dhcpig
 homepage: https://github.com/kamorin/DHCPig
 size: 87040
 install:

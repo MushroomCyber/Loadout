@@ -7,6 +7,8 @@ description: A UDP Inter-Asterisk_eXchange (i.e. IAX) packet was captured from a
   that even resembles an IAX payload.
 categories:
 - vuln-scan
+binaries:
+- iaxflood
 homepage: http://www.hackingexposedvoip.com/sec_tools.html
 size: 25600
 install:

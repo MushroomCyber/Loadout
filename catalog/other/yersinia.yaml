@@ -8,6 +8,8 @@ description: 'Yersinia is a framework for performing layer 2 attacks. It is desi
   (HSRP). - 802.1q. - 802.1x. - Inter-Switch Link Protocol (ISL). - VLAN Trunking Protocol (VTP).'
 categories:
 - vuln-scan
+binaries:
+- yersinia
 homepage: https://github.com/tomac/yersinia
 size: 427008
 install:

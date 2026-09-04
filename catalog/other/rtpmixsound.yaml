@@ -4,6 +4,8 @@ description: A tool to mix pre-recorded audio in real-time with the audio (i.e. 
   target audio stream.
 categories:
 - vuln-scan
+binaries:
+- rtpmixsound
 homepage: http://www.hackingvoip.com/sec_tools.html
 size: 236544
 install:

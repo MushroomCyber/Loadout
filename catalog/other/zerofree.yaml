@@ -12,6 +12,8 @@ description: 'Zerofree finds the unallocated blocks with non-zero value content 
   Zerofree has been written to be run from GNU/Linux systems installed as guest OS'
 categories:
 - other
+binaries:
+- zerofree
 homepage: https://frippery.org/uml/
 size: 30720
 install:

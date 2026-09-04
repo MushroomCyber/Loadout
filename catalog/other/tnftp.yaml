@@ -11,6 +11,8 @@ description: 'tnftp is what many users affectionately call the enhanced ftp clie
   `-T'', `rate'')'
 categories:
 - network
+binaries:
+- tnftp
 homepage: https://en.wikipedia.org/wiki/Tnftp
 size: 265216
 install:

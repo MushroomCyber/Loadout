@@ -10,6 +10,8 @@ categories:
 - social
 tags:
 - phishing
+binaries:
+- evilginx2
 homepage: https://github.com/kgretzky/evilginx2
 size: 10622976
 install:

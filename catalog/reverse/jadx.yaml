@@ -9,6 +9,9 @@ categories:
 - reverse
 tags:
 - android
+binaries:
+- jadx
+- jadx-gui
 homepage: https://github.com/skylot/jadx
 size: 63714304
 install:

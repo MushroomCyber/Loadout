@@ -11,6 +11,8 @@ categories:
 - recon
 tags:
 - subdomains
+binaries:
+- assetfinder
 homepage: https://github.com/tomnomnom/assetfinder
 size: 6254592
 install:

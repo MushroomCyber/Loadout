@@ -6,6 +6,8 @@ categories:
 - forensics
 tags:
 - recovery
+binaries:
+- extundelete
 homepage: http://extundelete.sourceforge.net/
 size: 155648
 install:

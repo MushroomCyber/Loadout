@@ -3,6 +3,8 @@ summary: Scans Cisco routers for vulnerabilities
 description: Perl script which scans cisco routers for common vulnerabilities.
 categories:
 - vuln-scan
+binaries:
+- CAT
 homepage: http://www.scrypt.net/
 size: 272384
 install:

@@ -10,6 +10,8 @@ description: 'This package contains the OWASP Maryam, a modular/optional open so
   and are maintained.'
 categories:
 - other
+binaries:
+- maryam
 homepage: https://github.com/saeeddhqan/Maryam
 size: 999424
 install:

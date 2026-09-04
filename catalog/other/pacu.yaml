@@ -7,6 +7,8 @@ description: This package contains an open-source AWS exploitation framework, de
   attacking vulnerable Lambda functions, and much more.
 categories:
 - other
+binaries:
+- pacu
 homepage: https://rhinosecuritylabs.com/aws/pacu-open-source-aws-exploitation-framework/
 size: 13986816
 install:

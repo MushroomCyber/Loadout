@@ -12,6 +12,8 @@ description: horst is a small, lightweight IEEE802.11 WLAN analyzer with a text 
   and the live TSF per node as it is counting * Detects IBSS "splits" (same ESSID but
 categories:
 - other
+binaries:
+- horst
 homepage: https://github.com/br101/horst
 size: 158720
 install:

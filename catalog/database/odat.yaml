@@ -10,6 +10,8 @@ categories:
 - database
 tags:
 - oracle
+binaries:
+- odat
 homepage: https://github.com/quentinhardy/odat
 size: 523264
 install:

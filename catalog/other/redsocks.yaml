@@ -8,6 +8,8 @@ description: Redsocks is a daemon running on the local system, that will transpa
   returning answers with the "truncated" flag set for any UDP query, forcing the resolver to use TCP.
 categories:
 - web
+binaries:
+- redsocks
 homepage: http://darkk.net.ru/redsocks/
 size: 159744
 install:

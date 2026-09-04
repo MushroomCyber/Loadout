@@ -4,6 +4,10 @@ description: This package contains a tool intended to help you manage your data 
   in the most efficient and organized way.
 categories:
 - other
+binaries:
+- redeye
+- redeye-start
+- redeye-stop
 homepage: https://github.com/redeye-framework/Redeye
 size: 23375872
 install:

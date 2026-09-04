@@ -9,6 +9,8 @@ description: 'Zim is a graphical text editor used to maintain a collection of wi
   lists * Draft blog entries and emails * Do brainstorming'
 categories:
 - other
+binaries:
+- zim
 homepage: https://zim-wiki.org
 size: 5483520
 install:

@@ -4,6 +4,9 @@ description: This package contains a Hex Editor for Reverse Engineers, Programme
   their retinas when working at 3 AM.
 categories:
 - other
+binaries:
+- imhex
+- imhex-updater
 homepage: https://github.com/WerWolv/ImHex
 size: 94537728
 install:

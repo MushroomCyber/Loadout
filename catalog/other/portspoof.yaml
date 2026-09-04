@@ -7,6 +7,10 @@ description: 'This package contains a service to enhance OS security through a s
   be used to generate fake banners and fool scanners. This tool requires configuration before use.'
 categories:
 - other
+binaries:
+- portspoof
+- portspoof-start
+- portspoof-stop
 homepage: https://github.com/drk1wi/portspoof
 size: 1112064
 install:

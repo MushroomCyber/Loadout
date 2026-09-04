@@ -6,6 +6,8 @@ description: 'This package contains a tool to find open S3 buckets and dump thei
   folder * whale Docker support'
 categories:
 - other
+binaries:
+- s3scanner
 homepage: https://github.com/sa7mon/s3scanner
 size: 18726912
 install:

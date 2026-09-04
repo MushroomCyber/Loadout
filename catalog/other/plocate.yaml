@@ -5,6 +5,10 @@ description: plocate is a locate(1) based on posting lists, giving much faster s
   alike.
 categories:
 - other
+binaries:
+- plocate
+- plocate-build
+- updatedb.plocate
 homepage: https://plocate.sesse.net/
 size: 585728
 install:

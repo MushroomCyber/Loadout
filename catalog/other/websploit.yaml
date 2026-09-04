@@ -4,6 +4,8 @@ description: WebSploit is an open source project which is used to scan and analy
   to find various type of vulnerabilites. This tool is very powerful and supports multiple vulnerabilities.
 categories:
 - other
+binaries:
+- websploit
 homepage: https://sourceforge.net/projects/websploit/
 size: 77824
 install:

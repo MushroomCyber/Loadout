@@ -9,6 +9,13 @@ description: Git is popular version control system designed to handle very large
   with other VCS's, or a web interface, is provided as separate git* packages.
 categories:
 - recon
+binaries:
+- git
+- git-receive-pack
+- git-shell
+- git-upload-archive
+- git-upload-pack
+- scalar
 homepage: https://git-scm.com/
 size: 52195328
 install:

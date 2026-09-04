@@ -12,6 +12,8 @@ description: 'Features: * convert shellcode between different formats and source
   FreeBSD/x86_64. * "*prepend breakpoint*" option. Check the -c switch. * rea'
 categories:
 - exploitation
+binaries:
+- shellnoob
 homepage: https://github.com/reyammer/shellnoob
 size: 98304
 install:

@@ -3,6 +3,8 @@ summary: Tool to flood any RTP device
 description: A command line tool used to flood any device that is processing RTP.
 categories:
 - vuln-scan
+binaries:
+- rtpflood
 homepage: http://www.hackingvoip.com/sec_tools.html
 size: 25600
 install:

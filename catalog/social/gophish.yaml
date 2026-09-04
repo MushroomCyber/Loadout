@@ -7,6 +7,10 @@ categories:
 - social
 tags:
 - phishing
+binaries:
+- gophish
+- gophish-start
+- gophish-stop
 homepage: https://getgophish.com/
 size: 60251136
 install:

@@ -6,6 +6,9 @@ description: Netwide Assembler.  NASM will currently output flat-form binary fil
   2-clause BSD license.
 categories:
 - recon
+binaries:
+- nasm
+- ndisasm
 homepage: https://www.nasm.us/
 size: 3851264
 install:

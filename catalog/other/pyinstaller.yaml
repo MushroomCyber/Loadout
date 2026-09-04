@@ -7,6 +7,13 @@ description: PyInstaller reads a Python script written by you. It analyzes your 
   modules.
 categories:
 - other
+binaries:
+- pyinstaller
+- pyi-archive_viewer
+- pyi-bindepend
+- pyi-grab_version
+- pyi-makespec
+- pyi-set_version
 homepage: https://pyinstaller.org/en/stable/
 size: 106496
 install:

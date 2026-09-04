@@ -6,6 +6,8 @@ description: This package contains IVRE (Instrument de veille sur les réseaux e
   Nmap to run scans, can use ZMap as a pre-scanner; IVRE can also import XML output from Nmap and Masscan.
 categories:
 - other
+binaries:
+- ivre
 homepage: https://ivre.rocks
 size: 19034112
 install:

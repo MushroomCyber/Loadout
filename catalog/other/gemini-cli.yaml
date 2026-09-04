@@ -5,6 +5,8 @@ description: This package contains an open-source AI agent that brings the power
   to the model.
 categories:
 - other
+binaries:
+- gemini-cli
 homepage: https://github.com/google-gemini/gemini-cli
 size: 47766528
 install:

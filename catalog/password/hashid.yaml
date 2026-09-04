@@ -9,6 +9,8 @@ categories:
 - password
 tags:
 - identification
+binaries:
+- hashid
 homepage: https://psypanda.github.io/hashID/
 size: 84992
 install:

@@ -4,6 +4,8 @@ description: Doona is a fork of the Bruteforce Exploit Detector Tool (BED). BED 
   designed to check daemons for potential buffer overflows, format string bugs etc.
 categories:
 - other
+binaries:
+- doona
 homepage: https://github.com/wireghoul/doona
 size: 131072
 install:

@@ -6,6 +6,10 @@ description: The goal of the program is to crack the verification hash of the en
   Open Source Supports integration into distributed computing environments Supports resume
 categories:
 - password
+binaries:
+- oclgausscrack
+- gausscombinator
+- gaussfilter
 homepage: https://github.com/jsteube/oclGaussCrack
 size: 128000
 install:

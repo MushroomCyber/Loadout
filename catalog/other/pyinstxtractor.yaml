@@ -4,6 +4,8 @@ description: PyInstaller Extractor is a Python script to extract the contents of
   executable file.
 categories:
 - other
+binaries:
+- pyinstxtractor
 homepage: https://github.com/extremecoders-re/pyinstxtractor
 size: 28672
 install:

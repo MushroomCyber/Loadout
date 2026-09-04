@@ -5,6 +5,8 @@ description: CherryTree is a hierarchical note taking application, featuring ric
   and more.
 categories:
 - other
+binaries:
+- cherrytree
 homepage: https://www.giuspen.net/cherrytree/
 size: 11544576
 install:

@@ -6,6 +6,8 @@ description: 'It is a packet sniffer which runs as a background process and serv
   and stabler than ntop.'
 categories:
 - sniffing
+binaries:
+- darkstat
 homepage: https://unix4lyfe.org/darkstat/
 size: 194560
 install:

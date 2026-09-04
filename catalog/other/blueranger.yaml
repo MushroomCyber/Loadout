@@ -11,6 +11,8 @@ categories:
 - wireless
 tags:
 - bluetooth
+binaries:
+- blueranger
 homepage: http://www.hackfromacave.com/projects/blueranger.html
 size: 13312
 install:

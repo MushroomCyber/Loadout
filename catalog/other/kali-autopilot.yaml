@@ -6,6 +6,8 @@ description: Kali Autopilot is a tool to help develop automatic attack scripts f
   testing.
 categories:
 - other
+binaries:
+- kali-autopilot
 homepage: https://gitlab.com/kalilinux/packages/kali-autopilot
 size: 100352
 install:

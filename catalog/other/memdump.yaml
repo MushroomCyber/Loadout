@@ -6,6 +6,8 @@ description: Program which dumps system memory to the standard output stream, sk
   is useful in security tests and forensics investigations.
 categories:
 - forensics
+binaries:
+- memdump
 homepage: http://www.porcupine.org/forensics/tct.html
 size: 45056
 install:

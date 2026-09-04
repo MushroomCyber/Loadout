@@ -6,6 +6,8 @@ description: This tool allow queries SSL/TLS services (such as HTTPS) and report
   for easy consumption by external programs.
 categories:
 - recon
+binaries:
+- sslscan
 homepage: https://github.com/rbsec/sslscan
 size: 182272
 install:

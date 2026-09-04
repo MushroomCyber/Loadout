@@ -5,6 +5,8 @@ description: This is a tiny program handy if you work with firewalls or routers 
   a range of hosts. It can also convert between common IP netmask and address formats.
 categories:
 - recon
+binaries:
+- netmask
 homepage: https://github.com/tlby/netmask
 size: 75776
 install:

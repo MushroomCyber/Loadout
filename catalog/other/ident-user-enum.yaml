@@ -6,6 +6,8 @@ description: This package is a simple PERL script to query the ident service (11
   the list of usernames gathered can be used for password guessing attacks on other network services.
 categories:
 - other
+binaries:
+- ident-user-enum
 homepage: https://pentestmonkey.net/tools/user-enumeration/ident-user-enum
 size: 12288
 install:

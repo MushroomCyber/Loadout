@@ -4,6 +4,8 @@ description: This Perl script will enumerate the usernames on any system that us
   module.
 categories:
 - web
+binaries:
+- apache-users
 homepage: https://labs.portcullis.co.uk/downloads/
 size: 13312
 install:

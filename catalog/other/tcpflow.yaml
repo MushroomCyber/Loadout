@@ -11,6 +11,8 @@ description: tcpflow is a program that captures data transmitted as part of TCP 
   'tcpdump' support. tcpflow can also rebuild flows from data captured with 'tcpdump -w'.
 categories:
 - sniffing
+binaries:
+- tcpflow
 homepage: https://github.com/simsong/tcpflow
 size: 838656
 install:

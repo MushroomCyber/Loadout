@@ -4,6 +4,8 @@ description: This package contains a tool to test a domains list. It takes a lis
   for working http and https servers.
 categories:
 - other
+binaries:
+- httprobe
 homepage: https://github.com/tomnomnom/httprobe
 size: 4653056
 install:

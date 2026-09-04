@@ -3,6 +3,8 @@ summary: robots.txt exclusion protocol implementation for Go language
 description: This package contains a robots.txt exclusion protocol implementation for Go language (golang).
 categories:
 - other
+binaries:
+- robots.txt-check
 homepage: https://github.com/temoto/robotstxt
 size: 5428224
 install:

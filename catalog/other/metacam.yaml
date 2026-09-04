@@ -7,6 +7,8 @@ description: EXIF (Exchangeable Image File Format) is a standard for storing int
   extensions from Nikon, Olympus, Canon and Casio. This program is useful in forensics investigations.
 categories:
 - forensics
+binaries:
+- metacam
 homepage: http://www.cheeseplant.org/~daniel/pages/metacam.html
 size: 145408
 install:

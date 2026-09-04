@@ -6,6 +6,8 @@ description: sbd is a Netcat-clone, designed to be portable and offer strong enc
   some other nice features. sbd supports TCP/IP communication only.
 categories:
 - post-exploitation
+binaries:
+- sbd
 homepage: https://mirrors.kernel.org/gentoo/distfiles/sbd-1.37.tar.gz
 size: 166912
 install:

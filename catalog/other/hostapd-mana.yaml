@@ -3,6 +3,9 @@ summary: featureful rogue access point
 description: This package contains a eatureful rogue access point first presented at Defcon 22.
 categories:
 - other
+binaries:
+- hostapd-mana
+- hostapd-mana_cli
 homepage: https://github.com/sensepost/hostapd-mana
 size: 1355776
 install:

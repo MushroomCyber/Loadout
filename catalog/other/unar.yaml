@@ -7,6 +7,9 @@ description: The Unarchiver is an archive unpacker program with support for the 
   tool which lists the contents of archives and the unar tool which extracts those contents.
 categories:
 - forensics
+binaries:
+- unar
+- lsar
 homepage: https://theunarchiver.com/command-line
 size: 6136832
 install:

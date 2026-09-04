@@ -9,6 +9,8 @@ description: 'This package contains a replacement for iphelix''s PACK. This is a
   passwords, but helps other tools crack more passwords faster.'
 categories:
 - password
+binaries:
+- pack2
 homepage: https://github.com/hops/pack2
 size: 918528
 install:

@@ -99,6 +99,13 @@ for every such tool, so the model now refuses to guess: an entry with no
 
 List the primary command first.
 
+Most of the apt-backed entries had this filled in from the distro's own
+`Contents` index, which maps files to packages without installing anything —
+that is where `libimage-exiftool-perl: [exiftool]` and
+`kubernetes-helm: [helm]` came from. Packages providing several commands with
+no obvious primary (`util-linux`, `bluez`) were left alone rather than guessed
+at, because the first entry is what `loadout run` executes.
+
 Name the command, not the file inside the archive. A release that ships
 `hayabusa-4.0.0-lin-x64-gnu` at its root still takes `binaries: [hayabusa]` —
 the version and platform glued onto the name are resolved at extraction time,

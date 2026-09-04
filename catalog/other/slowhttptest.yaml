@@ -7,6 +7,8 @@ description: SlowHTTPTest is a highly configurable tool that simulates some appl
   usage on the server.
 categories:
 - vuln-scan
+binaries:
+- slowhttptest
 homepage: https://github.com/shekyan/slowhttptest
 size: 91136
 install:

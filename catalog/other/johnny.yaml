@@ -3,6 +3,8 @@ summary: GUI for John the Ripper
 description: Johnny is provides a GUI for the John the Ripper password cracking tool.
 categories:
 - password
+binaries:
+- johnny
 homepage: https://openwall.info/wiki/john/johnny
 size: 944128
 install:

@@ -6,6 +6,8 @@ categories:
 - other
 tags:
 - wireless
+binaries:
+- berate_ap
 homepage: https://github.com/sensepost/berate_ap
 size: 105472
 install:

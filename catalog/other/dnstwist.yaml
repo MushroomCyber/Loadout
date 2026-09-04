@@ -7,6 +7,8 @@ description: dnstwist generates a list of similarly looking domain names for a g
   fraud and corporate espionage.
 categories:
 - other
+binaries:
+- dnstwist
 homepage: https://github.com/elceef/dnstwist
 size: 500736
 install:

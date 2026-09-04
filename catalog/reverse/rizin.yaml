@@ -8,6 +8,18 @@ categories:
 - reverse
 tags:
 - disassembler
+binaries:
+- rizin
+- rz-asm
+- rz-ax
+- rz-bin
+- rz-diff
+- rz-find
+- rz-gg
+- rz-hash
+- rz-run
+- rz-sign
+- rz-test
 homepage: https://rizin.re/
 size: 276480
 install:

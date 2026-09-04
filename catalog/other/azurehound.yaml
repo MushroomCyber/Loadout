@@ -5,6 +5,8 @@ categories:
 - other
 tags:
 - cloud-ad
+binaries:
+- azurehound
 homepage: https://github.com/SpecterOps/AzureHound
 size: 13575168
 install:

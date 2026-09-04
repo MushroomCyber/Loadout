@@ -6,6 +6,8 @@ description: 'UPX is an advanced executable file compressor. UPX will typically 
   files for different OS. NOTE: This package is based on the UCL library, which is licensed under GPL.'
 categories:
 - exploitation
+binaries:
+- upx-ucl
 homepage: https://upx.github.io/
 size: 2700288
 install:

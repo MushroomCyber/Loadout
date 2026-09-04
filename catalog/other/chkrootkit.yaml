@@ -9,6 +9,11 @@ description: 'The chkrootkit security scanner searches for signs that the system
   system.'
 categories:
 - forensics
+binaries:
+- chkrootkit
+- chklastlog
+- chkrootkit-daily
+- chkwtmp
 homepage: https://www.chkrootkit.org/
 size: 1010688
 install:

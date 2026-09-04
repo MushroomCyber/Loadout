@@ -7,6 +7,8 @@ categories:
 - forensics
 tags:
 - imaging
+binaries:
+- dc3dd
 homepage: https://sourceforge.net/projects/dc3dd/
 size: 489472
 install:

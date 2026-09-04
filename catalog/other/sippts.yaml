@@ -4,6 +4,9 @@ description: Sippts is a set of tools to audit VoIP servers and devices using SI
   programmed in Python and it allows pentesters to check the security of a VoIP server using SIP protocol.
 categories:
 - other
+binaries:
+- sippts
+- sippts-gui
 homepage: https://github.com/Pepelux/sippts
 size: 780288
 install:

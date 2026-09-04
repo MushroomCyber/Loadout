@@ -4,6 +4,8 @@ description: Rifiuti is a tool to examine the INFO2 files. The INFO2 file gives 
   the files found in the MS Windows recycle bin. This package is useful in forensics investigations.
 categories:
 - forensics
+binaries:
+- rifiuti
 homepage: https://sf.net/projects/odessa
 size: 30720
 install:

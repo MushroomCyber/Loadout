@@ -4,6 +4,8 @@ description: This package contains a Python based LinkedIn enumeration tool. You
   from HunterIO.
 categories:
 - other
+binaries:
+- inspy
 homepage: https://github.com/gojhonny/InSpy
 size: 46080
 install:

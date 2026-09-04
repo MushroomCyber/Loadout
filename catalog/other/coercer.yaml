@@ -4,6 +4,8 @@ description: A Python script to automatically coerce a Windows server to authent
   machine through many methods.
 categories:
 - other
+binaries:
+- coercer
 homepage: https://github.com/p0dalirius/Coercer
 size: 246784
 install:

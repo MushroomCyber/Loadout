@@ -6,6 +6,8 @@ description: This program will dump the traffic on a network and analyze it for 
   application data traffic. ssldump is based on tcpdump, a network monitoring and data acquisition tool.
 categories:
 - recon
+binaries:
+- ssldump
 homepage: https://github.com/adulau/ssldump
 size: 197632
 install:

@@ -9,6 +9,8 @@ description: 'ohrwurm is a small and simple RTP fuzzer that has been successfull
   only works partially)'
 categories:
 - vuln-scan
+binaries:
+- ohrwurm
 homepage: http://mazzoo.de/blog/2006/08/25#ohrwurm
 size: 33792
 install:

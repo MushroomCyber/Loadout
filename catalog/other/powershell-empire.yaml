@@ -8,6 +8,11 @@ description: This package contains a post-exploitation framework that includes a
   to evade network detection, all wrapped up in a usability-focused framework.
 categories:
 - other
+binaries:
+- powershell-empire
+- starkiller
+- starkiller-start
+- starkiller-stop
 homepage: https://github.com/BC-SECURITY/Empire
 size: 52293632
 install:

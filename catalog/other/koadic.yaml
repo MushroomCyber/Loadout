@@ -13,6 +13,8 @@ description: 'This package contains Koadic, or COM Command & Control. It is a Wi
   replaces it directly; maintained C2 frameworks such as Sliver or Empire cover the same ground.'
 categories:
 - other
+binaries:
+- koadic
 homepage: https://github.com/zerosum0x0/koadic
 size: 7875584
 install:

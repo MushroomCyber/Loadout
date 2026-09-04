@@ -5,6 +5,8 @@ description: This package contains the client and tools for the Proxmark3. It is
   older hardware revisions.
 categories:
 - wireless
+binaries:
+- proxmark3
 homepage: https://github.com/RfidResearchGroup/proxmark3
 size: 5985280
 install:

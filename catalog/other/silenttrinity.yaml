@@ -12,6 +12,8 @@ description: 'This package contains a modern, asynchronous, multiplayer & multis
   speeds. - Real-time Updates and Communication - Use of Websockets allow for real-time'
 categories:
 - other
+binaries:
+- silenttrinity
 homepage: https://github.com/byt3bl33d3r/SILENTTRINITY
 size: 5133312
 install:

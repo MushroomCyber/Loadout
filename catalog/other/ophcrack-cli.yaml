@@ -6,6 +6,8 @@ description: Ophcrack is a Windows password cracker based on a time-memory trade
   with command line interface only.
 categories:
 - password
+binaries:
+- ophcrack-cli
 homepage: https://ophcrack.sourceforge.net/
 size: 192512
 install:

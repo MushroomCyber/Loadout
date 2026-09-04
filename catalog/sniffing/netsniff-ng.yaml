@@ -13,6 +13,15 @@ categories:
 - sniffing
 tags:
 - capture
+binaries:
+- netsniff-ng
+- astraceroute
+- bpfc
+- curvetun
+- flowtop
+- ifpps
+- mausezahn
+- trafgen
 homepage: http://netsniff-ng.org/
 size: 2182144
 install:

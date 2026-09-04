@@ -5,6 +5,8 @@ description: This package contains a proof of concept Command and Control framew
   but also contains the ability to use traditional DNS.
 categories:
 - other
+binaries:
+- godoh
 homepage: https://github.com/sensepost/goDoH
 size: 7783424
 install:

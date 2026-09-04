@@ -6,6 +6,8 @@ description: Stegosuite is a graphical steganography tool to easily hide informa
   in Java and utilizes the SWT toolkit for its interface.
 categories:
 - crypto
+binaries:
+- stegosuite
 homepage: https://codeberg.org/tob/stegosuite
 size: 285696
 install:

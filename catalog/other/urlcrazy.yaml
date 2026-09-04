@@ -4,6 +4,8 @@ description: Generate and test domain typos and variations to detect and perform
   phishing, and corporate espionage.
 categories:
 - recon
+binaries:
+- urlcrazy
 homepage: https://www.morningstarsecurity.com/research/urlcrazy
 size: 1377280
 install:

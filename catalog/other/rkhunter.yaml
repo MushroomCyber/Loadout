@@ -7,6 +7,8 @@ description: 'Rootkit Hunter scans systems for known and unknown rootkits, backd
   Running additional tests, such as chkrootkit, is recommended.'
 categories:
 - forensics
+binaries:
+- rkhunter
 homepage: https://rkhunter.sourceforge.net
 size: 1102848
 install:

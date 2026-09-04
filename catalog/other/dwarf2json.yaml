@@ -4,6 +4,8 @@ description: This package contains a Go utility that processes files containing 
   to generate Volatilty3 Intermediate Symbol File (ISF) JSON output suitable for Linux and macOS analysis.
 categories:
 - other
+binaries:
+- dwarf2json
 homepage: https://github.com/volatilityfoundation/dwarf2json
 size: 2655232
 install:

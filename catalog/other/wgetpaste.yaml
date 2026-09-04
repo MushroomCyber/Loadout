@@ -3,6 +3,8 @@ summary: Command-line interface to various online pastebin services
 description: This package contains a script that automates pasting to a number of pastebin services.
 categories:
 - other
+binaries:
+- wgetpaste
 homepage: http://wgetpaste.zlin.dk/
 size: 50176
 install:

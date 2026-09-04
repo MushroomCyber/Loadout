@@ -14,6 +14,8 @@ categories:
 - recon
 tags:
 - dns
+binaries:
+- dnsenum
 homepage: https://github.com/SparrowOchon/dnsenum2
 size: 89088
 install:

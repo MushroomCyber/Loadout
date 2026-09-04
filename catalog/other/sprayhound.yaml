@@ -4,6 +4,8 @@ description: SprayHound is a Python library to safely password spray in Active D
   users as owned in Bloodhound and detects paths to Domain Admins.
 categories:
 - other
+binaries:
+- sprayhound
 homepage: https://github.com/Hackndo/sprayhound
 size: 70656
 install:

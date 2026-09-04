@@ -10,6 +10,8 @@ description: Dufflebag is a tool that searches through public Elastic Block Stor
   torn down when you're done with it.
 categories:
 - other
+binaries:
+- dufflebag
 homepage: https://github.com/BishopFox/dufflebag
 size: 6189056
 install:

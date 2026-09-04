@@ -7,6 +7,13 @@ description: 'hashdeep is a set of tools to compute MD5, SHA1, SHA256, tiger and
   (hash input files in arbitrary sized blocks). This package is useful in forensics investigations.'
 categories:
 - forensics
+binaries:
+- hashdeep
+- md5deep
+- sha1deep
+- sha256deep
+- tigerdeep
+- whirlpooldeep
 homepage: https://md5deep.sourceforge.net
 size: 1646592
 install:

@@ -4,6 +4,8 @@ description: This package contains a cyber security framework designed to easily
   assist manual red-teams, and automate incident response.
 categories:
 - other
+binaries:
+- caldera
 homepage: https://github.com/mitre/caldera
 size: 73330688
 install:

@@ -8,6 +8,8 @@ description: 'This package identifies and fingerprints Web Application Firewall 
   responding to the attacks.'
 categories:
 - recon
+binaries:
+- wafw00f
 homepage: https://github.com/EnableSecurity/wafw00f
 size: 271360
 install:

@@ -6,6 +6,10 @@ description: This package contains a security orchestration and vulnerability ma
   vulnerability data using a number of heuristic algorithms that improve with the more you use the platform.
 categories:
 - other
+binaries:
+- defectdojo
+- defectdojo-start
+- defectdojo-stop
 homepage: https://github.com/DefectDojo/django-DefectDojo
 size: 112930816
 install:

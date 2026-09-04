@@ -12,6 +12,8 @@ description: SentryPeer is a distributed list of bad IP addresses and phone numb
   members via p2p methods.
 categories:
 - detection
+binaries:
+- sentrypeer
 homepage: https://sentrypeer.org
 size: 5582848
 install:

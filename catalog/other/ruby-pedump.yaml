@@ -3,6 +3,8 @@ summary: dump win32 PE executable files with a pure ruby
 description: This package contains a script to dump headers, sections, extract resources of win32 PE exe,dll,etc
 categories:
 - other
+binaries:
+- pedump-ruby
 homepage: http://github.com/zed-0xff/pedump
 size: 2533376
 install:

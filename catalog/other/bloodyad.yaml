@@ -6,6 +6,8 @@ description: bloodyAD can perform specific LDAP calls to a domain controller in 
   without LDAPS is supported. It is also designed to be used transparently with a SOCKS proxy.
 categories:
 - other
+binaries:
+- bloodyad
 homepage: https://github.com/CravateRouge/bloodyAD
 size: 51908608
 install:

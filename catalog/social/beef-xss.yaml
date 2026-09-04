@@ -12,6 +12,10 @@ categories:
 - social
 tags:
 - browser
+binaries:
+- beef-xss
+- beef-xss-start
+- beef-xss-stop
 homepage: https://beefproject.com/
 size: 86747136
 install:

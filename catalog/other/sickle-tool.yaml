@@ -5,6 +5,8 @@ description: Sickle is a payload development tool originally created to aid in c
   modules are mostly aimed towards assembly this tool is not limited to shellcode.
 categories:
 - other
+binaries:
+- sickle-pdk
 homepage: https://github.com/wetw0rk/Sickle
 size: 482304
 install:

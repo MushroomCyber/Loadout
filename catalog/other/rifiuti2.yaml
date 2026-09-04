@@ -11,6 +11,9 @@ description: 'Rifiuti2 analyses recycle bin files from Windows. Analysis of Wind
   and rifiuti-vista are chosen depending on relevant Windows recycle bin format.'
 categories:
 - forensics
+binaries:
+- rifiuti2
+- rifiuti-vista
 homepage: https://abelcheung.github.io/rifiuti2
 size: 137216
 install:

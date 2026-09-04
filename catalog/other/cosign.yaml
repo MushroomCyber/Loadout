@@ -7,6 +7,8 @@ description: 'Signing OCI containers (and other artifacts) using Sigstore Cosign
   command-line tool cosign.'
 categories:
 - other
+binaries:
+- cosign
 homepage: https://github.com/sigstore/cosign
 size: 88803328
 install:

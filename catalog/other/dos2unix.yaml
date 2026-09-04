@@ -8,6 +8,11 @@ description: 'This package contains utilities dos2unix, unix2dos, mac2unix, unix
   developed in 1989.'
 categories:
 - other
+binaries:
+- dos2unix
+- mac2unix
+- unix2dos
+- unix2mac
 homepage: https://waterlan.home.xs4all.nl/dos2unix.html
 size: 1623040
 install:

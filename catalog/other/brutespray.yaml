@@ -6,6 +6,8 @@ description: Brutespray has been re-written in Golang, eliminating the requireme
   files, Nexpose's XML Export feature, Nessus exports in .nessus format, and various lists.
 categories:
 - other
+binaries:
+- brutespray
 homepage: https://github.com/x90skysn3k/brutespray
 size: 25657344
 install:

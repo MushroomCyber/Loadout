@@ -4,6 +4,8 @@ description: ethtool can be used to query and change settings such as speed, aut
   offload on many network devices, especially Ethernet devices.
 categories:
 - wireless
+binaries:
+- ethtool
 homepage: https://www.kernel.org/pub/software/network/ethtool/
 size: 1114112
 install:

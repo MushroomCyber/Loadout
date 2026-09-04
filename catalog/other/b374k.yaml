@@ -12,6 +12,8 @@ categories:
 - other
 tags:
 - web-shell
+binaries:
+- b374k
 homepage: https://github.com/b374k/b374k
 size: 505856
 install:

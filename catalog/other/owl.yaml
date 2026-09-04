@@ -7,6 +7,8 @@ description: This package contains an open implementation of the Apple Wireless 
   that existing IPv6-capable programs can use AWDL without modification.
 categories:
 - other
+binaries:
+- owl
 homepage: https://owlink.org/
 size: 88064
 install:

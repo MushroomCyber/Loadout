@@ -10,6 +10,8 @@ description: 'WebScarab is designed to be a tool for anyone who needs to expose 
   the same intercepting-proxy ground.'
 categories:
 - web
+binaries:
+- webscarab
 homepage: https://github.com/OWASP/OWASP-WebScarab
 size: 11823104
 install:

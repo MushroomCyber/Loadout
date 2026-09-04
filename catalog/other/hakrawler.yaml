@@ -4,6 +4,8 @@ description: Fast golang web crawler for gathering URLs and JavaSript file locat
   a simple implementation of the awesome Gocolly library.
 categories:
 - web
+binaries:
+- hakrawler
 homepage: https://github.com/hakluke/hakrawler
 size: 9828352
 install:

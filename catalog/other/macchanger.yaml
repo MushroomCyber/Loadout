@@ -10,6 +10,8 @@ description: 'GNU MAC Changer is an utility that makes the maniputation of MAC a
   card) * display a vendor MAC list (today, 6200 items) to choose from'
 categories:
 - wireless
+binaries:
+- macchanger
 homepage: https://github.com/alobbs/macchanger
 size: 656384
 install:

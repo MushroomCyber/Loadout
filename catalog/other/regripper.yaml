@@ -7,6 +7,8 @@ description: Regripper's CLI tool can be used to surgically extract, translate, 
   designates.
 categories:
 - forensics
+binaries:
+- regripper
 homepage: https://github.com/keydet89/RegRipper3.0
 size: 1129472
 install:

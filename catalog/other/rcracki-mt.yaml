@@ -4,6 +4,8 @@ description: rcracki_mt is our modified version of rcrack which supports hybrid 
   addition to that, it also adds multi-core support
 categories:
 - password
+binaries:
+- rcracki_mt
 homepage: https://freerainbowtables.com/
 size: 415744
 install:

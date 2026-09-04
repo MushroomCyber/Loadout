@@ -5,6 +5,8 @@ description: This tool is not a PDF parser, but it will scan a file to look for 
   opened. PDFiD will also handle name obfuscation.
 categories:
 - forensics
+binaries:
+- pdfid
 homepage: https://blog.didierstevens.com/programs/pdf-tools/
 size: 108544
 install:

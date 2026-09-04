@@ -4,6 +4,8 @@ description: Ligolo-ng is a simple, lightweight and fast tool that allows pentes
   from a reverse TCP/TLS connection using a tun interface (without the need of SOCKS).
 categories:
 - other
+binaries:
+- ligolo-ng-common-binaries
 homepage: https://github.com/nicocha30/ligolo-ng
 size: 165814272
 install:

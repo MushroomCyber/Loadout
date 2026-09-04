@@ -4,6 +4,8 @@ description: SIP Army Knife is a fuzzer that searches for cross site scripting, 
   format strings, buffer overflows, and more.
 categories:
 - vuln-scan
+binaries:
+- siparmyknife
 homepage: https://packetstormsecurity.com/files/107301/SIP-Army-Knife-Fuzzer-11232011.html
 size: 31744
 install:

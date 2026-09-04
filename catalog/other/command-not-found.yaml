@@ -5,6 +5,9 @@ description: This package will install a handler for command_not_found that look
 categories:
 - other
 size: 536576
+binaries:
+- command-not-found
+- update-command-not-found
 install:
 - provider: apt
   package: command-not-found

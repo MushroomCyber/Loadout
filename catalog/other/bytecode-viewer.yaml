@@ -12,6 +12,8 @@ description: This package contains Bytecode Viewer (BCV). It is an Advanced Ligh
   and developed by Konloch.
 categories:
 - reverse
+binaries:
+- bytecode-viewer
 homepage: https://github.com/Konloch/bytecode-viewer
 size: 70183936
 install:

@@ -5,6 +5,8 @@ description: Gitleaks is a SAST tool for **detecting** and **preventing** hardco
   secrets, past or present, in your code. This package contains the command-line tool 'gitleaks'.
 categories:
 - other
+binaries:
+- gitleaks
 homepage: https://github.com/gitleaks/gitleaks
 size: 10366976
 install:

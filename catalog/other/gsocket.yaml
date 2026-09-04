@@ -12,6 +12,12 @@ description: 'Abandon the thought of IP Addresses and Port Numbers. Instead star
   IP-Layer with its own Gsocket-Layer. A client connection to a hostname ending in ''*.gsocke'
 categories:
 - other
+binaries:
+- gsocket
+- blitz
+- gs-mount
+- gs-netcat
+- gs-sftp
 homepage: https://github.com/hackerschoice/gsocket
 size: 284672
 install:

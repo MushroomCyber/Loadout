@@ -10,6 +10,8 @@ description: This package contains a default credential scanner. Commercial vuln
   available credentials.
 categories:
 - other
+binaries:
+- changeme
 homepage: https://github.com/ztgrace/changeme
 size: 321536
 install:
