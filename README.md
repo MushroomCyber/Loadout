@@ -388,6 +388,23 @@ loadout export --format ansible  > playbook.yml
 loadout export --format loadout  > loadout.yaml
 ```
 
+### Shell completion
+
+```bash
+loadout completions bash > ~/.local/share/bash-completion/completions/loadout
+loadout completions zsh  > ~/.zfunc/_loadout      # ~/.zfunc must be in $fpath
+loadout completions fish > ~/.config/fish/completions/loadout.fish
+```
+
+Generated from the parser that actually runs, so it covers every subcommand
+and flag and cannot drift from them. Printed to stdout rather than installed:
+where these belong differs per shell and per distro, and a tool that writes
+into your shell configuration uninvited is one you stop trusting.
+
+Tool ids are deliberately not baked in — there are 842, they change with every
+catalog update, and a script carrying a stale copy would confidently offer
+tools that no longer exist.
+
 ### Everything speaks JSON
 
 ```bash
