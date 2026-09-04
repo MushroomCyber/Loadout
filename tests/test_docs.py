@@ -163,3 +163,38 @@ def test_the_only_published_database_is_the_compiled_catalog():
     stray copy inside the tree would be published without anyone noticing."""
     databases = [p for p in tracked_files() if p.endswith(".db")]
     assert databases == ["loadout/data/catalog.db"], databases
+
+
+class TestVersionAgreement:
+    """The version is written in two files. A release tag is a third claim
+    about it, and the release workflow refuses a mismatch -- but finding that
+    out at tag time means the tag is already pushed."""
+
+    def _root(self):
+        return Path(__file__).resolve().parent.parent
+
+    def test_pyproject_and_the_package_agree(self):
+        import re
+
+        import tomllib
+
+        root = self._root()
+        pyproject = tomllib.loads(
+            (root / "pyproject.toml").read_text(encoding="utf-8")
+        )["project"]["version"]
+        source = re.search(
+            r'__version__\s*=\s*"([^"]+)"',
+            (root / "loadout" / "__init__.py").read_text(encoding="utf-8"),
+        ).group(1)
+        assert pyproject == source
+
+    def test_the_release_workflow_checks_the_tag_against_both(self):
+        """Whatever this test asserts locally, the tag itself is only checked
+        in CI -- so the check has to exist there."""
+        workflow = (self._root() / ".github" / "workflows" / "release.yml")
+        assert workflow.is_file()
+        text = workflow.read_text(encoding="utf-8")
+        assert "GITHUB_REF_NAME" in text
+        assert "pyproject.toml" in text
+        assert "__version__" in text
+
