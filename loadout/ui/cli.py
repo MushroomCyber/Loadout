@@ -1145,12 +1145,21 @@ def cmd_loadout(ctx: Context) -> int:
         out.print_note(f"Reproduce it elsewhere with: loadout sync {manifest.slug}")
         return 0
 
-    target = loadouts.get(args.slug) if getattr(args, "slug", None) else None
+    slug = getattr(args, "slug", None)
+    # An omitted slug falls back to ./loadout.yaml, the way `sync` does. The
+    # argument is declared optional, so omitting it has to mean something --
+    # it used to mean "No loadout named None".
+    target = loadouts.get(slug) if slug else loadouts.project_manifest()
     if target is None:
-        out.print_error(
-            f"No loadout named {getattr(args, 'slug', '')!r}.",
-            "See `loadout loadout list`.",
-        )
+        if slug:
+            out.print_error(
+                f"No loadout named {slug!r}.", "See `loadout loadout list`."
+            )
+        else:
+            out.print_error(
+                f"No {loadouts.PROJECT_MANIFEST} in this directory.",
+                "Name a loadout instead, or see `loadout loadout list`.",
+            )
         return 4
 
     if command == "show":

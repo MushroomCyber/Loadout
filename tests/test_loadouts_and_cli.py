@@ -11,6 +11,8 @@ import pytest
 from loadout import loadouts
 from loadout.ui.cli import main
 
+NL = chr(10)
+
 
 class TestManifests:
     def test_round_trips(self, tmp_path):
@@ -280,3 +282,90 @@ class TestRunningContent:
         main(["run", "seclists"])
         combined = capsys.readouterr()
         assert "/usr/share/seclists" in (combined.out + combined.err)
+
+
+@pytest.fixture
+def machine(catalog, monkeypatch, tmp_path):
+    """A box with nmap installed, and a working directory of its own."""
+    from loadout.providers.apt import AptProvider
+    from loadout.providers.base import ProviderStatus
+
+    monkeypatch.setattr(AptProvider, "list_installed", lambda self: {"nmap"})
+    monkeypatch.setattr(
+        "loadout.providers.available_providers",
+        lambda: {"apt": ProviderStatus(name="apt", available=True)},
+    )
+    monkeypatch.setattr("loadout.catalog.open_catalog", lambda explicit=None: catalog)
+    monkeypatch.chdir(tmp_path)
+    return tmp_path
+
+
+class TestTheCatalogCommand:
+    def test_info_reports_what_catalog_is_actually_in_use(self, machine, capsys):
+        """Which catalog answered is the first question when a tool is
+        missing, and the shipped one and a refreshed one can differ."""
+        assert main(["catalog", "info", "--json"]) == 0
+        payload = json.loads(capsys.readouterr().out)
+        assert payload["tools"] > 0
+        assert payload["path"].endswith(".db")
+        assert payload["categories"]
+
+    def test_validate_accepts_a_good_source_tree(self, machine, capsys, tmp_path):
+        source = tmp_path / "src"
+        source.mkdir()
+        (source / "x.yaml").write_text(
+            NL.join(["id: x", "summary: a tool", "binaries: [x]", ""]), encoding="utf-8"
+        )
+        assert main(["catalog", "validate", "--source", str(source)]) == 0
+
+    def test_validate_rejects_a_broken_entry_and_says_why(
+        self, machine, capsys, tmp_path
+    ):
+        source = tmp_path / "src"
+        source.mkdir()
+        (source / "bad.yaml").write_text("id: Bad Name" + NL, encoding="utf-8")
+        assert main(["catalog", "validate", "--source", str(source)]) != 0
+        assert "must match" in capsys.readouterr().out
+
+    def test_build_writes_a_catalog_that_can_be_opened(self, machine, tmp_path):
+        from loadout.catalog.store import CatalogStore
+
+        source = tmp_path / "src"
+        source.mkdir()
+        (source / "x.yaml").write_text(
+            NL.join(["id: x", "summary: a tool", "binaries: [x]", ""]), encoding="utf-8"
+        )
+        target = tmp_path / "built.db"
+        assert main(
+            ["catalog", "build", "--source", str(source), "--output", str(target)]
+        ) == 0
+        with CatalogStore(target) as store:
+            assert store.get("x") is not None
+
+
+class TestTheLoadoutCommand:
+    def test_list_names_the_bundled_kits(self, machine, capsys):
+        assert main(["loadout", "list", "--json"]) == 0
+        rows = json.loads(capsys.readouterr().out)
+        assert rows
+        assert {"slug", "name", "tools", "source"} <= set(rows[0])
+
+    def test_save_captures_what_is_installed(self, machine, capsys, tmp_path):
+        target = tmp_path / "kit.yaml"
+        assert main(["loadout", "save", "mykit", "--output", str(target)]) == 0
+        assert "nmap" in target.read_text(encoding="utf-8")
+
+    def test_diff_falls_back_to_the_project_manifest(self, machine, capsys):
+        """The slug is declared optional, so omitting it has to mean
+        something -- it used to mean "No loadout named None"."""
+        (machine / "loadout.yaml").write_text(
+            NL.join(["slug: kit", "tools:", "- nmap", "- ffuf", ""]), encoding="utf-8"
+        )
+        assert main(["loadout", "diff", "--json"]) in (0, 1)
+        payload = json.loads(capsys.readouterr().out)
+        assert "ffuf" in payload["missing"]
+        assert "nmap" in payload["present"]
+
+    def test_an_unknown_loadout_is_refused(self, machine, capsys):
+        assert main(["loadout", "show", "not-a-real-kit"]) != 0
+

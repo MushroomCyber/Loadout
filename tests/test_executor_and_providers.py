@@ -7,7 +7,7 @@ import zipfile
 
 import pytest
 
-from loadout.errors import LoadoutError, ProviderError
+from loadout.errors import LoadoutError, ProviderError, VerificationError
 from loadout.executor import (
     EVENT_ACTION_DONE,
     EVENT_PLAN_DONE,
@@ -1008,3 +1008,128 @@ class TestVerificationPersistsToState:
         row = state.get("ffuf")
         assert row["verify_method"] == ""
         assert row["verify_ok"] == 0
+
+
+class _Response:
+    """Just enough of a requests.Response for these paths."""
+
+    def __init__(self, status_code=200, text=""):
+        self.status_code = status_code
+        self.text = text
+
+
+class TestTalkingToTheGithubApi:
+    """Every branch here ends in a message someone reads while an install is
+    failing, so each one has to name the actual problem -- "rate limit, set
+    GITHUB_TOKEN" is actionable where "API returned 403" is not."""
+
+    def _fetch(self, monkeypatch, response):
+        monkeypatch.setattr(
+            "loadout.http_util.polite_get", lambda *a, **k: response
+        )
+        return lambda: GithubReleaseProvider()._fetch_release("owner/tool")
+
+    def test_a_release_comes_back_parsed(self, monkeypatch):
+        fetch = self._fetch(monkeypatch, _Response(200, '{"tag_name": "v1.2.3"}'))
+        assert fetch()["tag_name"] == "v1.2.3"
+
+    def test_an_unreachable_api_is_not_a_missing_release(self, monkeypatch):
+        fetch = self._fetch(monkeypatch, None)
+        with pytest.raises(ProviderError, match="could not reach"):
+            fetch()
+
+    def test_a_404_says_the_release_does_not_exist(self, monkeypatch):
+        fetch = self._fetch(monkeypatch, _Response(404))
+        with pytest.raises(ProviderError, match="no such release"):
+            fetch()
+
+    def test_a_403_names_the_rate_limit_and_the_fix(self, monkeypatch):
+        """This is the one people actually hit, and the fix is a token."""
+        fetch = self._fetch(monkeypatch, _Response(403))
+        with pytest.raises(ProviderError, match="GITHUB_TOKEN"):
+            fetch()
+
+    def test_another_status_is_reported_with_its_code(self, monkeypatch):
+        fetch = self._fetch(monkeypatch, _Response(500))
+        with pytest.raises(ProviderError, match="500"):
+            fetch()
+
+    def test_malformed_json_blames_the_response_not_the_catalog(self, monkeypatch):
+        fetch = self._fetch(monkeypatch, _Response(200, "not json at all"))
+        with pytest.raises(ProviderError, match="malformed API response"):
+            fetch()
+
+    def test_a_tag_is_requested_by_its_own_url(self, monkeypatch):
+        seen = {}
+
+        def capture(url, **kwargs):
+            seen["url"] = url
+            return _Response(200, "{}")
+
+        monkeypatch.setattr("loadout.http_util.polite_get", capture)
+        GithubReleaseProvider()._fetch_release("owner/tool", "v9.9.9")
+        assert seen["url"].endswith("/releases/tags/v9.9.9")
+
+
+class TestReadingTheAssetList:
+    def _assets(self, payload):
+        return GithubReleaseProvider()._assets_of(payload, "owner/tool")
+
+    def test_assets_are_read_off_the_release(self):
+        assets = self._assets(
+            {"assets": [
+                {"name": "tool.tar.gz", "browser_download_url": "https://x/t", "size": 5}
+            ]}
+        )
+        assert assets[0].name == "tool.tar.gz"
+        assert assets[0].size == 5
+
+    def test_an_asset_with_no_download_url_is_skipped(self):
+        """A release still uploading has assets with no URL yet."""
+        assets = self._assets(
+            {"assets": [
+                {"name": "pending.tar.gz"},
+                {"name": "ready.tar.gz", "browser_download_url": "https://x/r"},
+            ]}
+        )
+        assert [a.name for a in assets] == ["ready.tar.gz"]
+
+    def test_a_release_with_nothing_downloadable_is_an_error(self):
+        with pytest.raises(ProviderError, match="no downloadable assets"):
+            self._assets({"assets": []})
+
+
+class TestFetchingTheChecksumFile:
+    def _assets(self, *names):
+        return [ReleaseAsset(name=n, url=f"https://x/{n}", size=1) for n in names]
+
+    def test_the_whole_file_comes_back_not_one_line(self, monkeypatch):
+        """A signature over SHA256SUMS covers the bytes of that file."""
+        body = "abc  tool.tar.gz" + chr(10) + "def  other.tar.gz" + chr(10)
+        monkeypatch.setattr(
+            "loadout.http_util.polite_get", lambda *a, **k: _Response(200, body)
+        )
+        text = GithubReleaseProvider._fetch_checksum_file(
+            self._assets("SHA256SUMS"), "SHA256SUMS"
+        )
+        assert text == body
+
+    def test_a_checksum_file_not_in_the_release_is_named(self):
+        with pytest.raises(VerificationError, match="not in the release assets"):
+            GithubReleaseProvider._fetch_checksum_file(
+                self._assets("tool.tar.gz"), "*SHA256SUMS"
+            )
+
+    def test_a_checksum_file_that_will_not_download_is_a_verification_failure(
+        self, monkeypatch
+    ):
+        """Not a provider error: the artifact cannot be checked, which is the
+        thing that must stop the install."""
+        monkeypatch.setattr(
+            "loadout.http_util.polite_get", lambda *a, **k: _Response(500)
+        )
+        with pytest.raises(VerificationError, match="could not download"):
+            GithubReleaseProvider._fetch_checksum_file(
+                self._assets("SHA256SUMS"), "SHA256SUMS"
+            )
+
