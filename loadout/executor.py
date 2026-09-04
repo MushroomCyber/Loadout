@@ -30,7 +30,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from .errors import LoadoutError, PrivilegeError
+from .errors import LoadoutError, NothingToVerifyAgainst, PrivilegeError
 from .planner import ACTION_FETCH, ACTION_INSTALL, Plan, PlannedAction
 from .policy import Privilege, deliberate_env, detect_privilege, elevate, subprocess_env
 from .providers.apt import AptProvider, apt_status_fd_args
@@ -78,6 +78,10 @@ class ActionResult:
     elapsed: float
     error: str = ""
     version: str = ""
+    #: This failed only because nothing was published to check the download
+    #: against, so a caller may offer to install it unverified. A failed check
+    #: never sets this: those bytes are wrong, and no flag makes them right.
+    waivable: bool = False
 
 
 @dataclass
@@ -110,6 +114,7 @@ class ExecResult:
                     "elapsed_seconds": round(r.elapsed, 2),
                     "error": r.error,
                     "version": r.version,
+                    "waivable": r.waivable,
                 }
                 for r in self.results
             ],
@@ -228,12 +233,14 @@ class Executor:
 
         error = ""
         success = True
+        waivable = False
         try:
             for step in action.steps:
                 self._run_step(step, context)
         except LoadoutError as exc:
             success = False
             error = exc.message
+            waivable = isinstance(exc, NothingToVerifyAgainst)
         except Exception as exc:
             success = False
             error = str(exc)
@@ -265,6 +272,7 @@ class Executor:
             elapsed=elapsed,
             error=error,
             version=version,
+            waivable=waivable,
         )
 
     def _record(self, action: PlannedAction, elapsed: float, context: ExecContext) -> str:

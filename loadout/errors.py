@@ -99,6 +99,17 @@ class VerificationError(LoadoutError):
         )
 
 
+class NothingToVerifyAgainst(VerificationError):
+    """The upstream published nothing to check the download against.
+
+    Kept apart from a *failed* check, which this must never be confused with:
+    a digest mismatch means the bytes are not the ones that were published,
+    and no flag makes that installable. This means there was never anything to
+    compare against, which a user can knowingly accept -- so it is the one
+    verification failure a caller may offer to waive.
+    """
+
+
 class PrivilegeError(LoadoutError):
     exit_code = 8
 

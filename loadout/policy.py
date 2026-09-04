@@ -22,7 +22,12 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from .errors import PrivilegeError, UnsafeArgument, VerificationError
+from .errors import (
+    NothingToVerifyAgainst,
+    PrivilegeError,
+    UnsafeArgument,
+    VerificationError,
+)
 from .model import PACKAGE_NAME_RE
 
 logger = logging.getLogger("loadout.policy")
@@ -268,7 +273,7 @@ def verify_digest(
         if allow_unverified:
             logger.warning("installing %s with no checksum (--allow-unverified)", path.name)
             return
-        raise VerificationError(f"No checksum published for {path.name}.")
+        raise NothingToVerifyAgainst(f"No checksum published for {path.name}.")
 
     actual = file_digest(path, algorithm)
     if actual.lower() != expected.strip().lower():

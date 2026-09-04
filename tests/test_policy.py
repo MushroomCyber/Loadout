@@ -198,6 +198,23 @@ class TestVerification:
         artifact.write_bytes(b"payload")
         verify_digest(artifact, file_digest(artifact).upper())
 
+    def test_nothing_published_and_a_failed_check_are_different_failures(
+        self, tmp_path
+    ):
+        """A UI may offer to waive the first. Offering to waive the second
+        would install bytes already known not to be the published ones."""
+        from loadout.errors import NothingToVerifyAgainst
+
+        artifact = tmp_path / "tool.tar.gz"
+        artifact.write_bytes(b"payload")
+
+        with pytest.raises(NothingToVerifyAgainst):
+            verify_digest(artifact, "")
+
+        with pytest.raises(VerificationError) as caught:
+            verify_digest(artifact, "0" * 64)
+        assert not isinstance(caught.value, NothingToVerifyAgainst)
+
 
 class TestChecksumParsing:
     def test_coreutils_format(self):

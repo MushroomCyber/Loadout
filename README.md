@@ -371,6 +371,14 @@ The detail pane reports what state already knew and never showed: how a tool
 was verified, when it was installed, and when it was last run through
 `loadout run`. "last run 6mo ago" is what tells you a kit needs pruning.
 
+An install that fails because upstream published nothing to check the download
+against offers an **Install unverified** button, which does from the browser
+what `--allow-unverified` does from the CLI. It appears only for that failure —
+a checksum *mismatch* never offers it, because those bytes are not the ones
+that were published and no flag should make them installable. The waiver lasts
+exactly one attempt, and the install it produces is recorded as unverified, so
+`loadout report` names it later.
+
 ### Keys
 
 | Key | Action |
