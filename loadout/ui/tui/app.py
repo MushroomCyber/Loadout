@@ -60,6 +60,40 @@ def textual_available() -> bool:
 _SHORT_PROVIDER = {"github": "gh", "cargo": "crate", "docker": "img"}
 
 
+#: Above this many results the per-tool lines are traded for a count: the
+#: install modal is 22 rows and the log has to keep most of them.
+_VERIFY_LINE_LIMIT = 3
+
+
+def verify_summary(events: list[tuple[str, str, bool]]) -> str:
+    """One markup block describing how far the installed files were checked.
+
+    A skipped check is reported as `unverified`, never folded into the
+    passing count -- the distinction between "checked and correct" and "not
+    checked" is the whole point of showing this at all.
+    """
+    if not events:
+        return ""
+    passed = [e for e in events if e[2]]
+    failed = [e for e in events if not e[2]]
+    if len(events) <= _VERIFY_LINE_LIMIT:
+        lines = []
+        for tool_id, method, ok in events:
+            if ok:
+                lines.append(f"[green]✓[/green] {tool_id}: {method} verified")
+            else:
+                lines.append(f"[yellow]![/yellow] {tool_id}: unverified ({method})")
+        return '\n'.join(lines)
+    parts = []
+    if passed:
+        parts.append(f"[green]✓ {len(passed)} verified[/green]")
+    if failed:
+        names = ", ".join(sorted(e[0] for e in failed)[:3])
+        more = "…" if len(failed) > 3 else ""
+        parts.append(f"[yellow]! {len(failed)} unverified ({names}{more})[/yellow]")
+    return "  ".join(parts)
+
+
 #: `pyfiglet -f ansi_shadow loadout`, baked in rather than depended on: the
 #: output is a constant, and a runtime dependency to regenerate a constant is
 #: a dependency for nothing.
@@ -303,8 +337,9 @@ if TEXTUAL_AVAILABLE:
             border: round $accent; background: $surface; padding: 1 2;
         }
         #title { text-style: bold; margin-bottom: 1; }
-        #verify { height: auto; }
-        #log { height: 1fr; border-top: solid $panel; margin-top: 1; }
+        #progress { height: auto; border-bottom: solid $panel; padding-bottom: 1; }
+        #verify { height: auto; background: $panel; padding: 0 1; }
+        #log { height: 1fr; margin-top: 1; }
         #actions { height: auto; margin-top: 1; align: right middle; }
         #actions Button { margin-left: 1; }
         """
@@ -328,9 +363,10 @@ if TEXTUAL_AVAILABLE:
                     f"{self.action.capitalize()}ing {len(self.plan.actions)} tool(s)",
                     id="title",
                 )
-                yield ProgressBar(total=100, show_eta=False, id="bar")
-                yield Static("", id="status")
-                yield Static("", id="verify")
+                with Vertical(id="progress"):
+                    yield ProgressBar(total=100, show_eta=False, id="bar")
+                    yield Static("", id="status")
+                    yield Static("", id="verify")
                 yield VerticalScroll(Static("", id="logtext"), id="log")
                 yield Horizontal(id="actions")
 
@@ -435,19 +471,19 @@ if TEXTUAL_AVAILABLE:
                 self._live = False
 
         def _set_verify(self, events: list[tuple[str, str, bool]]) -> None:
-            """Render verification outcomes on their own line, not the
-            scrolling log -- a 14-line install log easily pushes a passing
-            checksum check out of view before the user reads it."""
-            lines = []
-            for tool_id, method, ok in events:
-                if ok:
-                    lines.append(f"[green]✓[/green] {tool_id}: {method} verified")
-                else:
-                    lines.append(f"[yellow]![/yellow] {tool_id}: unverified ({method})")
+            """Render verification outcomes inside the progress block.
+
+            Not in the scrolling log: that keeps only the last 14 lines, and
+            apt alone says far more than that after a check has passed. A
+            batch install collapses to a count rather than growing a line per
+            tool, so the log keeps its share of a 22-row modal.
+            """
             try:
-                self.query_one("#verify", Static).update("\n".join(lines))
+                target = self.query_one("#verify", Static)
             except NoMatches:  # pragma: no cover - screen torn down mid-update
                 self._live = False
+                return
+            target.update(verify_summary(events))
 
         def _finish(self, summary: str, failed: bool) -> None:
             self._done = True

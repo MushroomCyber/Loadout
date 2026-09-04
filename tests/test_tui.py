@@ -1123,6 +1123,7 @@ async def test_the_install_screen_reports_verification_outside_the_scrolling_log
         verify = screen.query_one("#verify", Static)
         assert "checksum verified" in str(verify.render())
         assert verify not in screen.query_one("#log").walk_children()
+        assert verify in screen.query_one("#progress").walk_children()
 
 
 async def test_a_skipped_check_is_reported_as_unverified_not_as_a_pass(app):
@@ -1142,6 +1143,35 @@ async def test_a_skipped_check_is_reported_as_unverified_not_as_a_pass(app):
         rendered = str(screen.query_one("#verify", Static).render())
         assert "unverified" in rendered
         assert "✓" not in rendered
+
+
+def test_a_batch_install_collapses_verification_to_a_count():
+    """One line per tool would eat the log on a 20-tool loadout."""
+    from loadout.ui.tui.app import verify_summary
+
+    events = [(f"tool{n}", "checksum", True) for n in range(8)]
+    summary = verify_summary(events)
+
+    assert summary.count(chr(10)) == 0
+    assert "8 verified" in summary
+
+
+def test_a_collapsed_count_still_names_what_went_unverified():
+    from loadout.ui.tui.app import verify_summary
+
+    events = [(f"tool{n}", "checksum", True) for n in range(6)]
+    events.append(("hayabusa", "checksum", False))
+    summary = verify_summary(events)
+
+    assert "6 verified" in summary
+    assert "1 unverified" in summary
+    assert "hayabusa" in summary
+
+
+def test_nothing_is_claimed_when_no_check_ran():
+    from loadout.ui.tui.app import verify_summary
+
+    assert verify_summary([]) == ""
 
 
 # ---------------------------------------------------------------------------
@@ -1246,7 +1276,7 @@ async def test_a_failed_check_shows_the_error_not_an_update_button(app):
 async def test_a_successful_update_tells_the_user_to_restart(app):
     """The running process has already imported the old modules; a
     fast-forward on disk changes nothing until loadout is restarted."""
-    from textual.widgets import Static
+    from textual.widgets import Button, Static
 
     from loadout import selfupdate
     from loadout.selfupdate import UpdateResult
@@ -1258,7 +1288,8 @@ async def test_a_successful_update_tells_the_user_to_restart(app):
             ok=True, old_commit="a" * 40, new_commit="b" * 40
         )
         try:
-            await pilot.click("#btn-udo")
+            screen.query_one("#btn-udo", Button).press()
+            await pilot.pause()
             await pilot.app.workers.wait_for_complete()
             await pilot.pause()
         finally:
