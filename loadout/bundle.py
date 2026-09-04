@@ -59,7 +59,11 @@ PAYLOAD_EXCLUDE = frozenset({"lock", "partial"})
 #: toolchain or a package index on the target, which an isolated machine is
 #: unlikely to have -- they are reported as skipped rather than silently
 #: dropped, so a bundle never quietly contains less than it claims.
-BUNDLEABLE = ("apt", "github")
+#: npm is deliberately absent: it needs `node`, and the only npm reachable on
+#: the development box is the Windows one via WSL interop, so the offline path
+#: could not be tested end to end. An untested bundle path is worse than an
+#: honest refusal -- it fails on the isolated machine instead of at build time.
+BUNDLEABLE = ("apt", "github", "pipx", "gem")
 
 
 @dataclass
