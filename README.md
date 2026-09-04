@@ -262,8 +262,19 @@ loadout bundle install kit.tar
 ```
 
 A bundle is a tar holding a `manifest.json` and the artifacts themselves — apt
-packages **with their full dependency closure**, and verified GitHub release
-binaries. Nothing about installing it touches the network.
+packages **with their full dependency closure**, verified GitHub release
+binaries, Python wheels, and RubyGems. Nothing about installing it touches the
+network.
+
+Every route carries its whole dependency closure, which is not what the obvious
+command gives you. `gem fetch zsteg` downloads one gem; the install needs
+seven, so a bundle built that way fails on the isolated machine looking for
+`prime`. Loadout resolves the closure instead and carries all seven.
+
+Python wheels are tied to an interpreter version — `pip download` on a 3.13 box
+pulls `cp313` wheels — so the bundle records the Python it was built for and
+**refuses on a mismatch**, naming both versions, rather than letting the install
+fail obscurely somewhere with no network to fix it from.
 
 The bundle is the one thing here that arrives from outside, onto a machine
 picked precisely because it is isolated, so it is treated as untrusted input:
@@ -276,9 +287,11 @@ picked precisely because it is isolated, so it is treated as untrusted input:
 - the build platform is recorded, because a bundle of amd64 debs is not a kit
   on an arm64 box and mid-engagement is the wrong time to find out.
 
-**What cannot travel:** `go`, `cargo`, `pipx`, `npm` and `gem` routes need a
-toolchain or a package index on the far side. Those are reported per tool with
-a reason rather than quietly dropped — a bundle that held less than it claimed
+**What cannot travel:** `go` and `cargo` need a build toolchain on the far
+side. `npm` is excluded for a different reason — it is not that it cannot work,
+but that the offline path has not been proven end to end, and an untested
+bundle path fails on the isolated machine instead of at build time. These are
+reported per tool with a reason rather than quietly dropped — a bundle that held less than it claimed
 would be discovered on the isolated machine, which is the worst place to
 discover anything. Where a tool has both a bundleable and a non-bundleable
 route, the bundleable one is chosen even if the catalog ranks it lower.

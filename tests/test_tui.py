@@ -1321,6 +1321,9 @@ async def test_retrying_starts_the_log_from_empty(app):
         screen = InstallScreen(pilot.app.ctx, Plan(), "install")
         pilot.app.push_screen(screen)
         await pilot.pause()
+        # The empty plan's own worker would otherwise finish after the retry
+        # and write its summary into the log this test just cleared.
+        screen._live = False
 
         screen._append_log("first attempt")
         screen._finish("[red]failed[/red]", True)
