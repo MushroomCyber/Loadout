@@ -999,9 +999,14 @@ if TEXTUAL_AVAILABLE:
                 [self._facet[1]] if self._facet and self._facet[0] == "category" else []
             )
 
-            total = len(search(query, providers=active_providers))
+            all_ids = search(query, providers=active_providers)
+            total = len(all_ids)
             if (chip := chips.get("facet-all")) is not None:
-                chip.label = f"{'all':<12}{total:>7}"
+                # Same installed/matching shape as the rows under it. A bare
+                # total here read as a different kind of number, which made
+                # the "0/0" rows beneath it look broken rather than filtered.
+                here = sum(1 for tool_id in all_ids if tool_id in installed)
+                chip.label = f"{'all':<12}{here:>3}/{total:<3}"
 
             for slug in self._facet_slugs:
                 chip = chips.get(f"facet-{slug}")
