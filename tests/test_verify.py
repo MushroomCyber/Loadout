@@ -162,6 +162,59 @@ def test_a_wrong_inference_is_unchecked_never_failed():
 
 
 # ---------------------------------------------------------------------------
+# Content has no command, and never will
+# ---------------------------------------------------------------------------
+
+
+def content(**kwargs) -> Tool:
+    kwargs.setdefault("id", "seclists")
+    kwargs.setdefault("kind", "content")
+    return Tool(**kwargs)
+
+
+def test_content_is_checked_by_its_paths_not_by_path_lookup(tmp_path):
+    """A wordlist ships no binary, so the PATH fallback called every content
+    entry `failed` -- accusing a good 1.8 GB install of being broken."""
+    (tmp_path / "seclists").mkdir()
+    result = verify_tool(content(paths=(str(tmp_path / "seclists"),)))
+    assert result.status == STATUS_PRESENT
+    assert "exists" in result.detail
+
+
+def test_content_whose_directory_is_absent_is_a_real_failure(tmp_path):
+    result = verify_tool(content(paths=(str(tmp_path / "not-there"),)))
+    assert result.status == STATUS_FAILED
+    assert "missing" in result.detail
+
+
+def test_content_with_no_paths_is_unchecked_not_failed():
+    """The catalog knows nothing about it, which is not the same as it being
+    broken -- the same rule the binary fallback already follows."""
+    result = verify_tool(content())
+    assert result.status == STATUS_UNCHECKED
+
+
+def test_content_never_falls_back_to_guessing_a_binary_from_the_id():
+    """`wordlists` on Kali does ship /usr/bin/wordlists, so the id guess would
+    sometimes pass -- reporting a directory of files as verified because an
+    unrelated command shares its name."""
+    from pathlib import Path as _Path
+
+    result = verify_tool(content(id=_Path(PY).stem))
+    assert result.status == STATUS_UNCHECKED
+    assert "inferred" not in result.detail
+
+
+def test_a_content_entry_may_still_carry_a_verify_command(tmp_path):
+    """`paths:` is the fallback, not a replacement: an entry that can prove
+    itself properly still gets to."""
+    result = verify_tool(
+        content(verify=python_command("print('seclists 2025.3')"), paths=("/nope",))
+    )
+    assert result.status == STATUS_OK
+
+
+# ---------------------------------------------------------------------------
 # Running a set
 # ---------------------------------------------------------------------------
 

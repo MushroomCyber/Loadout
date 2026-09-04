@@ -310,6 +310,14 @@ catalog's `verify:` command ran and exited 0; **on PATH** means the binary was
 found but never run; **failed** means it did not work; **not checkable** means
 the catalog records neither a command nor a binary name.
 
+Wordlists and payload collections are checked differently, because they have no
+command to run. Entries marked `kind: content` — SecLists, the Kali wordlists,
+PayloadsAllTheThings — declare `paths:` instead of `binaries:`, and `verify`
+checks those exist. Before that distinction they were checked for a binary they
+were never going to have, so a working 1.8 GB install reported as failed.
+`loadout run` on one of them says where its files are rather than trying to
+execute a directory.
+
 ### Prove what you used
 
 Pentest reports and DFIR chain-of-custody both need "which tools, which

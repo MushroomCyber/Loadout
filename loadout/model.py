@@ -24,6 +24,19 @@ PACKAGE_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9+.\-]*$")
 #: g++, libstdc++6). Rejecting it aborted the whole APT catalog build.
 TOOL_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._+\-]*$")
 
+#: An entry that installs an executable. The default, and what every field
+#: named after running something assumes.
+KIND_TOOL = "tool"
+
+#: An entry that installs data: wordlists, payloads, templates, rulesets.
+#: Roughly half a working toolkit is not executable, and treating it as a
+#: degenerate tool made every binary-shaped question about it answer wrongly --
+#: `loadout verify` reported it missing, because it looked for a command that
+#: was never supposed to exist.
+KIND_CONTENT = "content"
+
+KINDS = (KIND_TOOL, KIND_CONTENT)
+
 
 class ModelError(ValueError):
     """Raised when catalog data violates the schema."""
@@ -94,6 +107,12 @@ class Tool:
     requires_root: bool = False
     #: Command proving the install actually works, e.g. ``ffuf -V``.
     verify: str = ""
+    #: ``tool`` or ``content`` -- see :data:`KIND_CONTENT`.
+    kind: str = KIND_TOOL
+    #: Where a ``content`` entry's data lands, e.g. ``/usr/share/seclists``.
+    #: This is to content what ``binaries`` is to a tool: the thing whose
+    #: presence proves the install did something.
+    paths: tuple[str, ...] = ()
     size: int = 0
     version: str = ""
     deprecated_by: str = ""
@@ -110,6 +129,10 @@ class Tool:
         self.phases = _norm_tuple(self.phases)
         self.binaries = _norm_tuple(self.binaries, lower=False)
         self.alternatives = _norm_tuple(self.alternatives)
+        self.paths = _norm_tuple(self.paths, lower=False)
+        self.kind = (self.kind or KIND_TOOL).strip().lower()
+        if self.kind not in KINDS:
+            raise ModelError(f"{self.id}: unknown kind {self.kind!r}, expected one of {KINDS}")
         self.summary = (self.summary or "").strip()
         self.description = (self.description or "").strip()
         self.size = max(0, int(self.size or 0))
@@ -120,6 +143,16 @@ class Tool:
     def category(self) -> str:
         """Primary category, for single-column displays."""
         return self.categories[0] if self.categories else "other"
+
+    @property
+    def is_content(self) -> bool:
+        """True for a wordlist, payload set or template pack.
+
+        Callers that are about to run, resolve or PATH-check something should
+        ask this first: for a content entry the honest answer to "where is its
+        command" is that it does not have one and never will.
+        """
+        return self.kind == KIND_CONTENT
 
     @property
     def primary_binary(self) -> str:
@@ -153,6 +186,7 @@ class Tool:
                 " ".join(self.tags),
                 " ".join(self.phases),
                 " ".join(self.binaries),
+                " ".join(self.paths),
                 " ".join(self.alternatives),
             ]
         ).strip()
@@ -180,7 +214,9 @@ class Tool:
             out["summary"] = self.summary
         if self.description:
             out["description"] = self.description
-        for name in ("categories", "tags", "phases", "binaries", "alternatives"):
+        if self.kind != KIND_TOOL:
+            out["kind"] = self.kind
+        for name in ("categories", "tags", "phases", "binaries", "paths", "alternatives"):
             value = getattr(self, name)
             if value:
                 out[name] = list(value)
@@ -213,6 +249,8 @@ class Tool:
             tags=tuple(data.get("tags") or []),
             phases=tuple(data.get("phases") or []),
             binaries=tuple(data.get("binaries") or []),
+            kind=str(data.get("kind") or KIND_TOOL),
+            paths=tuple(data.get("paths") or []),
             homepage=data.get("homepage", "") or "",
             repo=data.get("repo", "") or "",
             license=data.get("license", "") or "",

@@ -1408,6 +1408,10 @@ async def test_pressing_the_waiver_runs_the_install_with_it_and_retry_without(ap
         screen = InstallScreen(pilot.app.ctx, Plan(), "install")
         pilot.app.push_screen(screen)
         await pilot.pause()
+        # The empty plan's own worker would otherwise land a second _finish
+        # between the one this test stages and the button it then presses,
+        # hiding the button and making the press a no-op.
+        screen._live = False
 
         screen._finish("[red]1 failed[/red]", True, True)
         await pilot.pause()

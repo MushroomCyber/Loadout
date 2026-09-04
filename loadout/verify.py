@@ -158,6 +158,42 @@ def verify_tool(tool: Any, *, timeout: int = DEFAULT_TIMEOUT) -> VerifyResult:
     )
 
 
+def _content_on_disk(tool: Any, elapsed: float) -> VerifyResult:
+    """Check a content entry's `paths:` instead of looking for a command.
+
+    A wordlist has no binary and never will, so the PATH fallback reported
+    every content entry as `failed` -- accusing a perfectly good 1.8 GB
+    install of being broken because it did not ship a command.
+    """
+    from pathlib import Path as _Path
+
+    paths = [_Path(p) for p in tool.paths]
+    if not paths:
+        return VerifyResult(
+            tool_id=tool.id,
+            status=STATUS_UNCHECKED,
+            detail="catalog records no paths for this content",
+            elapsed=elapsed,
+        )
+
+    missing = [p for p in paths if not p.exists()]
+    if missing:
+        return VerifyResult(
+            tool_id=tool.id,
+            status=STATUS_FAILED,
+            detail=f"missing: {', '.join(str(p) for p in missing[:3])}",
+            elapsed=elapsed,
+        )
+    # `present`, not `ok`: the directory exists. Whether its contents are the
+    # ones the catalog meant is a claim only a checksum could support.
+    return VerifyResult(
+        tool_id=tool.id,
+        status=STATUS_PRESENT,
+        detail=f"{paths[0]} exists",
+        elapsed=elapsed,
+    )
+
+
 def _without_a_command(tool: Any, elapsed: float) -> VerifyResult:
     """No `verify:` in the catalog -- fall back to looking for the binary.
 
@@ -165,6 +201,9 @@ def _without_a_command(tool: Any, elapsed: float) -> VerifyResult:
     PATH is a weaker claim than running it, and a report that blurs the two is
     worth less than one that admits the difference.
     """
+    if getattr(tool, "is_content", False):
+        return _content_on_disk(tool, elapsed)
+
     binary = tool.primary_binary
     if binary:
         found = shutil.which(binary)
