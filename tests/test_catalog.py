@@ -420,6 +420,26 @@ class TestShippedSignaturePins:
             assert key.rstrip().endswith("-----END PGP PUBLIC KEY BLOCK-----"), tool_id
             assert len(block.get("key_fingerprint", "")) == 40, tool_id
 
+    def test_a_keyless_pin_names_an_identity_and_an_issuer(self):
+        """Keyless with no pinned identity accepts a signature from anyone who
+        can get a Sigstore certificate, which is everyone."""
+        for tool_id, block in _signature_blocks():
+            if block.get("type") != "cosign" or block.get("public_key"):
+                continue
+            assert block.get("certificate_identity"), tool_id
+            assert block.get("certificate_oidc_issuer"), tool_id
+
+    def test_a_detached_keyless_pin_names_the_certificate_it_needs(self):
+        """anchore ships checksums.txt.pem beside checksums.txt.sig; without
+        the .pem cosign has nothing to check the identity against."""
+        for tool_id, block in _signature_blocks():
+            if block.get("type") != "cosign" or block.get("public_key"):
+                continue
+            if block.get("format") == "bundle":
+                assert not block.get("certificate"), tool_id
+            else:
+                assert block.get("certificate"), tool_id
+
     def test_velociraptor_verifies_the_asset_it_downloads(self):
         """Velocidex publishes no checksum file at all, so this entry is
         signature-or-nothing -- dropping the block would leave the catalog's

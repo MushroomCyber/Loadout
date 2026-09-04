@@ -54,6 +54,19 @@ SIGNS_ARTIFACT = "artifact"
 SIGNS_CHECKSUMS = "checksums"
 SIGNS_CHOICES = (SIGNS_ARTIFACT, SIGNS_CHECKSUMS)
 
+#: A bare detached signature. What gpg and minisign always produce, and what
+#: cosign produced before Sigstore bundles.
+FORMAT_DETACHED = "detached"
+
+#: A Sigstore bundle -- one `.sigstore.json` carrying the signature, the
+#: signing certificate and the transparency-log entry together. cosign now
+#: deprecates `--signature` in favour of `--bundle`, and projects that publish
+#: only a bundle (sigstore/cosign itself, trivy) could not be verified at all
+#: while `--signature` was the only form this understood.
+FORMAT_BUNDLE = "bundle"
+
+FORMAT_CHOICES = (FORMAT_DETACHED, FORMAT_BUNDLE)
+
 #: Stands, inside ``asset``, for the name of the release asset that platform
 #: detection actually picked. Some projects publish no shared checksum file
 #: and instead sign every asset separately, so the signature's name is only
@@ -122,8 +135,21 @@ class SignatureSpec:
     #: Keyless cosign only.
     certificate_identity: str = ""
     certificate_oidc_issuer: str = ""
+    #: Glob matching the signing certificate, for keyless cosign in the
+    #: pre-bundle form: anchore ships `checksums.txt.pem` beside
+    #: `checksums.txt.sig`. Without the certificate there is nothing to check
+    #: the pinned identity against, so keyless verification of that shape
+    #: could not work at all.
+    certificate: str = ""
+    #: :data:`FORMAT_DETACHED` or :data:`FORMAT_BUNDLE`.
+    format: str = FORMAT_DETACHED
     #: Whether the signature covers the artifact or the checksum file.
     signs: str = SIGNS_ARTIFACT
+
+    @property
+    def needs_certificate(self) -> bool:
+        """Does verification need a separate certificate asset fetched too?"""
+        return bool(self.certificate) and self.format != FORMAT_BUNDLE
 
     @property
     def tool(self) -> str:
@@ -153,6 +179,8 @@ def parse_spec(raw: Any) -> SignatureSpec | None:
         key_fingerprint=str(data.get("key_fingerprint", "")).replace(" ", "").upper(),
         certificate_identity=str(data.get("certificate_identity", "")).strip(),
         certificate_oidc_issuer=str(data.get("certificate_oidc_issuer", "")).strip(),
+        certificate=str(data.get("certificate", "")).strip(),
+        format=str(data.get("format", FORMAT_DETACHED)).strip().lower() or FORMAT_DETACHED,
         signs=str(data.get("signs", SIGNS_ARTIFACT)).strip().lower() or SIGNS_ARTIFACT,
     )
 
@@ -160,6 +188,11 @@ def parse_spec(raw: Any) -> SignatureSpec | None:
 def resolve_asset(spec: SignatureSpec, artifact_name: str) -> str:
     """The glob to match the signature file with, for this artifact."""
     return spec.asset.replace(ASSET_PLACEHOLDER, artifact_name)
+
+
+def resolve_asset_certificate(spec: SignatureSpec, artifact_name: str) -> str:
+    """The glob to match the signing certificate with, for this artifact."""
+    return spec.certificate.replace(ASSET_PLACEHOLDER, artifact_name)
 
 
 def validate_spec(raw: Any) -> list[str]:
@@ -180,6 +213,30 @@ def validate_spec(raw: Any) -> list[str]:
     asset = str(raw.get("asset", "")).strip()
     if not asset:
         errors.append("signature: missing 'asset' (glob matching the signature file)")
+
+    fmt = str(raw.get("format", FORMAT_DETACHED)).strip().lower() or FORMAT_DETACHED
+    if fmt not in FORMAT_CHOICES:
+        errors.append(
+            f"signature: 'format' must be one of {', '.join(FORMAT_CHOICES)}, "
+            f"got {fmt!r}"
+        )
+    if fmt == FORMAT_BUNDLE and kind != TYPE_COSIGN:
+        errors.append(
+            f"signature: 'format: bundle' is a Sigstore concept and only "
+            f"applies to cosign, not {kind or 'an unset type'}"
+        )
+
+    certificate = str(raw.get("certificate", "")).strip()
+    if certificate and kind != TYPE_COSIGN:
+        errors.append(
+            f"signature: 'certificate' only applies to cosign, not "
+            f"{kind or 'an unset type'}"
+        )
+    if certificate and fmt == FORMAT_BUNDLE:
+        errors.append(
+            "signature: a bundle already carries its certificate; drop "
+            "'certificate' or drop 'format: bundle'"
+        )
 
     signs = str(raw.get("signs", SIGNS_ARTIFACT)).strip().lower() or SIGNS_ARTIFACT
     if signs not in SIGNS_CHOICES:
@@ -233,6 +290,12 @@ def validate_spec(raw: Any) -> list[str]:
                 "keyless verification. Keyless with no pinned identity would "
                 "accept a signature from anyone."
             )
+        if not public_key and fmt == FORMAT_DETACHED and not certificate:
+            errors.append(
+                "signature: keyless cosign with a detached signature also "
+                "needs 'certificate' (the .pem beside the .sig). Without it "
+                "there is no certificate to check the pinned identity against."
+            )
     return errors
 
 
@@ -240,7 +303,13 @@ def backend_available(spec: SignatureSpec) -> bool:
     return shutil.which(spec.tool) is not None
 
 
-def verify_signature(payload: Path, signature: Path, spec: SignatureSpec) -> None:
+def verify_signature(
+    payload: Path,
+    signature: Path,
+    spec: SignatureSpec,
+    *,
+    certificate: Path | None = None,
+) -> None:
     """Raise :class:`VerificationError` unless *signature* is a good signature
     over *payload* by the key the catalog pinned.
 
@@ -254,12 +323,11 @@ def verify_signature(payload: Path, signature: Path, spec: SignatureSpec) -> Non
             f"{spec.tool} is required to verify this download but is not installed."
         )
 
-    verifier = {
-        TYPE_GPG: _verify_gpg,
-        TYPE_MINISIGN: _verify_minisign,
-        TYPE_COSIGN: _verify_cosign,
-    }[spec.type]
-    verifier(payload, signature, spec)
+    if spec.type == TYPE_COSIGN:
+        _verify_cosign(payload, signature, spec, certificate=certificate)
+    else:
+        verifier = {TYPE_GPG: _verify_gpg, TYPE_MINISIGN: _verify_minisign}[spec.type]
+        verifier(payload, signature, spec)
     logger.debug("%s: %s signature verified", payload.name, spec.type)
 
 
@@ -365,8 +433,28 @@ def _verify_minisign(payload: Path, signature: Path, spec: SignatureSpec) -> Non
         )
 
 
-def _verify_cosign(payload: Path, signature: Path, spec: SignatureSpec) -> None:
-    argv = ["cosign", "verify-blob", "--signature", str(signature)]
+def _verify_cosign(
+    payload: Path,
+    signature: Path,
+    spec: SignatureSpec,
+    *,
+    certificate: Path | None = None,
+) -> None:
+    """Three shapes, because Sigstore has published three.
+
+    A bundle carries signature, certificate and transparency-log entry in one
+    `.sigstore.json` and goes in via ``--bundle``; cosign now deprecates
+    ``--signature`` in its favour. The older keyless form is a `.sig` plus a
+    separate `.pem`, and without that certificate there is nothing to check
+    the pinned identity against. A key-based signature needs neither.
+    """
+    if spec.format == FORMAT_BUNDLE:
+        argv = ["cosign", "verify-blob", "--bundle", str(signature)]
+    else:
+        argv = ["cosign", "verify-blob", "--signature", str(signature)]
+        if certificate is not None:
+            argv += ["--certificate", str(certificate)]
+
     if spec.public_key:
         # cosign wants a file on disk; the catalog carries the key inline.
         with tempfile.TemporaryDirectory(prefix="loadout-cosign-") as tmp:

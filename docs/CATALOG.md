@@ -195,6 +195,8 @@ install:
 | `public_key` | The trust anchor, inline. Required for `gpg` and `minisign`; for `cosign` either this or a pinned identity. |
 | `key_fingerprint` | Optional for `gpg`: 40 hex characters, asserted against the key that actually made the signature. |
 | `certificate_identity`, `certificate_oidc_issuer` | Keyless `cosign` only, and both required — keyless with no pinned identity accepts a signature from anyone. |
+| `certificate` | Keyless `cosign` with a detached signature: glob matching the `.pem` beside the `.sig`. |
+| `format` | `detached` (default) or `bundle` for a Sigstore `.sigstore.json`. |
 
 Three rules are worth knowing before you write one:
 
@@ -208,6 +210,44 @@ Three rules are worth knowing before you write one:
 - **Verification never touches the user's keyring.** Each check runs against a
   throwaway `GNUPGHOME` holding only your pinned key, so a catalog entry can
   neither read nor write anyone's trust store.
+
+#### Sigstore comes in three shapes
+
+Which one a project publishes decides what the block says, and the only
+reliable way to find out is to look at a real release rather than at the
+docs.
+
+```yaml
+# 1. A Sigstore bundle: signature, certificate and log entry in one file.
+signature: {type: cosign, format: bundle, asset: "{asset}.sigstore.json",
+            certificate_identity: keyless@projectsigstore.iam.gserviceaccount.com,
+            certificate_oidc_issuer: https://accounts.google.com}
+
+# 2. Keyless, pre-bundle: a .sig plus the .pem that carries the identity.
+signature: {type: cosign, asset: "*_checksums.txt.sig",
+            certificate: "*_checksums.txt.pem", signs: checksums,
+            certificate_identity: "https://github.com/anchore/syft/.github/workflows/release.yaml@refs/heads/main",
+            certificate_oidc_issuer: https://token.actions.githubusercontent.com}
+
+# 3. Key-based: no identity, just a pinned public key.
+signature: {type: cosign, asset: "*.sig", public_key: "-----BEGIN PUBLIC KEY-----
+..."}
+```
+
+Two things about those identities are easy to get wrong, and both were found
+by reading real certificates:
+
+- **The identity is not always a GitHub workflow.** cosign's own releases are
+  signed by `keyless@projectsigstore.iam.gserviceaccount.com` with issuer
+  `https://accounts.google.com`, not by anything under `github.com`.
+- **A keyless identity is usually stable, so pin it literally.** syft's is
+  `...release.yaml@refs/heads/main` — the branch, not the tag — and the same
+  literal verifies 1.50.0 and 1.51.1. Check two releases before assuming an
+  identity moves.
+
+Omitting `certificate` on shape 2 fails review rather than the install: without
+the `.pem` there is nothing to check the pinned identity against, and cosign's
+own error points somewhere else entirely.
 
 #### When every asset is signed separately
 

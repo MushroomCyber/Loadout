@@ -106,6 +106,9 @@ def test_keyless_cosign_needs_a_pinned_identity():
         {
             "type": "cosign",
             "asset": "*.sig",
+            # The .pem is not optional for this shape: without a certificate
+            # cosign has nothing to check the pinned identity against.
+            "certificate": "*.pem",
             "certificate_identity": "https://github.com/ffuf/ffuf/.github/workflows/release.yml@refs/tags/v2.1.0",
             "certificate_oidc_issuer": "https://token.actions.githubusercontent.com",
         }
@@ -483,3 +486,83 @@ def test_the_placeholder_is_accepted_for_the_artifact_it_belongs_to():
         )
         == []
     )
+
+
+class TestSigstoreShapes:
+    """Sigstore has published three shapes and the catalog has to say which.
+
+    All three were checked against real releases before being encoded here:
+    cosign's own bundle verifies under a Google service-account identity (not
+    the GitHub workflow one the shape suggests), and syft's keyless identity
+    is `refs/heads/main` -- stable across releases, so a literal pin holds and
+    no regexp field is needed.
+    """
+
+    def _keyless(self, **extra):
+        base = {
+            "type": "cosign",
+            "asset": "*.sig",
+            "certificate_identity": "https://github.com/anchore/syft/.github/workflows/release.yaml@refs/heads/main",
+            "certificate_oidc_issuer": "https://token.actions.githubusercontent.com",
+        }
+        base.update(extra)
+        return base
+
+    def test_a_bundle_needs_no_separate_certificate(self):
+        assert validate_spec(self._keyless(format="bundle", asset="*.sigstore.json")) == []
+
+    def test_a_detached_keyless_signature_must_name_its_certificate(self):
+        """Without the .pem there is nothing to check the pinned identity
+        against, and cosign fails with an error about the wrong thing."""
+        errors = " ".join(validate_spec(self._keyless()))
+        assert "certificate" in errors
+
+    def test_a_bundle_carrying_a_certificate_too_is_contradictory(self):
+        errors = " ".join(
+            validate_spec(self._keyless(format="bundle", certificate="*.pem"))
+        )
+        assert "already carries its certificate" in errors
+
+    def test_bundle_is_a_sigstore_concept_and_gpg_may_not_claim_it(self):
+        errors = " ".join(
+            validate_spec(
+                {"type": "gpg", "asset": "*.asc", "format": "bundle",
+                 "public_key": "-----BEGIN PGP PUBLIC KEY BLOCK-----"}
+            )
+        )
+        assert "only applies to cosign" in errors
+
+    def test_an_unknown_format_is_refused(self):
+        errors = " ".join(validate_spec(self._keyless(format="attestation")))
+        assert "'format' must be one of" in errors
+
+    def test_a_certificate_on_a_gpg_block_is_refused(self):
+        errors = " ".join(
+            validate_spec(
+                {"type": "gpg", "asset": "*.asc", "certificate": "*.pem",
+                 "public_key": "-----BEGIN PGP PUBLIC KEY BLOCK-----"}
+            )
+        )
+        assert "only applies to cosign" in errors
+
+    def test_the_format_defaults_to_detached(self):
+        from loadout.signature import FORMAT_DETACHED
+
+        spec = parse_spec(self._keyless(certificate="*.pem"))
+        assert spec.format == FORMAT_DETACHED
+        assert spec.needs_certificate is True
+
+    def test_a_bundle_does_not_ask_for_a_certificate_download(self):
+        spec = parse_spec(self._keyless(format="bundle", asset="*.sigstore.json"))
+        assert spec.needs_certificate is False
+
+    def test_the_certificate_glob_follows_the_chosen_asset(self):
+        from loadout.signature import resolve_asset_certificate
+
+        spec = parse_spec(
+            self._keyless(asset="{asset}.sig", certificate="{asset}.pem")
+        )
+        assert resolve_asset_certificate(spec, "tool-linux-amd64") == (
+            "tool-linux-amd64.pem"
+        )
+
