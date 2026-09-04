@@ -68,6 +68,16 @@ for every such tool, so the model now refuses to guess: an entry with no
 
 List the primary command first.
 
+Name the command, not the file inside the archive. A release that ships
+`hayabusa-4.0.0-lin-x64-gnu` at its root still takes `binaries: [hayabusa]` —
+the version and platform glued onto the name are resolved at extraction time,
+and the file is installed under the name you listed. That resolution only looks
+at the archive root, and only where a digit follows the separator, so
+`hayabusa_report.css` deeper in the same archive is not a candidate. Two
+plausible matches at the root is an error rather than a guess: if a release ships
+both `tool-1.0-linux-amd64` and `tool-1.0-linux-arm64` unpacked together, set
+`asset:` so only one architecture is downloaded.
+
 ## Install methods
 
 Each entry in `install:` names a `provider` plus its own keys. Order does not

@@ -622,6 +622,10 @@ class GithubReleaseProvider(Provider):
             if candidate.is_file() and candidate.name == binary:
                 return candidate
 
+        versioned = _versioned_binary(into, binary)
+        if versioned is not None:
+            return versioned
+
         # Some projects name the binary after the archive rather than the tool.
         # Only accept that when the archive holds a single file: "there is one
         # candidate" is evidence, "one file happens to be executable" is not --
@@ -634,6 +638,57 @@ class GithubReleaseProvider(Provider):
             f"({len(files)} file(s) extracted). "
             f"Set the catalog entry's `binaries:` to the real name."
         )
+
+
+#: What may separate a binary's name from the version and platform glued onto
+#: it: hayabusa ships ``hayabusa-4.0.0-lin-x64-gnu``, others ``tool_v1.2_linux``.
+#: A digit has to follow, because a bare prefix match also takes
+#: ``hayabusa_report.css`` out of the same archive.
+_VERSIONED_NAME_RE = re.compile(r"^[-_]v?\d")
+
+#: Extensions that rule a file out however well its name matches. Releases
+#: routinely ship ``tool-1.2.3.sha256`` and ``tool-1.2.3.sig`` beside the
+#: binary those files describe, and a nested archive is not the binary either.
+_NOT_A_BINARY = (
+    ".txt", ".md", ".rst", ".sig", ".asc", ".pem", ".sha256", ".sha512",
+    ".json", ".yaml", ".yml", ".toml", ".ini", ".conf", ".cfg",
+    ".css", ".html", ".htm", ".js", ".png", ".svg", ".jpg", ".ico",
+    ".gz", ".xz", ".bz2", ".zip", ".tar", ".7z", ".deb", ".rpm",
+)
+
+
+def _root_level_files(into: Path) -> list[Path]:
+    """The extracted files at the archive's top level.
+
+    Sees through a single wrapping directory, because tarballs conventionally
+    have one and it carries no information about which file is the binary.
+    """
+    try:
+        entries = sorted(into.iterdir())
+    except OSError:
+        return []
+    if len(entries) == 1 and entries[0].is_dir():
+        entries = sorted(entries[0].iterdir())
+    return [p for p in entries if p.is_file()]
+
+
+def _versioned_binary(into: Path, binary: str) -> Path | None:
+    """The root-level file that is *binary* with a version glued on, if unambiguous.
+
+    Restricted to the archive root on purpose. Hayabusa's release holds 5,670
+    files, one of which is the binary ``hayabusa-4.0.0-lin-x64-gnu`` and
+    another of which is ``config/html_report/hayabusa_report.css``; matching
+    anywhere in the tree would make the choice between them a coin toss.
+    Two candidates is a catalog problem, not something to guess at.
+    """
+    candidates = [
+        path
+        for path in _root_level_files(into)
+        if path.name.startswith(binary)
+        and _VERSIONED_NAME_RE.match(path.name[len(binary) :])
+        and not path.name.lower().endswith(_NOT_A_BINARY)
+    ]
+    return candidates[0] if len(candidates) == 1 else None
 
 
 def _safe_member(name: str) -> bool:

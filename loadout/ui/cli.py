@@ -1282,6 +1282,66 @@ def _parse_since(value: str | None) -> str | None:
     return value
 
 
+def _detail_fields(detail: str) -> dict[str, str]:
+    """The ``key=value`` tokens the executor writes into a history row."""
+    fields: dict[str, str] = {}
+    for token in (detail or "").split():
+        key, sep, value = token.partition("=")
+        if sep:
+            fields[key] = value
+    return fields
+
+
+def _verification_of(events: list[dict[str, Any]], entry: dict[str, Any]) -> dict[str, Any]:
+    """How the most recent install in the window checked this tool.
+
+    Falls back to the state row for a tool installed before the window, which
+    knows the method but not whether a bypass flag was what allowed it -- so
+    that case reports what it knows and does not claim a bypass it cannot see.
+    """
+    from ..executor import VERIFY_NONE, VERIFY_NOT_APPLICABLE
+
+    installs = [r for r in events if r["action"] == "install"]
+    for row in installs:  # newest first
+        fields = _detail_fields(row.get("detail", ""))
+        method = fields.get("verify", "")
+        if not method:
+            continue
+        return {
+            "method": "" if method == VERIFY_NOT_APPLICABLE else method,
+            "verified": method not in (VERIFY_NONE, VERIFY_NOT_APPLICABLE),
+            "checkable": method != VERIFY_NOT_APPLICABLE,
+            "allow_unverified": fields.get("allow_unverified") == "yes",
+            "source": "history",
+        }
+
+    method = entry.get("verify_method") or ""
+    return {
+        "method": method,
+        "verified": bool(entry.get("verify_ok")),
+        "checkable": bool(method),
+        "allow_unverified": False,
+        "source": "state" if method else "unrecorded",
+    }
+
+
+def _verify_cell(verification: dict[str, Any]) -> str:
+    """One column's worth of how a tool was checked.
+
+    Four outcomes, kept apart because three of them are easy to read as a
+    fourth: verified, no check of ours to run, a check that found nothing,
+    and no record either way. The last is the one an older state file gives,
+    and "n/a" would state something about it that isn't known.
+    """
+    if verification["verified"]:
+        return verification["method"] or "yes"
+    if verification["source"] == "unrecorded":
+        return "—"
+    if not verification["checkable"]:
+        return "n/a"
+    return "no (--allow-unverified)" if verification["allow_unverified"] else "no"
+
+
 def cmd_report(ctx: Context) -> int:
     """Tool inventory for an engagement window.
 
@@ -1322,8 +1382,18 @@ def cmd_report(ctx: Context) -> int:
                 "first_seen": events[-1]["ts"] if events else "",
                 "last_used": entry.get("last_used") or (events[0]["ts"] if events else ""),
                 "invocations": len(events),
+                "verification": _verification_of(events, entry),
             }
         )
+
+    # The question a challenged finding asks is "could that binary have been
+    # something else", so the tools that arrived unchecked are called out
+    # rather than left to be spotted in a column.
+    unverified = [
+        t["tool"]
+        for t in tools
+        if t["verification"]["checkable"] and not t["verification"]["verified"]
+    ]
 
     payload: dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -1335,6 +1405,7 @@ def cmd_report(ctx: Context) -> int:
             "catalog": ctx.catalog.info().generated_at,
         },
         "tools": tools,
+        "unverified": unverified,
     }
     digest = hashlib.sha256(
         _json.dumps(payload, sort_keys=True, default=str).encode("utf-8")
@@ -1351,14 +1422,24 @@ def cmd_report(ctx: Context) -> int:
             f"Generated {payload['generated_at']} · window: {payload['window']['since']}"
             f" → {payload['window']['until']} · scope: {payload['scope']}",
             "",
-            "| Tool | Version | Via | Last used | Runs |",
-            "| --- | --- | --- | --- | --- |",
+            "| Tool | Version | Via | Verified | Last used | Runs |",
+            "| --- | --- | --- | --- | --- | --- |",
         ]
         for tool in tools:
             lines.append(
                 f"| {tool['tool']} | {tool['version'] or '—'} | {tool['provider'] or '—'} "
+                f"| {_verify_cell(tool['verification'])} "
                 f"| {tool['last_used'] or '—'} | {tool['invocations']} |"
             )
+        if unverified:
+            lines += [
+                "",
+                "## Installed without verification",
+                "",
+                "These arrived with nothing to check the download against:",
+                "",
+            ]
+            lines += [f"- `{tool_id}`" for tool_id in unverified]
         lines += ["", f"`sha256:{digest}`"]
         text = "\n".join(lines)
     else:
@@ -1374,8 +1455,15 @@ def cmd_report(ctx: Context) -> int:
         for tool in tools:
             lines.append(
                 f"  {tool['tool']:<28} {tool['version'][:18]:<20} "
-                f"{tool['provider']:<8} runs={tool['invocations']}"
+                f"{tool['provider']:<8} {_verify_cell(tool['verification']):<14} "
+                f"runs={tool['invocations']}"
             )
+        if unverified:
+            lines += [
+                "",
+                f"Installed without verification ({len(unverified)}):",
+                "  " + ", ".join(unverified),
+            ]
         lines += ["", f"sha256:{digest}"]
         text = "\n".join(lines)
 

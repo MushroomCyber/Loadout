@@ -425,6 +425,86 @@ class TestArchiveSafety:
         assert found.name == "tool_v1.2_linux"
 
 
+class TestABinaryWearingItsVersion:
+    """The shape hayabusa ships: a versioned binary among thousands of files."""
+
+    def test_the_hayabusa_release_shape_resolves(self, tmp_path):
+        archive = tmp_path / "hayabusa-4.0.0-lin-x64-gnu.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("hayabusa-4.0.0-lin-x64-gnu", "binary")
+            zf.writestr("config/html_report/hayabusa_report.css", "body{}")
+            zf.writestr("rules/sigma/one.yml", "title: x")
+            zf.writestr("README.md", "docs")
+        found = GithubReleaseProvider._extract(archive, tmp_path / "out", "hayabusa")
+        assert found.name == "hayabusa-4.0.0-lin-x64-gnu"
+
+    def test_the_css_file_is_not_mistaken_for_the_binary(self, tmp_path):
+        """A plain prefix match would take it; it shares the whole tool name."""
+        archive = tmp_path / "a.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("hayabusa_report.css", "body{}")
+            zf.writestr("README.md", "docs")
+        with pytest.raises(ProviderError, match="not found inside"):
+            GithubReleaseProvider._extract(archive, tmp_path / "out", "hayabusa")
+
+    def test_a_checksum_beside_the_binary_does_not_make_it_ambiguous(self, tmp_path):
+        archive = tmp_path / "a.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("tool-1.2.3-linux-amd64", "binary")
+            zf.writestr("tool-1.2.3-linux-amd64.sha256", "abc")
+            zf.writestr("tool-1.2.3-linux-amd64.sig", "sig")
+            zf.writestr("LICENSE", "mit")
+        found = GithubReleaseProvider._extract(archive, tmp_path / "out", "tool")
+        assert found.name == "tool-1.2.3-linux-amd64"
+
+    def test_a_single_wrapping_directory_is_seen_through(self, tmp_path):
+        archive = tmp_path / "a.tar.gz"
+        payload = tmp_path / "payload"
+        payload.write_text("binary", encoding="utf-8")
+        with tarfile.open(archive, "w:gz") as tar:
+            tar.add(payload, arcname="tool-2.0/tool-2.0-linux")
+            tar.add(payload, arcname="tool-2.0/docs/guide.md")
+        found = GithubReleaseProvider._extract(archive, tmp_path / "out", "tool")
+        assert found.name == "tool-2.0-linux"
+
+    def test_a_nested_binary_is_not_reached_for(self, tmp_path):
+        """Only the root is considered -- deeper is where the decoys live."""
+        archive = tmp_path / "a.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("bin/extras/tool-1.0-linux", "binary")
+            zf.writestr("README.md", "docs")
+            zf.writestr("LICENSE", "mit")
+        with pytest.raises(ProviderError, match="not found inside"):
+            GithubReleaseProvider._extract(archive, tmp_path / "out", "tool")
+
+    def test_two_versioned_candidates_are_refused_rather_than_guessed(self, tmp_path):
+        archive = tmp_path / "a.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("tool-1.0-linux-amd64", "binary")
+            zf.writestr("tool-1.0-linux-arm64", "binary")
+            zf.writestr("README.md", "docs")
+        with pytest.raises(ProviderError, match="not found inside"):
+            GithubReleaseProvider._extract(archive, tmp_path / "out", "tool")
+
+    def test_a_suffix_that_is_not_a_version_is_not_a_match(self, tmp_path):
+        """`toolkit` starts with `tool` and is a different program."""
+        archive = tmp_path / "a.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("tool-runner", "other")
+            zf.writestr("toolkit", "other")
+            zf.writestr("README.md", "docs")
+        with pytest.raises(ProviderError, match="not found inside"):
+            GithubReleaseProvider._extract(archive, tmp_path / "out", "tool")
+
+    def test_an_exact_name_still_wins_over_a_versioned_one(self, tmp_path):
+        archive = tmp_path / "a.zip"
+        with zipfile.ZipFile(archive, "w") as zf:
+            zf.writestr("tool-1.0-linux", "wrong")
+            zf.writestr("bin/tool", "binary")
+        found = GithubReleaseProvider._extract(archive, tmp_path / "out", "tool")
+        assert found.name == "tool"
+
+
 class TestDockerProvider:
     def test_image_reference_is_validated(self):
         from loadout.providers.docker import DockerProvider

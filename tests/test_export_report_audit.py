@@ -138,6 +138,189 @@ class TestReport:
         assert _parse_since(None) is None
 
 
+class TestTheReportNamesWhatArrivedUnchecked:
+    """The question a challenged finding asks: could that binary have been
+    something else? A state row cannot answer it -- it holds one row per tool,
+    overwritten by the next install."""
+
+    def _install(self, tool_id, detail):
+        from loadout.state import get_state_db
+
+        db = get_state_db()
+        db.set_installed(tool_id, True, provider="github", version="1.0")
+        db.record("install", tool_id, detail=detail)
+
+    def test_a_bypassed_check_is_named_and_says_what_permitted_it(
+        self, installed_machine, capsys
+    ):
+        self._install("nmap", "provider=github verify=none allow_unverified=yes")
+        assert main(["report", "--format", "json"]) == 0
+        payload = json.loads(capsys.readouterr().out)
+
+        assert payload["unverified"] == ["nmap"]
+        entry = next(t for t in payload["tools"] if t["tool"] == "nmap")
+        assert entry["verification"]["verified"] is False
+        assert entry["verification"]["allow_unverified"] is True
+
+    def test_a_passing_check_records_which_method_passed(
+        self, installed_machine, capsys
+    ):
+        self._install("nmap", "provider=github verify=gpg")
+        assert main(["report", "--format", "json"]) == 0
+        payload = json.loads(capsys.readouterr().out)
+
+        assert payload["unverified"] == []
+        entry = next(t for t in payload["tools"] if t["tool"] == "nmap")
+        assert entry["verification"] == {
+            "method": "gpg",
+            "verified": True,
+            "checkable": True,
+            "allow_unverified": False,
+            "source": "history",
+        }
+
+    def test_a_provider_with_no_check_of_ours_is_not_called_unverified(
+        self, installed_machine, capsys
+    ):
+        """apt verifies its own package signatures. Listing it beside a real
+        bypass would bury the one that matters."""
+        self._install("nmap", "provider=apt verify=n/a")
+        assert main(["report", "--format", "json"]) == 0
+        payload = json.loads(capsys.readouterr().out)
+
+        assert payload["unverified"] == []
+        entry = next(t for t in payload["tools"] if t["tool"] == "nmap")
+        assert entry["verification"]["checkable"] is False
+        assert entry["verification"]["method"] == ""
+
+    def test_the_newest_install_is_what_the_report_states(
+        self, installed_machine, capsys
+    ):
+        """Reinstalling with a checksum published clears the earlier bypass."""
+        self._install("nmap", "provider=github verify=none allow_unverified=yes")
+        self._install("nmap", "provider=github verify=checksum")
+
+        assert main(["report", "--format", "json"]) == 0
+        payload = json.loads(capsys.readouterr().out)
+        assert payload["unverified"] == []
+
+    def test_an_install_recorded_before_this_existed_falls_back_to_state(
+        self, installed_machine, capsys
+    ):
+        from loadout.state import get_state_db
+
+        db = get_state_db()
+        db.set_installed(
+            "nmap", True, provider="github", version="1.0",
+            verification=("checksum", True),
+        )
+        db.record("install", "nmap", detail="provider=github elapsed=1.0s version=1.0")
+
+        assert main(["report", "--format", "json"]) == 0
+        entry = next(
+            t
+            for t in json.loads(capsys.readouterr().out)["tools"]
+            if t["tool"] == "nmap"
+        )
+        assert entry["verification"]["source"] == "state"
+        assert entry["verification"]["verified"] is True
+
+    def test_nothing_recorded_at_all_claims_nothing(self, installed_machine, capsys):
+        from loadout.state import get_state_db
+
+        get_state_db().record("run", "nmap")
+        assert main(["report", "--format", "json"]) == 0
+        entry = next(
+            t
+            for t in json.loads(capsys.readouterr().out)["tools"]
+            if t["tool"] == "nmap"
+        )
+        assert entry["verification"]["source"] == "unrecorded"
+        assert entry["verification"]["allow_unverified"] is False
+
+    def test_nothing_recorded_does_not_read_as_nothing_to_check(
+        self, installed_machine, capsys
+    ):
+        """`n/a` says apt verified it itself. An older state file knows neither
+        that nor the opposite, and must not borrow the reassuring one."""
+        from loadout.ui.cli import _verify_cell
+
+        unrecorded = {
+            "method": "", "verified": False, "checkable": False,
+            "allow_unverified": False, "source": "unrecorded",
+        }
+        assert _verify_cell(unrecorded) == "—"
+        assert _verify_cell({**unrecorded, "source": "history"}) == "n/a"
+
+    def test_the_text_report_calls_out_the_bypass_rather_than_hiding_it_in_a_column(
+        self, installed_machine, capsys
+    ):
+        self._install("nmap", "provider=github verify=none allow_unverified=yes")
+        assert main(["report"]) == 0
+        text = capsys.readouterr().out
+        assert "Installed without verification (1):" in text
+        assert "--allow-unverified" in text
+
+    def test_the_markdown_report_has_a_verified_column(self, installed_machine, capsys):
+        self._install("nmap", "provider=github verify=checksum")
+        assert main(["report", "--format", "markdown"]) == 0
+        text = capsys.readouterr().out
+        assert "| Verified |" in text
+        assert "| checksum " in text
+        assert "Installed without verification" not in text
+
+
+class TestTheExecutorWritesTheAuditFact:
+    def test_a_passing_check_names_its_method(self):
+        from loadout.executor import verification_detail
+
+        detail = verification_detail([("checksum", True)], allow_unverified=False)
+        assert detail == "verify=checksum"
+
+    def test_a_bypass_records_the_flag_that_allowed_it(self):
+        from loadout.executor import verification_detail
+
+        detail = verification_detail([("checksum", False)], allow_unverified=True)
+        assert detail == "verify=none allow_unverified=yes"
+
+    def test_no_check_of_ours_is_distinct_from_a_check_that_found_nothing(self):
+        from loadout.executor import verification_detail
+
+        assert verification_detail([], allow_unverified=True) == "verify=n/a"
+        assert verification_detail([], allow_unverified=False) == "verify=n/a"
+
+    def test_the_flag_is_not_claimed_when_it_changed_nothing(self):
+        """Passing --allow-unverified and then verifying anyway is not a bypass;
+        recording it as one would put clean installs in the report's list."""
+        from loadout.executor import verification_detail
+
+        detail = verification_detail([("gpg", True)], allow_unverified=True)
+        assert detail == "verify=gpg"
+
+    def test_the_fact_reaches_the_history_row(self, catalog, tmp_path):
+        from loadout.executor import ExecContext, Executor
+        from loadout.model import InstallMethod
+        from loadout.planner import PlannedAction
+        from loadout.state import StateDB
+
+        state = StateDB(tmp_path / "state.db")
+        executor = Executor(state=state, allow_unverified=True)
+        action = PlannedAction(
+            tool=catalog.get("nmap"),
+            action="install",
+            provider="github",
+            method=InstallMethod(provider="github", spec={"repo": "x/y"}),
+        )
+        context = ExecContext(emit=lambda event: None, allow_unverified=True)
+        context.verified("checksum", False)
+
+        executor._record(action, 1.0, context)
+
+        row = state.history(tool_id="nmap")[0]
+        assert "allow_unverified=yes" in row["detail"]
+        assert "provider=github" in row["detail"]
+
+
 class TestAudit:
     def test_reports_clean_machine(self, installed_machine, capsys):
         from loadout.state import get_state_db
