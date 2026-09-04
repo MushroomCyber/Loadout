@@ -14,6 +14,22 @@ binaries:
 homepage: https://github.com/anchore/syft
 size: 83992576
 install:
+- provider: github
+  repo: anchore/syft
+  checksums: "*_checksums.txt"
+  priority: 40
+  # Keyless Sigstore, verified against a pinned workflow identity rather than
+  # a key. The identity was read out of the real certificate rather than
+  # copied from documentation, and confirmed to verify releases 1.50.0 and
+  # 1.51.1 -- it is `refs/heads/main`, not a tag, so it does not move with
+  # each release and a literal pin holds.
+  signature:
+    type: cosign
+    asset: "*_checksums.txt.sig"
+    certificate: "*_checksums.txt.pem"
+    signs: checksums
+    certificate_identity: https://github.com/anchore/syft/.github/workflows/release.yaml@refs/heads/main
+    certificate_oidc_issuer: https://token.actions.githubusercontent.com
 - provider: apt
   package: syft
   distros:

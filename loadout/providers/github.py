@@ -39,6 +39,7 @@ from ..signature import (
     SignatureSpec,
     parse_spec,
     resolve_asset,
+    resolve_asset_certificate,
     verify_signature,
 )
 from .base import CommandStep, Provider, ProviderStatus, PythonStep, Step
@@ -589,7 +590,23 @@ class GithubReleaseProvider(Provider):
 
         signature_path = workdir / signature_asset.name
         self._download(signature_asset.url, signature_path)
-        verify_signature(payload, signature_path, spec)
+
+        certificate_path = None
+        if spec.needs_certificate:
+            cert_pattern = resolve_asset_certificate(spec, archive.name)
+            cert_asset = next(
+                (a for a in assets if fnmatch.fnmatch(a.name, cert_pattern)), None
+            )
+            if cert_asset is None:
+                names = ", ".join(a.name for a in assets[:6])
+                raise VerificationError(
+                    f"signing certificate {cert_pattern!r} is not in the release "
+                    f"assets. Available: {names}"
+                )
+            certificate_path = workdir / cert_asset.name
+            self._download(cert_asset.url, certificate_path)
+
+        verify_signature(payload, signature_path, spec, certificate=certificate_path)
 
     @staticmethod
     def _download(url: str, destination: Path) -> None:

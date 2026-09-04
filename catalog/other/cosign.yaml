@@ -12,6 +12,22 @@ binaries:
 homepage: https://github.com/sigstore/cosign
 size: 88803328
 install:
+- provider: github
+  repo: sigstore/cosign
+  asset: cosign-linux-amd64
+  checksums: cosign_checksums.txt
+  priority: 40
+  # A Sigstore bundle: signature, certificate and transparency-log entry in
+  # one file. Signed by the project's own service account, not by a GitHub
+  # workflow -- that identity was read out of the real bundle, which is why
+  # it is not the `github.com/sigstore/...` value the shape suggests.
+  signature:
+    type: cosign
+    format: bundle
+    asset: "{asset}.sigstore.json"
+    signs: artifact
+    certificate_identity: keyless@projectsigstore.iam.gserviceaccount.com
+    certificate_oidc_issuer: https://accounts.google.com
 - provider: apt
   package: cosign
   distros:

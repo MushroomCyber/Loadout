@@ -341,8 +341,9 @@ class TestGithubSignature:
         def fake_download(url, destination):
             destination.write_bytes(b"signature")
 
-        def fake_verify(payload, signature, spec):
+        def fake_verify(payload, signature, spec, *, certificate=None):
             seen["payload"] = payload.read_bytes()
+            seen["certificate"] = certificate
 
         monkeypatch.setattr(GithubReleaseProvider, "_download", staticmethod(fake_download))
         monkeypatch.setattr("loadout.providers.github.verify_signature", fake_verify)
