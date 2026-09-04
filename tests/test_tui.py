@@ -418,11 +418,38 @@ async def test_the_all_chip_counts_what_the_other_filters_allow(app):
     async with app.run_test() as pilot:
         await pilot.pause()
         chip = pilot.app.query_one("#facet-all", Button)
-        assert str(chip.label).split()[-1] == "4", str(chip.label)
+        assert str(chip.label).split()[-1].split("/")[1] == "4", str(chip.label)
 
         pilot.app.query_one("#query", Input).value = "nmap"
         await pilot.pause()
-        assert str(chip.label).split()[-1] == "1", str(chip.label)
+        assert str(chip.label).split()[-1].split("/")[1] == "1", str(chip.label)
+
+
+async def test_every_chip_counts_the_same_way_so_a_filtered_column_reads_as_one(app):
+    """Every row said `installed/matching` except the one at the top, which
+    said a bare total. Against a query that only one category can answer, the
+    column then read as `2` over a stack of `0/0` -- which looks like broken
+    counts rather than a filter doing its job."""
+    from textual.widgets import Button, Input
+
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        pilot.app.query_one("#query", Input).value = "nmap"
+        await pilot.pause()
+
+        labels = {
+            str(c.id): str(c.label)
+            for c in pilot.app.query("#facetlist Button").results(Button)
+        }
+        assert all("/" in label for label in labels.values()), labels
+
+        matching = {
+            slug: int(label.split()[-1].split("/")[1])
+            for slug, label in labels.items()
+        }
+        assert matching["facet-all"] == sum(
+            count for slug, count in matching.items() if slug != "facet-all"
+        )
 
 
 async def test_search_ids_matches_search_but_skips_building_tools(catalog):
