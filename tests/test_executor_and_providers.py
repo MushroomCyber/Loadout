@@ -425,6 +425,68 @@ class TestArchiveSafety:
         assert found.name == "tool_v1.2_linux"
 
 
+class TestAWaivableFailureIsMarkedAsOne:
+    """The TUI has no --allow-unverified to pass, so it has to be told which
+    failures a waiver would actually resolve."""
+
+    def _plan(self, catalog, fn):
+        from loadout.model import InstallMethod
+        from loadout.planner import Plan, PlannedAction
+        from loadout.providers.base import PythonStep
+
+        return Plan(
+            actions=[
+                PlannedAction(
+                    tool=catalog.get("nmap"),
+                    action="install",
+                    provider="github",
+                    method=InstallMethod(provider="github", spec={"repo": "x/y"}),
+                    steps=[PythonStep(fn=fn, description="install")],
+                )
+            ]
+        )
+
+    def test_nothing_published_to_check_against_is_waivable(self, catalog):
+        from loadout.errors import NothingToVerifyAgainst
+        from loadout.executor import Executor
+
+        def step(ctx):
+            raise NothingToVerifyAgainst("No checksum published for tool.zip.")
+
+        result = Executor().run(self._plan(catalog, step))
+        assert result.failures[0].waivable is True
+
+    def test_a_failed_check_is_not(self, catalog):
+        from loadout.errors import VerificationError
+        from loadout.executor import Executor
+
+        def step(ctx):
+            raise VerificationError("sha256 mismatch for tool.zip")
+
+        result = Executor().run(self._plan(catalog, step))
+        assert result.failures[0].waivable is False
+
+    def test_an_unrelated_failure_is_not(self, catalog):
+        from loadout.errors import ProviderError
+        from loadout.executor import Executor
+
+        def step(ctx):
+            raise ProviderError("network unreachable")
+
+        result = Executor().run(self._plan(catalog, step))
+        assert result.failures[0].waivable is False
+
+    def test_json_output_carries_it(self, catalog):
+        from loadout.errors import NothingToVerifyAgainst
+        from loadout.executor import Executor
+
+        def step(ctx):
+            raise NothingToVerifyAgainst("No checksum published for tool.zip.")
+
+        payload = Executor().run(self._plan(catalog, step)).to_dict()
+        assert payload["results"][0]["waivable"] is True
+
+
 class TestABinaryWearingItsVersion:
     """The shape hayabusa ships: a versioned binary among thousands of files."""
 

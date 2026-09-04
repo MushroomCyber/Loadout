@@ -364,6 +364,7 @@ if TEXTUAL_AVAILABLE:
         #title { text-style: bold; margin-bottom: 1; }
         #progress { height: auto; border-bottom: solid $panel; padding-bottom: 1; }
         #verify { height: auto; background: $panel; padding: 0 1; }
+        #btn-unverified { background: $error; color: $text; }
         #log { height: 1fr; margin-top: 1; }
         #actions { height: auto; margin-top: 1; align: right middle; }
         #actions Button { margin-left: 1; }
@@ -381,6 +382,10 @@ if TEXTUAL_AVAILABLE:
             #: user quits mid-install.
             self._app: Any = None
             self._live = False
+            #: Set only by the user pressing the waiver button, and only for
+            #: the one attempt that follows -- never inherited from the CLI
+            #: session or remembered across screens.
+            self._allow_unverified = False
 
         def compose(self) -> ComposeResult:
             with Vertical(id="box"):
@@ -409,19 +414,31 @@ if TEXTUAL_AVAILABLE:
                     yield Button(
                         "Retry", variant="primary", id="btn-retry", compact=True
                     )
+                    # Shown only after a failure that this would actually
+                    # resolve, so it cannot become the button someone presses
+                    # by habit: a digest *mismatch* never offers it.
+                    yield Button(
+                        "Install unverified", id="btn-unverified", compact=True
+                    )
                     yield Button("Close", id="btn-close", compact=True)
 
         def on_mount(self) -> None:
             self._app = self.app
             self._live = True
+            # An empty Static still paints its panel background, which drew a
+            # coloured band across the modal before any check had run.
+            self.query_one("#verify", Static).display = False
             self._show_actions(retry=False, close=False)
             self._execute()
 
         def on_unmount(self) -> None:
             self._live = False
 
-        def _show_actions(self, *, retry: bool, close: bool) -> None:
+        def _show_actions(
+            self, *, retry: bool, close: bool, unverified: bool = False
+        ) -> None:
             self.query_one("#btn-retry", Button).display = retry
+            self.query_one("#btn-unverified", Button).display = unverified
             self.query_one("#btn-close", Button).display = close
 
         def _post(self, method: Any, *args: Any) -> None:
@@ -452,9 +469,20 @@ if TEXTUAL_AVAILABLE:
         @on(Button.Pressed, "#btn-retry")
         def _btn_retry(self, event: Button.Pressed) -> None:
             event.stop()
+            self._restart(allow_unverified=False)
+
+        @on(Button.Pressed, "#btn-unverified")
+        def _btn_unverified(self, event: Button.Pressed) -> None:
+            event.stop()
+            self._restart(allow_unverified=True)
+
+        def _restart(self, *, allow_unverified: bool) -> None:
             self._done = False
+            self._allow_unverified = allow_unverified
             self.query_one("#log", RichLog).clear()
-            self.query_one("#verify", Static).update("")
+            verify = self.query_one("#verify", Static)
+            verify.update("")
+            verify.display = False
             self.query_one("#bar", ProgressBar).update(progress=0)
             self._show_actions(retry=False, close=False)
             self._execute()
@@ -486,11 +514,17 @@ if TEXTUAL_AVAILABLE:
                         self._append_log, f"{mark} {event.tool_id}: {event.message}"
                     )
 
-            executor = Executor(sink=sink, state=self.ctx.state)
+            executor = Executor(
+                sink=sink,
+                state=self.ctx.state,
+                allow_unverified=self._allow_unverified,
+            )
             failed = False
+            waivable = False
             try:
                 result = executor.run(self.plan)
                 failed = not result.ok
+                waivable = any(f.waivable for f in result.failures)
                 summary = (
                     f"[green]✓ {len(result.succeeded)} succeeded[/green]"
                     if result.ok
@@ -500,7 +534,7 @@ if TEXTUAL_AVAILABLE:
             except Exception as exc:
                 failed = True
                 summary = f"[red]✗ {exc}[/red]"
-            self._post(self._finish, summary, failed)
+            self._post(self._finish, summary, failed, waivable)
 
         def _set_progress(self, percent: float, message: str) -> None:
             try:
@@ -528,15 +562,27 @@ if TEXTUAL_AVAILABLE:
             except NoMatches:  # pragma: no cover - screen torn down mid-update
                 self._live = False
                 return
-            target.update(verify_summary(events))
+            text = verify_summary(events)
+            target.update(text)
+            target.display = bool(text)
 
-        def _finish(self, summary: str, failed: bool) -> None:
+        def _finish(self, summary: str, failed: bool, waivable: bool = False) -> None:
             self._done = True
             if not self.is_attached:  # pragma: no cover - quit during install
                 return
             self.query_one("#bar", ProgressBar).update(progress=100)
             self.query_one("#status", Static).update(summary)
-            self._show_actions(retry=failed, close=True)
+            if waivable:
+                # What the button does and what it costs, next to the button
+                # itself: the CLI says this in a remediation string the TUI
+                # never showed, which left the browser unable to install a
+                # tool the CLI could.
+                self._append_log(
+                    "[yellow]Upstream published nothing to check this download "
+                    "against.[/yellow] [dim]'Install unverified' downloads it "
+                    "anyway and records the install as unverified.[/dim]"
+                )
+            self._show_actions(retry=failed, close=True, unverified=waivable)
 
     class SelfUpdateScreen(ModalScreen[bool]):
         """Loadout updating itself, through the same `loadout.selfupdate`

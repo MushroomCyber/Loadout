@@ -1305,6 +1305,122 @@ async def test_retrying_starts_the_log_from_empty(app):
         assert screen.query_one("#log", RichLog).lines == []
 
 
+async def test_an_entry_with_no_published_checksum_can_be_installed_knowingly(app):
+    """The browser could not install hayabusa at all: upstream publishes no
+    checksums, so it failed with the CLI's remediation -- pass
+    --allow-unverified -- and no way to do that from here."""
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+        screen._live = False
+
+        screen._finish("[red]1 failed[/red]", True, True)
+        await pilot.pause()
+
+        visible = {str(b.label) for b in screen.query("#actions Button") if b.display}
+        assert visible == {"Retry", "Install unverified", "Close"}
+
+
+async def test_the_waiver_is_not_offered_for_a_check_that_actually_failed(app):
+    """A digest mismatch means the bytes are not the published ones. Offering
+    to install them anyway is the one thing this button must never do."""
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+        screen._live = False
+
+        screen._finish("[red]1 failed[/red]", True, False)
+        await pilot.pause()
+
+        visible = {str(b.label) for b in screen.query("#actions Button") if b.display}
+        assert visible == {"Retry", "Close"}
+
+
+async def test_the_waiver_says_what_it_costs_before_it_is_pressed(app):
+    from textual.widgets import RichLog
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+        screen._live = False
+
+        screen._finish("[red]1 failed[/red]", True, True)
+        await pilot.pause()
+
+        rendered = " ".join(
+            segment.text
+            for line in screen.query_one("#log", RichLog).lines
+            for segment in line._segments
+        )
+        assert "nothing to check this download against" in rendered
+        assert "records the install as unverified" in rendered
+
+
+async def test_pressing_the_waiver_runs_the_install_with_it_and_retry_without(app):
+    """The flag lasts exactly one attempt. A Retry after a waived install must
+    not quietly keep waiving."""
+    from textual.widgets import Button
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+
+        screen._finish("[red]1 failed[/red]", True, True)
+        await pilot.pause()
+        assert screen._allow_unverified is False
+
+        screen.query_one("#btn-unverified", Button).press()
+        await pilot.pause()
+        assert screen._allow_unverified is True
+
+        screen._finish("[red]1 failed[/red]", True, True)
+        await pilot.pause()
+        screen.query_one("#btn-retry", Button).press()
+        await pilot.pause()
+        assert screen._allow_unverified is False
+
+
+async def test_the_verification_row_takes_no_space_until_it_has_something_to_say(app):
+    """It carries a panel background, so an empty one drew a coloured band
+    across the modal for the whole of every install."""
+    from textual.widgets import Static
+
+    from loadout.planner import Plan
+    from loadout.ui.tui.app import InstallScreen
+
+    async with app.run_test() as pilot:
+        screen = InstallScreen(pilot.app.ctx, Plan(), "install")
+        pilot.app.push_screen(screen)
+        await pilot.pause()
+
+        assert screen.query_one("#verify", Static).display is False
+
+        screen._set_verify([("nmap", "checksum", True)])
+        await pilot.pause()
+        assert screen.query_one("#verify", Static).display is True
+
+        screen._set_verify([])
+        await pilot.pause()
+        assert screen.query_one("#verify", Static).display is False
+
+
 # ---------------------------------------------------------------------------
 # Updating Loadout itself, from inside Loadout
 # ---------------------------------------------------------------------------
