@@ -22,7 +22,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from .. import __version__, configure_console, configure_logging, logger
+from .. import __version__, configure_console, configure_logging, lockfile, logger
 from .. import verify as verify_mod
 from ..errors import LoadoutError
 from . import output as out
@@ -315,6 +315,16 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--allow-unverified", action="store_true")
     p.add_argument("--prune", action="store_true",
                    help="Also remove installed tools the manifest does not list.")
+
+    p = sub.add_parser(
+        "lock", help="Record what a loadout resolved to, for a reproducible rebuild."
+    )
+    p.add_argument("slug", nargs="?", help="Defaults to ./loadout.yaml")
+    p.add_argument("--check", action="store_true",
+                   help="Compare against the lockfile instead of writing it. "
+                        "Exits non-zero on any drift.")
+    p.add_argument("--output", "-o", type=Path,
+                   help=f"Where to write (default ./{lockfile.LOCK_NAME}).")
 
     # -- state -------------------------------------------------------------
     p = sub.add_parser("history", help="What this tool has done.")
@@ -1234,14 +1244,168 @@ def cmd_sync(ctx: Context) -> int:
             out.emit_json({"slug": target.slug, "in_sync": True, **result.to_dict()})
         else:
             out.print_ok("Nothing to do — already in sync.")
+            _report_lock_drift(ctx, target)
         return 0
 
-    return _run_plan(ctx, plan, action="install")
+    code = _run_plan(ctx, plan, action="install")
+    if code == 0:
+        _report_lock_drift(ctx, target)
+    return code
+
+
+def _report_lock_drift(ctx: Context, target: Any) -> None:
+    """Say whether the converged machine matches the lockfile, if there is one.
+
+    Reported rather than enforced: honouring a pin at install time needs each
+    provider to be able to express one, and only `go` can today. Saying "these
+    six tools are not the versions the lock records" is the half that a
+    disputed finding actually needs, and it is a claim this can support.
+    """
+    path = lockfile.lock_path()
+    if not path.is_file():
+        return
+    try:
+        lock = lockfile.Lock.read(path)
+    except (OSError, ValueError) as exc:
+        out.print_warn(f"{path.name} is not readable: {exc}")
+        return
+    installed = ctx.installed() & set(target.tools)
+    drifts = lockfile.compare(lock, ctx.state.all_state(), installed=installed)
+    if drifts:
+        _print_drift(path, drifts)
+    else:
+        out.print_ok(f"Matches {path.name}.")
 
 
 # ---------------------------------------------------------------------------
 # State, reporting, audit
 # ---------------------------------------------------------------------------
+
+
+def _resolve_lock_target(ctx: Context):
+    """The loadout a lock applies to: a named one, or ./loadout.yaml."""
+    from .. import loadouts
+
+    slug = getattr(ctx.args, "slug", None)
+    if slug:
+        target = loadouts.get(slug)
+        if target is None:
+            out.print_error(f"No loadout named {slug!r}.", "See `loadout loadout list`.")
+        return target
+
+    target = loadouts.project_manifest()
+    if target is None:
+        out.print_error(
+            f"No {loadouts.PROJECT_MANIFEST} in this directory.",
+            "Name a loadout instead: `loadout lock <slug>`.",
+        )
+    return target
+
+
+def cmd_lock(ctx: Context) -> int:
+    """Write or check ``loadout.lock``.
+
+    A loadout names tool ids; this records what they resolved to on a real
+    machine, so "rebuild the box from the engagement repo" and "prove this box
+    matches it" stop being different questions with no answer.
+    """
+    target = _resolve_lock_target(ctx)
+    if target is None:
+        return 4
+
+    path = ctx.args.output or lockfile.lock_path()
+    state = ctx.state.all_state()
+
+    if ctx.args.check:
+        if not path.is_file():
+            out.print_error(
+                f"No {path} to check against.",
+                f"Create one with `loadout lock {target.slug}`.",
+            )
+            return 4
+        try:
+            lock = lockfile.Lock.read(path)
+        except (OSError, ValueError) as exc:
+            out.print_error(f"{path} is not readable: {exc}")
+            return 4
+
+        # Compared against the loadout's own tools, not the whole machine:
+        # every other package on a Kali box is "unlocked" and saying so would
+        # bury the drift that matters.
+        installed = ctx.installed() & set(target.tools)
+        drifts = lockfile.compare(lock, state, installed=installed)
+        if ctx.json_mode:
+            out.emit_json(
+                {
+                    "slug": lock.slug,
+                    "path": str(path),
+                    "in_sync": not drifts,
+                    "drift": [d.to_dict() for d in drifts],
+                }
+            )
+            return 0 if not drifts else 1
+
+        if not drifts:
+            out.print_ok(f"{len(lock.entries)} tool(s) match {path.name}.")
+            return 0
+        _print_drift(path, drifts)
+        return 1
+
+    lock = lockfile.capture(target.slug, list(target.tools), state)
+    if not lock.entries:
+        out.print_error(
+            f"None of {target.slug}'s tools are installed here.",
+            "Run `loadout sync` first -- a lock records what a machine has, "
+            "not what it should have.",
+        )
+        return 4
+
+    lock.write(path)
+    unrecorded = [e.tool_id for e in lock.entries.values() if not e.version]
+    if ctx.json_mode:
+        out.emit_json({"path": str(path), **lock.to_dict(), "no_version": unrecorded})
+        return 0
+
+    out.print_ok(f"Wrote {path} — {len(lock.entries)} tool(s).")
+    missing_from_lock = sorted(set(target.tools) - set(lock.entries))
+    if missing_from_lock:
+        out.print_warn(
+            f"Not locked (not installed here): {', '.join(missing_from_lock[:8])}"
+        )
+    if unrecorded:
+        out.print_warn(
+            f"No version recorded for: {', '.join(sorted(unrecorded)[:8])} — "
+            "these cannot be compared later."
+        )
+    return 0
+
+
+def _print_drift(path: Path, drifts: list) -> None:
+    from ..lockfile import (
+        DRIFT_MISSING,
+        DRIFT_PROVIDER,
+        DRIFT_UNKNOWN,
+        DRIFT_UNLOCKED,
+        DRIFT_VERSION,
+    )
+
+    labels = {
+        DRIFT_MISSING: "not installed",
+        DRIFT_VERSION: "version differs",
+        DRIFT_PROVIDER: "different provider",
+        DRIFT_UNLOCKED: "not in the lock",
+        DRIFT_UNKNOWN: "no version to compare",
+    }
+    out.print_error(f"{len(drifts)} difference(s) from {path.name}.")
+    for drift in drifts:
+        detail = ""
+        if drift.expected and drift.actual:
+            detail = f"  {drift.expected} -> {drift.actual}"
+        elif drift.expected:
+            detail = f"  expected {drift.expected}"
+        elif drift.actual:
+            detail = f"  found {drift.actual}"
+        out.print_note(f"  {drift.tool_id:<28} {labels.get(drift.kind, drift.kind)}{detail}")
 
 
 def cmd_history(ctx: Context) -> int:
@@ -2202,6 +2366,7 @@ _COMMANDS = {
     "catalog": cmd_catalog,
     "loadout": cmd_loadout,
     "sync": cmd_sync,
+    "lock": cmd_lock,
     "history": cmd_history,
     "report": cmd_report,
     "audit": cmd_audit,
