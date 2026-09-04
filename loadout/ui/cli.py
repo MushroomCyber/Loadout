@@ -22,7 +22,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from .. import __version__, configure_console, configure_logging, lockfile, logger
+from .. import __version__, completions, configure_console, configure_logging, lockfile, logger
 from .. import verify as verify_mod
 from ..errors import LoadoutError
 from . import output as out
@@ -315,6 +315,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--allow-unverified", action="store_true")
     p.add_argument("--prune", action="store_true",
                    help="Also remove installed tools the manifest does not list.")
+
+    p = sub.add_parser("completions", help="Print a shell completion script.")
+    p.add_argument("shell", choices=list(completions.SHELLS))
 
     p = sub.add_parser(
         "lock", help="Record what a loadout resolved to, for a reproducible rebuild."
@@ -1300,6 +1303,17 @@ def _resolve_lock_target(ctx: Context):
             "Name a loadout instead: `loadout lock <slug>`.",
         )
     return target
+
+
+def cmd_completions(ctx: Context) -> int:
+    """Print a completion script for the named shell.
+
+    Written to stdout rather than installed: where these files belong differs
+    per shell and per distro, and a tool that writes into someone's shell
+    configuration uninvited is a tool people stop trusting.
+    """
+    print(completions.render(ctx.args.shell, build_parser()), end="")
+    return 0
 
 
 def cmd_lock(ctx: Context) -> int:
@@ -2367,6 +2381,7 @@ _COMMANDS = {
     "loadout": cmd_loadout,
     "sync": cmd_sync,
     "lock": cmd_lock,
+    "completions": cmd_completions,
     "history": cmd_history,
     "report": cmd_report,
     "audit": cmd_audit,
