@@ -1,4 +1,5 @@
 id: seclists
+kind: content
 summary: The collection of wordlists everything else expects
 description: SecLists is a collection of multiple types of lists used during security assessments. List
   types include usernames, passwords, URLs, sensitive data grep strings, fuzzing payloads, and many more.
@@ -11,6 +12,8 @@ tags:
 - data
 phases:
 - discovery
+paths:
+- /usr/share/seclists
 homepage: https://github.com/danielmiessler/SecLists
 size: 1935140864
 install:

@@ -291,7 +291,10 @@ if TEXTUAL_AVAILABLE:
             field("category", ", ".join(tool.categories))
             field("phases", ", ".join(tool.phases))
             field("tags", ", ".join(tool.tags))
-            field("binaries", ", ".join(tool.binaries) or "[dim]unknown[/dim]")
+            if tool.is_content:
+                field("paths", ", ".join(tool.paths) or "[dim]unknown[/dim]")
+            else:
+                field("binaries", ", ".join(tool.binaries) or "[dim]unknown[/dim]")
             field("homepage", tool.homepage)
             if tool.size:
                 field("size", f"{tool.size / 1024 / 1024:.1f} MB")

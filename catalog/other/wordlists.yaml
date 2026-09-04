@@ -1,8 +1,11 @@
 id: wordlists
+kind: content
 summary: Contains the rockyou wordlist
 description: This package contains the rockyou.txt wordlist and has an installation size of 134 MB.
 categories:
 - recon
+paths:
+- /usr/share/wordlists
 homepage: https://www.kali.org
 size: 53374976
 install:

@@ -222,7 +222,10 @@ def render_detail(tool: Any, status: dict | None = None, provider_status: dict |
     row("category", ", ".join(tool.categories))
     row("phases", ", ".join(tool.phases))
     row("tags", ", ".join(tool.tags))
-    row("binaries", ", ".join(tool.binaries) or "[dim]unknown[/dim]")
+    if tool.is_content:
+        row("paths", ", ".join(tool.paths) or "[dim]unknown[/dim]")
+    else:
+        row("binaries", ", ".join(tool.binaries) or "[dim]unknown[/dim]")
     row("homepage", tool.homepage)
     row("license", tool.license)
     if tool.size:

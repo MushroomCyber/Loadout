@@ -147,6 +147,86 @@ class TestSchemaValidation:
         assert any("binaries" in w for w in result.warnings)
 
 
+class TestContentEntries:
+    """Roughly half a working toolkit is not executable. Held as `kind:
+    content` so the binary-shaped questions stop being asked of it."""
+
+    def test_a_content_entry_is_valid(self):
+        result = validate_entry(
+            {"id": "seclists", "kind": "content", "paths": ["/usr/share/seclists"]}
+        )
+        assert result.ok
+        assert result.tool.is_content
+
+    def test_kind_defaults_to_tool(self):
+        result = validate_entry({"id": "x", "binaries": ["x"]})
+        assert result.tool.kind == "tool"
+        assert result.tool.is_content is False
+
+    def test_an_unknown_kind_is_an_error_not_a_silent_default(self):
+        result = validate_entry({"id": "x", "kind": "wordlist"})
+        assert not result.ok
+        assert "unknown kind" in result.errors[0]
+
+    def test_content_is_asked_for_paths_rather_than_binaries(self):
+        result = validate_entry({"id": "x", "kind": "content", "summary": "y"})
+        assert result.ok
+        assert any("paths" in w for w in result.warnings)
+        assert not any("binaries" in w for w in result.warnings)
+
+    def test_content_that_ships_a_command_is_questioned(self):
+        """If it installs something you run, it is a tool -- the distinction
+        is what every guard downstream keys off."""
+        result = validate_entry(
+            {"id": "x", "kind": "content", "paths": ["/x"], "binaries": ["x"]}
+        )
+        assert result.ok
+        assert any("if it installs a command" in w for w in result.warnings)
+
+    def test_paths_survive_a_round_trip(self):
+        from loadout.model import Tool
+
+        original = Tool.from_dict(
+            {"id": "x", "kind": "content", "paths": ["/usr/share/x"]}
+        )
+        assert Tool.from_dict(original.to_dict()).paths == ("/usr/share/x",)
+
+    def test_a_tool_entry_does_not_serialise_a_kind_it_never_set(self):
+        from loadout.model import Tool
+
+        assert "kind" not in Tool(id="x").to_dict()
+
+
+class TestShippedContentEntries:
+    """The three Kali content packages, held as content rather than as tools
+    that mysteriously install no command."""
+
+    def _shipped(self):
+        from pathlib import Path
+
+        root = Path(__file__).resolve().parent.parent / "catalog"
+        if not root.is_dir():
+            pytest.skip("catalog source tree not present")
+        return {t.id: t for t in load_source_tree(root).tools}
+
+    def test_the_shipped_content_entries_declare_where_their_files_land(self):
+        tools = self._shipped()
+        for tool_id, expected in (
+            ("seclists", "/usr/share/seclists"),
+            ("wordlists", "/usr/share/wordlists"),
+            ("payloadsallthethings", "/usr/share/payloadsallthethings"),
+        ):
+            tool = tools.get(tool_id)
+            assert tool is not None, tool_id
+            assert tool.is_content, tool_id
+            assert expected in tool.paths, tool_id
+
+    def test_no_content_entry_claims_a_binary(self):
+        content = [t for t in self._shipped().values() if t.is_content]
+        assert content, "expected some content entries"
+        assert [t.id for t in content if t.binaries] == []
+
+
 class TestCompiler:
     def _write(self, root, name, text):
         path = root / name

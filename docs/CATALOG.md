@@ -57,6 +57,37 @@ Open a pull request. CI validates every entry and fails on any error.
 | `alternatives` | no | Other tool ids. Powers `loadout alt`. |
 | `deprecated_by` | no | Tool id that supersedes this. `loadout audit` surfaces it. |
 | `install` | yes* | Install routes. Without it the tool is browsable but not installable. |
+| `kind` | no | `tool` (default) or `content`. See below. |
+| `paths` | for content | Where a content entry's files land, e.g. `/usr/share/seclists`. |
+
+### Content is not a tool with a missing binary
+
+Roughly half a working toolkit is not executable: wordlists, payload
+collections, template packs, rulesets. Those take `kind: content`, and name
+`paths:` instead of `binaries:`.
+
+```yaml
+id: seclists
+kind: content
+summary: The collection of wordlists everything else expects
+paths:
+- /usr/share/seclists
+install:
+- provider: apt
+  package: seclists
+```
+
+`paths` is to content what `binaries` is to a tool: the thing whose presence
+proves the install did something. `loadout verify` checks those paths exist
+instead of looking for a command on `PATH` — without that it reported every
+wordlist as **failed**, accusing a working 1.8 GB install of being broken
+because it shipped no executable. `loadout run` refuses a content entry and
+says where its files are rather than telling you to add a `binaries:` field.
+
+An entry that installs *both* data and a command is a tool. Some Kali content
+packages do ship a small helper binary (`/usr/bin/seclists` just prints where
+the files went); that is not the point of the package, so it stays content and
+the helper goes unlisted.
 
 ### `binaries` is not optional in spirit
 

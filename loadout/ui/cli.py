@@ -785,6 +785,15 @@ def cmd_run(ctx: Context) -> int:
     if tool is None:
         raise ToolNotFound(ctx.args.tool, suggestions=ctx.catalog.suggest(ctx.args.tool))
 
+    if tool.is_content:
+        where = tool.paths[0] if tool.paths else ""
+        out.print_error(
+            f"{tool.id} is content, not a command -- there is nothing to run.",
+            f"Its files are at {where}." if where else
+            f"See `loadout show {tool.id}` for where its files live.",
+        )
+        return 4
+
     extra = [a for a in ctx.args.args if a != "--"]
     binary = tool.primary_binary
 

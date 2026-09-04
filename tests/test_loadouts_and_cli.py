@@ -236,3 +236,47 @@ class TestSelfUpdateCLI:
 
         assert main(["self-update"]) == 130
         assert "Traceback" not in capsys.readouterr().err
+
+
+class TestRunningContent:
+    """`loadout run seclists` is a category error, and it used to be reported
+    as a catalog defect -- "no known binary ... add a `binaries:` field" --
+    which is advice that would make the entry wrong."""
+
+    @pytest.fixture
+    def content_catalog(self, tmp_path, monkeypatch):
+        from loadout.catalog.compile import build_catalog
+        from loadout.catalog.store import CatalogStore
+        from loadout.model import Tool
+
+        path = tmp_path / "content.db"
+        build_catalog(
+            path,
+            [
+                Tool.from_dict(
+                    {
+                        "id": "seclists",
+                        "kind": "content",
+                        "summary": "Wordlists",
+                        "paths": ["/usr/share/seclists"],
+                    }
+                )
+            ],
+            source="test",
+        )
+        store = CatalogStore(path)
+        monkeypatch.setattr("loadout.catalog.open_catalog", lambda explicit=None: store)
+        yield store
+        store.close()
+
+    def test_running_content_says_what_it_is_rather_than_blaming_the_catalog(
+        self, content_catalog, capsys
+    ):
+        assert main(["run", "seclists"]) == 4
+        output = capsys.readouterr().out + capsys.readouterr().err
+        assert "nothing to run" in output
+
+    def test_it_points_at_where_the_files_actually_are(self, content_catalog, capsys):
+        main(["run", "seclists"])
+        combined = capsys.readouterr()
+        assert "/usr/share/seclists" in (combined.out + combined.err)

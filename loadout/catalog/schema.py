@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..model import TOOL_ID_RE, InstallMethod, Tool
+from ..model import KIND_CONTENT, KINDS, TOOL_ID_RE, InstallMethod, Tool
 
 #: Categories a tool may claim. Deliberately wider than the previous
 #: offence-only taxonomy -- "all good security tools" has to include the blue
@@ -76,7 +76,7 @@ _REQUIRED = ("id",)
 _KNOWN_FIELDS = {
     "id", "summary", "description", "categories", "tags", "phases", "binaries",
     "homepage", "repo", "license", "install", "alternatives", "requires_root",
-    "verify", "size", "version", "deprecated_by", "metadata",
+    "verify", "size", "version", "deprecated_by", "metadata", "kind", "paths",
 }
 
 
@@ -161,7 +161,26 @@ def validate_entry(data: Any, *, origin: str = "<entry>") -> ValidationResult:
     elif len(str(data["summary"])) > 120:
         result.warnings.append(f"{origin}: summary over 120 chars will be truncated")
 
-    if not data.get("binaries"):
+    kind = str(data.get("kind") or "tool").strip().lower()
+    if kind not in KINDS:
+        result.errors.append(
+            f"{origin}: unknown kind {kind!r}. Valid: {', '.join(KINDS)}"
+        )
+
+    if kind == KIND_CONTENT:
+        # Asking a wordlist for its binary is the mistake this field exists to
+        # stop, so the warning is about the field that actually applies.
+        if not data.get("paths"):
+            result.warnings.append(
+                f"{origin}: no 'paths' -- `loadout verify` cannot tell whether "
+                "the content is really there"
+            )
+        if data.get("binaries"):
+            result.warnings.append(
+                f"{origin}: kind 'content' with 'binaries' -- if it installs a "
+                "command, it is a tool"
+            )
+    elif not data.get("binaries"):
         result.warnings.append(
             f"{origin}: no 'binaries' -- `loadout run` and `--help` cannot work for it"
         )
