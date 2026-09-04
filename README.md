@@ -233,6 +233,31 @@ loadout sync --prune            # and remove what isn't declared
 loadout loadout diff acme-webapp-2026
 ```
 
+#### Pin it: `loadout.lock`
+
+A manifest lists tool ids and no versions, so applying it in March and again in
+September builds two different boxes. `loadout lock` records what those ids
+actually resolved to — provider, version, and how the download was checked —
+into a `loadout.lock` you commit beside the manifest.
+
+```bash
+loadout lock                    # write it from this machine
+loadout lock --check            # does this box still match? non-zero if not
+loadout sync                    # reports drift against the lock when it exists
+```
+
+Drift is reported per tool, and the kinds are kept apart because they are not
+the same claim: **version differs** names both sides, **different provider**
+catches the same version number from apt and from a release archive (not
+interchangeable builds), and **no version to compare** is reported rather than
+passed silently — an absence of evidence must never render as agreement.
+
+It records and compares; it does not force a version at install time. Pinning
+on install needs every provider to be able to express one and only `go` can
+today, so a lock that claimed to hold pins would be holding about a fifth of
+them. Reporting exactly where a box diverges is the half a disputed finding
+needs, and it is a claim this can actually support.
+
 | Loadout | For |
 |---|---|
 | `pentester-web` | Web application testing |
@@ -495,6 +520,7 @@ entry uses it yet — adding one is a pull request, not a code change.
 | `$XDG_STATE_HOME/loadout/state.db` | Installs, history, stars, provenance |
 | `$XDG_DATA_HOME/loadout/catalog.db` | The compiled catalog |
 | `./loadout.yaml` | Project manifest for `loadout sync` |
+| `./loadout.lock` | What those ids resolved to, for `loadout lock --check` |
 
 | Variable | Effect |
 |---|---|

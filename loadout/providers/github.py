@@ -219,6 +219,10 @@ class GithubReleaseProvider(Provider):
     ) -> None:
         release = self._fetch_release(repo, tag)
         assets = self._assets_of(release, repo)
+        # The resolved tag, not the requested one: `latest` is what most
+        # entries ask for, and "latest" is not a version anybody can rebuild
+        # from six months later.
+        ctx.installed_version = str(release.get("tag_name") or tag or "")
 
         asset = self._select_asset(assets, pattern)
         if asset is None:

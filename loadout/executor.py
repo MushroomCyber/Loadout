@@ -129,6 +129,13 @@ class ExecContext:
     allow_unverified: bool = False
     dry_run: bool = False
     tool_id: str = ""
+    #: The version a provider resolved during the install, when only the
+    #: install knows it. A GitHub release install is the case: it downloads a
+    #: specific tag and then nothing on disk records which, so
+    #: `installed_version()` could only answer "the binary exists" and
+    #: `loadout.lock` had nothing to pin for the provider where pinning
+    #: matters most.
+    installed_version: str = ""
     #: Every verification a provider reported for this action, in order --
     #: e.g. [("signature", True), ("checksum", True)] or [("checksum", False)]
     #: for "no checksum published". Read back by the executor to persist a
@@ -285,9 +292,13 @@ class Executor:
             from .providers import get_provider
 
             provider = get_provider(action.provider)
-            version = provider.installed_version(action.tool, action.method) or ""
+            version = (
+                context.installed_version
+                or provider.installed_version(action.tool, action.method)
+                or ""
+            )
         except Exception:
-            version = ""
+            version = context.installed_version or ""
         verify_method, verify_ok = _summarize_verification(context.verify_checks)
         try:
             installed = action.action == ACTION_INSTALL
