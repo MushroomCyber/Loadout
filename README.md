@@ -322,6 +322,17 @@ loadout audit                   # unmaintained, superseded or unverified tooling
 loadout history --tool nuclei
 ```
 
+The report carries how each tool's download was checked, and names the ones that
+arrived unchecked in a section of their own — with the `--allow-unverified` that
+permitted it, where that is what happened. Three outcomes are kept apart rather
+than merged: a check that passed (named by method, `checksum` or `gpg`), a
+provider with no check of ours to run (`n/a` — apt verifies its own package
+signatures), and a check that ran with nothing to verify against. Only the last
+is an unverified install, and it is the one a challenged finding asks about.
+
+This is read out of the install history rather than current state, so it survives
+a reinstall and still answers for a tool that has since been removed.
+
 ### Take it elsewhere
 
 ```bash

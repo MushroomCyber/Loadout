@@ -290,11 +290,17 @@ class Executor:
                 version=version,
                 verification=(verify_method, verify_ok),
             )
+            audit = verification_detail(
+                context.verify_checks, allow_unverified=self.allow_unverified
+            )
             self.state.record(
                 action.action,
                 action.tool.id,
                 success=True,
-                detail=f"provider={action.provider} elapsed={elapsed:.1f}s version={version}",
+                detail=(
+                    f"provider={action.provider} elapsed={elapsed:.1f}s "
+                    f"version={version} {audit}"
+                ),
             )
         except Exception as exc:  # pragma: no cover - state is best effort
             logger.debug("state record failed: %s", exc)
@@ -411,6 +417,38 @@ def _summarize_verification(checks: list[tuple[str, bool]]) -> tuple[str, bool]:
     if passed:
         return "+".join(passed), True
     return checks[-1][0], False
+
+
+#: No verification step of ours ran, which is not the same as one that ran and
+#: found nothing: apt verifies its own package signatures, and reporting that
+#: as an unverified install would bury the ones that really are.
+VERIFY_NOT_APPLICABLE = "n/a"
+
+#: A check ran and had nothing to check against -- a github release with no
+#: published checksum and no signature. Only reachable at all because
+#: ``--allow-unverified`` was passed; without it the install refuses.
+VERIFY_NONE = "none"
+
+
+def verification_detail(
+    checks: list[tuple[str, bool]], *, allow_unverified: bool
+) -> str:
+    """The audit fact written into the history row, as ``key=value`` tokens.
+
+    Without this the state row is the only record of how a binary was checked,
+    and it holds one row per tool -- overwritten by the next install and gone
+    for anything since removed. A report asked months later which binaries
+    arrived unchecked has to read a log of what happened, not a snapshot of
+    what is currently true.
+    """
+    method, ok = _summarize_verification(checks)
+    if not checks:
+        return f"verify={VERIFY_NOT_APPLICABLE}"
+    if ok:
+        return f"verify={method}"
+    if allow_unverified:
+        return f"verify={VERIFY_NONE} allow_unverified=yes"
+    return f"verify={VERIFY_NONE}"
 
 
 def _insert_options(argv: list[str], options: list[str]) -> list[str]:
