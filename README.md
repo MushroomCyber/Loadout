@@ -83,6 +83,27 @@ loadout doctor
 > source checkout and is installed from the checkout with `pip install -e .` or
 > `pipx install --editable .`.
 
+### Cutting a release
+
+Pushing a `v*` tag builds an sdist and a wheel, installs the wheel into a clean
+interpreter and runs it, then attaches the distributions and the three shell
+completion scripts to a GitHub Release.
+
+```bash
+# bump both, then tag — the workflow refuses if the three disagree
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+The version is written in `pyproject.toml` and in `loadout/__init__.py`, and a
+tag is a third claim about it. All three must agree or the release fails before
+anything is built: artifacts whose contents disagree with their own filename
+are discovered by whoever installs them.
+
+PyPI publishing is wired but switched off. It needs Trusted Publishing
+configured on PyPI and the `PUBLISH_TO_PYPI` repository variable set to
+`true` — left inert so the wiring can be reviewed before it is ever able to
+publish.
+
 ### Kali / Linux quick start
 
 On Kali, Debian, Ubuntu, or most Linux hosts:

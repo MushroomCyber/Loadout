@@ -1,0 +1,122 @@
+name: Release
+
+# Cutting a release is deliberately a tag push and nothing else: no button
+# that publishes from an arbitrary branch, and no schedule that could ship
+# whatever happened to land that week.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # The version lives in two files and the tag is a third claim about it. A
+  # mismatch produces a release whose artifacts disagree with their own name,
+  # which is discovered by whoever installs it -- so it fails here instead.
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Tag matches the packaged version
+        run: |
+          python - <<'PY'
+          import os, re, sys, tomllib
+          from pathlib import Path
+
+          tag = os.environ["GITHUB_REF_NAME"].lstrip("v")
+          pyproject = tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]
+          source = re.search(
+              r'__version__\s*=\s*"([^"]+)"', Path("loadout/__init__.py").read_text()
+          ).group(1)
+
+          if not (tag == pyproject == source):
+              print(f"::error::tag {tag!r}, pyproject {pyproject!r}, "
+                    f"__version__ {source!r} must all agree")
+              sys.exit(1)
+          print(f"version {tag} agrees across tag, pyproject.toml and __init__.py")
+          PY
+
+  build:
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip build
+      - run: python -m build
+
+      # A wheel that imports on the machine that built it proves very little.
+      # Installing into a clean interpreter is what catches a missing package
+      # in `[tool.setuptools]` or a data file that never made it in -- the
+      # catalog is 800KB of that, and without it the tool has nothing to show.
+      - name: The wheel works on its own
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install --quiet dist/*.whl
+          /tmp/clean/bin/loadout --version
+          /tmp/clean/bin/loadout catalog info --json
+          /tmp/clean/bin/loadout search nmap --json > /dev/null
+          test "$(/tmp/clean/bin/loadout completions bash | wc -l)" -gt 10
+
+      - name: Shell completions, as release assets
+        run: |
+          mkdir -p dist/completions
+          for shell in bash zsh fish; do
+            /tmp/clean/bin/loadout completions "$shell" > "dist/completions/loadout.$shell"
+          done
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: dist
+          path: dist/
+
+  github-release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: dist
+          path: dist
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --repo "${{ github.repository }}" \
+            --title "$TAG" \
+            --generate-notes \
+            dist/*.whl dist/*.tar.gz dist/completions/*
+
+  # Inert until someone configures Trusted Publishing on PyPI and sets the
+  # `publish_to_pypi` repository variable. Left switched off rather than
+  # omitted so the wiring is reviewable before it can ever run: a workflow
+  # that starts publishing the first time it is merged is not reviewable.
+  pypi:
+    needs: build
+    if: vars.PUBLISH_TO_PYPI == 'true'
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: dist
+          path: dist
+      - name: Only the distributions, never the completions
+        run: rm -rf dist/completions
+      - uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc  # v1.12.4
