@@ -4,6 +4,8 @@ description: Username guessing tool primarily for use against the default Solari
   either EXPN, VRFY or RCPT TO.
 categories:
 - recon
+binaries:
+- smtp-user-enum
 homepage: http://pentestmonkey.net/tools/user-enumeration/smtp-user-enum
 size: 100352
 install:

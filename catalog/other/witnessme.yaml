@@ -5,6 +5,10 @@ description: This package contains a Web Inventory tool inspired by Eyewitness, 
   it drives in the back-end.
 categories:
 - other
+binaries:
+- witnessme
+- wmapi
+- wmdb
 homepage: https://github.com/byt3bl33d3r/WitnessMe
 size: 411648
 install:

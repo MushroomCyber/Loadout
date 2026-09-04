@@ -6,6 +6,8 @@ description: This package contains experimental scripts. They are PoCs that show
   using AWDL (AirDrop).
 categories:
 - other
+binaries:
+- apple-bleee
 homepage: https://github.com/hexway/apple_bleee
 size: 24687616
 install:

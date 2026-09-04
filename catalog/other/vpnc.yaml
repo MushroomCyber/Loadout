@@ -7,6 +7,12 @@ description: 'vpnc is a VPN client compatible with cisco3000 VPN Concentrator (a
   group settings.'
 categories:
 - network
+binaries:
+- vpnc
+- cisco-decrypt
+- pcf2vpnc
+- vpnc-connect
+- vpnc-disconnect
 homepage: https://github.com/streambinder/vpnc
 size: 239616
 install:

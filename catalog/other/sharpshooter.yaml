@@ -5,6 +5,8 @@ description: SharpShooter is a payload creation framework for the retrieval and 
   HTA, JS, VBS and WSF.
 categories:
 - other
+binaries:
+- sharpshooter
 homepage: https://github.com/mdsecactivebreach/SharpShooter
 size: 550912
 install:

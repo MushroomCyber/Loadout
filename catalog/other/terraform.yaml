@@ -12,6 +12,8 @@ description: 'This package contains a tool for building, changing, and versionin
   call apply. This lets you avoid any surprises when Terraform manipulates infrastructure. * Resour'
 categories:
 - other
+binaries:
+- terraform
 homepage: https://github.com/hashicorp/terraform
 size: 80915456
 install:

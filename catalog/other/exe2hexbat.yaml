@@ -3,6 +3,8 @@ summary: Convert EXE to bat
 description: A Python script to convert a Windows PE executable file to a batch file and vice versa.
 categories:
 - post-exploitation
+binaries:
+- exe2hex
 homepage: https://github.com/g0tmi1k/exe2hex/
 size: 37888
 install:

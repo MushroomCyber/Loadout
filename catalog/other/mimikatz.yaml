@@ -4,6 +4,8 @@ description: Mimikatz uses admin rights on Windows to display passwords of curre
   plaintext.
 categories:
 - password
+binaries:
+- mimikatz
 homepage: https://blog.gentilkiwi.com/mimikatz
 size: 2670592
 install:

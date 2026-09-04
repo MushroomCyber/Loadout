@@ -7,6 +7,10 @@ description: 'The Teredo IPv6 tunneling protocol encapsulates IPv6 packets into 
   Teredo clients.'
 categories:
 - post-exploitation
+binaries:
+- miredo
+- miredo-checkconf
+- teredo-mire
 homepage: http://www.remlab.net/miredo/
 size: 397312
 install:

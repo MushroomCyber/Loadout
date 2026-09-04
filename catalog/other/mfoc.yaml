@@ -6,6 +6,8 @@ description: 'MFOC is an open source implementation of "offline nested" attack b
   (user provided using command line).'
 categories:
 - other
+binaries:
+- mfoc
 homepage: https://github.com/nfc-tools/mfoc
 size: 70656
 install:

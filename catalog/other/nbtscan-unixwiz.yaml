@@ -5,6 +5,8 @@ description: This package contains a command-line tool that scans for open NETBI
   of the standard Windows tool nbtstat, but it operates on a range of addresses instead of just one.
 categories:
 - other
+binaries:
+- nbtscan-unixwiz
 homepage: http://unixwiz.net/tools/nbtscan.html
 size: 54272
 install:

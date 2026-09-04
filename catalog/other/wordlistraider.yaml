@@ -6,6 +6,8 @@ description: This package contains a Python tool for preparing existing wordlist
   unnecessary requests.
 categories:
 - other
+binaries:
+- wordlistraider
 homepage: https://github.com/GregorBiswanger/WordlistRaider
 size: 30720
 install:

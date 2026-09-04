@@ -4,6 +4,8 @@ description: Like to snmpwalk, snmpcheck allows you to enumerate the SNMP device
   in a very human readable friendly format. It could be useful for penetration testing or systems monitoring.
 categories:
 - recon
+binaries:
+- snmp-check
 homepage: http://www.nothink.org/codes/snmpcheck/index.php
 size: 47104
 install:

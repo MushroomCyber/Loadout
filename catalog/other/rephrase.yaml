@@ -6,6 +6,8 @@ description: If you can nearly remember your GnuPG passphrase - but not quite - 
   and tell you which combination (if any) gives you the correct passphrase.
 categories:
 - forensics
+binaries:
+- rephrase
 homepage: https://www.roguedaemon.net/rephrase/
 size: 44032
 install:

@@ -5,6 +5,9 @@ description: If you are auditing WPA-PSK or WPA2-PSK networks, you can use this 
   handshake, a dictionary file of passphrases to guess with, and the SSID for the network.
 categories:
 - wireless
+binaries:
+- cowpatty
+- genpmk
 homepage: https://www.willhackforsushi.com/?page_id=50
 size: 74752
 install:

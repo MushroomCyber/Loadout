@@ -8,6 +8,8 @@ categories:
 - password
 tags:
 - wordlists
+binaries:
+- crunch
 homepage: http://sourceforge.net/projects/crunch-wordlist/
 size: 86016
 install:

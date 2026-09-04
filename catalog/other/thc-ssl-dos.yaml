@@ -8,6 +8,8 @@ description: THC-SSL-DOS is a tool to verify the performance of SSL. Establishin
   via single TCP connection.
 categories:
 - vuln-scan
+binaries:
+- thc-ssl-dos
 homepage: http://www.thc.org/thc-ssl-dos/
 size: 35840
 install:

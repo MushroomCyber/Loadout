@@ -4,6 +4,8 @@ description: ldeep is an in-depth ldap enumeration utility that can either run a
   LDAP server or locally on saved files.
 categories:
 - other
+binaries:
+- ldeep
 homepage: https://github.com/franc-pentest/ldeep
 size: 260096
 install:

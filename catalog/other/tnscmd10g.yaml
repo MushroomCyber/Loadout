@@ -3,6 +3,8 @@ summary: Tool to prod the oracle tnslsnr process
 description: A tool to prod the oracle tnslsnr process on port 1521/tcp.
 categories:
 - web
+binaries:
+- tnscmd10g
 homepage: http://www.red-database-security.com/
 size: 18432
 install:

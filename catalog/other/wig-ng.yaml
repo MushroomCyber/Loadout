@@ -6,6 +6,9 @@ description: 'This package contains WIG (Wi-Fi Information Gathering), a utility
   doesn''t perform channel hopping, use tools such as chopping or airodump-ng.'
 categories:
 - other
+binaries:
+- wig-ng
+- wig-ng.py
 homepage: https://github.com/6e726d/wig-ng
 size: 342016
 install:

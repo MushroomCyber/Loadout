@@ -8,6 +8,8 @@ description: This package contains a simple tool for using a PowerShell downgrad
   line window or through a payload delivery system.
 categories:
 - web
+binaries:
+- unicorn-magic
 homepage: https://github.com/trustedsec/unicorn
 size: 101376
 install:

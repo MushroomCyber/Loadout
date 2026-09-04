@@ -5,6 +5,8 @@ description: This package contains a CMS Detection and Exploitation suite. It sc
   of digital content. It typically supports multiple users in a collaborative environment.
 categories:
 - other
+binaries:
+- cmseek
 homepage: https://github.com/Tuhinshubhra/CMSeeK
 size: 409600
 install:

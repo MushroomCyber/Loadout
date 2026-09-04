@@ -8,6 +8,8 @@ description: p0f performs passive OS detection based on SYN packets. Unlike nmap
   has an extensible and detailed fingerprinting database.
 categories:
 - recon
+binaries:
+- p0f
 homepage: https://lcamtuf.coredump.cx/p0f3/
 size: 223232
 install:

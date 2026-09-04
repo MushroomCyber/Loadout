@@ -8,6 +8,9 @@ description: EyeWitness is designed to take screenshots of websites, provide som
   a web page. The --open flag, which is optional, will open the URL in a new tab within Firefox.
 categories:
 - recon
+binaries:
+- eyewitness
+- geckodriver
 homepage: https://www.christophertruncer.com/eyewitness-triage-tool/
 size: 6066176
 install:

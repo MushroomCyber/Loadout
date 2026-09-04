@@ -8,6 +8,8 @@ description: 'This package includes a fast and flexible crawler designed for ope
   information is saved in an organized manner or can be exported as json.'
 categories:
 - other
+binaries:
+- photon
 homepage: https://github.com/s0md3v/Photon
 size: 61440
 install:

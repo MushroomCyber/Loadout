@@ -3,6 +3,8 @@ summary: Command line filetype search
 description: Use this tool to search for a specific file type in a given domain.
 categories:
 - other
+binaries:
+- goofile
 homepage: https://github.com/sosukeinu/goofile
 size: 37888
 install:

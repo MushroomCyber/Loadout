@@ -11,6 +11,10 @@ description: 'Magic Rescue scans a block device for file types it knows how to r
   carver and it is useful in forensics investigations.'
 categories:
 - forensics
+binaries:
+- magicrescue
+- dupemap
+- magicsort
 homepage: https://github.com/jbj/magicrescue
 size: 263168
 install:

@@ -8,6 +8,8 @@ description: EAP-MD5 is a legacy authentication mechanism that does not provide 
   offline dictionary attack against the user's password.
 categories:
 - wireless
+binaries:
+- eapmd5pass
 homepage: https://www.willhackforsushi.com/?page_id=67
 size: 104448
 install:

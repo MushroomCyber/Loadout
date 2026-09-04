@@ -4,6 +4,9 @@ description: Uniscan is a simple Remote File Include, Local File Include and Rem
   vulnerability scanner.
 categories:
 - web
+binaries:
+- uniscan
+- uniscan-gui
 homepage: https://sourceforge.net/projects/uniscan/
 size: 1257472
 install:

@@ -7,6 +7,10 @@ description: 'This package contains a modern and sophisticated insecure web appl
   facing servers, as they will be compromised.'
 categories:
 - other
+binaries:
+- juice-shop
+- juice-shop-start
+- juice-shop-stop
 homepage: https://github.com/juice-shop/juice-shop
 size: 1123794944
 install:

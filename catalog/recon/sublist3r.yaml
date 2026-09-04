@@ -10,6 +10,8 @@ categories:
 - recon
 tags:
 - subdomains
+binaries:
+- sublist3r
 homepage: https://github.com/aboul3la/Sublist3r
 alternatives:
 - subfinder

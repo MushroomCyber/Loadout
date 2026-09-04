@@ -5,6 +5,8 @@ description: Cabextract is a program which unpacks cabinet (.cab) files, which a
 categories:
 - forensics
 size: 84992
+binaries:
+- cabextract
 install:
 - provider: apt
   package: cabextract

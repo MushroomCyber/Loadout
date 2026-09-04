@@ -11,6 +11,8 @@ description: 'This package contains a tool to find a company (target) infrastruc
   * Linode: - Storage * Alibaba: - Storage'
 categories:
 - other
+binaries:
+- cloudbrute
 homepage: https://github.com/0xsha/cloudbrute
 size: 6457344
 install:

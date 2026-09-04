@@ -8,6 +8,8 @@ description: 'Cilium’s new Tetragon component enables powerful realtime, eBPF-
   relation to individual workloads. This package contains the tool tetra CLI.'
 categories:
 - other
+binaries:
+- tetra
 homepage: https://github.com/cilium/tetragon
 size: 53168128
 install:

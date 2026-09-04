@@ -6,6 +6,8 @@ description: Kustomize is a standalone binary tool for managing Kubernetes confi
   functionality like applying patches, setting images, and managing common labels and annotations.
 categories:
 - other
+binaries:
+- kustomize
 homepage: https://github.com/kubernetes-sigs/kustomize
 size: 23992320
 install:

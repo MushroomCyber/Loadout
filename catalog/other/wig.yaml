@@ -11,6 +11,8 @@ description: This package contains a web application information gathering tool,
   and version.
 categories:
 - other
+binaries:
+- wig
 homepage: https://github.com/jekyc/wig
 size: 6677504
 install:

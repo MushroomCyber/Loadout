@@ -6,6 +6,8 @@ description: Hubble is a fully distributed networking and security observability
   infrastructure in a completely transparent manner.
 categories:
 - other
+binaries:
+- hubble
 homepage: https://github.com/cilium/hubble
 size: 109249536
 install:

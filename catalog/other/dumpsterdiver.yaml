@@ -10,6 +10,8 @@ description: 'This package contains a tool, which can analyze big volumes of dat
   job with far better detectors.'
 categories:
 - other
+binaries:
+- DumpsterDiver
 homepage: https://github.com/securing/DumpsterDiver
 size: 45056
 install:

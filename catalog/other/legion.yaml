@@ -5,6 +5,8 @@ description: This package contains an open source, easy-to-use, super-extensible
   Legion is a fork of SECFORCE's Sparta.
 categories:
 - recon
+binaries:
+- legion
 homepage: https://github.com/Hackman238/legion
 size: 7878656
 install:

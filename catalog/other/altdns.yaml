@@ -8,6 +8,8 @@ description: This package contains a DNS recon tool that allows for the discover
   DNS bruteforcing tool.
 categories:
 - other
+binaries:
+- altdns
 homepage: https://github.com/infosec-au/altdns
 size: 47104
 install:

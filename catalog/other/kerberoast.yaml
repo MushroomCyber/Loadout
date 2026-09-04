@@ -5,6 +5,8 @@ description: 'This package contains a series of tools for attacking MS Kerberos 
   - crack with tgsrepcrack - request Ticket(s) - etc'
 categories:
 - other
+binaries:
+- kerberoast
 homepage: https://github.com/nidem/kerberoast
 size: 82944
 install:

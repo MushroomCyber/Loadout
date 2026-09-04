@@ -6,6 +6,8 @@ description: Cutecom is a graphical serial terminal, like minicom. It is aimed m
   and output among other things. It is written using the Qt library originally by Trolltech (www.trolltech.com).
 categories:
 - hardware
+binaries:
+- cutecom
 homepage: https://gitlab.com/cutecom/cutecom
 size: 756736
 install:

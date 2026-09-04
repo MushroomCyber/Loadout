@@ -6,6 +6,8 @@ categories:
 - vuln-scan
 tags:
 - fuzzing
+binaries:
+- bed
 homepage: http://www.snake-basket.de
 size: 74752
 install:

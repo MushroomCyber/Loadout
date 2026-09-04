@@ -8,6 +8,8 @@ description: In the case of WPA/WPA2, by running airodump-ng along side this you
   what is going on. All sessions are labelled so you know which is which.
 categories:
 - wireless
+binaries:
+- wifi-honey
 homepage: https://www.digininja.org/projects/wifi_honey.php
 size: 16384
 install:

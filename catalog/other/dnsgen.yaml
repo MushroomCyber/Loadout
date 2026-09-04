@@ -4,6 +4,8 @@ description: This package provides a generator of a combination of domain names 
   Combinations are created based on wordlist. Custom words are extracted per execution.
 categories:
 - other
+binaries:
+- dnsgen
 homepage: https://github.com/ProjectAnte/dnsgen
 size: 37888
 install:

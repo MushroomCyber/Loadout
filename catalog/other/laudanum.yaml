@@ -5,6 +5,8 @@ description: Laudanum is a collection of injectable files, designed to be used i
   such as shell, DNS query, LDAP retrieval and others.
 categories:
 - web
+binaries:
+- laudanum
 homepage: https://sourceforge.net/projects/laudanum/
 size: 203776
 install:

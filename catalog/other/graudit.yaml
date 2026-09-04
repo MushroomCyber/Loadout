@@ -5,6 +5,8 @@ description: This is a simple script and signature sets that allows you to find 
   RATS, SWAAT and flaw-finder while keeping the technical requirements to a minimum and being very flexible.
 categories:
 - other
+binaries:
+- graudit
 homepage: https://github.com/wireghoul/graudit
 size: 120832
 install:

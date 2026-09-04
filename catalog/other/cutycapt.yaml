@@ -5,6 +5,8 @@ description: CutyCapt is a small cross-platform command-line utility to capture 
   and BMP.
 categories:
 - web
+binaries:
+- cutycapt
 homepage: https://github.com/Crystalix007/CutyCapt
 size: 77824
 install:

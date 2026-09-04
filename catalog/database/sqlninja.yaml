@@ -8,6 +8,8 @@ categories:
 - database
 tags:
 - mssql
+binaries:
+- sqlninja
 homepage: https://sqlninja.sourceforge.net/
 size: 1056768
 install:

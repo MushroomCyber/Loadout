@@ -6,6 +6,13 @@ description: Arpwatch maintains a database of Ethernet MAC addresses seen on the
   manually, take a look at the arpalert package which may fit your needs better.
 categories:
 - recon
+binaries:
+- arpwatch
+- arp2ethers
+- arpfetch
+- arpsnmp
+- bihourly
+- massagevendor
 homepage: https://ee.lbl.gov/
 size: 156672
 install:

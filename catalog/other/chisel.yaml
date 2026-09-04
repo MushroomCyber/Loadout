@@ -5,6 +5,8 @@ description: This package contains a fast TCP/UDP tunnel, transported over HTTP,
   though it can also be used to provide a secure endpoint into your network.
 categories:
 - other
+binaries:
+- chisel
 homepage: https://github.com/jpillora/chisel
 size: 10612736
 install:

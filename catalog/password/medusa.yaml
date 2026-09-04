@@ -13,6 +13,8 @@ categories:
 - password
 tags:
 - online
+binaries:
+- medusa
 homepage: http://foofus.net/?page_id=51
 size: 863232
 install:

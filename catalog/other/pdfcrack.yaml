@@ -11,6 +11,8 @@ description: 'PDFCrack is a simple tool for recovering passwords from pdf-docume
   crack.'
 categories:
 - password
+binaries:
+- pdfcrack
 homepage: http://pdfcrack.sf.net
 size: 91136
 install:

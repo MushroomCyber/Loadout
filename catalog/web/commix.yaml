@@ -9,6 +9,8 @@ categories:
 - web
 tags:
 - injection
+binaries:
+- commix
 homepage: https://commixproject.com
 size: 1161216
 install:

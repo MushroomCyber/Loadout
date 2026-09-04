@@ -8,6 +8,10 @@ description: 'A set of Python scripts/utilities that tries to make password spra
   and is maintained.'
 categories:
 - other
+binaries:
+- sprayingtoolkit
+- atomizer
+- spindrift
 homepage: https://github.com/byt3bl33d3r/SprayingToolkit
 size: 80896
 install:

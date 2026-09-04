@@ -5,6 +5,8 @@ description: This package contains getallurls (gau). It fetches known URLs from 
   by Tomnomnom's waybackurls.
 categories:
 - other
+binaries:
+- getallurls
 homepage: https://github.com/lc/gau
 size: 6739968
 install:

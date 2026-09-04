@@ -5,6 +5,8 @@ description: 'This package provides tweaks for Kali Linux. This include things l
   * Additional configuration for virtualized environments * Kernel settings'
 categories:
 - other
+binaries:
+- kali-tweaks
 homepage: https://gitlab.com/kalilinux/packages/kali-tweaks
 size: 160768
 install:

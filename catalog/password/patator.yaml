@@ -3,6 +3,8 @@ categories:
 - password
 tags:
 - online
+binaries:
+- patator
 install:
 - provider: apt
   package: patator

@@ -10,6 +10,8 @@ description: Rebind is a tool that implements the multiple A record DNS rebindin
 categories:
 - sniffing
 size: 2774016
+binaries:
+- dns-rebind
 install:
 - provider: apt
   package: rebind

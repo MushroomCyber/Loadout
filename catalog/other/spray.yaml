@@ -7,6 +7,8 @@ description: This package contains a Password Spraying tool for Active Directory
   fit in the complex (1 Upper, 1 lower, 1 digit) category.
 categories:
 - other
+binaries:
+- spray
 homepage: https://github.com/Greenwolf/Spray
 size: 40912896
 install:

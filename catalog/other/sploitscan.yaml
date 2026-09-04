@@ -12,6 +12,8 @@ description: 'SploitScan is an efficient and easy-to-use command-line tool desig
   aiming to take preventive measures. - CISA Infrastructure Security Agency - respon'
 categories:
 - other
+binaries:
+- sploitscan
 homepage: https://github.com/xaitax/SploitScan
 size: 275456
 install:

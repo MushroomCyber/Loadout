@@ -10,6 +10,8 @@ categories:
 - post-exploitation
 tags:
 - windows
+binaries:
+- tftpd32
 homepage: https://tftpd32.jounin.net/tftpd32.html
 size: 604160
 install:

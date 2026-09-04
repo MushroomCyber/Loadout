@@ -8,6 +8,11 @@ description: 'Siege is an regression test and benchmark utility. It can stress t
   this package contains siege with HTTPS support turned on, thus it obsoletes siege-ssl package now.'
 categories:
 - vuln-scan
+binaries:
+- siege
+- bombardment
+- siege.config
+- siege2csv
 homepage: https://www.joedog.org/JoeDog/Siege
 size: 290816
 install:

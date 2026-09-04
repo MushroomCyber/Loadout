@@ -12,6 +12,8 @@ description: Safecopy tries to get as much data from SOURCE as possible, even re
   retrieve as much data from a device as possible with minimum harm, and then trying to
 categories:
 - forensics
+binaries:
+- safecopy
 homepage: http://safecopy.sf.net
 size: 99328
 install:

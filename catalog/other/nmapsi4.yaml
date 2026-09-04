@@ -4,6 +4,8 @@ description: NmapSI4 is a complete Qt-based Gui with the design goal to provide 
   for users, in order to manage all options of this power security net scanner.
 categories:
 - recon
+binaries:
+- nmapsi4
 homepage: https://www.nmapsi4.org
 size: 1379328
 install:

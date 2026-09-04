@@ -4,6 +4,8 @@ description: DotDotPwn is a very flexible intelligent fuzzer to discover travers
   in software such as HTTP/FTP/TFTP servers, Web platforms such as CMSs, ERPs, Blogs, etc.
 categories:
 - web
+binaries:
+- dotdotpwn
 homepage: https://dotdotpwn.blogspot.ca
 size: 241664
 install:

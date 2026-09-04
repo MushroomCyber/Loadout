@@ -5,6 +5,8 @@ description: This package contains scripts that display info about files in diff
   disassembly ropper uses the Capstone Framework.
 categories:
 - other
+binaries:
+- ropper
 homepage: https://scoding.de/ropper/
 size: 411648
 install:

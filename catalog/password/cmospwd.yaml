@@ -5,6 +5,8 @@ description: CmosPwd is a cross-platform tool to decrypt password stored in CMOS
   BIOSes may not be supported or may require additional steps.
 categories:
 - password
+binaries:
+- cmospwd
 homepage: https://www.cgsecurity.org/wiki/CmosPwd
 size: 66560
 install:

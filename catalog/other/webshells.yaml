@@ -3,6 +3,8 @@ summary: Collection of webshells
 description: A collection of webshells for ASP, ASPX, CFM, JSP, Perl, and PHP servers.
 categories:
 - web
+binaries:
+- webshells
 homepage: https://www.kali.org
 size: 72704
 install:

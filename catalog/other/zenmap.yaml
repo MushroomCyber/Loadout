@@ -5,6 +5,8 @@ description: Zenmap is an Nmap frontend. It is meant to be useful for advanced u
   Summer of Code.
 categories:
 - recon
+binaries:
+- zenmap
 homepage: https://nmap.org/
 size: 1854464
 install:

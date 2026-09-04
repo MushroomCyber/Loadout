@@ -3,6 +3,8 @@ summary: security auditing toolkit (CLI)
 description: This package contains caido CLI, a security auditing toolkit.
 categories:
 - other
+binaries:
+- caido-cli
 homepage: https://github.com/caido/caido
 size: 158941184
 install:

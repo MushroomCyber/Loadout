@@ -3,6 +3,8 @@ summary: Hexadecimal & URL encoder + decoder
 description: This package contains a hexadecimal & URL (en/de)coder.
 categories:
 - other
+binaries:
+- hURL
 homepage: https://github.com/fnord0/hURL
 size: 191488
 install:

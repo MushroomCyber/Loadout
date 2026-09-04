@@ -6,6 +6,13 @@ description: 'FreeRADIUS is a high-performance RADIUS server with support for: -
   attributes. - Regexp matching in string attributes. and lots more.'
 categories:
 - network
+binaries:
+- freeradius
+- checkrad
+- rad_counter
+- raddebug
+- radmin
+- rlm_sqlippool_tool
 homepage: http://www.freeradius.org/
 size: 3516416
 install:

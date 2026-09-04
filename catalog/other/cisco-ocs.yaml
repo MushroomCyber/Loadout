@@ -3,6 +3,8 @@ summary: Mass Cisco scanner
 description: A mass Cisco scanning tool.
 categories:
 - vuln-scan
+binaries:
+- cisco-ocs
 homepage: http://hacklab.altervista.org/
 size: 25600
 install:

@@ -5,6 +5,8 @@ description: This package provides a wrapper around nmap, and distribute scans a
   supports resume.
 categories:
 - other
+binaries:
+- dscan
 homepage: https://github.com/0x4E0x650x6F/dscan
 size: 97280
 install:

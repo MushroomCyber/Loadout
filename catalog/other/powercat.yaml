@@ -6,6 +6,8 @@ categories:
 - post-exploitation
 tags:
 - windows
+binaries:
+- powercat
 homepage: https://github.com/besimorhino/powercat
 size: 56320
 install:

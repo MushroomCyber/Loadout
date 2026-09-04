@@ -5,6 +5,8 @@ description: Cutter is a free and open-source reverse engineering platform power
   mind. Cutter is created by reverse engineers for reverse engineers.
 categories:
 - reverse
+binaries:
+- cutter
 homepage: https://cutter.re
 size: 9055232
 install:

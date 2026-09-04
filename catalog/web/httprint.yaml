@@ -10,6 +10,8 @@ categories:
 - web
 tags:
 - fingerprint
+binaries:
+- httprint
 homepage: https://www.net-square.com/httprint.html
 size: 1521664
 install:

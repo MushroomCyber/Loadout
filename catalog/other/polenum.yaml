@@ -6,6 +6,8 @@ description: polenum is a Python script which uses the Impacket Library from COR
   access to a windows machine.
 categories:
 - recon
+binaries:
+- polenum
 homepage: https://github.com/Wh1t3Fox/polenum/
 size: 26624
 install:

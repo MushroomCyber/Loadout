@@ -12,6 +12,9 @@ description: 'This package contains hostapd modified with hostapd-wpe.patch. It 
   for this was provided by the Cupid PoC: https://github.com/lgrangeia/cupid hostap'
 categories:
 - wireless
+binaries:
+- hostapd-wpe
+- hostapd-wpe_cli
 homepage: https://github.com/aircrack-ng/aircrack-ng/tree/master/patches/wpe
 size: 2362368
 install:

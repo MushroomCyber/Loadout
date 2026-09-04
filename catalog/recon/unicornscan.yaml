@@ -12,6 +12,12 @@ description: 'Unicornscan is a new information gathering and correlation engine 
   identification by analyzing responses. - PCAP file logging and filtering - Relational data'
 categories:
 - recon
+binaries:
+- unicornscan
+- fantaip
+- unibrow
+- unicfgtst
+- us
 homepage: http://www.unicornscan.org/
 alternatives:
 - masscan

@@ -10,6 +10,8 @@ description: 'This package contains a Network Forensic Analysis Tool (NFAT) that
   On Linux it is a Command Line Interface tool.'
 categories:
 - other
+binaries:
+- brutesharkcli
 homepage: https://github.com/odedshimon/BruteShark
 size: 97823744
 install:

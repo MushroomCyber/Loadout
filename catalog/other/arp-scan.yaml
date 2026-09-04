@@ -4,6 +4,11 @@ description: arp-scan is a command-line tool that uses the ARP protocol to disco
   hosts on the local network. It is available for Linux and BSD under the GPL licence
 categories:
 - recon
+binaries:
+- arp-scan
+- arp-fingerprint
+- get-iab
+- get-oui
 homepage: https://github.com/royhills/arp-scan
 size: 1605632
 install:

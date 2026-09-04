@@ -11,6 +11,8 @@ description: xmount allows you to convert on-the-fly between multiple input and 
   VWware or alike.
 categories:
 - forensics
+binaries:
+- xmount
 homepage: https://www.sits.lu/xmount
 size: 334848
 install:

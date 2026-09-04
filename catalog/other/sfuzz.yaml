@@ -5,6 +5,9 @@ description: In the same vein as the Generic Protocol Framework, sfuzz is a real
   to use, but fairly powerful and flexible black box testing utility.
 categories:
 - vuln-scan
+binaries:
+- sfuzz
+- sfo
 homepage: http://aconole.brad-x.com/programs/sfuzz.html
 size: 195584
 install:

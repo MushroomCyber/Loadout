@@ -6,6 +6,8 @@ description: This package provides a free, open-source database (http://opendata
   domains and subdomains.
 categories:
 - other
+binaries:
+- zonedb
 homepage: https://github.com/zonedb/zonedb
 size: 15587328
 install:

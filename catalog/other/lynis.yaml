@@ -6,6 +6,8 @@ description: Lynis is an auditing tool for hardening GNU/Linux and Unix based sy
   scanners, system benchmarking and fine-tuning tools.
 categories:
 - vuln-scan
+binaries:
+- lynis
 homepage: https://cisofy.com/lynis/
 size: 1763328
 install:

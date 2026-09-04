@@ -7,6 +7,8 @@ description: Inspired by EtherPEG, Driftnet is a program which listens to networ
   it.)
 categories:
 - sniffing
+binaries:
+- driftnet
 homepage: https://github.com/deiv/driftnet
 size: 110592
 install:

@@ -6,6 +6,8 @@ description: 'Multi-protocol packet injector tool for *nix systems, actually sup
   per second.'
 categories:
 - vuln-scan
+binaries:
+- t50
 homepage: https://gitlab.com/fredericopissarra/t50
 size: 117760
 install:

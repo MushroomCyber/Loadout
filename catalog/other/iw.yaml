@@ -6,6 +6,8 @@ description: This package contains the 'iw' command line tool which allows one t
   it is strongly recommended to switch to iw and nl80211.
 categories:
 - wireless
+binaries:
+- iw
 homepage: https://wireless.wiki.kernel.org/en/users/documentation/iw
 size: 339968
 install:

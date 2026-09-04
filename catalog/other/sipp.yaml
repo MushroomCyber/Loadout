@@ -8,6 +8,8 @@ description: SIPp is a free Open Source test tool / traffic generator for the SI
   sockets or multiplexed with retransmission management and dynamically adjustable call rates.
 categories:
 - vuln-scan
+binaries:
+- sipp
 homepage: https://sipp.sourceforge.net/
 size: 752640
 install:

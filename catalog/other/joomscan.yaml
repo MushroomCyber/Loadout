@@ -4,6 +4,8 @@ description: This package contains JoomScan, short for [Joom]la Vulnerability [S
   in perl programming language to detect Joomla CMS vulnerabilities and analysis them.
 categories:
 - web
+binaries:
+- joomscan
 homepage: https://www.owasp.org/index.php/Category:OWASP_Joomla_Vulnerability_Scanner_Project
 size: 280576
 install:

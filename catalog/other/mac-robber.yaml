@@ -12,6 +12,8 @@ description: mac-robber is a digital investigation tool (digital forensics) that
   filesystem analysis tools. You can run mac-robber on an obscure, suspect UNIX filesystem t
 categories:
 - forensics
+binaries:
+- mac-robber
 homepage: https://www.sleuthkit.org/mac-robber
 size: 35840
 install:

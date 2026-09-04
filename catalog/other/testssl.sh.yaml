@@ -12,6 +12,8 @@ description: 'testssl.sh is a free command line tool which checks a server''s se
   at the code, see what''s going on and you can change it. Heck, even the development is open (gi'
 categories:
 - other
+binaries:
+- testssl
 homepage: https://testssl.sh/
 size: 3696640
 install:

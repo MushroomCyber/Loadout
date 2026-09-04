@@ -7,6 +7,17 @@ description: Firewall Builder consists of an object-oriented GUI and a set of po
   drag-and-drop operations. This is the GUI part of fwbuilder
 categories:
 - network
+binaries:
+- fwbuilder
+- fwb_compile_all
+- fwb_iosacl
+- fwb_ipf
+- fwb_ipfw
+- fwb_ipt
+- fwb_pf
+- fwb_pix
+- fwb_procurve_acl
+- fwbedit
 homepage: https://github.com/fwbuilder/fwbuilder/
 size: 41763840
 install:

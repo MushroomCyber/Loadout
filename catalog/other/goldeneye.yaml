@@ -10,6 +10,8 @@ description: 'GoldenEye is a HTTP DoS Test Tool. This tool can be used to test i
   reference rather than recommended.'
 categories:
 - other
+binaries:
+- goldeneye
 homepage: https://github.com/jseidl/GoldenEye
 size: 986112
 install:

@@ -8,6 +8,8 @@ description: HTTrack is an offline browser utility, allowing you to download a W
   interrupted downloads. HTTrack is fully configurable, and has an integrated help system.
 categories:
 - web
+binaries:
+- httrack
 homepage: http://www.httrack.com
 size: 67584
 install:

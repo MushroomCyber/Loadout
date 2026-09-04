@@ -7,6 +7,12 @@ description: ccrypt is a utility for encrypting and decrypting files and streams
   very strong security.
 categories:
 - crypto
+binaries:
+- ccrypt
+- ccat
+- ccdecrypt
+- ccencrypt
+- ccguess
 homepage: https://ccrypt.sourceforge.net/
 size: 184320
 install:

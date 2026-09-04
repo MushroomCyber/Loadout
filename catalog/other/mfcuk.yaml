@@ -7,6 +7,8 @@ description: 'Toolkit containing samples and various tools based on and around l
   weaknesses/attacks.'
 categories:
 - other
+binaries:
+- mfcuk
 homepage: https://github.com/nfc-tools/mfcuk
 size: 89088
 install:

@@ -4,6 +4,8 @@ description: Rubeus is a C# toolset for raw Kerberos interaction and abuses. It 
   Benjamin Delpy's Kekeo project and Vincent LE TOUX's MakeMeEnterpriseAdmin project.
 categories:
 - other
+binaries:
+- rubeus
 homepage: https://github.com/GhostPack/Rubeus
 size: 296960
 install:

@@ -5,6 +5,8 @@ description: VoIP Hopper is a GPLv3 licensed security tool, written in C that ra
   be used to test the (in)security of VLANs.
 categories:
 - vuln-scan
+binaries:
+- voiphopper
 homepage: https://sourceforge.net/projects/voiphopper
 size: 133120
 install:

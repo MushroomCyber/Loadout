@@ -6,6 +6,8 @@ description: 'swaks (Swiss Army Knife SMTP) is a command-line tool written in Pe
   spending too much time iterating "telnet foo.example 25" swaks is for you.'
 categories:
 - recon
+binaries:
+- swaks
 homepage: https://www.jetmore.org/john/code/swaks/
 size: 319488
 install:

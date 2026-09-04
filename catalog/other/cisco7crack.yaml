@@ -7,6 +7,8 @@ description: This tool is used to crack Cisco Type 7 passwords. Can be used to e
   is in use on the Cisco IOS device.
 categories:
 - other
+binaries:
+- cisco7crack
 homepage: https://github.com/madrisan/cisco7crack
 size: 28672
 install:

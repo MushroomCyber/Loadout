@@ -5,6 +5,8 @@ description: This package contains a tool without any pretention able to retriev
   remotely in order to avoid detections by antivirus software as much as possible.
 categories:
 - other
+binaries:
+- spraykatz
 homepage: https://github.com/aas-n/spraykatz
 size: 798720
 install:

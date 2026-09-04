@@ -8,6 +8,8 @@ description: Proxytunnel creates tunnels through HTTP(S) proxies for any TCP bas
   listening on a local port to be forwarded through the tunnel.
 categories:
 - web
+binaries:
+- proxytunnel
 homepage: https://proxytunnel.sourceforge.io/
 size: 100352
 install:

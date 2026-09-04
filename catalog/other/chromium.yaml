@@ -4,6 +4,8 @@ description: Web browser that aims to build a safer, faster, and more stable int
   This package contains the web browser component.
 categories:
 - recon
+binaries:
+- chromium
 homepage: http://www.chromium.org/Home
 size: 307680256
 install:

@@ -6,6 +6,8 @@ description: Trivial File Transfer Protocol (TFTP) is a file transfer protocol, 
   the client.
 categories:
 - network
+binaries:
+- tftp
 homepage: https://git.kernel.org/pub/scm/network/tftp/tftp-hpa.git/
 size: 60416
 install:

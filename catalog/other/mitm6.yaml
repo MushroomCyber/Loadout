@@ -5,6 +5,8 @@ description: mitm6 is a pentesting tool that exploits the default configuration 
   IPv6 address and setting the attackers host as default DNS server.
 categories:
 - other
+binaries:
+- mitm6
 homepage: https://github.com/dirkjanm/mitm6
 size: 40960
 install:

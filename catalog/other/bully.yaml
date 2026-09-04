@@ -6,6 +6,8 @@ description: Bully is a new implementation of the WPS brute force attack, writte
   memory and cpu performance, correct handling of endianness, and a more robust set of options.
 categories:
 - wireless
+binaries:
+- bully
 homepage: https://github.com/kimocoder/bully
 size: 179200
 install:

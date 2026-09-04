@@ -9,6 +9,8 @@ categories:
 - forensics
 tags:
 - carving
+binaries:
+- scalpel
 homepage: https://github.com/nolaforensix/scalpel-1.60
 size: 91136
 install:

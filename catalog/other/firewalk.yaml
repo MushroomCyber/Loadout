@@ -12,6 +12,8 @@ description: Firewalk is an active reconnaissance network security tool that att
   in assessing the security configuration of packet filtering devices, such as those u
 categories:
 - recon
+binaries:
+- firewalk
 homepage: http://packetfactory.openwall.net/projects/firewalk/
 size: 52224
 install:

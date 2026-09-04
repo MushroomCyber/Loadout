@@ -7,6 +7,8 @@ description: 'This package is part of the OpenSSL project''s implementation of t
   with ciphers; * testing SSL/TLS clients and servers; * handling S/MIME signed or encrypted mail.'
 categories:
 - recon
+binaries:
+- openssl
 homepage: https://openssl-library.org
 size: 2586624
 install:

@@ -5,6 +5,8 @@ description: rsakeyfind is a tool that locates BER-encoded RSA private keys in M
   file. This package is useful to several activities, as forensics investigations.
 categories:
 - forensics
+binaries:
+- rsakeyfind
 homepage: https://citp.princeton.edu/our-work/memory/code/
 size: 34816
 install:

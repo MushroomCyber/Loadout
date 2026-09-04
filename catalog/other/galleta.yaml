@@ -4,6 +4,8 @@ description: Galleta is a forensics tool that examines the content of cookie fil
   Internet Explorer (MSIE). It parses the file and outputs a field separated that can be loaded in a spreadsheet.
 categories:
 - forensics
+binaries:
+- galleta
 homepage: https://odessa.sourceforge.net/
 size: 31744
 install:

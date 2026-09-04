@@ -4,6 +4,8 @@ description: Guesses sids/instances against an Oracle database according to a pr
   The speed is slow (80-100 guesses per second) but it does the job.
 categories:
 - web
+binaries:
+- sidguess
 homepage: http://www.cqure.net/wp/tools/database/sidguesser/
 size: 25600
 install:

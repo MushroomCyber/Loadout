@@ -5,6 +5,8 @@ description: vopono is a tool to run applications through VPN tunnels via tempor
   keeping your main connection as normal.
 categories:
 - other
+binaries:
+- vopono
 homepage: https://github.com/jamesmcm/vopono
 size: 13840384
 install:

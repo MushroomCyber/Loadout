@@ -12,6 +12,8 @@ description: 'SQLite Database Browser is a visual tool used to create, design an
   with SQL commands.'
 categories:
 - web
+binaries:
+- sqlitebrowser
 homepage: https://sqlitebrowser.org/
 size: 5829632
 install:

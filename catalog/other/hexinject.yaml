@@ -6,6 +6,11 @@ description: HexInject is a very versatile packet injector and sniffer, that pro
   network traffic in a transparent manner.
 categories:
 - sniffing
+binaries:
+- hexinject
+- hex2raw
+- packets.tcl
+- prettypacket
 homepage: https://hexinject.sourceforge.net/
 size: 102400
 install:

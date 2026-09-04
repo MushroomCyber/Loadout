@@ -8,6 +8,8 @@ description: 'This package contains a pentesting / redteaming tool by Ed William
   * The ability to retrieve hashes across a range; * Hash spraying'
 categories:
 - other
+binaries:
+- redsnarf
 homepage: https://github.com/nccgroup/redsnarf
 size: 12583936
 install:

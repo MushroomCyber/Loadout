@@ -5,6 +5,8 @@ description: This package contains an email OSINT and breach hunting tool using 
   torrent.
 categories:
 - other
+binaries:
+- h8mail
 homepage: https://github.com/khast3x/h8mail
 size: 145408
 install:

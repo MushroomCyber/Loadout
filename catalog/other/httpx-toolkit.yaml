@@ -10,6 +10,8 @@ description: This package contains the httpX toolkit developed by ProjectDiscove
   /usr/bin/httpx.
 categories:
 - recon
+binaries:
+- httpx-toolkit
 homepage: https://github.com/projectdiscovery/httpx
 size: 56858624
 install:

@@ -9,6 +9,8 @@ description: This package contains a CLI tool and Go library for generating a So
   own format.
 categories:
 - other
+binaries:
+- syft
 homepage: https://github.com/anchore/syft
 size: 83992576
 install:

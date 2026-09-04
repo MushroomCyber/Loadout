@@ -12,6 +12,8 @@ description: Wget is a network utility to retrieve files from the web using HTTP
   access behind firewalls.
 categories:
 - recon
+binaries:
+- wget
 homepage: https://www.gnu.org/software/wget/
 size: 3874816
 install:

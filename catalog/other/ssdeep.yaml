@@ -8,6 +8,8 @@ description: ssdeep is a tool for recursive computing and matching of Context Tr
   investigations.
 categories:
 - forensics
+binaries:
+- ssdeep
 homepage: https://github.com/ssdeep-project/ssdeep
 size: 84992
 install:

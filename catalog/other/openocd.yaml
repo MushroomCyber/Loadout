@@ -9,6 +9,8 @@ description: OpenOCD aims to provide debugging, in-system programming and bounda
   with OpenOCD's Jim Tcl engine. OpenOCD supports many different types of JTAG interfaces/programmers.
 categories:
 - hardware
+binaries:
+- openocd
 homepage: http://openocd.sourceforge.net/
 size: 9279488
 install:

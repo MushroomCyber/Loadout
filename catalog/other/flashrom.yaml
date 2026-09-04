@@ -12,6 +12,8 @@ description: 'flashrom is a tool for identifying, reading, writing, verifying an
   nicrealtek (for flash ROMs on Realtek and SMC 1211 network cards) * nicnatsemi (for'
 categories:
 - hardware
+binaries:
+- flashrom
 homepage: http://www.flashrom.org
 size: 1219584
 install:

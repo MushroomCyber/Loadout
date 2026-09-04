@@ -7,6 +7,9 @@ description: curl is a command line tool for transferring data with URL syntax, 
   file transfer resume, proxy tunneling and a busload of other useful tricks.
 categories:
 - recon
+binaries:
+- curl
+- wcurl
 homepage: https://curl.se/
 size: 519168
 install:

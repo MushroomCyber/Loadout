@@ -6,6 +6,8 @@ description: crackle exploits a flaw in the BLE pairing process that allows an a
   communications between the master and the slave can be decrypted
 categories:
 - password
+binaries:
+- crackle
 homepage: https://github.com/mikeryan/crackle
 size: 55296
 install:

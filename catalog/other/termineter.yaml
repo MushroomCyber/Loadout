@@ -7,6 +7,8 @@ description: This package contains a Python framework which provides a platform 
   optical probe with a serial interface.
 categories:
 - exploitation
+binaries:
+- termineter
 homepage: https://github.com/rsmusllp/termineter
 size: 351232
 install:

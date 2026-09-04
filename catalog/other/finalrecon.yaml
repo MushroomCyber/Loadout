@@ -4,6 +4,8 @@ description: A fast and simple Python script for web reconnaissance that follows
   provides detailed information on various areas.
 categories:
 - other
+binaries:
+- finalrecon
 homepage: https://github.com/thewhiteh4t/FinalRecon
 size: 430080
 install:

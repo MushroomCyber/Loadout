@@ -7,6 +7,9 @@ description: This package provides a commandline client for the WHOIS (RFC 3912)
 categories:
 - network
 size: 393216
+binaries:
+- whois
+- mkpasswd
 install:
 - provider: apt
   package: whois

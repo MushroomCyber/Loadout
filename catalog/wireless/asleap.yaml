@@ -3,6 +3,9 @@ summary: A tool for exploiting Cisco LEAP networks
 description: Demonstrates a serious deficiency in proprietary Cisco LEAP networks.
 categories:
 - wireless
+binaries:
+- asleap
+- genkeys
 homepage: https://www.willhackforsushi.com/
 size: 240640
 install:

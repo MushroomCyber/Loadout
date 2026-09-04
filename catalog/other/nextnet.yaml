@@ -3,6 +3,8 @@ summary: pivot point discovery tool in Go
 description: This package contains a pivot point discovery tool written in Go.
 categories:
 - other
+binaries:
+- nextnet
 homepage: https://github.com/hdm/nextnet
 size: 2725888
 install:

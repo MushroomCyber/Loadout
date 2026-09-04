@@ -3,6 +3,8 @@ summary: cross-platform command line tool for handling hosts files
 description: cross-platform command line tool for adding, removing or listing mappings in hosts file.
 categories:
 - other
+binaries:
+- hostsman
 homepage: https://github.com/qszhuan/hostsman
 size: 52224
 install:

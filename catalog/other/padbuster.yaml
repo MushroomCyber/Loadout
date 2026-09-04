@@ -5,6 +5,8 @@ description: PadBuster is a Perl script for automating Padding Oracle Attacks. P
   analysis to determine whether a request is vulnerable to padding oracle attacks.
 categories:
 - web
+binaries:
+- padbuster
 homepage: https://github.com/GDSSecurity/PadBuster
 size: 40960
 install:

@@ -4,6 +4,11 @@ description: Rfcat is a sub GHz analysis tool. The goals of the project are to r
   researchers to create needed tools for analyzing unknown targets, to aid in reverse-engineering of hardware.
 categories:
 - wireless
+binaries:
+- rfcat
+- rfcat_bootloader
+- rfcat_msfrelay
+- rfcat_server
 homepage: https://github.com/atlas0fd00m/rfcat
 size: 453632
 install:

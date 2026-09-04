@@ -6,6 +6,8 @@ description: 'This package contains Covenant:  .NET command and control framewor
   that includes a web-based interface that allows for multi-user collaboration.'
 categories:
 - other
+binaries:
+- covenant-kbx
 homepage: https://github.com/cobbr/Covenant
 size: 26351616
 install:

@@ -8,6 +8,13 @@ description: Snort is a libpcap-based packet sniffer/logger which can be used as
   provides the plain-vanilla version of Snort.
 categories:
 - other
+binaries:
+- snort
+- appid_detector_builder.sh
+- show_flows
+- snort2lua
+- u2boat
+- u2spewfoo
 homepage: https://www.snort.org/
 size: 11697152
 install:

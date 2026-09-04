@@ -6,6 +6,11 @@ description: xclip is a command line utility that is designed to run on any syst
   also print an X selection to standard out, which can then be redirected to a file or another program.
 categories:
 - other
+binaries:
+- xclip
+- xclip-copyfile
+- xclip-cutfile
+- xclip-pastefile
 homepage: https://github.com/astrand/xclip
 size: 63488
 install:

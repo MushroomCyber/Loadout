@@ -5,6 +5,16 @@ description: The goal of Xplico is extract from an internet traffic capture the 
   each VoIP call (SIP, MGCP, H323), FTP, TFTP, and so on. Xplico is not a network protocol analyzer.
 categories:
 - forensics
+binaries:
+- xplico
+- mfbc
+- mfile
+- mpaltalk
+- mwmail
+- trigcap
+- xplico-webui
+- xplico-webui-start
+- xplico-webui-stop
 homepage: https://www.xplico.org
 size: 10569728
 install:

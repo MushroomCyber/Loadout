@@ -5,6 +5,8 @@ description: This tool responds to SSDP multicast discover requests, posing as a
   network. Users who are tempted to open the device are shown a configurable webpage.
 categories:
 - other
+binaries:
+- evil-ssdp
 homepage: https://github.com/initstring/evil-ssdp
 size: 102400
 install:

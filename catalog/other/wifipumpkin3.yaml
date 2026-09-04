@@ -5,6 +5,13 @@ description: This package contains a powerful framework for rogue access point a
   network to conduct a man-in-the-middle attack.
 categories:
 - other
+binaries:
+- wifipumpkin3
+- captiveflask
+- evilqr3
+- phishkin3
+- sslstrip3
+- wp3
 homepage: https://github.com/P0cL4bs/wifipumpkin3
 size: 30661632
 install:

@@ -3,6 +3,8 @@ summary: Faraday on the terminal
 description: This package contains the official client that make automating your security workflows, easier.
 categories:
 - other
+binaries:
+- faraday-cli
 homepage: https://github.com/infobyte/faraday-cli
 size: 831488
 install:

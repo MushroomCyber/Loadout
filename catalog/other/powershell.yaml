@@ -3,6 +3,8 @@ summary: PowerShell is an automation and configuration management platform.
 description: It consists of a cross-platform command-line shell and associated scripting language.
 categories:
 - other
+binaries:
+- pwsh
 homepage: https://microsoft.com/powershell
 size: 197821440
 install:

@@ -7,6 +7,8 @@ description: Nipper-ng is the next generation of nippper, and will always remain
 categories:
 - other
 size: 795648
+binaries:
+- nipper
 install:
 - provider: apt
   package: nipper-ng

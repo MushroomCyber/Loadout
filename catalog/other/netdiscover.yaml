@@ -9,6 +9,8 @@ description: Netdiscover is an active/passive address reconnaissance tool, mainl
   checks or in pentests.
 categories:
 - recon
+binaries:
+- netdiscover
 homepage: https://github.com/netdiscover-scanner/netdiscover
 size: 3229696
 install:

@@ -4,6 +4,8 @@ description: A quick way to generate various "basic" Meterpreter payloads using 
   of the Metasploit framework.
 categories:
 - exploitation
+binaries:
+- msfpc
 homepage: https://github.com/g0tmi1k/msfpc
 size: 59392
 install:

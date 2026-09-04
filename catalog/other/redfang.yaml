@@ -6,6 +6,8 @@ description: fang is a small proof-of-concept application to find non discovered
 categories:
 - wireless
 size: 40960
+binaries:
+- fang
 install:
 - provider: apt
   package: redfang

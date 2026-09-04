@@ -6,6 +6,8 @@ description: 'Nasty is a program that helps you to recover the passphrase of you
   package is useful in forensics investigations.'
 categories:
 - forensics
+binaries:
+- nasty
 homepage: https://github.com/folkertvanheusden/nasty
 size: 43008
 install:

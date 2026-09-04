@@ -12,6 +12,9 @@ description: dnsmap scans a domain for common subdomains using a built-in or an 
   the target company's IP netblocks, domain names, phone numbers, etc. Subdomain brute-fo
 categories:
 - recon
+binaries:
+- dnsmap
+- dnsmap-bulk
 homepage: https://github.com/resurrecting-open-source-projects/dnsmap
 size: 265216
 install:

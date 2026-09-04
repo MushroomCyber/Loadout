@@ -7,6 +7,8 @@ description: When attempting to crack passwords custom word lists are very usefu
   return a word list sorted by most common first.
 categories:
 - recon
+binaries:
+- twofi
 homepage: https://www.digininja.org/projects/twofi.php
 size: 38912
 install:

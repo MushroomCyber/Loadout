@@ -7,6 +7,8 @@ description: Instaloader downloads photos from Instagram, including public and p
   stop previously interrupted download interactions.
 categories:
 - other
+binaries:
+- instaloader
 homepage: https://github.com/instaloader/instaloader
 size: 326656
 install:

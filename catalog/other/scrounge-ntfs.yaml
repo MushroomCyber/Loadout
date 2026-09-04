@@ -5,6 +5,8 @@ description: Scrounge NTFS is a data recovery program for NTFS filesystems. It r
   forensics investigations.
 categories:
 - forensics
+binaries:
+- scrounge-ntfs
 homepage: http://thewalter.net/stef/software/scrounge/
 size: 50176
 install:

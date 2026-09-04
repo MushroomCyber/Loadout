@@ -6,6 +6,8 @@ description: Gitxray (short for Git X-Ray) is a multifaceted security tool desig
   it seeks out information in unconventional places.
 categories:
 - other
+binaries:
+- gitxray
 homepage: https://kulkansecurity.github.io/gitxray/
 size: 391168
 install:

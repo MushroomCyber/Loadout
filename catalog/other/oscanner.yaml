@@ -7,6 +7,8 @@ description: 'Oscanner is an Oracle assessment framework developed in Java. It h
   The results are given in a graphical java tree.'
 categories:
 - web
+binaries:
+- oscanner
 homepage: http://www.cqure.net/wp/tools/database/oscanner/
 size: 1537024
 install:

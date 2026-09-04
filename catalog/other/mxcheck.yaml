@@ -6,6 +6,8 @@ description: 'mxcheck is an info scanner for e-mail servers, checking: - DNS rec
   and VRFY command - If the server is an open relay'
 categories:
 - other
+binaries:
+- mxcheck
 homepage: https://github.com/steffenfritz/mxcheck
 size: 7127040
 install:

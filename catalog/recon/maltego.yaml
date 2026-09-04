@@ -7,6 +7,8 @@ categories:
 - recon
 tags:
 - osint
+binaries:
+- maltego
 homepage: https://www.maltego.com
 size: 314216448
 install:

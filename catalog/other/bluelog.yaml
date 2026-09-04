@@ -7,6 +7,8 @@ categories:
 - wireless
 tags:
 - bluetooth
+binaries:
+- bluelog
 homepage: http://www.digifail.com/software/bluelog.shtml
 size: 202752
 install:

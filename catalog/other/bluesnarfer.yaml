@@ -5,6 +5,8 @@ categories:
 - wireless
 tags:
 - bluetooth
+binaries:
+- bluesnarfer
 homepage: http://www.alighieri.org/
 size: 30720
 install:

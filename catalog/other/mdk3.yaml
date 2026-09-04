@@ -12,6 +12,8 @@ description: 'MDK is a proof-of-concept tool to exploit common IEEE 802.11 (Wi-F
   rewritten and still maintained.'
 categories:
 - wireless
+binaries:
+- mdk3
 homepage: https://github.com/aircrack-ng/mdk3
 size: 178176
 install:

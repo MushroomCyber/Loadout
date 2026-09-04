@@ -10,6 +10,8 @@ description: 'This package contains a small C program that will help you with ne
   Usable IP Address'
 categories:
 - other
+binaries:
+- whatmask
 homepage: http://www.laffeycomputer.com/whatmask.html
 size: 40960
 install:

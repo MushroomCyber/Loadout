@@ -12,6 +12,8 @@ description: 'bruteforce-wallet try to find the password of an encrypted Peercoi
   and/or weak). There are some command line options to specify: - The minimum password length t'
 categories:
 - other
+binaries:
+- bruteforce-wallet
 homepage: https://github.com/glv2/bruteforce-wallet
 size: 53248
 install:

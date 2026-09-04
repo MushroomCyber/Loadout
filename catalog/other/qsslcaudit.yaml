@@ -4,6 +4,8 @@ description: This tool can be used to determine if an application that uses TLS/
   does this in a secure way.
 categories:
 - recon
+binaries:
+- qsslcaudit
 homepage: https://github.com/gremwell/qsslcaudit
 size: 1173504
 install:

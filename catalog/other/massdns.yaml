@@ -6,6 +6,8 @@ description: This package contains a simple high-performance DNS stub resolver t
   resolvers.
 categories:
 - other
+binaries:
+- massdns
 homepage: https://github.com/blechschmidt/massdns
 size: 131072
 install:

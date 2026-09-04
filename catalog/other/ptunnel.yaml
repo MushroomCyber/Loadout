@@ -6,6 +6,8 @@ description: ptunnel is an application that allows you to reliably tunnel TCP co
   working in a closed networking environment with firewalls and proxies.
 categories:
 - post-exploitation
+binaries:
+- ptunnel
 homepage: http://www.mit.edu/afs.new/sipb/user/golem/tmp/ptunnel-0.61.orig/web/
 size: 136192
 install:

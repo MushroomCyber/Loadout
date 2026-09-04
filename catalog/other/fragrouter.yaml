@@ -3,6 +3,8 @@ summary: IDS evasion toolkit
 description: Fragrouter is a network intrusion detection evasion toolkit.
 categories:
 - recon
+binaries:
+- fragrouter
 homepage: http://www.anzen.com/research/nidsbench/fragrouter.html
 size: 73728
 install:

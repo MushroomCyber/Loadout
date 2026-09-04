@@ -5,6 +5,9 @@ description: This package contains a tool to compare two versions of a code‑ba
   the security fix and provides detailed description so you can validate—or weaponize—it fast.
 categories:
 - other
+binaries:
+- patchleaks
+- PatchLeaks
 homepage: https://github.com/hatlesswizard/PatchLeaks
 size: 28187648
 install:

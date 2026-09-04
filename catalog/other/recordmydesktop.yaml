@@ -4,6 +4,8 @@ description: The application produces an ogg-encapsulated theora-vorbis file. re
   be as unobstrusive as possible by proccessing only regions of the screen that have changed
 categories:
 - reporting
+binaries:
+- recordmydesktop
 homepage: https://enselic.github.io/recordmydesktop/
 size: 131072
 install:

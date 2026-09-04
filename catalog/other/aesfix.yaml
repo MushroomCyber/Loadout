@@ -6,6 +6,8 @@ description: This program illustrates a technique for correcting bit errors in a
   rather than performance. This package is useful to several activities, as forensics investigations.
 categories:
 - crypto
+binaries:
+- aesfix
 homepage: https://citp.princeton.edu/our-work/memory/code/
 size: 41984
 install:

@@ -10,6 +10,8 @@ description: This package contains a tool written in Powershell that allows you 
   functions in memory that help the pentester. This is happening whithin the post-exploitation phase.
 categories:
 - other
+binaries:
+- ibombshell
 homepage: https://github.com/Telefonica/ibombshell
 size: 5182464
 install:

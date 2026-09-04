@@ -8,6 +8,8 @@ categories:
 - password
 tags:
 - wordlists
+binaries:
+- rsmangler
 homepage: https://digi.ninja/projects/rsmangler.php
 size: 24576
 install:

@@ -4,6 +4,8 @@ description: Hoaxshell is a Windows reverse shell payload generator and handler 
   protocol to establish a beacon-like reverse shell
 categories:
 - other
+binaries:
+- hoaxshell
 homepage: https://github.com/t3l3machus/hoaxshell/
 size: 86016
 install:

@@ -6,6 +6,8 @@ description: waybackpy is a Python package and a CLI tool that interfaces with t
   it from a Python file/module or from the command-line interface.
 categories:
 - other
+binaries:
+- waybackpy
 homepage: https://github.com/akamhy/waybackpy
 size: 99328
 install:

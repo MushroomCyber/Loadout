@@ -10,6 +10,8 @@ description: Mantra is a browser especially designed for web application securit
   security issues in vulnerable web applications etc.
 categories:
 - web
+binaries:
+- owasp-mantra-ff
 homepage: https://www.owasp.org/index.php/OWASP_Mantra_-_Security_Framework
 size: 125464576
 install:

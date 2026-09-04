@@ -4,6 +4,8 @@ description: The arping utility sends ARP and/or ICMP requests to the specified 
   replies. The host may be specified by its hostname, its IP address, or its MAC address.
 categories:
 - recon
+binaries:
+- arping
 homepage: https://www.habets.pp.se/synscan/programs.php?prog=arping
 size: 92160
 install:

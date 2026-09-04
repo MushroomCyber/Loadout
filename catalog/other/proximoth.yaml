@@ -4,6 +4,8 @@ description: Proximoth is a command-line tool to detect Wi-Fi devices in proximi
   Attack.
 categories:
 - other
+binaries:
+- proximoth
 homepage: https://technicaluserx.gitlab.io/proximoth
 size: 984064
 install:

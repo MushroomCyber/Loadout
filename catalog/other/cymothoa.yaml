@@ -5,6 +5,10 @@ description: Cymothoa is a stealth backdooring tool, that inject backdoor's shel
   infect them.
 categories:
 - post-exploitation
+binaries:
+- cymothoa
+- bgrep
+- udp_server
 homepage: https://cymothoa.sourceforge.net/
 size: 92160
 install:

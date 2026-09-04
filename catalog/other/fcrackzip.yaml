@@ -6,6 +6,9 @@ description: fcrackzip is a fast password cracker partly written in assembler. I
   and forensics experts.
 categories:
 - password
+binaries:
+- fcrackzip
+- fcrackzipinfo
 homepage: http://oldhome.schmorp.de/marc/fcrackzip.html
 size: 81920
 install:

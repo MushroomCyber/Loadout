@@ -7,6 +7,8 @@ description: sqlsus is an open source MySQL injection and takeover tool, written
   output.
 categories:
 - web
+binaries:
+- sqlsus
 homepage: https://sqlsus.sourceforge.net/
 size: 159744
 install:

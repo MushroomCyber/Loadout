@@ -8,6 +8,9 @@ description: Exifprobe reads image files produced by digital cameras (including 
   investigations.
 categories:
 - forensics
+binaries:
+- exifprobe
+- exifgrep
 homepage: https://github.com/hfiguiere/exifprobe
 size: 518144
 install:

@@ -9,6 +9,8 @@ description: 'This package contains an OSINT tool that allows you to obtain a ta
   reset on different websites to obtain associated masked emails and correlate it to the victim''s one.'
 categories:
 - other
+binaries:
+- email2phonenumber
 homepage: https://github.com/martinvigo/email2phonenumber
 size: 73728
 install:

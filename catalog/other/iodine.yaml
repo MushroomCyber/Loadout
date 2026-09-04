@@ -4,6 +4,10 @@ description: This is a piece of software that lets you tunnel IPv4 data through 
   be usable in different situations where internet access is firewalled, but DNS queries are allowed.
 categories:
 - post-exploitation
+binaries:
+- iodine
+- iodine-client-start
+- iodined
 homepage: https://code.kryo.se/iodine
 size: 250880
 install:

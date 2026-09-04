@@ -10,6 +10,8 @@ categories:
 - post-exploitation
 tags:
 - windows
+binaries:
+- windows-privesc-check
 homepage: https://pentestmonkey.net/tools/windows-privesc-check
 size: 8345600
 install:

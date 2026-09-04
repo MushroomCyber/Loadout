@@ -7,6 +7,12 @@ description: This is a port of the 4.4BSD filesystem backup suite. Dump examines
   and directory subtrees may be restored from full or partial backups.
 categories:
 - other
+binaries:
+- dump
+- rdump
+- restore
+- rmt-dump
+- rrestore
 homepage: http://dump.sourceforge.net
 size: 412672
 install:

@@ -5,6 +5,8 @@ description: 'OSINT Tool: Generate username lists from companies on LinkedIn. Th
   lists of possible username formats for all employees of a company you point it at.'
 categories:
 - other
+binaries:
+- linkedin2username
 homepage: https://github.com/initstring/linkedin2username
 size: 39936
 install:

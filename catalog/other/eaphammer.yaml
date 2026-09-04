@@ -8,6 +8,8 @@ description: This package contains a toolkit for performing targeted evil twin a
   WPA/2-EAP network in just commands.
 categories:
 - other
+binaries:
+- eaphammer
 homepage: https://github.com/s0lst1c3/eaphammer
 size: 11973632
 install:

@@ -6,6 +6,8 @@ description: This package contains a tool to relay phase 2 authentication attemp
   to Sycophant.
 categories:
 - other
+binaries:
+- wpa_sycophant
 homepage: https://github.com/sensepost/wpa_sycophant
 size: 887808
 install:

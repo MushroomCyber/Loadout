@@ -4,6 +4,8 @@ description: This package contains a simple Perl script to enumerate information
   running SNMP.
 categories:
 - other
+binaries:
+- snmpenum
 homepage: https://packetstormsecurity.com/files/download/31079/snmpenum.zip
 size: 21504
 install:

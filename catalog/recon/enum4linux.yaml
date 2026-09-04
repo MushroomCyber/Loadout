@@ -11,6 +11,8 @@ categories:
 - recon
 tags:
 - smb-ad
+binaries:
+- enum4linux
 homepage: https://labs.portcullis.co.uk/tools/enum4linux/
 size: 59392
 install:

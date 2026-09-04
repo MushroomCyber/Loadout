@@ -12,6 +12,8 @@ description: 'Gpart is a tool which tries to guess the primary partition table o
   swap partitions (versions 0 and 1). * The Minix operating system filesystem type. * MS'
 categories:
 - forensics
+binaries:
+- gpart
 homepage: https://github.com/baruch/gpart
 size: 77824
 install:

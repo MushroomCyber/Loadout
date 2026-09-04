@@ -7,6 +7,15 @@ description: Faraday introduces a new concept (IPE) Integrated Penetration-Test 
   like the upstream repo.
 categories:
 - reporting
+binaries:
+- faraday
+- faraday-manage
+- faraday-server
+- faraday-start
+- faraday-stop
+- faraday-worker
+- faraday-worker-gevent
+- python-faraday
 homepage: https://faradaysec.com
 size: 42250240
 install:

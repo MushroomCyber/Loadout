@@ -5,6 +5,8 @@ categories:
 - password
 tags:
 - identification
+binaries:
+- hash-identifier
 homepage: https://github.com/blackploit/hash-identifier
 size: 50176
 install:

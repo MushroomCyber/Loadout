@@ -5,6 +5,8 @@ description: This package contains a Kubernetes penetration tool, enables an att
   obtain further code execution, and gain control of the cluster.
 categories:
 - other
+binaries:
+- peirates
 homepage: https://github.com/inguardians/peirates
 size: 84747264
 install:

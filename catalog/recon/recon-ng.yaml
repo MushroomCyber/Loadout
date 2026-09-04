@@ -12,6 +12,10 @@ categories:
 - recon
 tags:
 - framework
+binaries:
+- recon-ng
+- recon-cli
+- recon-web
 homepage: https://github.com/lanmaster53/recon-ng
 size: 277504
 install:

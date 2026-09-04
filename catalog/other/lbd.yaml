@@ -3,6 +3,8 @@ summary: Load balancer detector
 description: Checks if a given domain uses load-balancing.
 categories:
 - recon
+binaries:
+- lbd
 homepage: http://ge.mine.nu/code/
 size: 15360
 install:

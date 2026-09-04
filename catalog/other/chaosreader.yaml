@@ -12,6 +12,8 @@ description: Chaosreader traces TCP/UDP/others sessions and fetches application 
   and for network traffic analysis.
 categories:
 - monitoring
+binaries:
+- chaosreader
 homepage: https://www.brendangregg.com/chaosreader.html
 size: 235520
 install:

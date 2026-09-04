@@ -10,6 +10,18 @@ description: readpe is a toolkit designed to analyze Microsoft Windows PE (Porta
   the ofs2rva, pedis, pehash, peldd, pepack, peres, pescan, pesec, pestr, readpe and rva2ofs commands.
 categories:
 - forensics
+binaries:
+- readpe
+- ofs2rva
+- pedis
+- pehash
+- peldd
+- pepack
+- peres
+- pescan
+- pesec
+- pestr
+- rva2ofs
 homepage: https://github.com/mentebinaria/readpe/wiki
 size: 1294336
 install:

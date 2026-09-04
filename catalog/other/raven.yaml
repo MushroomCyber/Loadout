@@ -8,6 +8,8 @@ description: This package contains a Python tool that extends the capabilities o
   may not be a viable option.
 categories:
 - other
+binaries:
+- raven
 homepage: https://github.com/gh0x0st/raven
 size: 47104
 install:

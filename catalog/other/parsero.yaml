@@ -8,6 +8,8 @@ description: 'Parsero is a free script written in Python which reads the Robots.
   with the search engines.'
 categories:
 - other
+binaries:
+- parsero
 homepage: https://github.com/behindthefirewalls/Parsero
 size: 20480
 install:

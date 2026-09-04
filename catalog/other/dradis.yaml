@@ -6,6 +6,10 @@ description: Dradis is a tool to help you simplify reporting and collaboration. 
   a decade by security professionals around the world.
 categories:
 - reporting
+binaries:
+- dradis
+- dradis-start
+- dradis-stop
 homepage: https://dradis.com/ce/
 size: 161421312
 install:

@@ -6,6 +6,8 @@ description: rdesktop is an open source client for Windows NT/2000 Terminal Serv
   upstream maintainter. Please see the home page for more details.
 categories:
 - recon
+binaries:
+- rdesktop
 homepage: https://www.rdesktop.org/
 size: 708608
 install:

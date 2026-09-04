@@ -5,6 +5,14 @@ description: Sudo is a program designed to allow a sysadmin to give limited root
   to get their work done.
 categories:
 - recon
+binaries:
+- sudo
+- cvtsudoers
+- sudo_logsrvd
+- sudo_sendlog
+- sudoedit
+- sudoreplay
+- visudo
 homepage: https://www.sudo.ws/
 size: 6936576
 install:

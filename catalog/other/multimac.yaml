@@ -4,6 +4,8 @@ description: Multimac is a Linux virtual ethernet tap allocator to emulate and u
   (with different MAC addresses) on a LAN using a single network adapter.
 categories:
 - other
+binaries:
+- multimac
 homepage: https://sourceforge.net/projects/multimac/
 size: 28672
 install:

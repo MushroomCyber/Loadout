@@ -6,6 +6,8 @@ description: This package contains an accurate, fast, and easy-to-use extraction
   the library for Python 3.
 categories:
 - other
+binaries:
+- unblob
 homepage: https://unblob.org/
 size: 1227776
 install:

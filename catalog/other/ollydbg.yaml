@@ -4,6 +4,8 @@ description: OllyDbg is a 32-bit assembler level analysing debugger for Microsof
   binary code analysis makes it particularly useful in cases where source is unavailable.
 categories:
 - reverse
+binaries:
+- ollydbg
 homepage: http://www.ollydbg.de/
 size: 2623488
 install:

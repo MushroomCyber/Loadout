@@ -8,6 +8,8 @@ description: btscanner is a tool designed specifically to extract as much inform
   gathered from these sources it is possible to make educated guesses as to the host device type.
 categories:
 - wireless
+binaries:
+- btscanner
 homepage: https://salsa.debian.org/pkg-security-team/btscanner
 size: 114688
 install:

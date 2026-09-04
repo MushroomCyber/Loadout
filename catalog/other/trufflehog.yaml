@@ -4,6 +4,8 @@ description: This package contains a utitlity to search through git repositories
   deep into commit history and branches. This is effective at finding secrets accidentally committed.
 categories:
 - other
+binaries:
+- trufflehog
 homepage: https://github.com/trufflesecurity/truffleHog
 size: 124257280
 install:

@@ -7,6 +7,8 @@ categories:
 - recon
 tags:
 - automation
+binaries:
+- autorecon
 homepage: https://github.com/Tib3rius/AutoRecon
 size: 1300480
 install:

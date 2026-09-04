@@ -3,6 +3,8 @@ summary: Tool for attacking AD Certificate Services
 description: Offensive tool for enumerating and abusing Active Directory Certificate Services (AD CS).
 categories:
 - other
+binaries:
+- certipy-ad
 homepage: https://github.com/ly4k/Certipy
 size: 763904
 install:

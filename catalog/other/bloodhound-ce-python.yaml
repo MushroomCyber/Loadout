@@ -6,6 +6,8 @@ categories:
 - other
 tags:
 - ad-mapping
+binaries:
+- bloodhound-ce-python
 homepage: https://github.com/dirkjanm/BloodHound.py/tree/bloodhound-ce
 size: 365568
 install:

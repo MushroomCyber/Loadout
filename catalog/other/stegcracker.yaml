@@ -8,6 +8,8 @@ description: 'StegCracker is steganography brute-force utility to uncover hidden
   the GitHub releases.'
 categories:
 - other
+binaries:
+- stegcracker
 homepage: https://github.com/Paradoxis/StegCracker
 size: 51200
 install:

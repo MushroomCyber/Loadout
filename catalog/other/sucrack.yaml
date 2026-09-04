@@ -7,6 +7,8 @@ description: sucrack is a multithreaded Linux/UNIX tool for cracking local user 
   This tool, written in C, is highly efficient and can attempt multiple logins at the same time.
 categories:
 - password
+binaries:
+- sucrack
 homepage: https://labs.portcullis.co.uk/tools/sucrack/
 size: 50176
 install:

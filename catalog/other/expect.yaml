@@ -8,6 +8,47 @@ description: Expect is a tool for automating interactive applications according 
   returning control to the script. This package contains the expect binary and several Expect based scripts.
 categories:
 - recon
+binaries:
+- expect
+- autoexpect
+- autopasswd
+- cryptdir
+- decryptdir
+- dislocate
+- expect8.6
+- expect9.0
+- expect_autoexpect
+- expect_autopasswd
+- expect_cryptdir
+- expect_decryptdir
+- expect_dislocate
+- expect_kibitz
+- expect_lpunlock
+- expect_mkpasswd
+- expect_multixterm
+- expect_passmass
+- expect_rftp
+- expect_rlogin-cwd
+- expect_timed-read
+- expect_timed-run
+- expect_tknewsbiff
+- expect_tkpasswd
+- expect_unbuffer
+- expect_weather
+- expect_xkibitz
+- expect_xpstat
+- kibitz
+- lpunlock
+- multixterm
+- passmass
+- rlogin-cwd
+- timed-read
+- timed-run
+- tknewsbiff
+- tkpasswd
+- unbuffer
+- xkibitz
+- xpstat
 homepage: https://core.tcl.tk/expect/
 size: 331776
 install:

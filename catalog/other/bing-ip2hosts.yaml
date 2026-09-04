@@ -12,6 +12,8 @@ categories:
 - other
 tags:
 - recon
+binaries:
+- bing-ip2hosts
 homepage: https://www.morningstarsecurity.com/research/bing-ip2hosts
 size: 29696
 install:

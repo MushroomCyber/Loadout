@@ -6,6 +6,8 @@ categories:
 - reverse
 tags:
 - java
+binaries:
+- jd-gui
 homepage: http://jd.benow.ca/
 size: 1500160
 install:

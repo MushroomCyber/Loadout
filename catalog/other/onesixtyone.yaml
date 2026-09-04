@@ -7,6 +7,8 @@ description: onesixtyone is a simple SNMP scanner which sends SNMP requests for 
   were scanned in less than 13 minutes.
 categories:
 - recon
+binaries:
+- onesixtyone
 homepage: https://github.com/trailofbits/onesixtyone
 size: 181248
 install:

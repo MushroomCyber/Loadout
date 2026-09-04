@@ -4,6 +4,8 @@ description: This package contains Netcat on steroids with Firewall, IDS/IPS eva
   shell, self-injecting shell and port forwarding magic - and its fully scriptable with Python (PSE).
 categories:
 - other
+binaries:
+- pwncat
 homepage: https://github.com/cytopia/pwncat
 size: 5904384
 install:

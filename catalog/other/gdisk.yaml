@@ -7,6 +7,11 @@ description: 'GPT fdisk (aka gdisk) is a text-mode partitioning tool that provid
   MBR structures - Back up GPT data to a file (and restore from file)'
 categories:
 - other
+binaries:
+- gdisk
+- cgdisk
+- fixparts
+- sgdisk
 homepage: http://sourceforge.net/projects/gptfdisk/
 size: 990208
 install:

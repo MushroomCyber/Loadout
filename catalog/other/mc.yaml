@@ -7,6 +7,11 @@ description: GNU Midnight Commander is a text-mode full-screen file manager. It 
   files.
 categories:
 - other
+binaries:
+- mc
+- mcdiff
+- mcedit
+- mcview
 homepage: https://www.midnight-commander.org
 size: 1628160
 install:

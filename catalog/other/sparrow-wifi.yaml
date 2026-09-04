@@ -7,6 +7,9 @@ description: This package contains a graphical Wi-Fi analyzer for Linux. It prov
   solution.
 categories:
 - other
+binaries:
+- sparrow-wifi
+- sparrowwifiagent
 homepage: https://github.com/ghostop14/sparrow-wifi
 size: 2039808
 install:

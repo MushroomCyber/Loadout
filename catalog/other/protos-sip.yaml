@@ -4,6 +4,8 @@ description: The purpose of this test-suite is to evaluate implementation level 
   of Session Initiation Protocol (SIP) implementations.
 categories:
 - vuln-scan
+binaries:
+- protos-sip
 homepage: https://www.ee.oulu.fi/research/ouspg/PROTOS_Test-Suite_c07-sip
 size: 2263040
 install:

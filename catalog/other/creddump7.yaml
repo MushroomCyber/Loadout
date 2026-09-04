@@ -5,6 +5,8 @@ description: This package contains a Python tool to extract various credentials 
   Flathers.
 categories:
 - password
+binaries:
+- creddump7
 homepage: https://github.com/CiscoCXSecurity/creddump7
 size: 79872
 install:

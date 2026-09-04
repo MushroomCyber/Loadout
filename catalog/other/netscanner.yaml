@@ -6,6 +6,8 @@ description: 'Netscanner is a network scanning tool with features like: - List H
   ARP) - (IPv6) Packetdump (ICMP6) - start/pause packetdump'
 categories:
 - other
+binaries:
+- netscanner
 homepage: https://github.com/Chleba/netscanner
 size: 12440576
 install:

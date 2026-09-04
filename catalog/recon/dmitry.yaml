@@ -6,6 +6,8 @@ categories:
 - recon
 tags:
 - osint
+binaries:
+- dmitry
 homepage: https://mor-pah.net/software/dmitry-deepmagic-information-gathering-tool/
 size: 51200
 install:

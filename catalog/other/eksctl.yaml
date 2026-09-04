@@ -5,6 +5,8 @@ description: eksctl is a simple CLI tool for creating clusters on EKS - Amazon's
   just one command – **eksctl create cluster**!
 categories:
 - other
+binaries:
+- eksctl
 homepage: https://github.com/weaveworks/eksctl
 size: 154756096
 install:

@@ -6,6 +6,8 @@ description: 'Inspired by searchsploit, getsploit combines two features: command
   the ability to immediately download the exploit source code in your working path.'
 categories:
 - other
+binaries:
+- getsploit
 homepage: https://github.com/vulnersCom/getsploit
 size: 40960
 install:

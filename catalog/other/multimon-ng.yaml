@@ -9,6 +9,8 @@ description: 'The successor to multimon, with support for more modes and improve
   UDP audio stream in gqrx (via netcat and sox).'
 categories:
 - wireless
+binaries:
+- multimon-ng
 homepage: https://github.com/EliasOenal/multimon-ng/
 size: 137216
 install:

@@ -5,6 +5,8 @@ description: TrueCrack is a bruteforce password cracker for TrueCrypt (Copyright
   function and XTS block cipher mode of operation used for hard disk encryption based on AES.
 categories:
 - password
+binaries:
+- truecrack
 homepage: https://github.com/lvaccaro/truecrack
 size: 2746368
 install:

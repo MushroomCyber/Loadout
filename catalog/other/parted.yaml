@@ -12,6 +12,9 @@ description: GNU Parted is a program that allows you to create, destroy, resize,
   files before running it, and do so at your own risk.
 categories:
 - recon
+binaries:
+- parted
+- partprobe
 homepage: https://www.gnu.org/software/parted
 size: 124928
 install:

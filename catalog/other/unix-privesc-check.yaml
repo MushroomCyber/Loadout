@@ -8,6 +8,8 @@ description: Unix-privesc-checker is a script that runs on Unix systems (tested 
   as root because it can read more files).
 categories:
 - vuln-scan
+binaries:
+- unix-privesc-check
 homepage: http://pentestmonkey.net/tools/audit/unix-privesc-check
 size: 87040
 install:

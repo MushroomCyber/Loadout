@@ -6,6 +6,8 @@ description: sn0int is a semi-automatic OSINT framework and package manager. It 
   in a unified format for followup investigations.
 categories:
 - other
+binaries:
+- sn0int
 homepage: https://github.com/kpcyrd/sn0int
 size: 17684480
 install:

@@ -10,6 +10,8 @@ description: 'SMBMap allows users to enumerate samba share drives across an enti
   output Kerberos support! (super beta)'
 categories:
 - recon
+binaries:
+- smbmap
 homepage: https://github.com/ShawnDEvans/smbmap
 size: 137216
 install:

@@ -6,6 +6,8 @@ description: WhatWeb identifies websites. It recognises web technologies includi
   version numbers, email addresses, account IDs, web framework modules, SQL errors, and more.
 categories:
 - recon
+binaries:
+- whatweb
 homepage: https://github.com/urbanadventurer/WhatWeb
 size: 19674112
 install:

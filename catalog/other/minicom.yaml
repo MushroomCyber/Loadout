@@ -4,6 +4,11 @@ description: Minicom is a clone of the MS-DOS "Telix" communication program. It 
   terminals, has a dialing directory and auto zmodem download.
 categories:
 - hardware
+binaries:
+- minicom
+- ascii-xfr
+- runscript
+- xminicom
 homepage: https://salsa.debian.org/minicom-team/minicom
 size: 1149952
 install:

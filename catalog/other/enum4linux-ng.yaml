@@ -4,6 +4,8 @@ description: Next generation version of enum4linux (a Windows/Samba enumeration 
   features like JSON/YAML export. Aimed for security professionals and CTF players.
 categories:
 - other
+binaries:
+- enum4linux-ng
 homepage: https://github.com/cddmp/enum4linux-ng
 size: 197632
 install:

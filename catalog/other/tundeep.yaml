@@ -3,6 +3,8 @@ summary: Layer 2 VPN/injection tool
 description: The tool resides [almost] entirely in user space on the victim aside from the pcap requirement.
 categories:
 - other
+binaries:
+- tundeep
 homepage: https://www.adampalmer.me/iodigitalsec/tundeep/
 size: 50176
 install:

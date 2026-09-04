@@ -6,6 +6,10 @@ description: myrescue is a program to rescue the still-readable data from a dama
   package is useful to recover data from any media and for forensics investigations.
 categories:
 - forensics
+binaries:
+- myrescue
+- myrescue-bitmap2ppm
+- myrescue-stat
 homepage: https://myrescue.sf.net
 size: 82944
 install:

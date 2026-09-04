@@ -10,6 +10,8 @@ description: ext4magic is a file carver (or file carving). It can be used when r
   stamps.
 categories:
 - forensics
+binaries:
+- ext4magic
 homepage: http://ext4magic.sf.net/ext4magic_en.html
 size: 240640
 install:

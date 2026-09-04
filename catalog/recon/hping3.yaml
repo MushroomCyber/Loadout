@@ -8,6 +8,8 @@ description: hping3 is a network tool able to send custom ICMP/UDP/TCP packets a
   TCP/IP stacks, etc.  hping3 is scriptable using the Tcl language.
 categories:
 - recon
+binaries:
+- hping3
 homepage: http://www.hping.org/
 size: 261120
 install:

@@ -9,6 +9,8 @@ description: 'Windows Credentials Editor (WCE) v1.3beta allows you to: NTLM auth
   cannot be performed.'
 categories:
 - forensics
+binaries:
+- wce
 homepage: http://www.ampliasecurity.com/research.html
 size: 962560
 install:

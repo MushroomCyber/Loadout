@@ -10,6 +10,8 @@ description: This package contains a tool to crawl the graph of certificate Alte
   them.
 categories:
 - other
+binaries:
+- certgraph
 homepage: https://github.com/lanrat/certgraph
 size: 6685696
 install:

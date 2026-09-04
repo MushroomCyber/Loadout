@@ -7,6 +7,12 @@ categories:
 - reverse
 tags:
 - debugger
+binaries:
+- gdb
+- gcore
+- gdb-add-index
+- gdbtui
+- gstack
 homepage: https://www.gnu.org/s/gdb/
 size: 12754944
 install:

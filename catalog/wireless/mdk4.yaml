@@ -9,6 +9,8 @@ categories:
 - wireless
 tags:
 - dos-attacks
+binaries:
+- mdk4
 homepage: https://github.com/aircrack-ng/mdk4
 size: 241664
 install:

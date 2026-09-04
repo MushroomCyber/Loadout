@@ -7,6 +7,8 @@ description: This package contains a Subdomain Takeover tool written in Go desig
   (NXDOMAIN) and are available to be registered.
 categories:
 - other
+binaries:
+- subjack
 homepage: https://github.com/haccer/subjack
 size: 11258880
 install:

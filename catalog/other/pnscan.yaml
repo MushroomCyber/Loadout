@@ -4,6 +4,9 @@ description: Pnscan is a multi threaded port scanner that can scan a large netwo
   not have all the features that nmap have but is much faster.
 categories:
 - recon
+binaries:
+- pnscan
+- t_listen
 homepage: https://github.com/ptrrkssn/pnscan
 size: 66560
 install:

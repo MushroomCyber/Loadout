@@ -4,6 +4,8 @@ description: This package contains Faraday Agents Dispatcher. It helps user deve
   Faraday written in any language. This package installs the library for Python 3.
 categories:
 - other
+binaries:
+- faraday-dispatcher
 homepage: https://github.com/infobyte/faraday_agent_dispatcher
 size: 290816
 install:

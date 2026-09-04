@@ -9,6 +9,8 @@ description: Hashrat is a hash-generation utility that supports the md5, sha1, s
   hashes. This tool is useful in forensics investigations and network security.
 categories:
 - other
+binaries:
+- hashrat
 homepage: https://github.com/ColumPaget/Hashrat/
 size: 525312
 install:

@@ -6,6 +6,8 @@ description: Hexedit is a file editor which allows editing and viewing a file in
   editing of fixed disks as well.  Includes a binary/octal/decimal/hex converter.
 categories:
 - other
+binaries:
+- hexeditor
 homepage: http://www.rogoyski.com/adam/programs/hexedit/
 size: 133120
 install:

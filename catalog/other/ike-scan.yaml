@@ -9,6 +9,9 @@ description: 'ike-scan discovers IKE hosts and can also fingerprint them using t
   fingerprinting paper which should be included in the ike-scan kit as udp-backoff-fingerprinting-paper.txt.'
 categories:
 - recon
+binaries:
+- ike-scan
+- psk-crack
 homepage: https://github.com/royhills/ike-scan
 size: 4376576
 install:

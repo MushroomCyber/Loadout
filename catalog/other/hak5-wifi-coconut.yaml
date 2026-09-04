@@ -3,6 +3,8 @@ summary: Userspace driver for the Hak5 Wi-Fi Coconut
 description: Userspace drive for USB Wi-Fi NICs and the Hak5 Wi-Fi Coconut
 categories:
 - other
+binaries:
+- wifi_coconut
 homepage: https://hak5.org
 size: 180224
 install:

@@ -5,6 +5,8 @@ description: mfterm is a terminal interface for working with Mifare Classic tags
   also a command history, like in most normal shells.
 categories:
 - other
+binaries:
+- mfterm
 homepage: https://github.com/4ZM/mfterm
 size: 108544
 install:

@@ -7,6 +7,8 @@ description: cadaver supports file upload, download, on-screen display, in-place
   to the HTTP protocol which allow users to collaboratively edit and manage files on remote web servers.
 categories:
 - web
+binaries:
+- cadaver
 homepage: https://github.com/notroj/cadaver
 size: 198656
 install:

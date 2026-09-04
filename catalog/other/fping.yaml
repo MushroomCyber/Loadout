@@ -7,6 +7,9 @@ description: fping is a ping like program which uses the Internet Control Messag
   to the next target in a round-robin fashion.
 categories:
 - recon
+binaries:
+- fping
+- fping6
 homepage: https://www.fping.org/
 size: 95232
 install:

@@ -8,6 +8,8 @@ description: 'fatcat is a tool to explore, extract, repair and forensic FAT file
   - Supports FAT12, FAT16 and FAT32.'
 categories:
 - other
+binaries:
+- fatcat
 homepage: https://github.com/Gregwar/fatcat
 size: 144384
 install:

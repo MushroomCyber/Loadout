@@ -5,6 +5,8 @@ description: This package contains a remote control framework, aiming to provide
   to maintain access to a compromised web server for privilege escalation purposes.
 categories:
 - other
+binaries:
+- phpsploit
 homepage: https://github.com/nil0x42/phpsploit
 size: 898048
 install:

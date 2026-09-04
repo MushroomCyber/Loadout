@@ -5,6 +5,8 @@ description: This tool extracts interesting bits from network traffic. One use i
   it.
 categories:
 - web
+binaries:
+- ferret-sidejack
 homepage: https://github.com/robertdavidgraham/ferret
 size: 388096
 install:

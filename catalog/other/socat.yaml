@@ -10,6 +10,14 @@ description: Socat (for SOcket CAT) establishes two bidirectional byte streams a
   supports sctp as of 1.7.0.
 categories:
 - web
+binaries:
+- socat
+- filan
+- procan
+- socat-broker.sh
+- socat-chain.sh
+- socat-mux.sh
+- socat1
 homepage: http://www.dest-unreach.org/socat/
 size: 1909760
 install:

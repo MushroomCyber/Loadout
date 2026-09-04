@@ -13,6 +13,10 @@ description: 'TestDisk checks the partition and boot sectors of your disks. It i
 categories:
 - vuln-scan
 size: 1530880
+binaries:
+- testdisk
+- fidentify
+- photorec
 install:
 - provider: apt
   package: testdisk

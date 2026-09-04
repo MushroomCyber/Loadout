@@ -5,6 +5,9 @@ description: Ligolo-MP is an advanced version of Ligolo-ng, with client-server a
   while also providing a clean GUI to track everything.
 categories:
 - other
+binaries:
+- ligolo-mp
+- ligolo-mp-client
 homepage: https://github.com/ttpreport/ligolo-mp
 size: 135668736
 install:

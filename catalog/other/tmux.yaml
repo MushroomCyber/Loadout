@@ -9,6 +9,8 @@ description: tmux enables a number of terminals (or windows) to be accessed and 
   or from the shell. It offers a choice of vim or Emacs key layouts.
 categories:
 - utility
+binaries:
+- tmux
 homepage: https://github.com/tmux/tmux/wiki
 size: 1321984
 install:

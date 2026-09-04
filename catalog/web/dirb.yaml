@@ -12,6 +12,10 @@ categories:
 - web
 tags:
 - discovery
+binaries:
+- dirb
+- dirb-gendict
+- html2dic
 homepage: https://dirb.sourceforge.net/
 alternatives:
 - feroxbuster

@@ -4,6 +4,8 @@ description: This program uses a brute force algorithm to guess your encrypted c
   This program can crack zip, 7z, and rar file passwords.
 categories:
 - password
+binaries:
+- rarcrack
 homepage: http://rarcrack.sourceforge.net/
 size: 57344
 install:

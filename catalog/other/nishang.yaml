@@ -5,6 +5,8 @@ description: Nishang is a framework and collection of scripts and payloads which
   basis of requirement by the author during real Penetration Tests.
 categories:
 - web
+binaries:
+- nishang
 homepage: https://github.com/samratashok/nishang
 size: 6723584
 install:

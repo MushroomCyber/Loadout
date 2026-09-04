@@ -7,6 +7,8 @@ description: This package contains a network security sniffer for finding vulner
   etc. The tool can also both listen to traffic on the interface and analyze already existing pcap files.
 categories:
 - sniffing
+binaries:
+- above
 homepage: https://github.com/caster0x00/Above
 size: 1489920
 install:

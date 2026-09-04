@@ -9,6 +9,8 @@ categories:
 - forensics
 tags:
 - carving
+binaries:
+- bulk_extractor
 homepage: https://github.com/simsong/bulk_extractor
 size: 16593920
 install:

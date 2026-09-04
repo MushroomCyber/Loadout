@@ -4,6 +4,8 @@ description: PHPGGC is a library of payloads exploiting unsafe object deserializ
   a command-line tool to generate them.
 categories:
 - other
+binaries:
+- phpggc
 homepage: https://github.com/ambionics/phpggc
 size: 665600
 install:

@@ -12,6 +12,8 @@ description: 'This package contains an easy to use and easy to install file brow
   compatible server (e.g. Tomcat>=3.0). It has been tested on Tomcat 4.0 and 5.5, Resin 2.1.7 a'
 categories:
 - other
+binaries:
+- jsp-file-browser
 homepage: https://www.vonloesch.de/filebrowser.html
 size: 95232
 install:

@@ -8,6 +8,11 @@ description: 'recoverjpeg tries to recover JFIF (JPEG) pictures and MOV movies f
   in forensics investigations.'
 categories:
 - forensics
+binaries:
+- recoverjpeg
+- recovermov
+- remove-duplicates
+- sort-pictures
 homepage: https://www.rfc1149.net/devel/recoverjpeg
 size: 66560
 install:

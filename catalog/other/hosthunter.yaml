@@ -6,6 +6,8 @@ description: This package contains a tool to efficiently discover and extract ho
   of HostHunter also takes screenshots of the targets, it is currently a beta functionality.
 categories:
 - other
+binaries:
+- hosthunter
 homepage: https://github.com/SpiderLabs/HostHunter
 size: 33792
 install:

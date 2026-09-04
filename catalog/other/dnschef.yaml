@@ -6,6 +6,8 @@ description: DNSChef is a highly configurable DNS proxy for Penetration Testers 
   termination or interception instead of a real host somewhere on the Internet.
 categories:
 - sniffing
+binaries:
+- dnschef
 homepage: https://github.com/iphelix/dnschef
 size: 52224
 install:

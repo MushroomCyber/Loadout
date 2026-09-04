@@ -12,6 +12,8 @@ categories:
 - recon
 tags:
 - dns
+binaries:
+- fierce
 homepage: https://github.com/mschwager/fierce
 size: 247808
 install:

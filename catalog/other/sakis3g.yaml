@@ -5,6 +5,8 @@ description: Sakis3G is a tweaked shell script which is supposed to work out-of-
   modem, and may even detect operator settings. You should try it when anything else fails.
 categories:
 - wireless
+binaries:
+- sakis3g
 homepage: http://www.sakis3g.org
 size: 549888
 install:

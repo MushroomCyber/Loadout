@@ -7,6 +7,8 @@ categories:
 - wireless
 tags:
 - automation
+binaries:
+- fern-wifi-cracker
 homepage: https://github.com/savio-code/fern-wifi-cracker
 size: 1187840
 install:

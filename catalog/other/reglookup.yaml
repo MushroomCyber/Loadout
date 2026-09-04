@@ -9,6 +9,10 @@ description: 'RegLookup is a system to direct analysis of Windows NT-based regis
   commands: reglookup, reglookup-recover and reglookup-timeline.'
 categories:
 - forensics
+binaries:
+- reglookup
+- reglookup-recover
+- reglookup-timeline
 homepage: https://web.archive.org/web/20240804024044/http://projects.sentinelchicken.org/reglookup/
 size: 89088
 install:

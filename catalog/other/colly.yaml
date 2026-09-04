@@ -6,6 +6,8 @@ description: This package contains a Colly Lightning Fast and Elegant Scraping F
   data processing or archiving.
 categories:
 - other
+binaries:
+- colly
 homepage: https://github.com/gocolly/colly
 size: 1460224
 install:

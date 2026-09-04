@@ -8,6 +8,8 @@ description: Gqrx works with hardware supported by gr-osmosdr, including Funcube
   It is powered by GNU Radio and the Qt GUI toolkit.
 categories:
 - wireless
+binaries:
+- gqrx
 homepage: https://gqrx.dk/
 size: 2185216
 install:

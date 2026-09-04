@@ -5,6 +5,8 @@ description: This tool provides a SimpleHTTPServer written in Go, enhanced with 
   of helpful features and security in mind.
 categories:
 - other
+binaries:
+- goshs
 homepage: https://github.com/patrickhener/goshs
 size: 23079936
 install:
