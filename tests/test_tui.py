@@ -1116,7 +1116,7 @@ async def test_the_detail_pane_says_how_an_installed_tool_was_verified(app):
     from loadout.ui.tui.app import ToolDetail
 
     get_state_db().set_installed(
-        "nmap", True, provider="github", verify_method="checksum", verify_ok=True
+        "nmap", True, provider="github", verification=("checksum", True)
     )
     async with app.run_test() as pilot:
         pilot.app.query_one("#query", Input).value = "nmap"
@@ -1133,7 +1133,7 @@ async def test_an_unverified_install_is_not_dressed_up_as_a_verified_one(app):
     from loadout.ui.tui.app import ToolDetail
 
     get_state_db().set_installed(
-        "nmap", True, provider="github", verify_method="checksum", verify_ok=False
+        "nmap", True, provider="github", verification=("checksum", False)
     )
     async with app.run_test() as pilot:
         pilot.app.query_one("#query", Input).value = "nmap"

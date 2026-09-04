@@ -288,8 +288,7 @@ class Executor:
                 installed,
                 provider=action.provider,
                 version=version,
-                verify_method=verify_method,
-                verify_ok=verify_ok,
+                verification=(verify_method, verify_ok),
             )
             self.state.record(
                 action.action,

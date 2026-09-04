@@ -134,9 +134,19 @@ class StateDB:
         *,
         provider: str = "",
         version: str = "",
-        verify_method: str = "",
-        verify_ok: bool = False,
+        verification: tuple[str, bool] | None = None,
     ) -> None:
+        """Record install state, and optionally how the artifact was checked.
+
+        *verification* separates "no check ran" from "nothing is known about
+        the check". The executor always knows -- ``("", False)`` for a
+        provider with no verification step of ours, ``("gpg", True)`` for one
+        that passed -- and passes it. The inventory reconciliation that runs
+        on nearly every command does not, so it passes ``None`` and leaves
+        the columns alone. Without that distinction, simply listing tools
+        erased the verification the install had just recorded.
+        """
+        verify_method, verify_ok = verification or ("", False)
         with self._tx() as conn:
             conn.execute(
                 """INSERT INTO tool_state(tool_id, installed, provider, version,
@@ -148,11 +158,20 @@ class StateDB:
                                         THEN excluded.provider ELSE tool_state.provider END,
                        version       = CASE WHEN excluded.version != ''
                                         THEN excluded.version ELSE tool_state.version END,
-                       verify_method = excluded.verify_method,
-                       verify_ok     = excluded.verify_ok,
-                       -- A removal must not stamp a fresh install date on a
-                       -- row it is about to mark uninstalled.
+                       verify_method = CASE WHEN ?
+                                        THEN excluded.verify_method
+                                        ELSE tool_state.verify_method END,
+                       verify_ok     = CASE WHEN ?
+                                        THEN excluded.verify_ok
+                                        ELSE tool_state.verify_ok END,
+                       -- Stamped when a tool becomes installed, not every
+                       -- time something writes the row: the inventory
+                       -- reconciliation runs on nearly every command, and
+                       -- restamping there made every tool on the machine
+                       -- read as having been installed today.
                        installed_at  = CASE WHEN excluded.installed = 1
+                                             AND (tool_state.installed = 0
+                                                  OR tool_state.installed_at IS NULL)
                                         THEN excluded.installed_at
                                         ELSE tool_state.installed_at END""",
                 (
@@ -163,6 +182,8 @@ class StateDB:
                     verify_method,
                     int(bool(verify_ok)),
                     _utcnow() if installed else None,
+                    int(verification is not None),
+                    int(verification is not None),
                 ),
             )
 
