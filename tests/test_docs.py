@@ -174,14 +174,15 @@ class TestVersionAgreement:
         return Path(__file__).resolve().parent.parent
 
     def test_pyproject_and_the_package_agree(self):
-        import re
-
-        import tomllib
-
+        # Read with a regex rather than `tomllib`: this project supports 3.10,
+        # where that module does not exist. The release workflow pins 3.12 and
+        # parses it properly there.
         root = self._root()
-        pyproject = tomllib.loads(
-            (root / "pyproject.toml").read_text(encoding="utf-8")
-        )["project"]["version"]
+        pyproject = re.search(
+            r'^version\s*=\s*"([^"]+)"',
+            (root / "pyproject.toml").read_text(encoding="utf-8"),
+            re.MULTILINE,
+        ).group(1)
         source = re.search(
             r'__version__\s*=\s*"([^"]+)"',
             (root / "loadout" / "__init__.py").read_text(encoding="utf-8"),
