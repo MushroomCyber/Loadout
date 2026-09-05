@@ -327,6 +327,110 @@ class TestTheCatalogCommand:
         assert main(["catalog", "validate", "--source", str(source)]) != 0
         assert "must match" in capsys.readouterr().out
 
+    def _probeable_tree(self, tmp_path):
+        source = tmp_path / "probe-src"
+        source.mkdir()
+        (source / "thing.yaml").write_text(
+            NL.join(
+                [
+                    "id: thing",
+                    "summary: a thing",
+                    "categories: [recon]",
+                    "binaries: [thing]",
+                    "",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        return source
+
+    def _probe_answers(self, monkeypatch, mapping):
+        from loadout.catalog import probe_verify
+
+        monkeypatch.setattr(
+            probe_verify.shutil,
+            "which",
+            lambda name: f"/usr/bin/{name}" if name == "thing" else None,
+        )
+        monkeypatch.setattr(
+            probe_verify,
+            "_run",
+            lambda argv, _timeout: mapping.get(" ".join(argv), (1, "")),
+        )
+
+    def test_probe_verify_reports_without_writing_by_default(
+        self, machine, capsys, tmp_path, monkeypatch
+    ):
+        source = self._probeable_tree(tmp_path)
+        before = (source / "thing.yaml").read_text(encoding="utf-8")
+        self._probe_answers(monkeypatch, {"thing --version": (0, "thing 1.2.3")})
+
+        assert main(["catalog", "probe-verify", "--source", str(source)]) == 0
+
+        printed = capsys.readouterr().out
+        assert "thing --version" in printed
+        assert "--write" in printed
+        assert (source / "thing.yaml").read_text(encoding="utf-8") == before
+
+    def test_probe_verify_writes_when_asked(
+        self, machine, capsys, tmp_path, monkeypatch
+    ):
+        source = self._probeable_tree(tmp_path)
+        self._probe_answers(monkeypatch, {"thing --version": (0, "thing 1.2.3")})
+
+        assert (
+            main(["catalog", "probe-verify", "--source", str(source), "--write"]) == 0
+        )
+        assert "verify: thing --version" in (
+            source / "thing.yaml"
+        ).read_text(encoding="utf-8")
+
+    def test_probe_verify_json_carries_the_commands_and_the_counts(
+        self, machine, capsys, tmp_path, monkeypatch
+    ):
+        source = self._probeable_tree(tmp_path)
+        self._probe_answers(monkeypatch, {"thing --version": (0, "thing 1.2.3")})
+
+        assert (
+            main(["--json", "catalog", "probe-verify", "--source", str(source)]) == 0
+        )
+        payload = json.loads(capsys.readouterr().out)
+        assert payload["found"] == 1
+        assert payload["versioned"] == 1
+        assert payload["commands"] == [
+            {"tool": "thing", "command": "thing --version", "versioned": True}
+        ]
+
+    def test_probe_verify_says_where_it_expected_a_catalog(
+        self, machine, capsys, tmp_path
+    ):
+        code = main(
+            ["catalog", "probe-verify", "--source", str(tmp_path / "nope")]
+        )
+        assert code == 3
+        assert "No catalog source" in capsys.readouterr().out
+
+    def test_probe_verify_warns_when_it_leaves_an_annotated_entry_alone(
+        self, machine, capsys, tmp_path, monkeypatch
+    ):
+        """Skipping silently would look identical to having nothing to do,
+        and the entries that carry comments are the signature ones."""
+        source = self._probeable_tree(tmp_path)
+        entry = source / "thing.yaml"
+        entry.write_text(
+            "# why this entry looks the way it does" + NL
+            + entry.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+        self._probe_answers(monkeypatch, {"thing --version": (0, "thing 1.2.3")})
+
+        assert (
+            main(["catalog", "probe-verify", "--source", str(source), "--write"]) == 0
+        )
+        printed = capsys.readouterr().out
+        assert "carry comments" in printed
+        assert "verify:" not in entry.read_text(encoding="utf-8")
+
     def test_build_writes_a_catalog_that_can_be_opened(self, machine, tmp_path):
         from loadout.catalog.store import CatalogStore
 
@@ -368,4 +472,95 @@ class TestTheLoadoutCommand:
 
     def test_an_unknown_loadout_is_refused(self, machine, capsys):
         assert main(["loadout", "show", "not-a-real-kit"]) != 0
+
+
+class TestTheBundleCommands:
+    """The air-gap path, driven through the CLI the way an operator drives it.
+
+    `bundle verify` is the one command whose whole job is to answer "can I
+    trust what I just carried in?", so it is exercised against a real archive
+    rather than a mocked manifest.
+    """
+
+    def _bundle(self, tmp_path):
+        from tests.test_bundle import make_bundle
+
+        return make_bundle(tmp_path)[0]
+
+    def test_verify_confirms_a_bundle_matches_its_manifest(
+        self, machine, capsys, tmp_path
+    ):
+        archive = self._bundle(tmp_path)
+        assert main(["bundle", "verify", str(archive)]) == 0
+        assert "match the manifest" in capsys.readouterr().out
+
+    def test_verify_json_reports_the_file_count(self, machine, capsys, tmp_path):
+        archive = self._bundle(tmp_path)
+        assert main(["--json", "bundle", "verify", str(archive)]) == 0
+        payload = json.loads(capsys.readouterr().out)
+        assert payload["ok"] is True
+        assert payload["files"] >= 1
+
+    def test_a_tampered_bundle_is_refused_rather_than_installed(
+        self, machine, capsys, tmp_path
+    ):
+        """A bundle is carried across an air gap by hand; the manifest digest
+        is the only thing that says the bytes are the ones that were packed."""
+        import tarfile
+
+        from loadout import bundle as bundle_mod
+
+        archive = self._bundle(tmp_path)
+        extracted = tmp_path / "unpacked"
+        manifest = bundle_mod.extract(archive, extracted)
+        (extracted / manifest.files[0].path).write_bytes(b"not what was packed")
+
+        repacked = tmp_path / "tampered.tar"
+        with tarfile.open(repacked, "w") as tar:
+            for item in sorted(extracted.rglob("*")):
+                tar.add(item, arcname=str(item.relative_to(extracted).as_posix()))
+
+        assert main(["bundle", "verify", str(repacked)]) != 0
+
+    def test_creating_with_nothing_named_says_what_to_pass(
+        self, machine, capsys, tmp_path
+    ):
+        code = main(["bundle", "create", "--out", str(tmp_path / "kit.tar")])
+        assert code == 2
+        assert "Nothing to bundle" in capsys.readouterr().out
+
+    def test_inspect_lists_what_a_bundle_holds_without_unpacking_it(
+        self, machine, capsys, tmp_path
+    ):
+        """Deciding whether to unpack something carried in from outside starts
+        with seeing what it claims to be."""
+        archive = self._bundle(tmp_path)
+        assert main(["--json", "bundle", "inspect", str(archive)]) == 0
+        payload = json.loads(capsys.readouterr().out)
+        assert "nmap" in json.dumps(payload)
+
+
+class TestSavingTheMachineAsALoadout:
+    def test_it_captures_what_is_actually_installed(self, machine, capsys, tmp_path):
+        import yaml
+
+        target = tmp_path / "kit.yaml"
+        assert main(["loadout", "save", "mykit", "--output", str(target)]) == 0
+        saved = yaml.safe_load(target.read_text(encoding="utf-8"))
+        assert "nmap" in json.dumps(saved)
+
+    def test_nothing_installed_is_reported_rather_than_written_as_an_empty_file(
+        self, machine, capsys, tmp_path, monkeypatch
+    ):
+        """An empty loadout applied later would silently install nothing and
+        look like it worked."""
+        from loadout.ui import cli as cli_mod
+
+        monkeypatch.setattr(cli_mod.Context, "installed", lambda self, refresh=True: set())
+        target = tmp_path / "empty.yaml"
+        code = main(["loadout", "save", "empty", "--output", str(target)])
+        assert code == 1
+        assert "nothing to capture" in capsys.readouterr().out.lower()
+        assert not target.exists()
+
 

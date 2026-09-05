@@ -1181,3 +1181,317 @@ class TestFetchingTheChecksumFile:
                 self._assets("SHA256SUMS"), "SHA256SUMS"
             )
 
+
+class TestAGithubInstallEndToEnd:
+    """The download-verify-extract-place path, against a faked release.
+
+    Everything below the API and the socket is real: a real tar.gz is built,
+    a real sha256 is computed, real extraction runs and a real file lands on
+    disk. Only `_fetch_release` and `_download` are replaced, because those
+    are the two steps that would otherwise reach the network.
+    """
+
+    def _release(self, tmp_path, *, with_checksums=True, binary="tool"):
+        import hashlib
+        import io
+        import tarfile
+
+        payload = b"#!/bin/sh\necho hi\n"
+        buf = io.BytesIO()
+        with tarfile.open(fileobj=buf, mode="w:gz") as tar:
+            info = tarfile.TarInfo(binary)
+            info.size = len(payload)
+            info.mode = 0o755
+            tar.addfile(info, io.BytesIO(payload))
+        archive_bytes = buf.getvalue()
+        name = f"{binary}_1.4.0_linux_amd64.tar.gz"
+        digest = hashlib.sha256(archive_bytes).hexdigest()
+        checksums = f"{digest}  {name}" + chr(10)
+
+        assets = [
+            {
+                "name": name,
+                "browser_download_url": f"https://example.invalid/{name}",
+                "size": len(archive_bytes),
+            }
+        ]
+        if with_checksums:
+            assets.append(
+                {
+                    "name": "checksums.txt",
+                    "browser_download_url": "https://example.invalid/checksums.txt",
+                    "size": len(checksums),
+                }
+            )
+        blobs = {
+            f"https://example.invalid/{name}": archive_bytes,
+            "https://example.invalid/checksums.txt": checksums.encode(),
+        }
+        return {"tag_name": "v1.4.0", "assets": assets}, blobs, digest
+
+    def _patch(self, monkeypatch, release, blobs):
+        from loadout.providers.github import GithubReleaseProvider
+
+        monkeypatch.setattr(
+            GithubReleaseProvider, "_fetch_release", lambda self, repo, tag="": release
+        )
+
+        def fake_download(url, destination):
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(blobs[url])
+
+        monkeypatch.setattr(
+            GithubReleaseProvider, "_download", staticmethod(fake_download)
+        )
+
+        # The checksum file comes down through polite_get rather than
+        # _download: the caller needs its text, not a file on disk.
+        class _Response:
+            def __init__(self, body: bytes) -> None:
+                self.status_code = 200
+                self.text = body.decode()
+
+        monkeypatch.setattr(
+            "loadout.http_util.polite_get",
+            lambda url, **_kw: _Response(blobs[url]) if url in blobs else None,
+        )
+
+    def _ctx(self, seen, **kwargs):
+        from loadout.executor import ExecContext
+
+        return ExecContext(emit=seen.append, tool_id="tool", **kwargs)
+
+    def test_it_lands_an_executable_and_records_the_resolved_tag(
+        self, tmp_path, monkeypatch
+    ):
+        """`latest` is what most entries ask for, and "latest" is not a version
+        anyone can rebuild from six months later -- the lock file needs the tag
+        the install actually resolved to."""
+        import os
+        import stat
+
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, _ = self._release(tmp_path)
+        self._patch(monkeypatch, release, blobs)
+        seen = []
+        ctx = self._ctx(seen)
+        target = tmp_path / "bin" / "tool"
+
+        GithubReleaseProvider()._download_and_install(
+            ctx,
+            repo="owner/tool",
+            pattern="*linux_amd64.tar.gz",
+            checksums_name="checksums.txt",
+            binary="tool",
+            target=target,
+        )
+
+        assert target.is_file()
+        assert target.read_bytes().startswith(b"#!/bin/sh")
+        assert ctx.installed_version == "v1.4.0"
+        if os.name != "nt":
+            assert target.stat().st_mode & stat.S_IXUSR
+
+    def test_a_checksum_mismatch_stops_before_anything_is_placed(
+        self, tmp_path, monkeypatch
+    ):
+        """The failure has to happen while the download is still in a temp
+        directory; a tampered artifact that reaches the target and then fails
+        has already been installed."""
+        from loadout.errors import VerificationError
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, _ = self._release(tmp_path)
+        blobs["https://example.invalid/checksums.txt"] = (
+            b"0" * 64 + b"  tool_1.4.0_linux_amd64.tar.gz" + chr(10).encode()
+        )
+        self._patch(monkeypatch, release, blobs)
+        target = tmp_path / "bin" / "tool"
+
+        with pytest.raises(VerificationError):
+            GithubReleaseProvider()._download_and_install(
+                self._ctx([]),
+                repo="owner/tool",
+                pattern="*linux_amd64.tar.gz",
+                checksums_name="checksums.txt",
+                binary="tool",
+                target=target,
+            )
+        assert not target.exists()
+
+    def test_a_checksum_file_with_no_line_for_the_asset_is_refused(
+        self, tmp_path, monkeypatch
+    ):
+        """A checksum file that covers other platforms and not this one would
+        otherwise install unverified while looking verified."""
+        from loadout.errors import VerificationError
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, _ = self._release(tmp_path)
+        blobs["https://example.invalid/checksums.txt"] = (
+            b"0" * 64 + b"  something_else.tar.gz" + chr(10).encode()
+        )
+        self._patch(monkeypatch, release, blobs)
+
+        with pytest.raises(VerificationError, match="no entry for"):
+            GithubReleaseProvider()._download_and_install(
+                self._ctx([]),
+                repo="owner/tool",
+                pattern="*linux_amd64.tar.gz",
+                checksums_name="checksums.txt",
+                binary="tool",
+                target=tmp_path / "bin" / "tool",
+            )
+
+    def test_no_published_checksum_refuses_unless_the_user_waived_it(
+        self, tmp_path, monkeypatch
+    ):
+        from loadout.errors import VerificationError
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, _ = self._release(tmp_path, with_checksums=False)
+        self._patch(monkeypatch, release, blobs)
+        target = tmp_path / "bin" / "tool"
+
+        with pytest.raises(VerificationError):
+            GithubReleaseProvider()._download_and_install(
+                self._ctx([]),
+                repo="owner/tool",
+                pattern="*linux_amd64.tar.gz",
+                checksums_name="",
+                binary="tool",
+                target=target,
+            )
+        assert not target.exists()
+
+        GithubReleaseProvider()._download_and_install(
+            self._ctx([], allow_unverified=True),
+            repo="owner/tool",
+            pattern="*linux_amd64.tar.gz",
+            checksums_name="",
+            binary="tool",
+            target=target,
+        )
+        assert target.is_file()
+
+    def test_an_unmatched_pattern_names_what_the_release_did_contain(
+        self, tmp_path, monkeypatch
+    ):
+        """"No asset matched" with no list means reading the release page by
+        hand to find out what to write in the catalog."""
+        from loadout.errors import ProviderError
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, _ = self._release(tmp_path)
+        self._patch(monkeypatch, release, blobs)
+
+        with pytest.raises(ProviderError, match=r"checksums\.txt|no asset matched"):
+            GithubReleaseProvider()._download_and_install(
+                self._ctx([]),
+                repo="owner/tool",
+                pattern="*windows*.zip",
+                checksums_name="checksums.txt",
+                binary="tool",
+                target=tmp_path / "bin" / "tool",
+            )
+
+    def test_a_target_outside_PATH_is_warned_about_rather_than_silently_odd(
+        self, tmp_path, monkeypatch
+    ):
+        """An install that reports success and leaves a binary the shell
+        cannot find is the failure this project exists to avoid."""
+        import os
+
+        from loadout.executor import EVENT_WARN
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, _ = self._release(tmp_path)
+        self._patch(monkeypatch, release, blobs)
+        monkeypatch.setenv("PATH", str(tmp_path / "somewhere-else"))
+        seen = []
+
+        GithubReleaseProvider()._download_and_install(
+            self._ctx(seen),
+            repo="owner/tool",
+            pattern="*linux_amd64.tar.gz",
+            checksums_name="checksums.txt",
+            binary="tool",
+            target=tmp_path / "bin" / "tool",
+        )
+
+        warnings = [e for e in seen if e.kind == EVENT_WARN]
+        assert any("PATH" in w.message for w in warnings)
+        assert os.sep in warnings[0].message
+
+    def test_the_bundle_fetch_verifies_on_the_connected_machine(
+        self, tmp_path, monkeypatch
+    ):
+        """What travels into the air-gap is an artifact already checked
+        against its publisher's checksums -- the isolated machine cannot fetch
+        them later."""
+        from loadout.model import InstallMethod, Tool
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, digest = self._release(tmp_path)
+        self._patch(monkeypatch, release, blobs)
+        dest = tmp_path / "bundle"
+        tool = Tool(id="tool", binaries=("tool",))
+        method = InstallMethod(
+            provider="github",
+            spec={
+                "repo": "owner/tool",
+                "asset": "*linux_amd64.tar.gz",
+                "checksums": "checksums.txt",
+            },
+        )
+
+        steps = GithubReleaseProvider().plan_fetch(tool, method, dest)
+        assert len(steps) == 1
+        steps[0].fn(self._ctx([]))
+
+        fetched = dest / "tool_1.4.0_linux_amd64.tar.gz"
+        assert fetched.is_file()
+        import hashlib
+
+        assert hashlib.sha256(fetched.read_bytes()).hexdigest() == digest
+
+    def test_installing_from_a_bundle_uses_the_same_placement_path(
+        self, tmp_path, monkeypatch
+    ):
+        """The online install and the offline one must not drift on extraction
+        safety or permissions, so they share `_place_binary`."""
+        from loadout.model import InstallMethod, Tool
+        from loadout.providers import github as github_mod
+        from loadout.providers.github import GithubReleaseProvider
+
+        release, blobs, _ = self._release(tmp_path)
+        self._patch(monkeypatch, release, blobs)
+        dest = tmp_path / "bundle"
+        dest.mkdir()
+        archive = dest / "tool_1.4.0_linux_amd64.tar.gz"
+        archive.write_bytes(blobs["https://example.invalid/tool_1.4.0_linux_amd64.tar.gz"])
+
+        bindir = tmp_path / "bin"
+        monkeypatch.setattr(github_mod, "user_bin_dir", lambda: bindir)
+
+        tool = Tool(id="tool", binaries=("tool",))
+        method = InstallMethod(provider="github", spec={"repo": "owner/tool"})
+        steps = GithubReleaseProvider().plan_install_local(tool, method, [archive])
+        steps[0].fn(self._ctx([]))
+
+        assert (bindir / "tool").read_bytes().startswith(b"#!/bin/sh")
+
+    def test_a_bundle_holding_only_signatures_is_an_error(self, tmp_path):
+        """Nothing to install is a bundle problem worth naming, not a crash on
+        an empty list."""
+        from loadout.errors import ProviderError
+        from loadout.model import InstallMethod, Tool
+        from loadout.providers.github import GithubReleaseProvider
+
+        tool = Tool(id="tool", binaries=("tool",))
+        method = InstallMethod(provider="github", spec={"repo": "owner/tool"})
+        with pytest.raises(ProviderError, match="no artifact"):
+            GithubReleaseProvider().plan_install_local(
+                tool, method, [tmp_path / "tool.tar.gz.sig"]
+            )
