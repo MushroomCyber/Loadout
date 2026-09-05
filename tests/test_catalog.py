@@ -426,8 +426,20 @@ class TestShippedSignaturePins:
         for tool_id, block in _signature_blocks():
             if block.get("type") != "cosign" or block.get("public_key"):
                 continue
-            assert block.get("certificate_identity"), tool_id
+            assert block.get("certificate_identity") or block.get(
+                "certificate_identity_regexp"
+            ), tool_id
             assert block.get("certificate_oidc_issuer"), tool_id
+
+    def test_an_identity_pattern_is_anchored_at_both_ends(self):
+        """cosign matches this unanchored, so a pattern naming the repository
+        alone is also satisfied by an identity that merely contains it."""
+        for tool_id, block in _signature_blocks():
+            pattern = block.get("certificate_identity_regexp")
+            if not pattern:
+                continue
+            assert pattern.startswith("^"), tool_id
+            assert pattern.endswith("$"), tool_id
 
     def test_a_detached_keyless_pin_names_the_certificate_it_needs(self):
         """anchore ships checksums.txt.pem beside checksums.txt.sig; without

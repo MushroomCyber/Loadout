@@ -9,6 +9,7 @@ with two keys shows whether the pinned one is actually enforced.
 
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 import sys
@@ -494,8 +495,12 @@ class TestSigstoreShapes:
     All three were checked against real releases before being encoded here:
     cosign's own bundle verifies under a Google service-account identity (not
     the GitHub workflow one the shape suggests), and syft's keyless identity
-    is `refs/heads/main` -- stable across releases, so a literal pin holds and
-    no regexp field is needed.
+    is `refs/heads/main` -- stable across releases, so a literal pin holds.
+
+    Whether an identity is stable is a property of the project, not of the
+    shape: trivy publishes the same bundle format but signs from
+    `@refs/tags/v<version>`, which moves with every release. That is what
+    `certificate_identity_regexp` exists for.
     """
 
     def _keyless(self, **extra):
@@ -566,3 +571,115 @@ class TestSigstoreShapes:
             "tool-linux-amd64.pem"
         )
 
+
+
+class TestIdentityPatterns:
+    """``certificate_identity_regexp``, for projects whose signing identity
+    carries the release tag.
+
+    Read out of the real bundles for trivy 0.70.0, 0.72.0 and 0.74.0: each
+    certificate's SAN ends ``@refs/tags/v<that version>``, so a literal pin
+    would start failing on the next release rather than on a tampered
+    artifact -- an alarm that fires for the wrong reason trains people to
+    ignore it.
+    """
+
+    TRIVY = (
+        r"^https://github\.com/aquasecurity/trivy/\.github/workflows/"
+        r"reusable-release\.yaml@refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$"
+    )
+
+    def _spec(self, **extra):
+        base = {
+            "type": "cosign",
+            "format": "bundle",
+            "asset": "*_checksums.txt.sigstore.json",
+            "signs": "checksums",
+            "certificate_oidc_issuer": "https://token.actions.githubusercontent.com",
+        }
+        base.update(extra)
+        return base
+
+    def test_a_pattern_satisfies_the_keyless_identity_requirement(self):
+        assert validate_spec(self._spec(certificate_identity_regexp=self.TRIVY)) == []
+
+    def test_it_matches_the_identities_it_was_written_for(self):
+        pattern = re.compile(self.TRIVY)
+        for version in ("0.70.0", "0.72.0", "0.74.0"):
+            assert pattern.match(
+                "https://github.com/aquasecurity/trivy/.github/workflows/"
+                f"reusable-release.yaml@refs/tags/v{version}"
+            ), version
+
+    def test_it_rejects_a_lookalike_identity(self):
+        """The pin has to do work, not merely be present."""
+        pattern = re.compile(self.TRIVY)
+        for identity in (
+            "https://github.com/attacker/trivy/.github/workflows/"
+            "reusable-release.yaml@refs/tags/v0.74.0",
+            "https://github.com/aquasecurity/trivy/.github/workflows/"
+            "release.yaml@refs/tags/v0.74.0",
+            "https://evil.example/github.com/aquasecurity/trivy/.github/"
+            "workflows/reusable-release.yaml@refs/tags/v0.74.0",
+        ):
+            assert not pattern.match(identity), identity
+
+    def test_an_unanchored_pattern_is_refused(self):
+        errors = " ".join(
+            validate_spec(
+                self._spec(certificate_identity_regexp="github.com/aquasecurity/trivy")
+            )
+        )
+        assert "anchored" in errors
+
+    def test_a_pattern_anchored_at_only_one_end_is_refused(self):
+        for pattern in ("^github.com/aquasecurity/trivy", "github.com/trivy$"):
+            errors = " ".join(
+                validate_spec(self._spec(certificate_identity_regexp=pattern))
+            )
+            assert "anchored" in errors, pattern
+
+    def test_a_pattern_that_does_not_compile_fails_review_not_an_install(self):
+        errors = " ".join(
+            validate_spec(self._spec(certificate_identity_regexp="^[unclosed$"))
+        )
+        assert "not a valid regular expression" in errors
+
+    def test_a_literal_and_a_pattern_together_are_ambiguous(self):
+        errors = " ".join(
+            validate_spec(
+                self._spec(
+                    certificate_identity="https://example.invalid/wf@refs/heads/main",
+                    certificate_identity_regexp=self.TRIVY,
+                )
+            )
+        )
+        assert "not both" in errors
+
+    def test_the_pattern_reaches_cosign_as_the_regexp_flag(self, tmp_path, monkeypatch):
+        """A literal passed to ``--certificate-identity`` would also verify a
+        matching release, so the flag actually used is the whole difference."""
+        import loadout.signature as signature_module
+
+        seen: list[list[str]] = []
+
+        def fake_run(argv, **_):
+            seen.append(argv)
+            return subprocess.CompletedProcess(argv, 0, "", "")
+
+        monkeypatch.setattr(signature_module, "_run", fake_run)
+        monkeypatch.setattr(signature_module.shutil, "which", lambda _: "/usr/bin/cosign")
+
+        payload = tmp_path / "checksums.txt"
+        payload.write_text("x", encoding="utf-8")
+        bundle = tmp_path / "checksums.txt.sigstore.json"
+        bundle.write_text("{}", encoding="utf-8")
+
+        spec = parse_spec(self._spec(certificate_identity_regexp=self.TRIVY))
+        verify_signature(payload, bundle, spec)
+
+        argv = seen[0]
+        assert "--certificate-identity-regexp" in argv
+        assert "--certificate-identity" not in argv
+        assert argv[argv.index("--certificate-identity-regexp") + 1] == self.TRIVY
+        assert "--bundle" in argv

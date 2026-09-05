@@ -88,6 +88,13 @@ SIGNATURE_TYPES = (TYPE_GPG, TYPE_MINISIGN, TYPE_COSIGN)
 #: An OpenPGP fingerprint as gpg reports it: 40 hex characters, no spaces.
 _FINGERPRINT_RE = re.compile(r"^[0-9A-F]{40}$")
 
+#: cosign matches ``--certificate-identity-regexp`` unanchored, so the pattern
+#: ``github.com/aquasecurity/trivy`` is also satisfied by
+#: ``https://evil.example/github.com/aquasecurity/trivy/...``. An identity
+#: pattern that does not pin both ends is not a pin, so the catalog refuses
+#: one rather than shipping a check that looks strict and is not.
+_ANCHORED_RE = re.compile(r"^\^.*\$$", re.S)
+
 #: ``[GNUPG:] VALIDSIG <fpr> <date> ...`` on the status channel. The first
 #: field is the fingerprint of the key that made the signature.
 _VALIDSIG_RE = re.compile(r"^\[GNUPG:\] VALIDSIG ([0-9A-F]{40})\b", re.M)
@@ -134,6 +141,12 @@ class SignatureSpec:
     key_fingerprint: str = ""
     #: Keyless cosign only.
     certificate_identity: str = ""
+    #: Alternative to ``certificate_identity`` for projects whose signing
+    #: identity moves with each release. trivy signs from
+    #: ``.../reusable-release.yaml@refs/tags/v0.74.0``, so a literal pin is
+    #: stale the moment the next tag is cut; anchore/syft signs from
+    #: ``@refs/heads/main`` and needs no pattern at all.
+    certificate_identity_regexp: str = ""
     certificate_oidc_issuer: str = ""
     #: Glob matching the signing certificate, for keyless cosign in the
     #: pre-bundle form: anchore ships `checksums.txt.pem` beside
@@ -178,6 +191,9 @@ def parse_spec(raw: Any) -> SignatureSpec | None:
         public_key=str(data.get("public_key", "")).strip(),
         key_fingerprint=str(data.get("key_fingerprint", "")).replace(" ", "").upper(),
         certificate_identity=str(data.get("certificate_identity", "")).strip(),
+        certificate_identity_regexp=str(
+            data.get("certificate_identity_regexp", "")
+        ).strip(),
         certificate_oidc_issuer=str(data.get("certificate_oidc_issuer", "")).strip(),
         certificate=str(data.get("certificate", "")).strip(),
         format=str(data.get("format", FORMAT_DETACHED)).strip().lower() or FORMAT_DETACHED,
@@ -282,14 +298,38 @@ def validate_spec(raw: Any) -> list[str]:
             errors.append("signature: minisign requires 'public_key'")
     elif kind == TYPE_COSIGN:
         identity = str(raw.get("certificate_identity", "")).strip()
+        pattern = str(raw.get("certificate_identity_regexp", "")).strip()
         issuer = str(raw.get("certificate_oidc_issuer", "")).strip()
-        if not public_key and not (identity and issuer):
+        if identity and pattern:
             errors.append(
-                "signature: cosign requires either 'public_key', or both "
-                "'certificate_identity' and 'certificate_oidc_issuer' for "
-                "keyless verification. Keyless with no pinned identity would "
-                "accept a signature from anyone."
+                "signature: set 'certificate_identity' or "
+                "'certificate_identity_regexp', not both -- cosign takes one "
+                "and which one won would not be visible from the catalog."
             )
+        if not public_key and not ((identity or pattern) and issuer):
+            errors.append(
+                "signature: cosign requires either 'public_key', or "
+                "'certificate_identity' (or 'certificate_identity_regexp') "
+                "together with 'certificate_oidc_issuer' for keyless "
+                "verification. Keyless with no pinned identity would accept a "
+                "signature from anyone."
+            )
+        if pattern:
+            try:
+                re.compile(pattern)
+            except re.error as exc:
+                errors.append(
+                    f"signature: 'certificate_identity_regexp' is not a valid "
+                    f"regular expression: {exc}"
+                )
+            else:
+                if not _ANCHORED_RE.match(pattern):
+                    errors.append(
+                        "signature: 'certificate_identity_regexp' must be "
+                        "anchored with ^ and $. cosign matches it unanchored, "
+                        "so an unanchored pattern also accepts identities that "
+                        "merely contain it."
+                    )
         if not public_key and fmt == FORMAT_DETACHED and not certificate:
             errors.append(
                 "signature: keyless cosign with a detached signature also "
@@ -462,11 +502,14 @@ def _verify_cosign(
             key_file.write_text(spec.public_key, encoding="utf-8")
             result = _run([*argv, "--key", str(key_file), str(payload)])
     else:
+        if spec.certificate_identity_regexp:
+            identity = ["--certificate-identity-regexp", spec.certificate_identity_regexp]
+        else:
+            identity = ["--certificate-identity", spec.certificate_identity]
         result = _run(
             [
                 *argv,
-                "--certificate-identity",
-                spec.certificate_identity,
+                *identity,
                 "--certificate-oidc-issuer",
                 spec.certificate_oidc_issuer,
                 str(payload),

@@ -76,8 +76,23 @@ def _describe_signature(spec: SignatureSpec | None) -> str:
         where = "the selected asset"
     else:
         where = "the artifact"
-    pin = spec.key_fingerprint or "pinned key"
-    return f"{spec.type} over {where}, {pin}"
+    return f"{spec.type} over {where}, {_describe_pin(spec)}"
+
+
+def _describe_pin(spec: SignatureSpec) -> str:
+    """What the signature is actually pinned to.
+
+    Keyless Sigstore pins an OIDC identity and no key at all, so describing
+    every pin as a key tells the reader of `--dry-run` the wrong thing about
+    what they are trusting.
+    """
+    if spec.key_fingerprint:
+        return spec.key_fingerprint
+    if spec.certificate_identity:
+        return f"identity {spec.certificate_identity}"
+    if spec.certificate_identity_regexp:
+        return f"identity matching {spec.certificate_identity_regexp}"
+    return "pinned key"
 
 
 def user_bin_dir() -> Path:
