@@ -37,4 +37,21 @@ install:
 - provider: github
   repo: aquasecurity/trivy
   checksums: '*checksums*.txt'
+  # A Sigstore bundle over the checksum file, which in turn covers every
+  # artifact in the release.
+  #
+  # The identity is a pattern rather than a literal because trivy signs from
+  # a workflow reference that carries the release tag -- confirmed against
+  # the real bundles for 0.70.0, 0.72.0 and 0.74.0, each of which ends
+  # `@refs/tags/v<that version>`. A literal pin would be stale the moment the
+  # next tag is cut. The anchors are load-bearing: cosign matches this
+  # unanchored, so without them an identity that merely contains the pattern
+  # would also pass.
+  signature:
+    type: cosign
+    format: bundle
+    asset: "*_checksums.txt.sigstore.json"
+    signs: checksums
+    certificate_identity_regexp: ^https://github\.com/aquasecurity/trivy/\.github/workflows/reusable-release\.yaml@refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$
+    certificate_oidc_issuer: https://token.actions.githubusercontent.com
 version: 0.66.0-0kali1

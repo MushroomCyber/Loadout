@@ -195,6 +195,7 @@ install:
 | `public_key` | The trust anchor, inline. Required for `gpg` and `minisign`; for `cosign` either this or a pinned identity. |
 | `key_fingerprint` | Optional for `gpg`: 40 hex characters, asserted against the key that actually made the signature. |
 | `certificate_identity`, `certificate_oidc_issuer` | Keyless `cosign` only, and both required — keyless with no pinned identity accepts a signature from anyone. |
+| `certificate_identity_regexp` | Instead of `certificate_identity`, for a signing identity that moves with each release. Must be anchored with `^` and `$`. |
 | `certificate` | Keyless `cosign` with a detached signature: glob matching the `.pem` beside the `.sig`. |
 | `format` | `detached` (default) or `bundle` for a Sigstore `.sigstore.json`. |
 
@@ -234,16 +235,35 @@ signature: {type: cosign, asset: "*.sig", public_key: "-----BEGIN PUBLIC KEY----
 ..."}
 ```
 
-Two things about those identities are easy to get wrong, and both were found
-by reading real certificates:
+Three things about those identities are easy to get wrong, and all three were
+found by reading real certificates:
 
 - **The identity is not always a GitHub workflow.** cosign's own releases are
   signed by `keyless@projectsigstore.iam.gserviceaccount.com` with issuer
   `https://accounts.google.com`, not by anything under `github.com`.
-- **A keyless identity is usually stable, so pin it literally.** syft's is
-  `...release.yaml@refs/heads/main` — the branch, not the tag — and the same
-  literal verifies 1.50.0 and 1.51.1. Check two releases before assuming an
-  identity moves.
+- **Some identities are stable and some carry the tag.** syft signs from
+  `...release.yaml@refs/heads/main` — the branch — and the same literal
+  verifies 1.50.0 and 1.51.1. trivy publishes the same bundle format but signs
+  from `...reusable-release.yaml@refs/tags/v0.74.0`, which is a different
+  string every release. Read two or three releases before deciding which you
+  have.
+- **A moving identity needs a pattern, and the pattern needs anchors.** cosign
+  matches `--certificate-identity-regexp` unanchored, so
+  `github.com/aquasecurity/trivy` is also satisfied by
+  `https://evil.example/github.com/aquasecurity/trivy/...`. An unanchored
+  pattern fails review here rather than passing a check that looks strict.
+
+```yaml
+# 4. Keyless with an identity that moves: a pattern instead of a literal.
+signature: {type: cosign, format: bundle, signs: checksums,
+            asset: "*_checksums.txt.sigstore.json",
+            certificate_identity_regexp: '^https://github\.com/aquasecurity/trivy/\.github/workflows/reusable-release\.yaml@refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$',
+            certificate_oidc_issuer: https://token.actions.githubusercontent.com}
+```
+
+Set one of `certificate_identity` and `certificate_identity_regexp`, never
+both: cosign takes one, and which one won would not be readable from the
+entry.
 
 Omitting `certificate` on shape 2 fails review rather than the install: without
 the `.pem` there is nothing to check the pinned identity against, and cosign's

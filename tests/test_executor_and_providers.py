@@ -947,6 +947,54 @@ class TestASignatureCoversWhatAChecksumWouldHave:
 
         assert "will refuse" in _describe_verify("", None)
 
+    def test_the_dry_run_names_what_the_signature_is_pinned_to(self):
+        """`--dry-run` is where someone decides whether the plan is
+        acceptable, and keyless Sigstore pins an OIDC identity and no key at
+        all -- calling that "pinned key" describes the wrong trust anchor."""
+        from loadout.providers.github import _describe_signature
+        from loadout.signature import parse_spec
+
+        issuer = "https://token.actions.githubusercontent.com"
+        literal = parse_spec(
+            {
+                "type": "cosign",
+                "format": "bundle",
+                "asset": "{asset}.sigstore.json",
+                "certificate_identity": "https://example.invalid/wf@refs/heads/main",
+                "certificate_oidc_issuer": issuer,
+            }
+        )
+        assert "identity https://example.invalid/wf@refs/heads/main" in (
+            _describe_signature(literal)
+        )
+
+        pattern = parse_spec(
+            {
+                "type": "cosign",
+                "format": "bundle",
+                "asset": "*_checksums.txt.sigstore.json",
+                "signs": "checksums",
+                "certificate_identity_regexp": "^https://example\\.invalid/wf@.*$",
+                "certificate_oidc_issuer": issuer,
+            }
+        )
+        described = _describe_signature(pattern)
+        assert "identity matching ^https://example" in described
+        assert "pinned key" not in described
+
+    def test_a_key_based_signature_is_still_described_as_a_key(self):
+        from loadout.providers.github import _describe_signature
+        from loadout.signature import parse_spec
+
+        spec = parse_spec(
+            {
+                "type": "cosign",
+                "asset": "{asset}.sig",
+                "public_key": "-----BEGIN PUBLIC KEY-----",
+            }
+        )
+        assert "pinned key" in _describe_signature(spec)
+
 
 class TestSummarizeVerification:
     """The (method, ok) pair the executor persists to state and the TUI
