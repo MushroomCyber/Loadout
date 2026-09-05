@@ -199,3 +199,57 @@ class TestVersionAgreement:
         assert "pyproject.toml" in text
         assert "__version__" in text
 
+
+
+class TestTheNumbersTheReadmeQuotes:
+    """Counts are the part of a README that rots without anyone noticing.
+
+    `github 15` sat in the provider table while the catalog had 17 routes,
+    which is exactly the kind of claim a reader has no way to doubt. These
+    fail loudly and name the replacement, so the fix is one line.
+    """
+
+    def _catalog(self):
+        from loadout.catalog.store import CatalogStore
+
+        return CatalogStore(ROOT / "loadout" / "data" / "catalog.db")
+
+    def test_the_tool_count_is_the_catalog_size(self):
+        with self._catalog() as store:
+            total = store.count()
+        readme = read("README.md")
+        assert f"catalog-{total}%20tools" in readme, f"badge should say {total}"
+        assert f"**{total}**" in readme or f"{total} " in readme
+
+    def test_the_provider_table_matches_the_compiled_catalog(self):
+        with self._catalog() as store:
+            counts = dict(store.facet_values("provider"))
+
+        readme = read("README.md")
+        marker = "**Providers with catalog coverage today:**"
+        assert marker in readme, "the provider coverage line is gone"
+        # The claim wraps across source lines; the paragraph is the unit.
+        start = readme.index(marker)
+        line = readme[start : readme.index(chr(10) * 2, start)]
+        quoted = {
+            name: int(number)
+            for name, number in re.findall(r"`([a-z]+)` (\d+)", line)
+        }
+        assert quoted == counts, (
+            f"README says {quoted}, catalog says {counts} -- "
+            "update the provider coverage line"
+        )
+
+    def test_the_quoted_catalog_coverage_is_what_the_catalog_holds(self):
+        with self._catalog() as store:
+            tools = list(store.iter_all())
+        binaries = sum(1 for t in tools if t.binaries)
+        verify = sum(1 for t in tools if t.verify)
+
+        readme = read("README.md")
+        assert f"**{binaries} of {len(tools)}**" in readme, (
+            f"README should say {binaries} of {len(tools)} entries name a binary"
+        )
+        assert f"**{verify}**" in readme, (
+            f"README should say {verify} entries carry a verify: command"
+        )

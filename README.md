@@ -10,6 +10,18 @@
   <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square&logo=python&logoColor=white">
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green?style=flat-square">
   <img alt="Platforms" src="https://img.shields.io/badge/linux%20%C2%B7%20macos%20%C2%B7%20wsl-supported-informational?style=flat-square">
+  <img alt="842 tools in the catalog" src="https://img.shields.io/badge/catalog-842%20tools-8a63d2?style=flat-square">
+</p>
+
+<p align="center">
+  <a href="#why-this-instead-of-apt-install">Why</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#everyday-use">Everyday use</a> ·
+  <a href="#interactive-browser">Browser</a> ·
+  <a href="#the-catalog">Catalog</a> ·
+  <a href="#configuration">Config</a> ·
+  <a href="#security">Security</a> ·
+  <a href="#contributing">Contributing</a>
 </p>
 
 <p align="center">
@@ -28,7 +40,7 @@ backend your machine actually has.
 loadout install nuclei          # apt on Kali, brew on macOS, go anywhere else
 loadout bundle create -l dfir-responder -o kit.tar   # then install it with no network
 loadout sync                    # converge this box to the team's loadout.yaml
-loadout report --since 30d      # signed inventory of what you used, for the report
+loadout report --since 30d      # what you used, and how each download was checked
 ```
 
 ---
@@ -50,76 +62,30 @@ loadout report --since 30d      # signed inventory of what you used, for the rep
 
 ## Install
 
-From a local checkout of this repository:
+Nothing is published to PyPI yet, so Loadout installs from a checkout. The same
+five lines work on Kali, Debian, Ubuntu, Arch, macOS and WSL.
 
 ```bash
 git clone https://github.com/MushroomCyber/Loadout.git
 cd Loadout
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e '.[dev,tui]'
+pip install -e '.[tui]'
 ```
-
-If you want a pipx-managed environment for the local repo checkout instead of a
-plain virtualenv:
 
 ```bash
-pipx install --editable .
+loadout doctor        # is this machine ready?
+loadout               # the interactive browser
 ```
 
-Then launch the interactive browser:
+The first launch opens the browser. Type to filter, arrow keys to move, `enter`
+to act on the highlighted tool. Everything is also clickable — see
+[Interactive browser](#interactive-browser).
 
-```bash
-loadout
-```
-
-Check the machine is ready:
-
-```bash
-loadout doctor
-```
-
-> `pipx install loadout` is for a published package on PyPI; this repo is a local
-> source checkout and is installed from the checkout with `pip install -e .` or
-> `pipx install --editable .`.
-
-### Cutting a release
-
-Pushing a `v*` tag builds an sdist and a wheel, installs the wheel into a clean
-interpreter and runs it, then attaches the distributions and the three shell
-completion scripts to a GitHub Release.
-
-```bash
-# bump both, then tag — the workflow refuses if the three disagree
-git tag v1.0.0 && git push origin v1.0.0
-```
-
-The version is written in `pyproject.toml` and in `loadout/__init__.py`, and a
-tag is a third claim about it. All three must agree or the release fails before
-anything is built: artifacts whose contents disagree with their own filename
-are discovered by whoever installs them.
-
-PyPI publishing is wired but switched off. It needs Trusted Publishing
-configured on PyPI and the `PUBLISH_TO_PYPI` repository variable set to
-`true` — left inert so the wiring can be reviewed before it is ever able to
-publish.
-
-### Kali / Linux quick start
-
-On Kali, Debian, Ubuntu, or most Linux hosts:
-
-```bash
-git clone https://github.com/MushroomCyber/Loadout.git
-cd Loadout
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e '.[dev,tui]'
-loadout
-```
-
-The first launch opens the interactive browser. Type to filter, arrow keys to
-move, `enter` to act on the highlighted tool. Everything is also clickable --
-see [Interactive browser](#interactive-browser).
+> **Prefer pipx?** `pipx install --editable .` from the same checkout.
+> (`pipx install loadout` would fetch a published package; there isn't one
+> yet.) Add the `dev` extra — `pip install -e '.[dev,tui]'` — only if you
+> intend to run the test suite, since it pulls pytest, ruff and mypy.
 
 ### Upgrading Loadout
 
@@ -497,9 +463,9 @@ differently depending on how you reached it.
 Two of those carry state you can read at a glance:
 
 - **Provider toggles** are only offered for backends that are both usable on
-  this machine *and* present in the catalog, and are labelled with how many
-  entries they cover: `apt 768`, `gh 15`, `pipx 10`. An active toggle takes the
-  accent colour.
+  this machine *and* present in the catalog — listing `npm` on a box where no
+  entry names it would be a control whose only outcome is an empty table. An
+  active toggle takes the accent colour, bold and reverse.
 - **Category chips** show installed-over-total (`wireless 14/48`). The active
   chip takes the accent, bold and reverse -- the only thing a chip's colour
   communicates is which one you clicked.
@@ -535,17 +501,23 @@ install:
 loadout catalog validate        # check the source tree
 loadout catalog build           # compile it
 loadout catalog update          # enrich from local APT metadata
+loadout catalog probe-verify    # suggest verify: commands by asking the binaries
 loadout catalog info
 ```
 
 Adding a tool is one file and a pull request. See
 [docs/CATALOG.md](docs/CATALOG.md).
 
+Coverage is uneven and reported honestly rather than papered over: **651 of 842**
+entries name the command they install, and **48** carry a `verify:` command that
+proves it runs. `loadout verify` says which of the two it could establish for
+each tool instead of implying the stronger one.
+
 **Providers implemented:** `apt` · `brew` · `pipx` · `go` · `cargo` · `gem` ·
 `npm` · `github` (verified release downloads) · `docker`
 
 **Providers with catalog coverage today:** `apt` 774 · `brew` 33 · `pipx` 24 ·
-`github` 15 · `go` 12 · `gem` 4 · `cargo` 2 · `npm` 1. `docker` works but no
+`github` 17 · `go` 12 · `gem` 4 · `cargo` 2 · `npm` 1. `docker` works but no
 entry uses it yet — adding one is a pull request, not a code change.
 
 ---
@@ -580,7 +552,8 @@ implies:
 - Every package name is validated before it reaches an argv, and `--` always separates options from names.
 - Downloaded artifacts are checksummed against the release's own checksum file. **No checksum means refusal**, not a warning; `--allow-unverified` is an explicit opt-in.
 - **A check that passed says so.** The install screen carries the result in the progress block, above the divider and outside the scrolling log; a batch install collapses it to a count rather than a line per tool, the CLI prints it without needing `--log-level DEBUG`, and it is recorded in state so the detail pane still shows `✓ checksum verified` long after the install. A *skipped* check reads as `unverified`, never as a pass.
-- Where upstream signs its releases, the catalog pins the key and the signature is checked with `gpg`, `minisign` or `cosign`. The signing key must be the pinned one — a valid signature by some *other* key is a failure, which is the check a bare `gpg --verify` exit code does not make. Verification runs against a throwaway keyring, so a catalog entry can never read or write your own. **A declared signature cannot be waived by `--allow-unverified`**; that flag is for projects that publish nothing to check against, not for checks that fail.
+- Where upstream signs its releases, the catalog pins the trust anchor and the signature is checked with `gpg`, `minisign` or `cosign`. The signer must be the pinned one — a valid signature by some *other* key is a failure, which is the check a bare `gpg --verify` exit code does not make. Verification runs against a throwaway keyring, so a catalog entry can never read or write your own. **A declared signature cannot be waived by `--allow-unverified`**; that flag is for projects that publish nothing to check against, not for checks that fail.
+- Keyless Sigstore is supported in all three shapes upstreams publish — a `.sigstore.json` bundle, a detached `.sig` with its `.pem`, and key-based cosign — and pins an OIDC identity rather than a key. Where a project's signing identity carries the release tag, the pin is a pattern, and **an unanchored pattern is rejected at catalog review**: cosign matches these unanchored, so a pattern naming only the repository would also accept an identity that merely contains it.
 - Archive extraction refuses absolute paths and `..` traversal.
 - No `shell=True` anywhere.
 - **Your sudo password never passes through loadout.** The browser hands the
@@ -599,7 +572,7 @@ Adding a tool to the catalog is the easiest useful contribution — one YAML fil
 no Python. See [docs/CATALOG.md](docs/CATALOG.md) for the format and
 [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow. There is an
 [issue template](https://github.com/MushroomCyber/Loadout/issues/new?template=add-tool.yml)
-if you would rather suggest a tool than write the entry yourself..
+if you would rather suggest a tool than write the entry yourself.
 
 ```bash
 pip install -e '.[dev,tui]'
@@ -611,6 +584,25 @@ mypy loadout
 Open [issues](https://github.com/MushroomCyber/Loadout/issues) are the place to
 look for something to pick up, and the place to propose something that is not
 there yet.
+
+### Cutting a release
+
+Pushing a `v*` tag builds an sdist and a wheel, installs the wheel into a clean
+interpreter and runs it, then attaches the distributions and the three shell
+completion scripts to a GitHub Release.
+
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+The version is written in `pyproject.toml` and in `loadout/__init__.py`, and the
+tag is a third claim about it. All three must agree or the release fails before
+anything is built: artifacts whose contents disagree with their own filename are
+discovered by whoever installs them.
+
+PyPI publishing is wired but switched off. It needs Trusted Publishing
+configured on PyPI and the `PUBLISH_TO_PYPI` repository variable set to `true` —
+left inert so the wiring can be reviewed before it is ever able to publish.
 
 ---
 
