@@ -65,6 +65,7 @@ jobs:
             echo "changed=$(/opt/lo/bin/python -c 'import json;print(json.load(open("/tmp/enrich.json"))["changed"])')"
             echo "described=$(/opt/lo/bin/python -c 'import json;print(json.load(open("/tmp/enrich.json"))["described"])')"
             echo "entries=$(/opt/lo/bin/python -c 'import json;print(json.load(open("/tmp/enrich.json"))["entries"])')"
+            echo "annotated=$(/opt/lo/bin/python -c 'import json;print(json.load(open("/tmp/enrich.json"))["annotated"])')"
           } >> "$GITHUB_OUTPUT"
 
       - name: Validate and rebuild the compiled catalog
@@ -89,6 +90,11 @@ jobs:
             Summaries, homepages, sizes and categories come from APT metadata and
             `kali-tools-*` meta-package membership. Curated values are never
             overwritten — enrichment only fills fields an entry leaves empty.
+
+            **${{ steps.enrich.outputs.annotated }}** entry(ies) were left
+            untouched because they carry `#` comments. YAML dumping cannot
+            round-trip those, and they are where the catalog explains its
+            signature pins — apply any change to them by hand.
 
             The compiled `loadout/data/catalog.db` has been rebuilt to match.
           labels: catalog

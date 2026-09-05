@@ -14,6 +14,7 @@ binaries:
 - sudoreplay
 - visudo
 homepage: https://www.sudo.ws/
+verify: sudo --version
 size: 6936576
 install:
 - provider: apt

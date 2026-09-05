@@ -6,10 +6,11 @@ description: This package provides a commandline client for the WHOIS (RFC 3912)
   a features-rich front end to the password encryption function crypt(3).
 categories:
 - network
-size: 393216
 binaries:
 - whois
 - mkpasswd
+verify: whois --version
+size: 393216
 install:
 - provider: apt
   package: whois

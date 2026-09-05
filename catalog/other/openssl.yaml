@@ -10,6 +10,7 @@ categories:
 binaries:
 - openssl
 homepage: https://openssl-library.org
+verify: openssl --version
 size: 2586624
 install:
 - provider: apt

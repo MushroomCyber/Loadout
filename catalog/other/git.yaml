@@ -17,6 +17,7 @@ binaries:
 - git-upload-pack
 - scalar
 homepage: https://git-scm.com/
+verify: git --version
 size: 52195328
 install:
 - provider: apt

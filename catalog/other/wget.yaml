@@ -15,6 +15,7 @@ categories:
 binaries:
 - wget
 homepage: https://www.gnu.org/software/wget/
+verify: wget --version
 size: 3874816
 install:
 - provider: apt

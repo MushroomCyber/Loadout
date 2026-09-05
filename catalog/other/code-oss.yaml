@@ -11,6 +11,7 @@ binaries:
 - code
 - vscode
 homepage: https://github.com/microsoft/vscode
+verify: code --version
 size: 2609858560
 install:
 - provider: apt

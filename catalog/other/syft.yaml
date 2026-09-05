@@ -12,6 +12,7 @@ categories:
 binaries:
 - syft
 homepage: https://github.com/anchore/syft
+verify: syft --version
 size: 83992576
 install:
 - provider: github

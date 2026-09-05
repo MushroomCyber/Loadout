@@ -11,6 +11,7 @@ binaries:
 - rzsh
 - zsh5
 homepage: https://www.zsh.org/
+verify: zsh --version
 size: 2558976
 install:
 - provider: apt

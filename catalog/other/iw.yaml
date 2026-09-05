@@ -9,6 +9,7 @@ categories:
 binaries:
 - iw
 homepage: https://wireless.wiki.kernel.org/en/users/documentation/iw
+verify: iw --version
 size: 339968
 install:
 - provider: apt

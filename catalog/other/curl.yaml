@@ -11,6 +11,7 @@ binaries:
 - curl
 - wcurl
 homepage: https://curl.se/
+verify: curl --version
 size: 519168
 install:
 - provider: apt
