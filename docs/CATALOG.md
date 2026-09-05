@@ -82,7 +82,7 @@ proves the install did something. `loadout verify` checks those paths exist
 instead of looking for a command on `PATH` — without that it reported every
 wordlist as **failed**, accusing a working 1.8 GB install of being broken
 because it shipped no executable. `loadout run` refuses a content entry and
-says where its files are rather than telling you to add a `binaries:` field.
+says where its files are, instead of telling you to add a `binaries:` field.
 
 An entry that installs *both* data and a command is a tool. Some Kali content
 packages do ship a small helper binary (`/usr/bin/seclists` just prints where
@@ -103,8 +103,8 @@ Most of the apt-backed entries had this filled in from the distro's own
 `Contents` index, which maps files to packages without installing anything —
 that is where `libimage-exiftool-perl: [exiftool]` and
 `kubernetes-helm: [helm]` came from. Packages providing several commands with
-no obvious primary (`util-linux`, `bluez`) were left alone rather than guessed
-at, because the first entry is what `loadout run` executes.
+no obvious primary (`util-linux`, `bluez`) were left alone. Guessing would be
+worse than saying nothing: the first entry is what `loadout run` executes.
 
 Name the command, not the file inside the archive. A release that ships
 `hayabusa-4.0.0-lin-x64-gnu` at its root still takes `binaries: [hayabusa]` —
@@ -112,7 +112,7 @@ the version and platform glued onto the name are resolved at extraction time,
 and the file is installed under the name you listed. That resolution only looks
 at the archive root, and only where a digit follows the separator, so
 `hayabusa_report.css` deeper in the same archive is not a candidate. Two
-plausible matches at the root is an error rather than a guess: if a release ships
+plausible matches at the root is an error, not a coin toss. If a release ships
 both `tool-1.0-linux-amd64` and `tool-1.0-linux-arm64` unpacked together, set
 `asset:` so only one architecture is downloaded.
 
@@ -176,8 +176,9 @@ loadout catalog probe-verify --source catalog --write  # record the answers
 ```
 
 It only ever probes tools already present, so what one machine can contribute
-is bounded by what is installed on it — the report prints that gap rather than
-counting absent tools as failures. Three things about it are deliberate:
+is bounded by what is installed on it. The report prints that gap, so an
+absent tool never reads as a broken entry. Three of its choices are worth
+knowing:
 
 - **`-v` is never tried.** It means *verbose* for enough tools that probing
   with it would start them; `tcpdump -v` begins capturing.
@@ -289,9 +290,9 @@ Set one of `certificate_identity` and `certificate_identity_regexp`, never
 both: cosign takes one, and which one won would not be readable from the
 entry.
 
-Omitting `certificate` on shape 2 fails review rather than the install: without
-the `.pem` there is nothing to check the pinned identity against, and cosign's
-own error points somewhere else entirely.
+Omit `certificate` on shape 2 and the catalog build fails, not the install.
+Without the `.pem` there is nothing to check the pinned identity against, and
+cosign's own error for that points somewhere else entirely.
 
 #### When every asset is signed separately
 
@@ -315,9 +316,9 @@ install:
 
 A signature over the artifact is a stronger claim than a checksum over it, so
 an entry like this one installs without `checksums:` and without
-`--allow-unverified`. The checksum step is skipped rather than waived: it has
-nothing left to prove about bytes a pinned key already vouched for. Publish
-both and both still run.
+`--allow-unverified`. The checksum step is skipped, not waived. It has nothing
+left to prove about bytes a pinned key already vouched for. Publish both and
+both still run.
 
 Get the fingerprint and armoured key from upstream's documented release key —
 not from whatever a keyserver search returns first:
@@ -401,7 +402,7 @@ Loadout builds the venv with a matching interpreter when the machine has one
 not — naming the gap and the release that would close it, instead of letting pip
 fail after the download with forty lines about ignored versions.
 
-Copy the value from the package's own metadata rather than guessing:
+Copy the value out of the package's own metadata. Do not guess it:
 
 ```bash
 curl -s https://pypi.org/pypi/<package>/json | python3 -c 'import json,sys;print(json.load(sys.stdin)["info"]["requires_python"])'

@@ -154,7 +154,7 @@ loadout hold burpsuite        # pin a version an engagement depends on
 ```
 
 If an upgrade leaves the machine in an odd state, `loadout doctor` names the
-problem rather than making you guess.
+problem instead of leaving you to guess.
 
 ---
 
@@ -233,17 +233,18 @@ loadout lock --check            # does this box still match? non-zero if not
 loadout sync                    # reports drift against the lock when it exists
 ```
 
-Drift is reported per tool, and the kinds are kept apart because they are not
-the same claim: **version differs** names both sides, **different provider**
-catches the same version number from apt and from a release archive (not
-interchangeable builds), and **no version to compare** is reported rather than
-passed silently — an absence of evidence must never render as agreement.
+Drift is reported per tool, in three kinds that are kept apart:
 
-It records and compares; it does not force a version at install time. Pinning
-on install needs every provider to be able to express one and only `go` can
-today, so a lock that claimed to hold pins would be holding about a fifth of
-them. Reporting exactly where a box diverges is the half a disputed finding
-needs, and it is a claim this can actually support.
+| Kind | Means |
+|---|---|
+| **version differs** | Names both sides, so you can see which way it moved |
+| **different provider** | Same version number, different build. `nmap 7.95` from apt and `nmap 7.95` from a release archive are not the same binary |
+| **no version to compare** | The provider could not tell us. Reported, never passed silently |
+
+The lock records and compares. It does not force a version at install time.
+Only `go` can express a version pin today, so a lock that claimed to pin
+everything would be pinning about a fifth of it. Saying exactly where a box
+has diverged is a smaller claim, and one this can actually support.
 
 | Loadout | For |
 |---|---|
@@ -285,8 +286,8 @@ seven, so a bundle built that way fails on the isolated machine looking for
 
 Python wheels are tied to an interpreter version — `pip download` on a 3.13 box
 pulls `cp313` wheels — so the bundle records the Python it was built for and
-**refuses on a mismatch**, naming both versions, rather than letting the install
-fail obscurely somewhere with no network to fix it from.
+**refuses on a mismatch** and names both versions. The alternative is an
+obscure failure somewhere with no network to fix it from.
 
 The bundle is the one thing here that arrives from outside, onto a machine
 picked precisely because it is isolated, so it is treated as untrusted input:
@@ -299,14 +300,16 @@ picked precisely because it is isolated, so it is treated as untrusted input:
 - the build platform is recorded, because a bundle of amd64 debs is not a kit
   on an arm64 box and mid-engagement is the wrong time to find out.
 
-**What cannot travel:** `go` and `cargo` need a build toolchain on the far
-side. `npm` is excluded for a different reason — it is not that it cannot work,
-but that the offline path has not been proven end to end, and an untested
-bundle path fails on the isolated machine instead of at build time. These are
-reported per tool with a reason rather than quietly dropped — a bundle that held less than it claimed
-would be discovered on the isolated machine, which is the worst place to
-discover anything. Where a tool has both a bundleable and a non-bundleable
-route, the bundleable one is chosen even if the catalog ranks it lower.
+**What cannot travel.** `go` and `cargo` need a build toolchain on the far
+side. `npm` is left out for a different reason: the offline path has never been
+tested end to end, and shipping it untested would mean it failing on the
+isolated machine instead of at build time.
+
+Either way you are told. Each excluded tool is listed with its reason when the
+bundle is built. A bundle that quietly held less than it claimed would be
+found out on the isolated machine, which is the worst possible place. Where a
+tool has both a bundleable and a non-bundleable route, the bundleable one
+wins even if the catalog ranks it lower.
 
 ### Check the kit before you need it
 
@@ -329,19 +332,23 @@ loadout verify --quiet          # only what is broken
 ```
 
 It exits non-zero if anything failed, so it works as the last line of a
-pre-engagement script. Four outcomes are reported separately rather than
-collapsed, because they are not equally strong claims: **verified** means the
-catalog's `verify:` command ran and exited 0; **on PATH** means the binary was
-found but never run; **failed** means it did not work; **not checkable** means
-the catalog records neither a command nor a binary name.
+pre-engagement script. The four outcomes are kept separate, because they are
+not equally strong claims:
 
-Wordlists and payload collections are checked differently, because they have no
-command to run. Entries marked `kind: content` — SecLists, the Kali wordlists,
+| Outcome | Means |
+|---|---|
+| **verified** | The catalog's `verify:` command ran and exited 0 |
+| **on PATH** | The binary was found, but never run |
+| **failed** | It did not work |
+| **not checkable** | The catalog knows neither a command nor a binary name |
+
+Wordlists and payload collections have no command to run, so they are checked
+differently. Entries marked `kind: content` — SecLists, the Kali wordlists,
 PayloadsAllTheThings — declare `paths:` instead of `binaries:`, and `verify`
-checks those exist. Before that distinction they were checked for a binary they
-were never going to have, so a working 1.8 GB install reported as failed.
-`loadout run` on one of them says where its files are rather than trying to
-execute a directory.
+checks those paths exist. Before that distinction existed they were hunted for
+a binary they were never going to have, and a working 1.8 GB install reported
+as failed. `loadout run` on one of them prints where its files are instead of
+trying to execute a directory.
 
 ### Prove what you used
 
@@ -355,16 +362,20 @@ loadout audit                   # unmaintained, superseded or unverified tooling
 loadout history --tool nuclei
 ```
 
-The report carries how each tool's download was checked, and names the ones that
-arrived unchecked in a section of their own — with the `--allow-unverified` that
-permitted it, where that is what happened. Three outcomes are kept apart rather
-than merged: a check that passed (named by method, `checksum` or `gpg`), a
-provider with no check of ours to run (`n/a` — apt verifies its own package
-signatures), and a check that ran with nothing to verify against. Only the last
-is an unverified install, and it is the one a challenged finding asks about.
+The report says how each tool's download was checked. Anything that arrived
+unchecked gets its own section, along with the `--allow-unverified` that
+permitted it. Three outcomes are kept apart:
 
-This is read out of the install history rather than current state, so it survives
-a reinstall and still answers for a tool that has since been removed.
+- a check that passed, named by method (`checksum`, `gpg`);
+- `n/a`, where there was no check of ours to run — apt verifies its own
+  package signatures;
+- a check that ran with nothing to verify against.
+
+Only the third is an unverified install, and it is the one a challenged
+finding asks about.
+
+All of it is read out of the install history, not current state, so it
+survives a reinstall and still answers for a tool you have since removed.
 
 ### Take it elsewhere
 
@@ -383,14 +394,15 @@ loadout completions zsh  > ~/.zfunc/_loadout      # ~/.zfunc must be in $fpath
 loadout completions fish > ~/.config/fish/completions/loadout.fish
 ```
 
-Generated from the parser that actually runs, so it covers every subcommand
-and flag and cannot drift from them. Printed to stdout rather than installed:
-where these belong differs per shell and per distro, and a tool that writes
-into your shell configuration uninvited is one you stop trusting.
+These are generated from the parser that actually runs, so they cover every
+subcommand and flag and cannot fall out of step with them. They print to
+stdout instead of installing themselves, because where the files belong
+differs by shell and by distro — and a tool that edits your shell
+configuration uninvited is one you stop trusting.
 
-Tool ids are deliberately not baked in — there are 842, they change with every
-catalog update, and a script carrying a stale copy would confidently offer
-tools that no longer exist.
+Tool ids are left out on purpose. There are 842 of them, they change with
+every catalog update, and a completion script carrying a stale copy would
+confidently offer tools that no longer exist.
 
 ### Everything speaks JSON
 
@@ -410,12 +422,12 @@ narrows as you type.
 
 The screenshot at the top of this page is exactly what you get. The banner
 drops to a single line on terminals under 96x30, so a small window spends its
-rows on tools rather than on the program's own name.
+rows on tools instead of on the program's own name.
 
 The whole catalog is browsable with an empty filter — starred first, then
 installed, then alphabetical. Typing a query switches to relevance ranking and
-shows the top 500 matches, which the hint line says outright rather than
-implying the rest do not exist.
+shows the top 500 matches. The hint line says so outright, so the rest are
+clearly still there.
 
 The detail pane reports what state already knew and never showed: how a tool
 was verified, when it was installed, and when it was last run through
@@ -423,9 +435,9 @@ was verified, when it was installed, and when it was last run through
 
 An install that fails because upstream published nothing to check the download
 against offers an **Install unverified** button, which does from the browser
-what `--allow-unverified` does from the CLI. It appears only for that failure —
-a checksum *mismatch* never offers it, because those bytes are not the ones
-that were published and no flag should make them installable. The waiver lasts
+what `--allow-unverified` does from the CLI. It appears only for that one
+failure. A checksum *mismatch* never offers it: those bytes are not the ones
+that were published, and no button should make them installable. The waiver lasts
 exactly one attempt, and the install it produces is recorded as unverified, so
 `loadout report` names it later.
 
@@ -508,10 +520,10 @@ loadout catalog info
 Adding a tool is one file and a pull request. See
 [docs/CATALOG.md](docs/CATALOG.md).
 
-Coverage is uneven and reported honestly rather than papered over: **651 of 842**
-entries name the command they install, and **48** carry a `verify:` command that
-proves it runs. `loadout verify` says which of the two it could establish for
-each tool instead of implying the stronger one.
+Coverage is uneven. **651 of 842** entries name the command they install, and
+**48** go further and carry a `verify:` command that proves it runs. For each
+tool, `loadout verify` says which of the two it managed, so a weaker check
+never reads as a stronger one.
 
 **Providers implemented:** `apt` · `brew` · `pipx` · `go` · `cargo` · `gem` ·
 `npm` · `github` (verified release downloads) · `docker`
@@ -551,9 +563,10 @@ implies:
 - `sudo` is constructed in exactly one function, `policy.elevate()` — enforced by a test.
 - Every package name is validated before it reaches an argv, and `--` always separates options from names.
 - Downloaded artifacts are checksummed against the release's own checksum file. **No checksum means refusal**, not a warning; `--allow-unverified` is an explicit opt-in.
-- **A check that passed says so.** The install screen carries the result in the progress block, above the divider and outside the scrolling log; a batch install collapses it to a count rather than a line per tool, the CLI prints it without needing `--log-level DEBUG`, and it is recorded in state so the detail pane still shows `✓ checksum verified` long after the install. A *skipped* check reads as `unverified`, never as a pass.
-- Where upstream signs its releases, the catalog pins the trust anchor and the signature is checked with `gpg`, `minisign` or `cosign`. The signer must be the pinned one — a valid signature by some *other* key is a failure, which is the check a bare `gpg --verify` exit code does not make. Verification runs against a throwaway keyring, so a catalog entry can never read or write your own. **A declared signature cannot be waived by `--allow-unverified`**; that flag is for projects that publish nothing to check against, not for checks that fail.
-- Keyless Sigstore is supported in all three shapes upstreams publish — a `.sigstore.json` bundle, a detached `.sig` with its `.pem`, and key-based cosign — and pins an OIDC identity rather than a key. Where a project's signing identity carries the release tag, the pin is a pattern, and **an unanchored pattern is rejected at catalog review**: cosign matches these unanchored, so a pattern naming only the repository would also accept an identity that merely contains it.
+- **A check that passed says so.** The install screen shows the result in the progress block, above the divider and outside the scrolling log. The CLI prints it without needing `--log-level DEBUG`. It is recorded in state, so the detail pane still shows `✓ checksum verified` months later. A batch install collapses all of that to a count. A *skipped* check reads as `unverified`, never as a pass.
+- Where upstream signs its releases, the catalog pins the trust anchor and `gpg`, `minisign` or `cosign` checks the signature. **The signer must be the pinned one.** A valid signature by some *other* key is a failure — a bare `gpg --verify` exit code would pass it, so Loadout reads gpg's status output and compares the fingerprint. Verification runs against a throwaway keyring, so a catalog entry can never touch your own.
+- **A signature the catalog declares cannot be waived.** `--allow-unverified` is for projects that publish nothing to check against. It is not for a check that ran and failed.
+- Sigstore is supported in all three shapes projects publish: a `.sigstore.json` bundle, a detached `.sig` with its `.pem`, and key-based cosign. Keyless pins an OIDC identity instead of a key. Some projects sign from an identity that carries the release tag, so the pin is a pattern, and **an unanchored pattern is refused when the catalog is built**. cosign matches these unanchored, which means `github.com/owner/tool` on its own would also accept `https://evil.example/github.com/owner/tool/...`.
 - Archive extraction refuses absolute paths and `..` traversal.
 - No `shell=True` anywhere.
 - **Your sudo password never passes through loadout.** The browser hands the
