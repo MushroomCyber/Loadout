@@ -10,6 +10,7 @@ allowed to move independently.
 from __future__ import annotations
 
 import logging
+import re
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -172,6 +173,7 @@ def enrich_source_tree(
             existing_paths[str(data["id"]).strip().lower()] = path
 
     changed = 0
+    annotated = 0
     for tool_id, tool in sorted(by_id.items()):
         payload = tool.to_dict()
         if before.get(tool_id) == payload:
@@ -179,20 +181,46 @@ def enrich_source_tree(
         destination = existing_paths.get(tool_id) or (
             root / tool.category / f"{tool_id}.yaml"
         )
-        dump_tool(tool, destination)
+        if dump_tool(tool, destination) is None:
+            annotated += 1
+            continue
         changed += 1
 
     return {
         "entries": len(by_id),
         "changed": changed,
         "added": added,
+        "annotated": annotated,
         "described": sum(1 for t in by_id.values() if t.summary),
         "categorised": sum(1 for t in by_id.values() if t.category != "other"),
     }
 
 
-def dump_tool(tool: Tool, destination: Path) -> Path:
+#: A `#` comment in an entry is the only place a catalog file can say *why*
+#: -- why this signature identity is a pattern, why this key was trusted, why
+#: a route is ordered the way it is. `yaml.safe_dump` cannot round-trip
+#: comments, so any generated rewrite of such a file deletes that reasoning
+#: silently, and the weekly enrichment job rewrites an entry whenever upstream
+#: metadata moves (a package's `size:` changes with every new version). The
+#: annotated entries are exactly the security-critical ones.
+_COMMENT_LINE_RE = re.compile(r"^\s*#", re.M)
+
+
+def is_annotated(path: Path) -> bool:
+    """Does this entry carry comments a regenerated file would destroy?"""
+    try:
+        return bool(_COMMENT_LINE_RE.search(path.read_text(encoding="utf-8")))
+    except OSError:
+        return False
+
+
+def dump_tool(tool: Tool, destination: Path) -> Path | None:
     """Write one tool back out as YAML. Used by the seeding importers.
+
+    Returns ``None`` without writing when the destination carries comments:
+    losing a reviewed explanation is worse than missing one round of automated
+    enrichment, and the caller reports what it skipped so a person can apply
+    the change by hand.
 
     Writes to a sibling temp file then ``os.replace``s it over the target.
     ``enrich_source_tree`` calls this hundreds of times in a batch; a plain
@@ -207,6 +235,10 @@ def dump_tool(tool: Tool, destination: Path) -> Path:
     import tempfile
 
     import yaml
+
+    if is_annotated(destination):
+        logger.info("%s carries comments; not regenerating it", destination)
+        return None
 
     destination.parent.mkdir(parents=True, exist_ok=True)
     payload = tool.to_dict()

@@ -17,6 +17,7 @@ phases:
 binaries:
 - chainsaw
 homepage: https://github.com/WithSecureLabs/chainsaw
+verify: chainsaw --version
 alternatives:
 - hayabusa
 - zircolite

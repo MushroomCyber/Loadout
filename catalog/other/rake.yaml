@@ -11,6 +11,7 @@ categories:
 binaries:
 - rake
 homepage: https://github.com/ruby/rake
+verify: rake --version
 size: 212992
 install:
 - provider: apt

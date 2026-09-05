@@ -24,6 +24,7 @@ from typing import Any
 
 from .. import __version__, completions, configure_console, configure_logging, lockfile, logger
 from .. import verify as verify_mod
+from ..catalog import probe_verify
 from ..errors import LoadoutError
 from . import output as out
 
@@ -286,6 +287,19 @@ def build_parser() -> argparse.ArgumentParser:
                    help="With --add-new, include every APT package.")
     q.add_argument("--no-binaries", dest="binaries", action="store_false", default=True,
                    help="Skip dpkg -L binary resolution (much faster).")
+
+    q = csub.add_parser(
+        "probe-verify",
+        help="Suggest verify: commands by running installed binaries.",
+    )
+    q.add_argument("--source", type=Path, default=Path("catalog"))
+    q.add_argument("--write", action="store_true",
+                   help="Write the accepted commands into the YAML tree.")
+    q.add_argument("--timeout", type=float, default=probe_verify.DEFAULT_TIMEOUT)
+    q.add_argument("--jobs", type=int, default=probe_verify.DEFAULT_JOBS)
+    q.add_argument("--accept-help", dest="versioned_only", action="store_false",
+                   default=True,
+                   help="Also accept a --help that exits 0, which proves less.")
 
     q = csub.add_parser("update", help="Enrich the catalog from local APT metadata.")
     q.add_argument("--all-packages", action="store_true",
@@ -995,6 +1009,69 @@ def cmd_catalog(ctx: Context) -> int:
             out.print_error(f"{len(report.errors)} error(s) — catalog not written")
             return 1
         out.print_ok(f"{len(report.tools)} tool(s) from {report.files_read} file(s)")
+        return 0
+
+    if command == "probe-verify":
+        from ..catalog.probe_verify import probe_source_tree
+
+        if not args.source.is_dir():
+            out.print_error(
+                f"No catalog source at {args.source}",
+                "Run this from a checkout of the repository, or pass --source.",
+            )
+            return 3
+
+        if not ctx.json_mode:
+            out.print_note(
+                "Running candidate flags against installed binaries. Only "
+                "tools present on this machine can be probed."
+            )
+        probed = probe_source_tree(
+            args.source,
+            write=args.write,
+            timeout=args.timeout,
+            jobs=args.jobs,
+            versioned_only=args.versioned_only,
+        )
+        if ctx.json_mode:
+            out.emit_json(
+                {
+                    **probed.to_dict(),
+                    "commands": [
+                        {
+                            "tool": probe.tool_id,
+                            "command": probe.command,
+                            "versioned": probe.versioned,
+                        }
+                        for probe in probed.probes
+                    ],
+                }
+            )
+            return 0
+
+        for probe in sorted(probed.probes, key=lambda probe: probe.tool_id):
+            mark = "version" if probe.versioned else "help   "
+            out.get_console().print(
+                f"[dim]{mark}[/dim]  {probe.tool_id:<28} {probe.command}"
+            )
+        out.print_ok(
+            f"{probed.found} of {probed.installed} installed candidate(s) "
+            f"answered ({probed.versioned} with a version)"
+        )
+        out.print_note(
+            f"{probed.candidates - probed.installed} candidate(s) are not "
+            "installed here and cannot be probed"
+        )
+        if args.write:
+            out.print_ok(f"{probed.written} entry(ies) updated")
+            if probed.annotated:
+                out.print_warn(
+                    f"{probed.annotated} entry(ies) carry comments and were "
+                    "left alone; add the command by hand to keep them"
+                )
+            out.print_note("Next: loadout catalog build --source " + str(args.source))
+        elif probed.probes:
+            out.print_note("Re-run with --write to record these.")
         return 0
 
     if command == "enrich":

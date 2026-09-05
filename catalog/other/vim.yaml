@@ -10,6 +10,7 @@ categories:
 binaries:
 - vim.basic
 homepage: https://www.vim.org/
+verify: vim.basic --version
 size: 4234240
 install:
 - provider: apt

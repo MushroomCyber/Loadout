@@ -10,6 +10,7 @@ binaries:
 - plocate-build
 - updatedb.plocate
 homepage: https://plocate.sesse.net/
+verify: plocate --version
 size: 585728
 install:
 - provider: apt

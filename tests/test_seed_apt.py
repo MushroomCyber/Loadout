@@ -414,6 +414,56 @@ class TestEnrichSourceTree:
         assert path.exists()
         assert path.read_text(encoding="utf-8") == original
 
+    def test_an_annotated_entry_is_never_regenerated(self, tmp_path):
+        """`yaml.safe_dump` cannot round-trip comments, so regenerating an
+        annotated file deletes the only place the catalog says *why* -- and
+        the annotated entries are the signature ones."""
+        from loadout.catalog import compile as compile_mod
+        from loadout.model import Tool
+
+        path = self._write(tmp_path, "other", "tool")
+        path.write_text(
+            "# Pinned from the real certificate, not from the docs.\n"
+            + path.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+        original = path.read_text(encoding="utf-8")
+
+        result = compile_mod.dump_tool(
+            Tool(id="tool", summary="changed", categories=("other",)), path
+        )
+
+        assert result is None
+        assert path.read_text(encoding="utf-8") == original
+
+    def test_an_unannotated_entry_is_still_written(self, tmp_path):
+        from loadout.catalog import compile as compile_mod
+        from loadout.model import Tool
+
+        path = self._write(tmp_path, "other", "tool")
+        result = compile_mod.dump_tool(
+            Tool(id="tool", summary="changed", categories=("other",)), path
+        )
+        assert result == path
+        assert "changed" in path.read_text(encoding="utf-8")
+
+    def test_enrichment_reports_what_it_declined_to_touch(self, tmp_path, monkeypatch):
+        """Silently skipping would be indistinguishable from having nothing to
+        do, and the weekly job's whole output is these counts."""
+        path = self._write(tmp_path, "other", "tool")
+        path.write_text("# why\n" + path.read_text(encoding="utf-8"), encoding="utf-8")
+        self._patch_apt(
+            monkeypatch,
+            [{"name": "tool", "summary": "from apt", "tags": [], "size": 0}],
+        )
+        from loadout.catalog import enrich_source_tree
+
+        stats = enrich_source_tree(tmp_path, resolve_binaries=False)
+
+        assert stats["annotated"] == 1
+        assert stats["changed"] == 0
+        assert "from apt" not in path.read_text(encoding="utf-8")
+
     def test_idempotent_second_run_touches_nothing(self, tmp_path, monkeypatch):
         self._write(tmp_path, "other", "tool")
         self._patch_apt(

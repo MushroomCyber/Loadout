@@ -16,6 +16,7 @@ binaries:
 - parted
 - partprobe
 homepage: https://www.gnu.org/software/parted
+verify: parted --version
 size: 124928
 install:
 - provider: apt

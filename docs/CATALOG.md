@@ -164,6 +164,30 @@ An entry with no `verify:` falls back to looking for its binary on `PATH`,
 which is a weaker claim and reported as such. Adding one is the single
 cheapest improvement to a catalog entry.
 
+#### Finding one by asking the tool
+
+No package index records which flag a tool answers to, so
+`loadout catalog probe-verify` runs a short list of conventional flags against
+the binaries installed on the machine you run it from and reports what worked:
+
+```bash
+loadout catalog probe-verify --source catalog          # report only
+loadout catalog probe-verify --source catalog --write  # record the answers
+```
+
+It only ever probes tools already present, so what one machine can contribute
+is bounded by what is installed on it — the report prints that gap rather than
+counting absent tools as failures. Three things about it are deliberate:
+
+- **`-v` is never tried.** It means *verbose* for enough tools that probing
+  with it would start them; `tcpdump -v` begins capturing.
+- **A version answer beats a `--help` that exits 0**, and probing stops as
+  soon as one is found. `--help` succeeds for nearly everything, so on its own
+  it shows the binary starts, not that it works — those are recorded only
+  with `--accept-help`.
+- **Nothing is written without `--write`**, and what it writes is a diff for
+  review like any other catalog change.
+
 ### Signatures
 
 A checksum proves the download was not corrupted. It does not prove who made

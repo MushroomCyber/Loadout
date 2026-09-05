@@ -10,6 +10,7 @@ categories:
 binaries:
 - cosign
 homepage: https://github.com/sigstore/cosign
+verify: cosign version
 size: 88803328
 install:
 - provider: github
